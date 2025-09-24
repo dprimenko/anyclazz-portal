@@ -2,9 +2,11 @@ import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import netlify from '@astrojs/netlify';
 
+import auth from 'auth-astro';
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
+  integrations: [react(), auth()],
   output: 'server',
   adapter: netlify(),
 
@@ -26,6 +28,10 @@ export default defineConfig({
     schema: {
       API_URL: envField.string({ context: "client", access: "public" }),
       GOOGLE_MAPS_API_KEY: envField.string({ context: "client", access: "public" }),
+      KEYCLOAK_ISSUER: envField.string({ context: "server", access: "public" }),
+      KEYCLOAK_CLIENT_ID: envField.string({ context: "server", access: "public" }),
+      KEYCLOAK_CLIENT_SECRET: envField.string({ context: "server", access: "public" }),
+      AUTH_SECRET: envField.string({ context: "server", access: "public" }),
     }
   }
 });

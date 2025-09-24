@@ -1,0 +1,30 @@
+---
+export const prerender = false;
+import Base from '../layout/Base.astro';
+import { getSession } from 'auth-astro/server';
+const session = await getSession(Astro.request);
+console.log("Session in index.astro:", session);
+---
+
+<Base>
+	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+		
+		{session?.user ? (
+			<button id="logout">Cerrar sesión</button>
+		) : (
+			<button id="login">Iniciar sesión</button>
+		)}
+	</div>
+
+	<script>
+		const { signIn, signOut } = await import("auth-astro/client")
+
+		if (document.querySelector("#login")) {
+			document.querySelector("#login").onclick = () => signIn("keycloak");
+		}
+
+		if (document.querySelector("#logout")) {
+			document.querySelector("#logout").onclick = () => signOut();
+		}
+    </script>
+</Base>
