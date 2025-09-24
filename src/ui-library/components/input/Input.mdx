@@ -1,0 +1,46 @@
+import { Canvas, Meta } from "@storybook/blocks";
+import * as Input from "./Input.stories.tsx";
+
+<Meta of={Input} title="Input" />
+
+# Input
+
+Input component with different props.
+
+#### Example
+
+<Canvas />
+
+## Usage
+
+```ts
+import { Input } from "@docline/ui";
+
+const Example = () => {
+  return (
+      <Input
+         label="Introduce tu nombre"
+         rightIcon="<X />"
+         onClick={() => ()}
+      />
+  );
+};
+
+export default Example;
+```
+
+#### Arguments
+
+- **`variant`** - (String) Input variant (big, small)
+- **`value`** - (String) Input value
+- **`label`** - (String) Input input
+- **`required`** - (Boolean) Is input required?
+- **`readOnly`** - (Boolean) Is input readOnly?
+- **`error`** - (Boolean) Input state error enabled
+- **`errorMessage`** - (String) Input error message
+- **`noErrorMessage`** - (Boolean) Hide error message slot
+- **`rightIcon`** - (DoclineUiIcon) Right side icon
+- **`$disabled`** - (Boolean) Disables input
+
+- **`data-testid`** _(type: `string`)_
+A string identifier used for testing purposes. It allows the component to be easily selected in testing frameworks.

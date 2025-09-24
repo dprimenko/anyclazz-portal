@@ -1,0 +1,81 @@
+@use '../../design-system/settings/colors.scss' as colors;
+@use '../../design-system/settings/spacing.scss' as spacing;
+@use '../../design-system/settings/typography.scss' as typography;
+
+.bottombar {
+    &__container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9;
+        height: 64px;
+    }
+
+    &__content {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color: colors.$basic-white;
+        gap: spacing.$spacing-8;
+        padding: 0 spacing.$spacing-16;
+        border-top: 1px solid colors.$neutral-200;
+        height: 100%;
+
+        .dark & {
+            background-color: colors.$basic-black;
+            border-top: 1px solid colors.$basic-black;
+        }
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        gap: spacing.$spacing-4;
+
+        & .bottombar__item-text {
+            @include typography.caption(typography.$regular);
+            color: colors.$basic-black;
+        }
+
+        .dark & .bottombar__item-text {
+            color: colors.$basic-white;
+        }
+
+        & .bottombar__item-icon {
+            fill: colors.$basic-black;
+            width: 24px;
+        }
+
+        .dark & .bottombar__item-icon {
+            fill: colors.$basic-white;
+        }
+    }
+
+    &__item--selected {
+        color: colors.$basic-black;
+
+        .dark & {
+            fill: colors.$basic-white;
+        }
+
+        & .bottombar__item-icon {
+            fill: colors.$basic-black;
+        }
+
+        & .bottombar__item-text {
+            text-decoration: underline;
+        }
+
+        .dark & .bottombar__item-icon {
+            fill: colors.$basic-white;
+        }
+    }
+}
+

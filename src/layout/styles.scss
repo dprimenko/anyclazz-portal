@@ -1,0 +1,65 @@
+@use '../design-system/settings/colors.scss' as colors;
+@use '../design-system/settings/sizes.scss' as sizes;
+@use '../design-system/settings/spacing.scss' as spacing;
+
+.app {
+    display: grid;
+    position: relative;
+    height: 100dvh;
+    
+    &.dark {
+        background-color: colors.$basic-black;
+    }
+
+    @media (min-width: sizes.$mobile-max) {
+		height: 100dvh;
+		grid-template-areas:
+			  "nav head"
+			  "nav main";
+        grid-template-columns: 18.5rem auto;
+		// ${({ $isSidebarCollapsed }) => css`
+		// 	grid-template-columns: ${$isSidebarCollapsed ? '5.5rem' : '13.5rem'} auto;
+		// `}
+	}
+}
+
+.left-sidebar__container {
+    display: none;
+    height: 100%;
+    border-right: 1px solid colors.$neutral-200;
+
+    .dark & {
+        border-right: 1px solid transparent;
+    }
+
+    @media (min-width: sizes.$mobile-max) {
+        display: flex;
+        flex-direction: column;
+        padding-top: spacing.$spacing-40;
+        gap: spacing.$spacing-40;
+        width: 100%;
+    }
+}
+
+.left-sidebar__logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & img {
+        width: 142px;
+    }
+}
+
+.main__container {
+    display: flex;
+    flex-direction: column;
+
+    
+    height: calc(100dvh - 64px);
+    
+    @media (min-width: sizes.$mobile-max) {
+        height: 100dvh;
+        padding: spacing.$spacing-16 0;
+    }
+}

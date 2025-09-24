@@ -1,0 +1,44 @@
+---
+import './styles.scss';
+import { Feed } from './Feed.tsx';
+import { COOKIES_KEYS } from '../../services/cookies';
+import type { StoryFeed } from './domain/StoryFeed';
+import { ApiFeedRepository } from './infrastructure/ApiFeedRepository';
+
+const storiesRepository = new ApiFeedRepository();
+const { slug, maxDist } = Astro.params;
+
+const DEFAULT_LOCATION = {
+    place_id: 'ChIJgTwKgJcpQg0RaSKMYcHeNsQ',
+    lat: 40.41672790000001,
+    lng: -3.7032905,
+    address: 'Madrid, España'
+};
+
+const cookieLocation = Astro.cookies.get(COOKIES_KEYS.LOCATION) ?? undefined;
+const predefinedLocation: { place_id: string; lat: number; lng: number; address: string } = cookieLocation ? JSON.parse(decodeURIComponent(cookieLocation.value)) : DEFAULT_LOCATION;
+let preFetchedStory: StoryFeed;
+
+const fetchPromises: Promise<void>[] = [];
+
+const fetchGeoStory = async (slug: string) => {
+    const story = await storiesRepository.retrieveStory({ id: slug });
+    preFetchedStory = story;
+}   
+
+if (slug) {
+    fetchPromises.push(fetchGeoStory(slug));
+}
+
+const executeInitialFetch = async () => {
+    for (const promise of fetchPromises) {
+        await promise;
+    }
+}
+
+await executeInitialFetch();
+---
+
+<div class="feed">
+	<Feed client:only preFetchedStory={preFetchedStory} predefinedLocation={predefinedLocation} maxDist={maxDist} />
+</div>

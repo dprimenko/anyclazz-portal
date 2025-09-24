@@ -1,0 +1,78 @@
+@use "sass:map";
+
+$font-family: "Inter, sans-serif";
+
+$regular: 400;
+$medium: 500;
+$semibold: 600;
+
+$fontSizes: (
+    display1: 2.5rem,
+    display2: 2rem,
+    display3: 1.5rem,
+    heading: 1.25rem,
+    body: 1rem,
+    bodySmall: 0.875rem,
+    caption: 0.75rem,
+);
+
+$lineHeights: (
+    display1: 3rem,
+    display2: 2.5rem,
+    display3: 2rem,
+    heading: 1.5rem,
+    body: 1.5rem,
+    bodySmall: 1.24rem,
+    caption: 1rem,
+);
+
+@function fontsize($key) {
+    @return map.get($fontSizes, $key);
+}
+
+@function lineheight($key) {
+    @return map.get($lineHeights, $key);
+}
+
+@mixin display1($weight) {
+    font-size: fontsize(display1);
+    line-height: lineheight(display1);
+    font-weight: $weight;
+}
+
+@mixin display2($weight) {
+    font-size: fontsize(display2);
+    line-height: lineheight(display2);
+    font-weight: $weight;
+}
+
+@mixin display3($weight) {
+    font-size: fontsize(display3);
+    line-height: lineheight(display3);
+    font-weight: $weight;
+}
+
+@mixin heading($weight) {
+    font-size: fontsize(heading);
+    line-height: lineheight(heading);
+    font-weight: $weight;
+}
+
+@mixin body($weight) {
+    font-size: fontsize(body);
+    line-height: lineheight(body);
+    font-weight: $weight;
+}
+
+@mixin bodySmall($weight) {
+    font-size: fontsize(bodySmall);
+    line-height: lineheight(bodySmall);
+    font-weight: $weight;
+}
+
+@mixin caption($weight) {
+    font-size: fontsize(caption);
+    line-height: lineheight(caption);
+    font-weight: $weight;
+}
+  

@@ -1,0 +1,32 @@
+import { Canvas, Meta } from "@storybook/blocks";
+import * as Overlay from "./Overlay.stories.tsx";
+
+<Meta of={Overlay} title="Overlay" />
+
+# Overlay
+
+Overlay component with different props.
+
+#### Example
+
+<Canvas />
+
+## Usage
+
+```ts
+import { Overlay } from "@docline/ui";
+
+const Example = () => {
+  return (
+      <Overlay>
+        {children}
+      </Overlay>
+  );
+};
+
+export default Example;
+```
+
+#### Arguments
+
+- **`children`** - (JSX) Children element

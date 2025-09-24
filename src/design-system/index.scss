@@ -1,0 +1,24 @@
+@use "./generic/reset";
+@use "./generic/base";
+@use "./settings/sizes";
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.not-mobile {
+    display: none;
+
+    @media (min-width: sizes.$mobile-max) {
+        display: flex;
+    }
+}
+
+.mobile-only {
+    display: flex;
+
+    @media (min-width: sizes.$mobile-max) {
+        display: none;
+    }
+}

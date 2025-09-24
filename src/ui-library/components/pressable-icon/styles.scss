@@ -1,0 +1,17 @@
+@use '../../../design-system/settings/spacing' as spacing;
+@use '../../../design-system/settings/colors' as colors;
+
+.pressable-icon {
+    display: grid;
+    place-content: center;
+    border-radius: 8px;
+    padding: spacing.$spacing-8;
+    cursor: pointer;
+    user-select: none;
+    background-color: colors.$neutral-900;
+
+    &--disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}

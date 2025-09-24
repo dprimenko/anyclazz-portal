@@ -1,0 +1,83 @@
+@use '../../design-system/settings/spacing.scss' as spacing;
+@use '../../design-system/settings/typography.scss' as typography;
+@use '../../design-system/settings/colors.scss' as colors;
+
+.menu__container {
+    padding: 0 spacing.$spacing-8;
+    height: 100%;
+}
+
+.menu__content {
+    list-style: none;
+	margin: 0;
+	padding: 0;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    & li {
+        margin-bottom: spacing.$spacing-8;
+    }
+}
+
+.menu {
+    &__item {
+        display: grid;
+        grid-template-columns: 1.5rem 1fr;
+        gap: spacing.$spacing-16;
+        align-items: center;
+        padding: 0.625rem 0.5rem;
+        cursor: pointer;
+        user-select: none;
+        border-radius: 0.5rem;
+    
+        .dark & {
+            color: colors.$basic-white;
+        }
+
+        &:hover {
+            background-color: colors.$neutral-200;
+        }
+
+        .dark &:hover {
+            background-color: colors.$neutral-900;
+        }
+
+        &.menu__item--no-icon {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__item--selected {
+        background-color: colors.$neutral-200;
+
+        .dark & {
+            background-color: colors.$neutral-900;
+        }
+    }
+
+    &__item-icon {
+        fill: colors.$neutral-900;
+        width: 24px;
+
+        .dark & {
+            fill: colors.$basic-white;
+        }
+    }
+
+    &__item-text {
+        @include typography.body(typography.$semibold);
+    }
+}
+
+.menu__footer-text {
+    @include typography.bodySmall(typography.$regular);
+    color: colors.$neutral-900;
+    padding: 0.625rem 0.5rem;
+
+    .dark & {
+        color: colors.$basic-white;
+    }
+}
