@@ -17,9 +17,6 @@
 			  "nav head"
 			  "nav main";
         grid-template-columns: 18.5rem auto;
-		// ${({ $isSidebarCollapsed }) => css`
-		// 	grid-template-columns: ${$isSidebarCollapsed ? '5.5rem' : '13.5rem'} auto;
-		// `}
 	}
 }
 
@@ -35,19 +32,21 @@
     @media (min-width: sizes.$mobile-max) {
         display: flex;
         flex-direction: column;
-        padding-top: spacing.$spacing-40;
-        gap: spacing.$spacing-40;
+        padding: spacing.$spacing-16;
+        gap: spacing.$spacing-24;
         width: 100%;
     }
 }
 
 .left-sidebar__logo {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: start;
+    align-items: start;
+    padding: 0 spacing.$spacing-8;
 
     & img {
-        width: 142px;
+        width: auto;
+        height: 46px;
     }
 }
 

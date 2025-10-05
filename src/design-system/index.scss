@@ -1,6 +1,17 @@
+@use "../../node_modules/@anyclazz/ui/dist/ui.css";
+@use "tailwindcss";
+
 @use "./generic/reset";
 @use "./generic/base";
 @use "./settings/sizes";
+
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-group(*) {
+    animation-duration: 0.2s;
+}
 
 a {
     color: inherit;

@@ -1,6 +1,7 @@
 import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import netlify from '@astrojs/netlify';
+import tailwindcss from "@tailwindcss/vite";
 
 import auth from 'auth-astro';
 
@@ -22,6 +23,7 @@ export default defineConfig({
         }
       }
     },
+    plugins: [tailwindcss()],
   },
 
   env: {

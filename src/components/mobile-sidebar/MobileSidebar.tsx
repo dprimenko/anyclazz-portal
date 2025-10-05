@@ -6,8 +6,6 @@ import { subscribe, unsubscribe } from "../../services/domain-events-bus";
 import { ThemeContextProvider } from "../../ui-library/themes";
 import { ListIcon } from '@phosphor-icons/react';
 
-const logo = '/images/logo.png';
-
 export function MobileSidebar() {
     const [isOpen, setIsOpen] = useState(false);
 

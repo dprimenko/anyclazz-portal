@@ -1,0 +1,101 @@
+---
+import { getLangFromUrl, useTranslations } from '../../../i18n';
+import './styles.scss';
+import { LocalMenuRepository } from '../infrastructure/LocalMenuRepository';
+import type { MenuItem } from '../domain/types';
+import { getSvgByName } from '../../../utils/getSvgByName';
+
+const { class: className, isDark } = Astro.props;
+const { pathname } = Astro.url;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const menuRepository = new LocalMenuRepository();
+const menuItems: MenuItem[] = menuRepository.getStudentMenuItems();
+const commonMenuItems: MenuItem[] = menuRepository.getCommonMenuItems();
+
+const isItemSelected = (item: MenuItem): boolean => {
+    if (item.href === pathname) {
+        return true;
+    }
+    if (item.subItems) {
+        return item.subItems.some((subItem) => isItemSelected(subItem));
+    }
+    return false;
+};
+
+---
+
+<div class:list={['menu__container', isDark && 'dark', className]}>
+    <ul class="menu__content">
+        <div class="menu__content-main">
+            {menuItems.map((menuItem) => (
+                <a href={menuItem.href}>
+                    <li>
+                            <div class:list={[
+                                'menu__item',
+                                pathname === menuItem.href && 'menu__item--selected',
+                            ]}>
+                                <div class="menu__item-icon" set:html={menuItem.icon ? getSvgByName(menuItem.icon) : ''}></div>
+                                <div class="text-base font-semibold menu__item-text">{t(menuItem.label as keyof typeof t)}</div>
+                                {menuItem.subItems?.length && <div class="menu__item-chevron" set:html={isItemSelected(menuItem) ? getSvgByName('common/chevron-up') : getSvgByName('common/chevron-down')}></div>}
+                            </div>
+                            {menuItem.subItems?.length && isItemSelected(menuItem) && 
+                            (
+                                <ul class="menu__content">
+                                    {menuItem.subItems.map((subItem) => (
+                                        <a href={subItem.href}>
+                                            <li>
+                                                <div class:list={[
+                                                    'menu__item',
+                                                    pathname === subItem.href && 'menu__item--selected',
+                                                ]}>
+                                                    <div class="menu__item-icon" set:html={subItem.icon ? getSvgByName(subItem.icon) : ''}></div>
+                                                    <div class="text-base font-semibold menu__item-text">{t(subItem.label as keyof typeof t)}</div>
+                                                </div>
+                                            </li>
+                                        </a>
+                                    ))}
+                                </ul>
+                            )}
+                    </li>
+                </a>
+            ))}
+        </div>
+
+        <div class="menu__content-footer">
+           {commonMenuItems.map((menuItem) => (
+                <a href={menuItem.href}>
+                    <li>
+                            <div class:list={[
+                                'menu__item',
+                                pathname === menuItem.href && 'menu__item--selected',
+                            ]}>
+                                <div class="menu__item-icon" set:html={menuItem.icon ? getSvgByName(menuItem.icon) : ''}></div>
+                                <div class="text-base font-semibold menu__item-text">{t(menuItem.label as keyof typeof t)}</div>
+                                {menuItem.subItems?.length && <div class="menu__item-chevron" set:html={isItemSelected(menuItem) ? getSvgByName('common/chevron-up') : getSvgByName('common/chevron-down')}></div>}
+                            </div>
+                            {menuItem.subItems?.length && isItemSelected(menuItem) && 
+                            (
+                                <ul class="menu__content">
+                                    {menuItem.subItems.map((subItem) => (
+                                        <a href={subItem.href}>
+                                            <li>
+                                                <div class:list={[
+                                                    'menu__item',
+                                                    pathname === subItem.href && 'menu__item--selected',
+                                                ]}>
+                                                    <div class="menu__item-icon" set:html={subItem.icon ? getSvgByName(subItem.icon) : ''}></div>
+                                                    <div class="text-base font-semibold menu__item-text">{t(subItem.label as keyof typeof t)}</div>
+                                                </div>
+                                            </li>
+                                        </a>
+                                    ))}
+                                </ul>
+                            )}
+                    </li>
+                </a>
+            ))}
+        </div>
+    </div>
+</div>

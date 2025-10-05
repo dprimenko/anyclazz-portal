@@ -1,0 +1,14 @@
+---
+import { AnyclazzAuthRepository } from "../../infrastructure/AnyclazzAuthRepository"
+
+const loggedUser = new AnyclazzAuthRepository();
+
+const user = await loggedUser.getCurrentUser(Astro.request);
+
+---
+
+<div>
+    {user && (
+        user.name
+    )}
+</div>
