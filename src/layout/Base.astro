@@ -5,9 +5,7 @@ import '../layout/styles.scss';
 import '../utils/dateConfig';
 
 import Menu from '../features/menu/ssr/Menu.astro';
-import BottomBar from '../features/bottom-bar/BottomBar.astro';
 import { getLangFromUrl } from '../i18n';
-import { MobileSidebar } from '../components/mobile-sidebar/MobileSidebar';
 const lang = getLangFromUrl(Astro.url);
 
 const {title, description, keywords = []} = Astro.props;
@@ -62,7 +60,5 @@ const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
         <main class='main__container'>
             <slot/>
         </main>
-        <BottomBar class="mobile-only" isDark={isDark} />
-        <MobileSidebar client:only/>
     </body>
 </html>

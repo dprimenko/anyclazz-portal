@@ -13,15 +13,7 @@ export default defineConfig({
 
   vite: {
     server: {
-      allowedHosts: ['localhost', 'anyclazz.a.pinggy.link'],
-      proxy: {
-        '^/maps/api/.*': {
-          target: 'https://maps.googleapis.com',
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/maps\/api/, '/maps/api')
-        }
-      }
+      allowedHosts: ['localhost', 'anyclazz.a.pinggy.link']
     },
     plugins: [tailwindcss()],
   },
@@ -29,7 +21,6 @@ export default defineConfig({
   env: {
     schema: {
       API_URL: envField.string({ context: "client", access: "public" }),
-      GOOGLE_MAPS_API_KEY: envField.string({ context: "client", access: "public" }),
       KEYCLOAK_ISSUER: envField.string({ context: "server", access: "public" }),
       KEYCLOAK_CLIENT_ID: envField.string({ context: "server", access: "public" }),
       KEYCLOAK_CLIENT_SECRET: envField.string({ context: "server", access: "public" }),
