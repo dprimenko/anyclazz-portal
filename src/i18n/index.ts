@@ -22,8 +22,7 @@ export function useTranslatedPath(lang: keyof typeof ui) {
 
 export function useTranslations(lang: keyof typeof ui) {
     return function t(key: keyof typeof ui[typeof defaultLang], params?: Record<string, string | number>) {
-        const currentLang = lang ?? getLangFromUrl(new URL(window.location.href));
-        let translation = ui[currentLang][key] || ui[defaultLang][key];
+        let translation = ui[lang]?.[key] || ui[defaultLang][key];
         
         // Si hay parámetros, reemplazar las variables en el texto
         if (params) {
