@@ -1,0 +1,22 @@
+---
+import Base from './Base.astro';
+import Menu from '../features/menu/ssr/Menu.astro';
+
+const isDark = false;
+const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
+---
+
+
+<Base {...Astro.props}>
+    <div class:list={['app', isDark && 'dark']}>
+        <nav class="not-mobile left-sidebar__container">
+        <div class="left-sidebar__logo">
+            <img src={logo} alt="Anyclazz Logo" />
+        </div>
+        <Menu isDark={isDark} />
+        </nav>
+        <main class='main__container'>
+            <slot/>
+        </main>
+    </div>
+</Base>

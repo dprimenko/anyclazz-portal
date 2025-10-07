@@ -2,13 +2,12 @@
 import '../design-system/index.scss';
 import '../layout/styles.scss';
 
-import '../utils/dateConfig';
+import '../features/shared/utils/dateConfig';
 
-import Menu from '../features/menu/ssr/Menu.astro';
 import { getLangFromUrl } from '../i18n';
 const lang = getLangFromUrl(Astro.url);
 
-const {title, description, keywords = []} = Astro.props;
+const {title, description, keywords = [], isDark} = Astro.props;
 
 const pageKeywords = [
     ...keywords,
@@ -17,9 +16,6 @@ const pageKeywords = [
 const formattedTitle = `${title? `${title} - ` : ''}Anyclazz`
 const rrssLogo = '/images/logo.svg';
 const defaultDescription = '';
-
-const isDark = false;
-const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
 
 ---
 
@@ -51,15 +47,7 @@ const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
         <meta name="twitter:image:width" content="265"/>
         <meta name="twitter:image:height" content="80"/>
     </head>
-    <body class:list={['font-mulish', 'app', isDark && 'dark']}>
-        <nav class="not-mobile left-sidebar__container">
-            <div class="left-sidebar__logo">
-                <img src={logo} alt="Anyclazz Logo" />
-            </div>
-            <Menu isDark={isDark} />
-        </nav>
-        <main class='main__container'>
-            <slot/>
-        </main>
+    <body class:list={['font-mulish']}>
+        <slot/>
     </body>
 </html>

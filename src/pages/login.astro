@@ -1,0 +1,98 @@
+---
+export const prerender = false;
+import Base from '../layout/Base.astro';
+import { getSession } from 'auth-astro/server';
+import {routeConfig} from '../config/routes.ts';
+
+const session = await getSession(Astro.request);
+
+if (session?.user) {
+  return Astro.redirect(routeConfig.defaultRedirectRoute);
+}
+---
+
+<Base>
+	<div class="login-container">
+		<div class="loader"></div>
+	</div>
+
+	<style>
+		.login-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+			width: ;
+			gap: 20px;
+			text-align: center;
+		}
+
+		h1 {
+			font-size: 2rem;
+			margin-bottom: 1rem;
+			color: var(--neutral-800);
+		}
+
+		p {
+			font-size: 1.1rem;
+			color: var(--neutral-600);
+		}
+
+		.loader {
+			border: 4px solid var(--neutral-200);
+			border-top: 4px solid var(--primary-500);
+			border-radius: 50%;
+			width: 40px;
+			height: 40px;
+			animation: spin 1s linear infinite;
+		}
+
+		#manual-login {
+			margin-top: 20px;
+			padding: 12px 24px;
+			background-color: var(--primary-500);
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 1rem;
+			transition: background-color 0.2s;
+		}
+
+		#manual-login:hover {
+			background-color: var(--primary-600);
+		}
+
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+	</style>
+
+	<script>
+		const { signIn } = await import("auth-astro/client");
+
+		async function redirectToKeycloak() {
+			try {
+				console.log('Iniciando redirección a Keycloak...');
+				await signIn("keycloak");
+			} catch (error) {
+				console.error('Error durante el sign in:', error);
+				const manualButton = document.getElementById('manual-login');
+				if (manualButton) {
+					manualButton.textContent = 'Error - Hacer clic para reintentar';
+				}
+			}
+		}
+
+		setTimeout(redirectToKeycloak, 100);
+
+		const manualButton = document.getElementById('manual-login');
+		if (manualButton) {
+			manualButton.onclick = () => {
+				redirectToKeycloak();
+			};
+		}
+	</script>
+</Base>

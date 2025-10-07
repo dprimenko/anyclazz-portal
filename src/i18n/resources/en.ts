@@ -14,4 +14,6 @@ export default {
     'menu.support': 'Support',
     'location.placeholder': 'Where are you?',
     'location.search_not_found': 'No results found',
+
+    'teachers.list.title': '{{count}} teachers in {{location}}',
 }

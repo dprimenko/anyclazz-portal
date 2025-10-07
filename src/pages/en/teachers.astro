@@ -1,0 +1,9 @@
+---
+import { TeachersList } from '../../features/teachers/teachers-list/components/teachers-list/TeachersList';
+import Main from '../../layout/Main.astro';
+export const prerender = false;
+---
+
+<Main>
+	<TeachersList client:only/>
+</Main>

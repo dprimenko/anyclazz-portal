@@ -15,6 +15,7 @@ export default defineConfig({
       authorization: {
         params: {
           prompt: "login",
+          scope: "openid profile email roles"
         }
       },
       token: "http://localhost:8081/realms/anyclazz/protocol/openid-connect/token",
@@ -45,13 +46,29 @@ export default defineConfig({
         if (account.access_token) {
           try {
             const payload = JSON.parse(atob(account.access_token.split('.')[1]));
+            console.log('🔍 Full JWT payload:', JSON.stringify(payload, null, 2));
+            console.log('📋 Available scopes in token:', payload.scope);
+            console.log('👤 Name field:', payload.name);
+            console.log('� Given name:', payload.given_name);
+            console.log('👨 Family name:', payload.family_name);
+            console.log('�📧 Email field:', payload.email);
+            console.log('🎭 All available fields:', Object.keys(payload));
+            
+            // Extraer el nombre del token y agregarlo al token de sesión
+            token.name = payload.name || `${payload.given_name || ''} ${payload.family_name || ''}`.trim() || payload.preferred_username || payload.email;
+            
             token.userRole = payload.userRole || payload.roles?.[0] || null;
             token.realmRoles = payload.realm_roles || [];
             token.roles = payload.roles || [];
+            
+            console.log('✅ Token name configured:', token.name);
           } catch (error) {
             console.error('Error decoding JWT:', error);
           }
         }
+        
+        console.log('🔗 Account object:', JSON.stringify(account, null, 2));
+        console.log('👤 Profile object:', JSON.stringify(profile, null, 2));
       }
       return token;
     },
@@ -62,6 +79,13 @@ export default defineConfig({
         (session as any).realmRoles = token.realmRoles;
         (session as any).roles = token.roles;
       }
+      
+      // Asegurar que el nombre esté disponible en la sesión
+      if (token.name) {
+        session.user.name = token.name as string;
+      }
+      
+      console.log('🎯 Final session user name:', session.user.name);
       return session;
     },
   },
