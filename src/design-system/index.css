@@ -1,0 +1,52 @@
+/* Design System CSS */
+
+/* Import Tailwind CSS */
+@import "tailwindcss";
+
+/* Settings - CSS Custom Properties */
+@import "./settings/colors.css";
+@import "./settings/spacing.css";
+@import "./settings/sizes.css";
+@import "./settings/typography.css";
+@import "./settings/border.css";
+@import "./settings/z-index.css";
+
+/* Generic - Resets and Base Styles */
+@import "./generic/reset.css";
+@import "./generic/base.css";
+
+/* View Transitions */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-group(*) {
+    animation-duration: 0.2s;
+}
+
+/* Global Styles */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Utility Classes */
+.not-mobile {
+    display: none;
+}
+
+@media (min-width: 768px) { /* mobile-max */
+    .not-mobile {
+        display: flex;
+    }
+}
+
+.mobile-only {
+    display: flex;
+}
+
+@media (min-width: 768px) { /* mobile-max */
+    .mobile-only {
+        display: none;
+    }
+}

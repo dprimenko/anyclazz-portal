@@ -19,13 +19,8 @@ export default defineConfig({
 
     css: {
       modules: {
-        localsConvention: 'camelCase', // Permite usar camelCase en vez de kebab-case
-        generateScopedName: '[name]__[local]___[hash:base64:5]', // Formato de los nombres de clase
-      },
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@use "sass:math";`, // Variables globales SCSS si las necesitas
-        },
+        localsConvention: 'camelCase',
+        generateScopedName: '[name]__[local]___[hash:base64:5]',
       },
     },
 

@@ -1,0 +1,8 @@
+:root {
+  /* Border Radius */
+  --radius-4: 0.25rem;   /* 4px */
+  --radius-8: 0.5rem;    /* 8px */
+  --radius-16: 1rem;     /* 16px */
+  --radius-24: 2rem;     /* 32px */
+  --radius-full: 100%;
+}

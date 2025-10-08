@@ -1,0 +1,68 @@
+:root {
+  /* Font Family */
+  --font-family: "Inter, sans-serif";
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Font Sizes */
+  --font-size-display1: 2.5rem;    /* 40px */
+  --font-size-display2: 2rem;      /* 32px */
+  --font-size-display3: 1.5rem;    /* 24px */
+  --font-size-heading: 1.25rem;    /* 20px */
+  --font-size-body: 1rem;          /* 16px */
+  --font-size-body-small: 0.875rem; /* 14px */
+  --font-size-caption: 0.75rem;    /* 12px */
+
+  /* Line Heights */
+  --line-height-display1: 3rem;    /* 48px */
+  --line-height-display2: 2.5rem;  /* 40px */
+  --line-height-display3: 2rem;    /* 32px */
+  --line-height-heading: 1.5rem;   /* 24px */
+  --line-height-body: 1.5rem;      /* 24px */
+  --line-height-body-small: 1.25rem; /* 20px */
+  --line-height-caption: 1rem;     /* 16px */
+}
+
+/* Typography Utility Classes */
+.text-display1 {
+  font-size: var(--font-size-display1);
+  line-height: var(--line-height-display1);
+}
+
+.text-display2 {
+  font-size: var(--font-size-display2);
+  line-height: var(--line-height-display2);
+}
+
+.text-display3 {
+  font-size: var(--font-size-display3);
+  line-height: var(--line-height-display3);
+}
+
+.text-heading {
+  font-size: var(--font-size-heading);
+  line-height: var(--line-height-heading);
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+.text-body-small {
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+}
+
+.text-caption {
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+}
+
+/* Weight Modifiers */
+.font-regular { font-weight: var(--font-weight-regular); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
