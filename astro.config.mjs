@@ -15,7 +15,11 @@ export default defineConfig({
     server: {
       allowedHosts: ['localhost', 'anyclazz.a.pinggy.link']
     },
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss({
+        content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}']
+      })
+    ],
     css: {
       modules: {
         localsConvention: 'camelCase', // Permite usar camelCase en vez de kebab-case
