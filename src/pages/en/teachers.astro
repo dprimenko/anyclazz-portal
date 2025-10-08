@@ -1,12 +1,9 @@
 ---
 import { TeachersList } from '../../features/teachers/teachers-list/components/teachers-list/TeachersList';
 import Main from '../../layout/Main.astro';
-import { ThemeProvider } from '../../providers/ThemeProvider';
 export const prerender = false;
 ---
 
 <Main>
-	<ThemeProvider client:only>
-		<TeachersList />
-	</ThemeProvider>
+	<TeachersList client:only />
 </Main>
