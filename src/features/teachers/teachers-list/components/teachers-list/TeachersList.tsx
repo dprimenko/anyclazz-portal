@@ -1,6 +1,6 @@
-import { StyledList, TeachersListContainer } from "./styles";
 import { useMemo } from "react";
 import { useTranslations } from "../../../../../i18n";
+import { Text } from "../../../../../ui-library/components/text/Text";
 
 export function TeachersList() {
   const t = useTranslations();
@@ -14,11 +14,11 @@ export function TeachersList() {
   }, []);
 
   return (
-    <TeachersListContainer>
-      <Text>{t('teachers.list.title', {count: countTeachers, location: teachersLocation})}</Text>
-      <StyledList>
+    <div>
+      <Text size="display-xs" color="primary">{t('teachers.list.title', {count: countTeachers, location: teachersLocation})}</Text>
+      <div>
           Teachers List Component
-      </StyledList>
-    </TeachersListContainer>
+      </div>
+    </div>
   );
 }

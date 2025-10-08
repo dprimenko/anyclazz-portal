@@ -16,6 +16,17 @@ export default defineConfig({
       allowedHosts: ['localhost', 'anyclazz.a.pinggy.link']
     },
     plugins: [tailwindcss()],
+    css: {
+      modules: {
+        localsConvention: 'camelCase', // Permite usar camelCase en vez de kebab-case
+        generateScopedName: '[name]__[local]___[hash:base64:5]', // Formato de los nombres de clase
+      },
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@use "sass:math";`, // Variables globales SCSS si las necesitas
+        },
+      },
+    },
   },
 
   env: {
