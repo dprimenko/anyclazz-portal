@@ -1,9 +1,11 @@
 ---
 import { TeachersList } from '../../features/teachers/teachers-list/components/teachers-list/TeachersList';
 import Main from '../../layout/Main.astro';
+import { Text } from '../../ui-library/components/text/Text.tsx';
 export const prerender = false;
 ---
 
 <Main>
+	<Text client:load>TEST</Text>
 	<TeachersList client:only />
 </Main>

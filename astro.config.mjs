@@ -1,9 +1,10 @@
 import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import netlify from '@astrojs/netlify';
-import tailwindcss from "@tailwindcss/vite";
 
 import auth from 'auth-astro';
+
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,11 +16,7 @@ export default defineConfig({
     server: {
       allowedHosts: ['localhost', 'anyclazz.a.pinggy.link']
     },
-    plugins: [
-      tailwindcss({
-        content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}']
-      })
-    ],
+
     css: {
       modules: {
         localsConvention: 'camelCase', // Permite usar camelCase en vez de kebab-case
@@ -31,6 +28,8 @@ export default defineConfig({
         },
       },
     },
+
+    plugins: [tailwindcss()]
   },
 
   env: {

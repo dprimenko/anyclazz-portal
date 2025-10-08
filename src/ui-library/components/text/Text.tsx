@@ -1,34 +1,6 @@
-import type { ColorType, TextSizeType, TextWeightType } from "../../shared/constants.ts";
-import type { TextAlignmentType, TextLevel } from "./types.ts";
-import classNames from "classnames";
-import styles from "./Text.module.scss";
-import type { ReactNode } from "react";
-
-export interface TextProps {
-    textalign?: TextAlignmentType;
-    color?: ColorType;
-    weight?: TextWeightType;
-    size?: TextSizeType;
-    uppercase?: boolean;
-    textLevel?: TextLevel;
-    children?: ReactNode;
-    className?: string;
-}
-
-export const Text = (
-    {
-        size = 'text-md',
-        color = 'tertiary',
-        weight = 'regular',
-        textalign = 'left',
-        uppercase = false,
-        textLevel = 'p',
-        children,
-        className,
-        ...props
-    }: TextProps) => {
+export const Text = ({children}) => {
         return (
-            <div className="text-2xl font-semibold" {...props}>
+            <div className="text-2xl font-semibold">
                 {children}
             </div>
         );
