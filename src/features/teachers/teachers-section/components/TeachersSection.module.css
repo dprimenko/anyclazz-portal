@@ -1,0 +1,5 @@
+.teachers-section__container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-32);
+}

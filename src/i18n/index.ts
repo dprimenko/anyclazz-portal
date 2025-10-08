@@ -20,7 +20,7 @@ export function useTranslatedPath(lang: keyof typeof ui) {
     }
 }
 
-export function useTranslations(lang: keyof typeof ui) {
+export function useTranslations({ lang }: { lang?: keyof typeof ui } = {}) {
     return function t(key: keyof typeof ui[typeof defaultLang], params?: Record<string, string | number>) {
         let translation = ui[lang]?.[key] || ui[defaultLang][key];
         

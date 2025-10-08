@@ -34,7 +34,7 @@ html {
 
 body {
   color: var(--color-neutral-900);
-  font-family: var(--font-family);
+  font-family: 'Inter', sans-serif;
   font-size: var(--font-size-body);
   line-height: var(--line-height-body);
   font-weight: var(--font-weight-regular);

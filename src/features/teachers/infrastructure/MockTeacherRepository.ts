@@ -177,7 +177,7 @@ const teachers = <Teacher[]>[
 
 export class MockTeacherRepository implements TeacherRepository {
 	async listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse> {
-		return {
+		return Promise.resolve({
 			teachers: teachers,
 			meta: {
 				currentPage: 1,
@@ -185,7 +185,7 @@ export class MockTeacherRepository implements TeacherRepository {
 				size: 10,
 				total: teachers.length,
 			},
-		};
+		});
 	}
 
 	async getTeacher(params: GetTeacherParams): Promise<Teacher> {

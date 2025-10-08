@@ -1,9 +1,25 @@
 import { useMemo } from "react";
 import { useTranslations } from "../../../../../i18n";
-import { Text } from "../../../../../ui-library/components/text/Text";
+import styles from "./TeachersList.module.css";
+import { useTeacherList } from "../../../hooks/useTeacherList";
+import type { TeacherRepository } from "../../../domain/types";
 
-export function TeachersList() {
+export interface TeachersListProps {
+  teacherRepository: TeacherRepository;
+}
+
+export function TeachersList({ teacherRepository }: TeachersListProps) {
   const t = useTranslations();
+
+  const { 
+		teachers, 
+		fetchingTeachers, 
+		page,
+		setPage,
+		pages,
+		search,
+		setSearch,
+	} = useTeacherList({ teacherRepository });
 
   const countTeachers = useMemo(() => {
     return 232;
@@ -14,10 +30,13 @@ export function TeachersList() {
   }, []);
 
   return (
-    <div>
-      <Text size="display-xs" color="primary">{t('teachers.list.title', {count: countTeachers, location: teachersLocation})}</Text>
-      <div>
-          Teachers List Component
+    <div className={styles["teachers-list__container"]}>
+      <div className={styles["teachers-list__content"]}>
+          {teachers.map(teacher => (
+            <div key={teacher.id}>
+              {teacher.name} {teacher.surname}
+            </div>
+          ))}
       </div>
     </div>
   );

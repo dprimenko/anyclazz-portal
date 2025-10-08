@@ -16,4 +16,6 @@ export default {
     'location.search_not_found': 'No results found',
 
     'teachers.list.title': '{{count}} teachers in {{location}}',
+    'teachers.list.subtitle': 'Book your next lesson.',
+    'teachers.error_fetching_teachers': 'Error fetching teachers. Please try again later.',
 }

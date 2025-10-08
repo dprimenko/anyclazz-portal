@@ -1,10 +1,12 @@
 ---
-import { TeachersList } from '../../features/teachers/teachers-list/components/teachers-list/TeachersList';
+import { MockTeacherRepository } from '../../features/teachers/infrastructure/MockTeacherRepository';
+import { TeachersSection } from '../../features/teachers/teachers-section/components/TeachersSection';
 import Main from '../../layout/Main.astro';
-import { Text } from '../../ui-library/components/text/Text.tsx';
 export const prerender = false;
+
+const teacherRepository = new MockTeacherRepository();
 ---
 
 <Main>
-	<TeachersList client:only />
+	<TeachersSection client:only teacherRepository={teacherRepository} />
 </Main>

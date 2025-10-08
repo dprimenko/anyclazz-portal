@@ -1,4 +1,4 @@
-import type { ColorType, TextSizeType, TextWeightType } from "../../shared/constants.ts";
+import type { ColorType, TextSizeType, TextWeightType } from "../../../shared/constants.ts";
 import type { TextAlignmentType, TextLevel } from "./types.ts";
 import classNames from "classnames";
 import styles from "./Text.module.css";
@@ -18,7 +18,7 @@ export interface TextProps {
 export const Text = (
     {
         size = 'text-md',
-        color = 'tertiary',
+        color = 'secondary',
         weight = 'regular',
         textalign = 'left',
         uppercase = false,
@@ -29,6 +29,7 @@ export const Text = (
     }: TextProps) => {
         const classes = classNames(
             { [styles.primary]: color === 'primary' },
+            { [styles.secondary]: color === 'secondary' },
             { [styles.tertiary]: color === 'tertiary' },
 
      
