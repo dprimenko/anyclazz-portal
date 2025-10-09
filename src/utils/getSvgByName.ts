@@ -22,7 +22,7 @@ Object.entries(svgModules).forEach(([path, content]) => {
   }
 });
 
-export function getSvgByName(name: string): string {
+export function getSvgByName(name: string, size?: number): string {
   const svgName = name.toLowerCase();
   const svg = svgMap[svgName];
   

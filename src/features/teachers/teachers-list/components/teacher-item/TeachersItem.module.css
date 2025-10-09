@@ -1,0 +1,19 @@
+.teacher-item__container {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-20);
+    padding: var(--spacing-16);
+}
+
+.teacher-item__avatar {
+    width: 150px;
+    height: 190px;
+    object-fit: cover;
+    border-radius: var(--radius-8);
+}
+
+.teacher-item__content-row {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-16);
+}

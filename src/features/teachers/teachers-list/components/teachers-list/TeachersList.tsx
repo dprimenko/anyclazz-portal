@@ -3,6 +3,7 @@ import { useTranslations } from "../../../../../i18n";
 import styles from "./TeachersList.module.css";
 import { useTeacherList } from "../../../hooks/useTeacherList";
 import type { TeacherRepository } from "../../../domain/types";
+import { TeacherItem } from "../teacher-item/TeacherItem";
 
 export interface TeachersListProps {
   teacherRepository: TeacherRepository;
@@ -33,9 +34,7 @@ export function TeachersList({ teacherRepository }: TeachersListProps) {
     <div className={styles["teachers-list__container"]}>
       <div className={styles["teachers-list__content"]}>
           {teachers.map(teacher => (
-            <div key={teacher.id}>
-              {teacher.name} {teacher.surname}
-            </div>
+            <TeacherItem key={teacher.id} teacher={teacher} />  
           ))}
       </div>
     </div>

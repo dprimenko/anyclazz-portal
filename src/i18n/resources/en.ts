@@ -1,6 +1,9 @@
 export default {
     'common.share': 'Share',
     'common.likes': 'Likes',
+    'common.reviews': 'reviews',
+    'common.students': 'students',
+    'common.lessons': 'lessons',
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',
     'menu.dashboard.last-lessons': 'Last Lessons',

@@ -29,14 +29,11 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
 		setFetchingTeachers(true);
 
 		async function fetch() {
-			console.log("FETCHING");
-			console.log(teacherRepository.listTeachers);
 			const teachers = await teacherRepository.listTeachers({ 
 				page,
 				size: DEFAULT_PAGE_SIZE,
 				query: search || undefined,
 			});
-			console.log(teachers);
 			setTeachers(teachers.teachers);
 			setPages(teachers.meta.lastPage);
 		}
@@ -57,21 +54,14 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
 		fetchTeachers();
 	}, [page, search, teachers]);
 
-    // useEffect(() => {
-	// 	console.log("INIT");
-	// 	if (!previousPage || previousPage === page) return;
-	// 	console.log("INIT inside");
-	// 	fetchTeachers();
-	// }, [previousPage, page]);
-
-	// useEffect(() => {
-	// 	refreshTeachers();
-	// }, [search]);
+    useEffect(() => {
+		if (!previousPage || previousPage === page) return;
+		fetchTeachers();
+	}, [previousPage, page]);
 
 	useEffect(() => {
-		console.log("INIT");
 		refreshTeachers();
-	}, []);
+	}, [search]);
 
     return {
         teachers,

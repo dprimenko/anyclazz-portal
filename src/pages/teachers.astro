@@ -1,0 +1,9 @@
+---
+import { TeachersSection } from '../features/teachers/teachers-section/components/TeachersSection';
+import Main from '../layout/Main.astro';
+export const prerender = false;
+---
+
+<Main>
+	<TeachersSection client:only />
+</Main>

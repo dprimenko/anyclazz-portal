@@ -10,6 +10,7 @@ export interface TextProps {
     weight?: TextWeightType;
     size?: TextSizeType;
     uppercase?: boolean;
+    underline?: boolean;
     textLevel?: TextLevel;
     children?: ReactNode;
     className?: string;
@@ -22,6 +23,7 @@ export const Text = (
         weight = 'regular',
         textalign = 'left',
         uppercase = false,
+        underline = false,
         textLevel = 'p',
         children,
         className,
@@ -34,6 +36,7 @@ export const Text = (
 
      
             {'text-2xl' : size === 'display-xs'},
+            {'text-lg' : size === 'text-lg'},
             {'text-base' : size === 'text-md'},
             {'text-sm' : size === 'text-sm'},
             {'text-xs' : size === 'text-xs'},
@@ -44,6 +47,8 @@ export const Text = (
             {'font-normal' : weight === 'regular'},
             {'font-medium' : weight === 'medium'},
             {'font-semibold' : weight === 'semibold'},
+            {'uppercase' : uppercase},
+            {'underline underline-offset-4' : underline},
             className
         );
 

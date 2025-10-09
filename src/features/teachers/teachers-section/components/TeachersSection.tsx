@@ -5,13 +5,11 @@ import styles from "./TeachersSection.module.css";
 import { Divider } from "../../../../ui-library/components/ssr/divider/Divider";
 import { Space } from "../../../../ui-library/components/ssr/space/Space";
 import { TeachersList } from "../../teachers-list/components/teachers-list/TeachersList";
-import type { TeacherRepository } from "../../domain/types";
+import { MockTeacherRepository } from "../../infrastructure/MockTeacherRepository";
 
-export interface TeachersSectionProps {
-  teacherRepository: TeacherRepository;
-}
+const teacherRepository = new MockTeacherRepository();
 
-export function TeachersSection({ teacherRepository }: TeachersSectionProps) {
+export function TeachersSection() {
   const t = useTranslations();
 
   const countTeachers = useMemo(() => {
@@ -20,13 +18,6 @@ export function TeachersSection({ teacherRepository }: TeachersSectionProps) {
 
   const teachersLocation = useMemo(() => {
     return "Madrid";
-  }, []);
-
-  useEffect(() => {
-    console.log("TeachersSection mounted");
-    teacherRepository.listTeachers({ page: 1, size: 10 }).then((response) => {
-      console.log("Fetched teachers:", response);
-    });
   }, []);
 
   return (

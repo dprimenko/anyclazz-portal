@@ -113,17 +113,17 @@ const teachers = <Teacher[]>[
 		createdAt: '2025-10-07T10:26:34.468Z',
 	},
 	{
-		id: '2',
-		name: 'Valentina',
-		surname: 'Harper',
-		email: 'valentina.harper@example.com',
-		avatar: 'https://anyclazz.b-cdn.net/43306c6f117bd1e44cfa1bac6ff614b579fbbc6a.jpg',
+		id: '3',
+		name: 'Marie',
+		surname: 'Walls',
+		email: 'marie.walls@example.com',
+		avatar: 'https://anyclazz.b-cdn.net/bb86af181a995ff3f8897991997ad484c9d3351b.jpg',
 		subjects: <TeacherSubject[]>[
 			{
-				id: '2',
+				id: '3',
 				name: {
-					en: 'Science',
-					es: 'Ciencias',
+					en: 'History',
+					es: 'Historia',
 				},
 			}
 		],
