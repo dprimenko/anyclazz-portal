@@ -17,7 +17,7 @@ export const Icon = (
 
         return (
             <img 
-                src={getSvgByName(icon, { color: iconColor })}
+                src={getSvgByName(`icons/${icon}`, { color: iconColor })}
                 width={iconWidth}
                 height={iconHeight}
                 alt={`${icon} icon`}

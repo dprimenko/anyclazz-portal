@@ -6,7 +6,7 @@ export class LocalMenuRepository implements MenuRepository {
             {
                 id: 'dashboard',
                 label: 'menu.dashboard',
-                icon: 'common/dashboard',
+                icon: 'dashboard',
                 href: '/dashboard',
                 subItems: [
                     {
@@ -39,19 +39,19 @@ export class LocalMenuRepository implements MenuRepository {
             {
                 id: 'teachers',
                 label: 'menu.teachers',
-                icon: 'common/people',
+                icon: 'people',
                 href: '/teachers',
             },
             {
                 id: 'messages',
                 label: 'menu.messages',
-                icon: 'common/chat',
+                icon: 'chat',
                 href: '/messages',
             },
             {
                 id: 'feed',
                 label: 'menu.feed',
-                icon: 'common/feed',
+                icon: 'feed',
                 href: '/feed',
             }
         ];
@@ -62,13 +62,13 @@ export class LocalMenuRepository implements MenuRepository {
             {
                 id: 'settings',
                 label: 'menu.settings',
-                icon: 'common/settings',
+                icon: 'settings',
                 href: '/me/settings',
             },
             {
                 id: 'support',
                 label: 'menu.support',
-                icon: 'common/support',
+                icon: 'support',
                 href: 'javascript:void(0);',
             },
         ];

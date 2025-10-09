@@ -3,9 +3,7 @@
     flex-direction: row;
     gap: var(--spacing-20);
     padding: var(--spacing-16);
-    border: 1px solid var(--color-neutral-200);
     border-radius: var(--radius-16);
-    box-shadow: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
 }
 
 .teacher-item__super-tutor-badge {
@@ -17,7 +15,8 @@
 .teacher-item__content {
     display: flex;
     flex-direction: row;
-    flex: 1 1 auto;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .teacher-item__content-info {
@@ -25,10 +24,14 @@
     flex-direction: column;
 }
 
-.teacher-item__content-actions {
+.teacher-item__content-presentation {
+    width: 64ch;
+    word-wrap: break-word;
+}
+
+.teacher-item__actions {
     display: flex;
     flex-direction: column;
-    width: 100%;
 }
 
 .teacher-item__avatar {
@@ -45,8 +48,5 @@
 }
 
 .teacher-item__class-types {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-16);
-    width: 100%;
+    
 }

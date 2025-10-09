@@ -13,6 +13,8 @@
 @import "./generic/reset.css";
 @import "./generic/base.css";
 
+@import "./components/index.css";
+
 /* View Transitions */
 @view-transition {
     navigation: auto;

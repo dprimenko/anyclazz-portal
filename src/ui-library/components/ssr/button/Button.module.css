@@ -1,0 +1,16 @@
+.btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-12);
+  color: var(--color-neutral-700);
+}
+
+.btn--primary {
+  color: var(--color-neutral-100);
+  background-color: var(--color-primary-700);
+  border: 2px solid;
+  border-color: none;
+  border-image-source: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+}

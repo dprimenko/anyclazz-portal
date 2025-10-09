@@ -32,6 +32,7 @@ export const Text = (
         ...props
     }: TextProps) => {
         const classes = classNames(
+            { [styles.accent]: colorType === 'accent' },
             { [styles.primary]: colorType === 'primary' },
             { [styles.secondary]: colorType === 'secondary' },
             { [styles.tertiary]: colorType === 'tertiary' },
@@ -55,8 +56,8 @@ export const Text = (
         );
 
         return (
-            <div className={classes} style={{ ...(color ? { color } : {}) }} {...props}>
+            <{`div`} className={classes} style={{ ...(color ? { color } : {}) }} {...props}>
                 {children}
-            </div>
+            </{`div`}>
         );
     };

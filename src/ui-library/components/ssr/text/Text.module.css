@@ -1,4 +1,8 @@
 .primary {
+  color: var(--color-primary-700);
+}
+
+.primary {
   color: var(--color-neutral-900);
 }
 
