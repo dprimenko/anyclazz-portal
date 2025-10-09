@@ -22,7 +22,12 @@ Object.entries(svgModules).forEach(([path, content]) => {
   }
 });
 
-export function getSvgByName(name: string, size?: number): string {
+export function getSvgByName(
+  name: string, 
+  options?: { 
+    color?: string; 
+  }
+): string {
   const svgName = name.toLowerCase();
   const svg = svgMap[svgName];
   
@@ -32,7 +37,20 @@ export function getSvgByName(name: string, size?: number): string {
     return '';
   }
   
-  return svg;
+  let modifiedSvg = svg;
+  
+  // Apply color by adding or updating fill attribute on the svg element
+  if (options?.color) {
+    // Remove existing fill attribute from svg tag
+    modifiedSvg = modifiedSvg.replace(/\s*fill="[^"]*"/g, '');
+    
+    // Add fill attribute to svg tag
+    modifiedSvg = modifiedSvg.replace('<svg', `<svg fill="${options.color}"`);
+  }
+  
+  // Convert SVG to data URI
+  const encodedSvg = encodeURIComponent(modifiedSvg);
+  return `data:image/svg+xml,${encodedSvg}`;
 }
 
 export function getAvailableSvgs(): string[] {

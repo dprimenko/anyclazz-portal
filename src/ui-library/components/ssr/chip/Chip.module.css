@@ -1,0 +1,15 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: 0 8px;
+  border-radius: 16px;
+  cursor: default;
+  user-select: none;
+}
+
+.chip--primary {
+  color: var(--color-primary-700);
+  background-color: var(--color-primary-100);
+  border: 1px solid var(--color-primary-200);
+}

@@ -6,7 +6,8 @@ import type { ReactNode } from "react";
 
 export interface TextProps {
     textalign?: TextAlignmentType;
-    color?: ColorType;
+    color?: string;
+    colorType?: ColorType;
     weight?: TextWeightType;
     size?: TextSizeType;
     uppercase?: boolean;
@@ -19,7 +20,8 @@ export interface TextProps {
 export const Text = (
     {
         size = 'text-md',
-        color = 'secondary',
+        color,
+        colorType = 'secondary',
         weight = 'regular',
         textalign = 'left',
         uppercase = false,
@@ -30,9 +32,9 @@ export const Text = (
         ...props
     }: TextProps) => {
         const classes = classNames(
-            { [styles.primary]: color === 'primary' },
-            { [styles.secondary]: color === 'secondary' },
-            { [styles.tertiary]: color === 'tertiary' },
+            { [styles.primary]: colorType === 'primary' },
+            { [styles.secondary]: colorType === 'secondary' },
+            { [styles.tertiary]: colorType === 'tertiary' },
 
      
             {'text-2xl' : size === 'display-xs'},
@@ -53,7 +55,7 @@ export const Text = (
         );
 
         return (
-            <div className={classes} {...props}>
+            <div className={classes} style={{ ...(color ? { color } : {}) }} {...props}>
                 {children}
             </div>
         );

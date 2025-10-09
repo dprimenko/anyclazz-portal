@@ -2,20 +2,25 @@ import { getSvgByName } from "../../../../utils/getSvgByName.ts";
 
 export interface IconProps {
     icon: string;
-    color?: string;
-    width?: number;
-    height?: number;
+    iconColor?: string;
+    iconWidth?: number;
+    iconHeight?: number;
 }
 
 export const Icon = (
     {
         icon,
-        color,
-        width,
-        height,
+        iconColor,
+        iconWidth,
+        iconHeight,
     }: IconProps) => {
 
         return (
-            getSvgByName(icon)
+            <img 
+                src={getSvgByName(icon, { color: iconColor })}
+                width={iconWidth}
+                height={iconHeight}
+                alt={`${icon} icon`}
+            />
         );
     };

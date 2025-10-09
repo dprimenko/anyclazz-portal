@@ -21,4 +21,5 @@ export default {
     'teachers.list.title': '{{count}} teachers in {{location}}',
     'teachers.list.subtitle': 'Book your next lesson.',
     'teachers.error_fetching_teachers': 'Error fetching teachers. Please try again later.',
+    'teachers.super-tutor': 'Super tutor',
 }

@@ -41,6 +41,7 @@
 .menu__item-icon {
     fill: #A4A7AE;
     width: 16px;
+    margin-top: 1px;
 }
 
 .menu__item-text {

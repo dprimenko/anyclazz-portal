@@ -3,12 +3,12 @@ import { getLangFromUrl, useTranslations } from '../../../i18n';
 import './styles.css';
 import { LocalMenuRepository } from '../infrastructure/LocalMenuRepository';
 import type { MenuItem } from '../domain/types';
-import { getSvgByName } from '../../../utils/getSvgByName';
+import { Icon } from '../../../ui-library/components/ssr/icon/Icon';
 
 const { class: className, isDark } = Astro.props;
 const { pathname } = Astro.url;
 const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+const t = useTranslations({ lang });
 
 const menuRepository = new LocalMenuRepository();
 const menuItems: MenuItem[] = menuRepository.getStudentMenuItems();
@@ -36,9 +36,13 @@ const isItemSelected = (item: MenuItem): boolean => {
                                 'menu__item',
                                 pathname === menuItem.href && 'menu__item--selected',
                             ]}>
-                                <div class="menu__item-icon" set:html={menuItem.icon ? getSvgByName(menuItem.icon) : ''}></div>
+                                <div class="menu__item-icon">
+                                    {menuItem.icon && (
+                                        <Icon icon={menuItem.icon} width={20} height={20} />
+                                    )}
+                                </div>
                                 <div class="text-base font-semibold menu__item-text">{t(menuItem.label as keyof typeof t)}</div>
-                                {menuItem.subItems?.length && <div class="menu__item-chevron" set:html={isItemSelected(menuItem) ? getSvgByName('common/chevron-up') : getSvgByName('common/chevron-down')}></div>}
+                                {menuItem.subItems?.length && <div class="menu__item-chevron"><Icon icon={isItemSelected(menuItem) ? 'common/chevron-up' : 'common/chevron-down'} /></div>}
                             </div>
                             {menuItem.subItems?.length && isItemSelected(menuItem) && 
                             (
@@ -50,7 +54,11 @@ const isItemSelected = (item: MenuItem): boolean => {
                                                     'menu__item',
                                                     pathname === subItem.href && 'menu__item--selected',
                                                 ]}>
-                                                    <div class="menu__item-icon" set:html={subItem.icon ? getSvgByName(subItem.icon) : ''}></div>
+                                                    <div class="menu__item-icon">
+                                                        {subItem.icon && (
+                                                            <Icon icon={subItem.icon} width={20} height={20} />
+                                                        )}
+                                                    </div>
                                                     <div class="text-base font-semibold menu__item-text">{t(subItem.label as keyof typeof t)}</div>
                                                 </div>
                                             </li>
@@ -71,9 +79,13 @@ const isItemSelected = (item: MenuItem): boolean => {
                                 'menu__item',
                                 pathname === menuItem.href && 'menu__item--selected',
                             ]}>
-                                <div class="menu__item-icon" set:html={menuItem.icon ? getSvgByName(menuItem.icon) : ''}></div>
+                                <div class="menu__item-icon">
+                                    {menuItem.icon && (
+                                        <Icon icon={menuItem.icon} width={20} height={20} />
+                                    )}
+                                </div>
                                 <div class="text-base font-semibold menu__item-text">{t(menuItem.label as keyof typeof t)}</div>
-                                {menuItem.subItems?.length && <div class="menu__item-chevron" set:html={isItemSelected(menuItem) ? getSvgByName('common/chevron-up') : getSvgByName('common/chevron-down')}></div>}
+                                {menuItem.subItems?.length && <div class="menu__item-chevron"><Icon icon={isItemSelected(menuItem) ? 'common/chevron-up' : 'common/chevron-down'} /></div>}
                             </div>
                             {menuItem.subItems?.length && isItemSelected(menuItem) && 
                             (
@@ -85,7 +97,11 @@ const isItemSelected = (item: MenuItem): boolean => {
                                                     'menu__item',
                                                     pathname === subItem.href && 'menu__item--selected',
                                                 ]}>
-                                                    <div class="menu__item-icon" set:html={subItem.icon ? getSvgByName(subItem.icon) : ''}></div>
+                                                    <div class="menu__item-icon">
+                                                        {subItem.icon && (
+                                                            <Icon icon={subItem.icon} width={20} height={20} />
+                                                        )}
+                                                    </div>
                                                     <div class="text-base font-semibold menu__item-text">{t(subItem.label as keyof typeof t)}</div>
                                                 </div>
                                             </li>
