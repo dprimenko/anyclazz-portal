@@ -1,0 +1,20 @@
+---
+/**
+ * Home page - redirects to dashboard if authenticated, otherwise to login
+ * The middleware already handles the redirect to dashboard for authenticated users.
+ * This page is only shown to non-authenticated users.
+ */
+export const prerender = false;
+import { getSession } from 'auth-astro/server';
+
+const session = await getSession(Astro.request);
+
+// If user is not authenticated, redirect to login
+if (!session?.user) {
+  return Astro.redirect('/login');
+}
+
+// If user is authenticated, middleware will redirect to dashboard
+// This code should not be reached due to middleware
+return Astro.redirect('/dashboard');
+---
