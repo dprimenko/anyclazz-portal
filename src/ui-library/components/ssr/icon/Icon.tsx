@@ -1,6 +1,6 @@
 import { getSvgByName } from "../../../../utils/getSvgByName.ts";
 
-export interface IconProps {
+export interface IconProps extends React.HTMLAttributes<HTMLImageElement> {
     icon: string;
     iconColor?: string;
     iconWidth?: number;
@@ -13,6 +13,7 @@ export const Icon = (
         iconColor,
         iconWidth,
         iconHeight,
+        ...props
     }: IconProps) => {
 
         return (
@@ -21,6 +22,7 @@ export const Icon = (
                 width={iconWidth}
                 height={iconHeight}
                 alt={`${icon} icon`}
+                {...props}
             />
         );
     };

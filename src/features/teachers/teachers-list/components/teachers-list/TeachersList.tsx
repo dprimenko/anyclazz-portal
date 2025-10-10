@@ -4,6 +4,7 @@ import styles from "./TeachersList.module.css";
 import { useTeacherList } from "../../../hooks/useTeacherList";
 import type { TeacherRepository } from "../../../domain/types";
 import { TeacherItem } from "../teacher-item/TeacherItem";
+import { Dropdown } from "../../../../../ui-library/components/form/dropdown/Dropdown";
 
 export interface TeachersListProps {
   teacherRepository: TeacherRepository;
@@ -32,6 +33,9 @@ export function TeachersList({ teacherRepository }: TeachersListProps) {
 
   return (
     <div className={styles["teachers-list__container"]}>
+      <div>
+        <Dropdown />
+      </div>
       <div className={styles["teachers-list__content"]}>
           {teachers.map(teacher => (
             <TeacherItem key={teacher.id} teacher={teacher} />  

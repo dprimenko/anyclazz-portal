@@ -1,6 +1,8 @@
 /* Import Tailwind CSS */
 @import "tailwindcss";
 
+@plugin "@headlessui/tailwindcss";
+
 /* Settings - CSS Custom Properties */
 @import "./settings/colors.css";
 @import "./settings/spacing.css";
