@@ -4,10 +4,9 @@ declare module '@auth/core/types' {
   interface Session {
     accessToken?: string;
     idToken?: string;
+    refreshToken?: string;
     userRole?: string;
-    realmRoles?: string[];
-    roles?: string[];
-    accessTokenExpires?: number;
+    primaryRole?: string | null;
     error?: string;
   }
 
@@ -20,6 +19,7 @@ declare module '@auth/core/types' {
     roles?: string[];
     accessTokenExpires?: number;
     error?: string;
+    hasRefreshToken?: boolean;
   }
 }
 

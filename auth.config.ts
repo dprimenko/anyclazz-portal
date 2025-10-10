@@ -6,7 +6,7 @@ import './src/types/auth.d.ts';
 
 export default defineConfig({
   secret: process.env.AUTH_SECRET || "gy07h9vlgxrjb0gdtsIRDLf4GxaN9HFY",
-  debug: true,
+  debug: false, // Cambiado a false para reducir logs y tamaño
   providers: [
     Keycloak({
       clientId: "anyclazz-app",
@@ -27,7 +27,7 @@ export default defineConfig({
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 10 * 60 * 60, // 10 horas (igual que ssoSessionMaxLifespan de Keycloak)
+    maxAge: 60 * 60, // 1 hora (sin offline_access, no hay refresh de larga duración)
   },
   callbacks: {
     async jwt({ token, account, profile, trigger }): Promise<JWT> {
@@ -38,29 +38,33 @@ export default defineConfig({
         token.idToken = account.id_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : Date.now() + 60 * 60 * 1000; // expires_at en ms
         
+        // Detectar si el usuario tiene refresh token
+        // Nota: Sin offline_access, el refresh token tiene duración limitada
+        token.hasRefreshToken = !!account.refresh_token;
+        
         // Decodificar el JWT para extraer información adicional
         if (account.access_token) {
           try {
             const payload = JSON.parse(atob(account.access_token.split('.')[1]));
-            console.log('🔍 Full JWT payload:', JSON.stringify(payload, null, 2));
-            console.log('📋 Available scopes in token:', payload.scope);
             
-            // Extraer el nombre del token y agregarlo al token de sesión
+            // Extraer solo la información esencial
             token.name = payload.name || `${payload.given_name || ''} ${payload.family_name || ''}`.trim() || payload.preferred_username || payload.email;
-            
             token.userRole = payload.userRole || payload.roles?.[0] || null;
             token.realmRoles = payload.realm_roles || [];
             token.roles = payload.roles || [];
             
-            console.log('✅ Token name configured:', token.name);
           } catch (error) {
             console.error('Error decoding JWT:', error);
           }
         }
         
-        console.log('🔗 Account object:', JSON.stringify(account, null, 2));
-        console.log('👤 Profile object:', JSON.stringify(profile, null, 2));
-        
+        return token;
+      }
+      
+      // Verificar si el token necesita ser refrescado
+      // Solo hacer refresh si el usuario tiene refresh token
+      if (!token.hasRefreshToken) {
+        console.log('⏱️  No refresh token available');
         return token;
       }
       
@@ -129,18 +133,19 @@ export default defineConfig({
     async session({ session, token }): Promise<Session> {
       // Si hay un error de refresh, invalidar la sesión
       if (token.error === 'RefreshAccessTokenError') {
-        console.error('❌ Session invalid due to refresh error');
-        // La sesión será inválida y el middleware redirigirá al logout
         return { ...session, error: 'RefreshAccessTokenError' } as Session;
       }
       
+      // Solo pasar datos esenciales a la sesión (reduce tamaño de cookie)
       if (token.accessToken) {
         (session as any).accessToken = token.accessToken;
         (session as any).idToken = token.idToken;
+        (session as any).refreshToken = token.refreshToken; // Necesario para revocación
         (session as any).userRole = token.userRole;
-        (session as any).realmRoles = token.realmRoles;
-        (session as any).roles = token.roles;
-        (session as any).accessTokenExpires = token.accessTokenExpires;
+        // Solo pasar el primer role en lugar de todos los arrays
+        const roles = (token.roles as string[]) || [];
+        const realmRoles = (token.realmRoles as string[]) || [];
+        (session as any).primaryRole = roles[0] || realmRoles[0] || null;
       }
       
       // Asegurar que el nombre esté disponible en la sesión
@@ -148,7 +153,6 @@ export default defineConfig({
         session.user.name = token.name as string;
       }
       
-      console.log('🎯 Final session user name:', session.user.name);
       return session;
     },
   },

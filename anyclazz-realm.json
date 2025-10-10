@@ -5,8 +5,8 @@
   "displayNameHtml": "<div class=\"kc-logo-text\"><span>AnyClazz</span></div>",
   "accessTokenLifespan": 3600,
   "accessTokenLifespanForImplicitFlow": 3600,
-  "ssoSessionIdleTimeout": 36000,
-  "ssoSessionMaxLifespan": 36000,
+  "ssoSessionIdleTimeout": 2592000,
+  "ssoSessionMaxLifespan": 2592000,
   "offlineSessionIdleTimeout": 2592000,
   "offlineSessionMaxLifespan": 5184000,
   "accessCodeLifespan": 60,
@@ -143,13 +143,19 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
-      "publicClient": true,
+      "publicClient": false,
       "frontchannelLogout": true,
       "attributes": {
         "backchannel.logout.session.required": "true",
-        "backchannel.logout.revoke.offline.tokens": "false",
+        "backchannel.logout.revoke.offline.tokens": "true",
         "post.logout.redirect.uris": "http://localhost:4321/*",
-        "pkce.code.challenge.method": "S256"
+        "pkce.code.challenge.method": "S256",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "use.refresh.tokens": "true",
+        "client_credentials.use_refresh_token": "false",
+        "client.offline.session.idle.timeout": "2592000",
+        "client.offline.session.max.lifespan": "5184000"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -642,7 +648,8 @@
       "enabled": true,
       "emailVerified": true,
       "attributes": {
-        "name": ["Admin User"]
+        "name": ["Admin User"],
+        "userRole": ["admin"]
       },
       "credentials": [
         {
@@ -659,7 +666,8 @@
       "enabled": true,
       "emailVerified": true,
       "attributes": {
-        "name": ["Teacher Demo"]
+        "name": ["Teacher Demo"],
+        "userRole": ["teacher"]
       },
       "credentials": [
         {
@@ -676,7 +684,8 @@
       "enabled": true,
       "emailVerified": true,
       "attributes": {
-        "name": ["Student Demo"]
+        "name": ["Student Demo"],
+        "userRole": ["student"]
       },
       "credentials": [
         {
