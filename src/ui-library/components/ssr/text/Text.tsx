@@ -3,6 +3,7 @@ import type { TextAlignmentType, TextLevel } from "./types.ts";
 import classNames from "classnames";
 import styles from "./Text.module.css";
 import type { ReactNode } from "react";
+import { createElement } from "react";
 
 export interface TextProps {
     textalign?: TextAlignmentType;
@@ -55,9 +56,9 @@ export const Text = (
             className
         );
 
-        return (
-            <{`div`} className={classes} style={{ ...(color ? { color } : {}) }} {...props}>
-                {children}
-            </{`div`}>
+        return createElement(
+            textLevel,
+            { className: classes, style: { ...(color ? { color } : {}) }, ...props },
+            children
         );
     };

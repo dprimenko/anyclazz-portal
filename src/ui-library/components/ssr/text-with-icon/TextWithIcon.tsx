@@ -18,7 +18,7 @@ export const TextWithIcon = (
     }: TextWithIconProps) => {
 
         return (
-            <div className={styles["text-with-icon"]} {...props}>
+            <div className={styles["text-with-icon"]}>
                 <div className={styles["text-with-icon__icon"]}>
                     <Icon icon={icon} iconWidth={iconWidth} iconHeight={iconHeight} />
                 </div>

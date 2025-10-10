@@ -31,4 +31,9 @@ export default {
     'teachers.speaks': 'Speaks:',
     'teachers.book-lesson': 'Book a lesson',
     'teachers.class-types-pricing': 'Class type & prices:',
+
+    'classtype.online_single': '1:1 Online',
+    'classtype.online_group': 'Group Online',
+    'classtype.onsite_single': '1:1 In person',
+    'classtype.onsite_group': 'Group in person',
 }

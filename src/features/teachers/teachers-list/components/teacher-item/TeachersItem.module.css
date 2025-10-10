@@ -34,9 +34,16 @@
     flex-direction: column;
 }
 
-.teacher-item__avatar {
+.teacher-item__avatar-container {
+    position: relative;
     width: 150px;
     height: 190px;
+    border-radius: var(--radius-8);
+}
+
+.teacher-item__avatar {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     border-radius: var(--radius-8);
 }
