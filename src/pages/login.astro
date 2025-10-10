@@ -7,8 +7,13 @@ import {routeConfig} from '../config/routes.ts';
 const session = await getSession(Astro.request);
 
 if (session?.user) {
+  // Si hay sesión, redirigir (el middleware ya maneja el callbackUrl)
   return Astro.redirect(routeConfig.defaultRedirectRoute);
 }
+
+// Pasar el callbackUrl al cliente
+const url = new URL(Astro.request.url);
+const callbackUrl = url.searchParams.get('callbackUrl');
 ---
 
 <Base>
@@ -76,6 +81,16 @@ if (session?.user) {
 		async function redirectToKeycloak() {
 			try {
 				console.log('Iniciando redirección a Keycloak...');
+				
+				// Obtener el callbackUrl de la URL actual y guardarlo en sessionStorage
+				const urlParams = new URLSearchParams(window.location.search);
+				const callbackUrl = urlParams.get('callbackUrl');
+				
+				if (callbackUrl) {
+					sessionStorage.setItem('auth_callback_url', callbackUrl);
+					console.log('Callback URL guardado:', callbackUrl);
+				}
+				
 				await signIn("keycloak");
 			} catch (error) {
 				console.error('Error durante el sign in:', error);

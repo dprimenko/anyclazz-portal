@@ -3,13 +3,30 @@ import './styles.css'
 import { AnyclazzAuthRepository } from "../../infrastructure/AnyclazzAuthRepository"
 
 const loggedUser = new AnyclazzAuthRepository();
-
 const user = await loggedUser.getCurrentUser(Astro.request);
-
 ---
 
-<div>
+<div class="logged-user">
     {user && (
-        user.name
+        <div class="logged-user__container">
+            <span class="logged-user__name">{user.name}</span>
+            <button 
+                class="logged-user__logout-btn" 
+                id="logout-btn"
+            >
+                Cerrar sesión
+            </button>
+        </div>
     )}
 </div>
+
+<script>
+    const logoutBtn = document.getElementById('logout-btn');
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Logout explícito: redirigir a /dashboard (sin callbackUrl)
+            window.location.href = '/api/auth/keycloak-logout';
+        });
+    }
+</script>

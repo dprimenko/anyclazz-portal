@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro';
 import Menu from '../features/menu/ssr/Menu.astro';
+import LoggedUser from '../features/auth/ssr/components/logged-user/LoggedUser.astro';
 
 const isDark = false;
 const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
@@ -10,10 +11,13 @@ const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
 <Base {...Astro.props}>
     <div class:list={['app', isDark && 'dark']}>
         <nav class="not-mobile left-sidebar__container">
-        <div class="left-sidebar__logo">
-            <img src={logo} alt="Anyclazz Logo" />
-        </div>
-        <Menu isDark={isDark} />
+            <div class="left-sidebar__logo">
+                <img src={logo} alt="Anyclazz Logo" />
+            </div>
+            <Menu isDark={isDark} />
+            <div class="left-sidebar__footer">
+                <LoggedUser />
+            </div>
         </nav>
         <main class='main__container'>
             <slot/>

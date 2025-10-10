@@ -18,7 +18,9 @@ import {
 function invalidateSession(context: any, reason: string) {
   console.log(`Invalidating session: ${reason}`);
   clearAccountValidationCache();
-  return context.redirect(`/api/auth/keycloak-logout`);
+  const { pathname } = new URL(context.request.url);
+  const callbackUrl = encodeURIComponent(pathname);
+  return context.redirect(`/api/auth/keycloak-logout?callbackUrl=${callbackUrl}`);
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -27,6 +29,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const validationLevel = getValidationLevel(pathname);
   
   console.log(`🛡️  Auth Middleware - Path: ${pathname}, Session: ${!!session?.user}, Validation: ${validationLevel}`);
+  
+  // Si hay un error de refresh token, invalidar la sesión
+  if (session && (session as any).error === 'RefreshAccessTokenError') {
+    console.log('❌ RefreshAccessTokenError detected, invalidating session');
+    return invalidateSession(context, 'Refresh token expired or invalid');
+  }
   
   if (isHomePage(pathname)) {
     if (session?.user) {
@@ -45,10 +53,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
   
   if (!session?.user && requiresAuth(pathname)) {
     console.log(`🚫 No session for protected route: ${pathname} -> redirecting to login`);
-    return context.redirect(routeConfig.loginRoute);
+    const callbackUrl = encodeURIComponent(`${pathname}${new URL(context.request.url).search}`);
+    return context.redirect(`${routeConfig.loginRoute}?callbackUrl=${callbackUrl}`);
   }
   
   if (session?.user && pathname === routeConfig.loginRoute) {
+    // Si el usuario autenticado está en login, verificar si hay un callbackUrl
+    const url = new URL(context.request.url);
+    const callbackUrl = url.searchParams.get('callbackUrl');
+    
+    if (callbackUrl) {
+      console.log(`↩️  Authenticated user accessing login with callback -> redirecting to ${callbackUrl}`);
+      return context.redirect(decodeURIComponent(callbackUrl));
+    }
+    
     console.log(`↩️  Authenticated user accessing login -> redirecting to ${getRedirectRoute('afterLogin')}`);
     return context.redirect(getRedirectRoute('afterLogin'));
   }
