@@ -47,7 +47,7 @@ export const Dropdown = ({
 	const [selected, setSelected] = useState<Person | undefined>()
 
     const classes = classNames(
-        'px-4 py-2.5 rounded-lg control control--input text-base focus:bg-red-500',
+        'px-4 py-2.5 rounded-lg control text-base',
 		styles.dropdown,
 		{ [styles['w-full']]: fullWidth },
 		className

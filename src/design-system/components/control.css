@@ -1,30 +1,18 @@
 .control {
     height: 2.75rem;
-
-    box-shadow: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
-    box-shadow: 0px -2px 0px 0px rgba(10, 13, 18, 0.05) inset;
-    box-shadow: 0px 0px 0px 1px rgba(10, 13, 18, 0.05) inset;
-
     background-color: var(--color-neutral-100);
-    
-    /* border: 1px solid var(--color-neutral-300); */
-
-    outline-width: 1px;
-    outline-offset: 1px;
-    outline-color: var(--color-neutral-300)
-    
+    outline: 1px solid var(--color-neutral-300) !important;
+    outline-offset: 0 !important;
 }
 
 .control.control--input::placeholder {
     color: var(--color-neutral-500)
 }
 
-/* .control.control--input:focus {
-    color: var(--color-neutral-500);
-    outline-color: var(--color-primary-500);
-    outline-width: 2px;
-    outline-offset: 2px;
-} */
+.control.control--input:focus {
+    color: var(--color-neutral-500) !important;
+    outline: 2px solid var(--color-primary-500) !important;
+}
 
 .control--secondary {
     background-color: var(--color-neutral-100);

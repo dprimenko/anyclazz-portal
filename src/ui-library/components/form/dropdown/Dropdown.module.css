@@ -6,3 +6,8 @@
   gap: var(--spacing-12);
   color: var(--color-neutral-700); */
 }
+
+.dropdown[data-state="open"] {
+    color: var(--color-neutral-500) !important;
+    outline: 2px solid var(--color-primary-500) !important;
+}
