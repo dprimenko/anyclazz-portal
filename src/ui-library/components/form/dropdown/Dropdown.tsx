@@ -1,9 +1,17 @@
 import { useState, type HTMLAttributes, type ReactNode } from 'react';
-import type { ColorType } from '../../../shared/constants';
+import type { ColorType } from '@/ui-library/shared/constants';
 import classNames from 'classnames';
 import styles from './Dropdown.module.css';
-import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
-import { Icon } from '../../ssr/icon/Icon';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
 export interface DropdownProps extends HTMLAttributes<HTMLSelectElement> {
 	prepend?: ReactNode;
@@ -39,39 +47,27 @@ export const Dropdown = ({
 	const [selected, setSelected] = useState<Person | undefined>()
 
     const classes = classNames(
-        'px-4 py-2.5 rounded-lg control control--input text-base data-[headlessui-state~="open"]:text-lg',
+        'px-4 py-2.5 rounded-lg control control--input text-base focus:bg-red-500',
 		styles.dropdown,
 		{ [styles['w-full']]: fullWidth },
 		className
 	);
 
 	return (
-		<Listbox value={selected} onChange={setSelected}>
-			<div className="relative mt-2">
-				<ListboxButton className={classes}>
-					<span className={classNames("col-start-1 row-start-1 truncate pr-6", {"font-medium": selected})}>{selected ? selected.name : 'Select an option'}</span>
-				<Icon
-					icon="chevron-down"
-					aria-hidden="true"
-					className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-				/>
-				</ListboxButton>
-
-				<ListboxOptions
-				transition
-				className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 data-leave:transition data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
-				>
-				{people.map((person) => (
-					<ListboxOption
-					key={person.id}
-					value={person}
-					className="group relative cursor-default py-2 pr-9 pl-3 text-gray-900 select-none data-focus:bg-indigo-600 data-focus:text-white data-focus:outline-hidden dark:text-white dark:data-focus:bg-indigo-500"
-					>
-						<span className="block truncate font-normal group-data-selected:font-semibold">{person.name}</span>
-					</ListboxOption>
-				))}
-				</ListboxOptions>
-			</div>
-		</Listbox>
+		<Select>
+			<SelectTrigger className={classes}>
+				<SelectValue placeholder="Select a fruit" />
+			</SelectTrigger>
+			<SelectContent>
+				<SelectGroup>
+				<SelectLabel>Fruits</SelectLabel>
+				<SelectItem value="apple">Apple</SelectItem>
+				<SelectItem value="banana">Banana</SelectItem>
+				<SelectItem value="blueberry">Blueberry</SelectItem>
+				<SelectItem value="grapes">Grapes</SelectItem>
+				<SelectItem value="pineapple">Pineapple</SelectItem>
+				</SelectGroup>
+			</SelectContent>
+		</Select>
 	);
 };
