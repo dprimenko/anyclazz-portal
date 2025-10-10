@@ -21,7 +21,7 @@ export const Button = ({
 }: ButtonProps) => {
     const isIconOnly = Boolean((icon && !label));
     const classes = classNames(
-        'rounded-lg control',
+		'rounded-md',
 		styles.btn,
 		{ 'px-4 py-2.5': !isIconOnly },
 		{ 'p-3': isIconOnly },

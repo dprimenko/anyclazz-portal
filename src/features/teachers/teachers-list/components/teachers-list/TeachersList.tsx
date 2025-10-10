@@ -34,7 +34,7 @@ export function TeachersList({ teacherRepository }: TeachersListProps) {
   return (
     <div className={styles["teachers-list__container"]}>
       <div>
-        <Dropdown />
+        <Dropdown fullWidth />
       </div>
       <div className={styles["teachers-list__content"]}>
           {teachers.map(teacher => (

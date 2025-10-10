@@ -1,20 +1,26 @@
 .btn {
+  height: 2.75rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-12);
   color: var(--color-neutral-700);
+  outline-width: 1px;
+  outline-offset: 0;
 
   box-shadow: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
   box-shadow: 0px -2px 0px 0px rgba(10, 13, 18, 0.05) inset;
-  box-shadow: 0px 0px 0px 1px rgba(10, 13, 18, 0.05) inset;
+  box-shadow: 0px 0px 0px 1px rgba(10, 13, 18, 0.18) inset;
 }
 
 .btn--primary {
   color: var(--color-neutral-100);
   background-color: var(--color-primary-700);
-  border: 2px solid;
-  border-color: none;
+  outline-width: 2px;
   border-image-source: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.btn--secondary {
+  outline-color: var(--color-neutral-300);
 }

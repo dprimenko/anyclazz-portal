@@ -3,14 +3,22 @@
     background-color: var(--color-neutral-100);
     outline: 1px solid var(--color-neutral-300) !important;
     outline-offset: 0 !important;
+    border-radius: var(--radius-8);
+    box-shadow: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
 }
 
-.control.control--input::placeholder {
-    color: var(--color-neutral-500)
+.control.control--input {
+    color: var(--color-neutral-900);
+    font-weight: 500;
+
 }
 
-.control.control--input:focus {
-    color: var(--color-neutral-500) !important;
+.control.control--input::placeholder, .control.control--input[data-placeholder] {
+    color: var(--color-neutral-500);
+    font-weight: 400;
+}
+
+.control.control--input:focus, .control.control--input[data-state="open"] {
     outline: 2px solid var(--color-primary-500) !important;
 }
 
