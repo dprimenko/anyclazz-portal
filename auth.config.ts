@@ -29,6 +29,18 @@ export default defineConfig({
     strategy: 'jwt',
     maxAge: 60 * 60, // 1 hora (sin offline_access, no hay refresh de larga duración)
   },
+  cookies: {
+    pkceCodeVerifier: {
+      name: 'authjs.pkce.code_verifier',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false, // false en desarrollo (localhost)
+        maxAge: 60 * 15, // 15 minutos (aumentado desde los 5 min por defecto para evitar expiraciones)
+      },
+    },
+  },
   callbacks: {
     async jwt({ token, account, profile, trigger }): Promise<JWT> {
       // Login inicial: guardar tokens y datos del usuario

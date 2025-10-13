@@ -1,5 +1,4 @@
 ---
-import '@fontsource/inter';
 import '../design-system/index.css';
 import '../layout/styles.css';
 
@@ -47,8 +46,10 @@ const defaultDescription = '';
         <meta name="twitter:image" content={rrssLogo}/>
         <meta name="twitter:image:width" content="265"/>
         <meta name="twitter:image:height" content="80"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     </head>
     <body>
+        <div id="portal-root"></div>
         <slot/>
     </body>
 </html>

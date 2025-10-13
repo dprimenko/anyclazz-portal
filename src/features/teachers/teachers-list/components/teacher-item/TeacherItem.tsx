@@ -1,4 +1,4 @@
-import type { ClassType, Teacher } from "../../../domain/types";
+import type { Teacher } from "../../../domain/types";
 import { Text } from "../../../../../ui-library/components/ssr/text/Text";
 import { TextWithIcon } from "../../../../../ui-library/components/ssr/text-with-icon/TextWithIcon.tsx";
 import styles from "./TeachersItem.module.css";
@@ -10,6 +10,9 @@ import { Button } from "../../../../../ui-library/components/ssr/button/Button.t
 import classNames from "classnames";
 import { Divider } from "../../../../../ui-library/components/ssr/divider/Divider.tsx";
 import { Fragment } from "react";
+import { Modal } from "@/ui-library/components/modal/Modal.tsx";
+import { BookingCreator } from "@/features/bookings/components/booking-creator/BookingCreator.tsx";
+import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon.ts";
 
 export interface TeacherProps {
     teacher: Teacher;
@@ -18,57 +21,32 @@ export interface TeacherProps {
 export function TeacherItem({ teacher }: TeacherProps) {
     const t = useTranslations();
 
-    const classTypeIcon = (type: ClassType) => {
-        switch (type) {
-            case 'online_single':
-                return 'laptop';
-            case 'online_group':
-                return 'laptop';
-            case 'onsite_single':
-                return 'home';
-            case 'onsite_group':
-                return 'group';
-            default:
-                return 'laptop';
-        }
-    };
-
-    const classTypeName = (type: ClassType) => {
-        switch (type) {
-            case 'online_single':
-                return 'laptop';
-            case 'online_group':
-                return 'laptop';
-            case 'onsite_single':
-                return 'home';
-            case 'onsite_group':
-                return 'group';
-            default:
-                return 'laptop';
-        }
-    };
-
     return (
         <div className={classNames('card', styles["teacher-item__container"])}>
             <div>
                 <div className={styles["teacher-item__avatar-container"]}>
                     <img className={styles["teacher-item__avatar"]} src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} />
-                    <div className={styles["teacher-item__super-tutor-badge"]}>
-                        <Icon icon="verified" iconWidth={32} iconHeight={32} />
-                    </div>
+                    {teacher.isSuperTeacher && (
+                        <div className={styles["teacher-item__super-tutor-badge"]}>
+                            <Icon icon="verified" iconWidth={32} iconHeight={32} />
+                        </div>
+                    )}
                 </div>
             </div>
             <div className={styles["teacher-item__content"]}>
                 <div className={styles["teacher-item__content-info"]}>
                     <div className={styles["teacher-item__content-row"]}>
                         <Text textLevel="h3" size="text-lg" weight="semibold" underline>{teacher.name} {teacher.surname}</Text>
-                        <Chip colorType="primary" rounded>
-                            <Icon icon="verified" iconWidth={16} iconHeight={16} />
-                            <Text size="text-xs" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
-                        </Chip>
+                        {teacher.isSuperTeacher && (
+                            <Chip colorType="primary" rounded>
+                                <Icon icon="verified" iconWidth={16} iconHeight={16} />
+                                <Text size="text-xs" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
+                            </Chip>
+                        )}
                     </div>
                     <Space size={10} direction="vertical"/>
                     <div className={styles["teacher-item__content-row"]}>
+                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary">{teacher.rating?.toFixed(1)}</TextWithIcon>
                         <Text colorType="tertiary" textLevel="span" underline>{teacher.reviewsNumber} {t('common.reviews')}</Text>
                         <TextWithIcon icon="people" textLevel="span" colorType="tertiary">{teacher.studentsNumber} {t('common.students')}</TextWithIcon>
                         <TextWithIcon icon="book" textLevel="span" colorType="tertiary">{teacher.lessonsNumber} {t('common.lessons')}</TextWithIcon>
@@ -108,7 +86,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                                 {teacher.classTypes.map((classType, index) => (
                                     <Fragment key={classType.type}>
                                         <div className="flex flex-row gap-1.5">
-                                            <Icon icon={classTypeIcon(classType.type)} />
+                                            <Icon icon={getClassTypeIcon(classType.type)} />
                                             <Text className="flex-1" textLevel="span" colorType="primary" size="text-sm">{t(`classtype.${classType.type}`)}</Text>
                                             <div className="flex flex-row gap-0.5 items-baseline">
                                                 <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{classType.price?.amount}</Text>
@@ -123,6 +101,9 @@ export function TeacherItem({ teacher }: TeacherProps) {
                     </div>
                 </div>
             </div>
+            <Modal onClose={() => {}} width={700} height={700}>
+				<BookingCreator teacher={teacher} />
+			</Modal>
         </div>
     );
 }

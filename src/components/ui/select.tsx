@@ -26,6 +26,7 @@ function SelectTrigger({
   className,
   size = "default",
   children,
+  prefix,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: "sm" | "default"
@@ -39,12 +40,19 @@ function SelectTrigger({
       //   className
       // )}
       className={cn(
-        "[&_svg:not([class*='text-'])]:text-muted-foreground flex w-fit items-center justify-between gap-2 whitespace-nowrap transition-[color,box-shadow] disabled:cursor-not-allowed *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground flex gap-2 whitespace-nowrap transition-[color,box-shadow] disabled:cursor-not-allowed *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
-      {children}
+      {prefix && (
+        <span data-slot="select-prefix" className="shrink-0">
+          {prefix}
+        </span>
+      )}
+      <span className="flex-1 text-left">
+        {children}
+      </span>
       <SelectPrimitive.Icon asChild>
         <Icon icon="chevron-down" iconWidth={20} iconHeight={20}/>
       </SelectPrimitive.Icon>

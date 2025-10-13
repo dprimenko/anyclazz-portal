@@ -20,6 +20,7 @@ export interface TeacherLanguage {
 export interface TeacherClassType {
     type: ClassType;
     price?: Price;
+    durations: (30 | 60)[];
 }
 
 export interface TeacherAddress {
@@ -36,6 +37,7 @@ export interface Teacher {
     avatar?: string;
     subjects: TeacherSubject[];
     classTypes: TeacherClassType[];
+    rating?: number;
     reviewsNumber?: number;
     studentsNumber?: number;
     lessonsNumber?: number;

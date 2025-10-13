@@ -25,6 +25,13 @@ export const GET: APIRoute = async ({ request, redirect, url }) => {
     
   } catch (error) {
     console.error('Error in auth callback:', error);
+    
+    // Manejar específicamente el error de PKCE expirado
+    if (error instanceof Error && error.message.includes('pkceCodeVerifier')) {
+      console.log('PKCE code verifier expired, redirecting to login with session expired message');
+      return redirect(`${routeConfig.loginRoute}?error=SessionExpired`);
+    }
+    
     return redirect(routeConfig.defaultRedirectRoute);
   }
 };

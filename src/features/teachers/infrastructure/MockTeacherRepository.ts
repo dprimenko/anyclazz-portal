@@ -22,9 +22,11 @@ const teachers = <Teacher[]>[
 				price: {
 					amount: 17,
 					currency: 'eur',
-				}
+				},
+				durations: [30, 60],
 			},
 		],
+		rating: 4.3,
 		reviewsNumber: 202,
 		studentsNumber: 89,
 		lessonsNumber: 2130,
@@ -69,30 +71,35 @@ const teachers = <Teacher[]>[
 				price: {
 					amount: 15,
 					currency: 'eur',
-				}
+				},
+				durations: [30, 60],
 			},
 			{
 				type: ClassType.onlineGroup,
 				price: {
 					amount: 10,
 					currency: 'eur',
-				}
+				},
+				durations: [60],
 			},
 			{
 				type: ClassType.onsiteSingle,
 				price: {
 					amount: 25,
 					currency: 'eur',
-				}
+				},
+				durations: [30, 60],
 			},
 			{
 				type: ClassType.onsiteGroup,
 				price: {
 					amount: 18,
 					currency: 'eur',
-				}
+				},
+				durations: [60],
 			},
 		],
+		rating: 5.0,
 		reviewsNumber: 405,
 		studentsNumber: 130,
 		lessonsNumber: 3850,
@@ -133,23 +140,27 @@ const teachers = <Teacher[]>[
 				price: {
 					amount: 17,
 					currency: 'eur',
-				}
+				},
+				durations: [30, 60],
 			},
 			{
 				type: ClassType.onsiteSingle,
 				price: {
 					amount: 25,
 					currency: 'eur',
-				}
+				},
+				durations: [30, 60],
 			},
 			{
 				type: ClassType.onsiteGroup,
 				price: {
 					amount: 12,
 					currency: 'eur',
-				}
+				},
+				durations: [60],
 			},
 		],
+		rating: 4.9,
 		reviewsNumber: 105,
 		studentsNumber: 38,
 		lessonsNumber: 150,

@@ -53,7 +53,7 @@ export const Dropdown = ({
 
 	return (
 		<Select>
-			<SelectTrigger className={classes}>
+			<SelectTrigger prefix={<Icon icon="flags/es" />} className={classes}>
 				<SelectValue placeholder="Any price" />
 			</SelectTrigger>
 			<SelectContent>

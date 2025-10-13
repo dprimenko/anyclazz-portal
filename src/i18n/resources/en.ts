@@ -10,6 +10,8 @@ export default {
     'common.language.level.c1': 'C1',
     'common.language.level.b2': 'B2',
     'common.language.level.native': 'Native',
+    'common.minutes': 'Minutes',
+
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',
     'menu.dashboard.last-lessons': 'Last Lessons',
@@ -36,4 +38,7 @@ export default {
     'classtype.online_group': 'Group Online',
     'classtype.onsite_single': '1:1 In person',
     'classtype.onsite_group': 'Group in person',
+
+    'booking.choose_classtype': 'Choose class type:',
+    'booking.lesson_duration': 'Lesson duration:',
 }

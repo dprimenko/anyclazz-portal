@@ -16,7 +16,8 @@
   --color-neutral-1000: #0F1419;
 
   /* Background Colors */
-  --color-bg-active: #FAFAFA;
+  --color-bg-tertiary: #f5f5f5;
+  --color-bg-active: #fafafa;
 
   /* Primary Colors */
   --color-primary-100: #FEF8F0;

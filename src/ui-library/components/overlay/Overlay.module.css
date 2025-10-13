@@ -1,0 +1,5 @@
+.overlay {
+    background-color: rgb(from var(--color-neutral-300) r g b / 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Para Safari */
+}

@@ -24,9 +24,27 @@ function invalidateSession(context: any, reason: string) {
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const session = await getSession(context.request);
   const { pathname } = new URL(context.request.url);
   const validationLevel = getValidationLevel(pathname);
+  
+  let session;
+  try {
+    session = await getSession(context.request);
+  } catch (error) {
+    // Manejar error de PKCE expirado
+    if (error instanceof Error && error.message.includes('pkceCodeVerifier')) {
+      console.log('❌ PKCE code verifier error detected in middleware');
+      // Solo redirigir a login si no estamos ya en una ruta pública o de auth
+      if (!isPublicRoute(pathname) && !pathname.startsWith('/api/auth')) {
+        const callbackUrl = encodeURIComponent(`${pathname}${new URL(context.request.url).search}`);
+        return context.redirect(`${routeConfig.loginRoute}?error=SessionExpired&callbackUrl=${callbackUrl}`);
+      }
+      // Si estamos en una ruta pública, continuar
+      return next();
+    }
+    // Re-lanzar otros errores
+    throw error;
+  }
   
   console.log(`🛡️  Auth Middleware - Path: ${pathname}, Session: ${!!session?.user}, Validation: ${validationLevel}`);
   
