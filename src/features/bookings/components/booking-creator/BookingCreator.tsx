@@ -20,9 +20,9 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
     const t = useTranslations();
     const classes = classNames(styles["booking-creator__container"]);
     const leftSideClasses = classNames("w-full h-full p-6 flex flex-col", styles["booking-creator__left-side"]);
-    const rightSideClasses = classNames("w-full relative p-6", styles["booking-creator__right-side"]);
-    const rightSideContentClasses = classNames("flex flex-col w-full overflow-y-auto", styles["booking-creator__right-side-content"]);
-    const actionsClasses = classNames("absolute bottom-0 left-0 right-0 flex flex-row w-full justify-between p-6", styles["booking-creator__actions"]);
+    const rightSideClasses = classNames("w-full h-full", styles["booking-creator__right-side"]);
+    const rightSideContentClasses = classNames("flex flex-col w-full px-6 pt-6", styles["booking-creator__right-side-content"]);
+    const actionsClasses = classNames("flex flex-row w-full justify-between p-6", styles["booking-creator__actions"]);
 
     const classOptionChildren = (classType: TeacherClassType) => (
         <div className="flex flex-row gap-1.5 w-full items-center">
@@ -89,7 +89,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                     </Text>
                 </div>
             </div>
-            <div className={rightSideClasses} style={{height: '700px'}}>
+            <div className={rightSideClasses}>
                 <div className={rightSideContentClasses}>
                     <Text weight="medium" colorType="primary">{t('booking.choose_classtype')}</Text>
                     <Space size={10} direction="vertical"/>
