@@ -9,6 +9,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     fullWidth?: boolean;
     label?: string;
 	colorType?: ColorType;
+	onlyText?: boolean;
 }
 
 export const Button = ({
@@ -17,6 +18,7 @@ export const Button = ({
 	colorType = 'secondary',
     className,
     fullWidth = false,
+    onlyText = false,
 	...props
 }: ButtonProps) => {
     const isIconOnly = Boolean((icon && !label));
@@ -25,7 +27,8 @@ export const Button = ({
 		styles.btn,
 		{ 'px-4 py-2.5': !isIconOnly },
 		{ 'p-3': isIconOnly },
-		{ [styles['w-full']]: fullWidth },
+		{ 'w-full': fullWidth },
+		{ [styles['btn--text']]: onlyText },
 		{ [styles['btn--primary']]: colorType === 'primary' },
 		className
 	);

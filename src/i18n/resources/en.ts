@@ -11,6 +11,8 @@ export default {
     'common.language.level.b2': 'B2',
     'common.language.level.native': 'Native',
     'common.minutes': 'Minutes',
+    'common.date_and_time': 'Date and time:',
+    'common.cancel': 'Cancel',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',

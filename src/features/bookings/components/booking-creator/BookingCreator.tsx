@@ -100,14 +100,12 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                         <RectangleSelectionGroup className="flex-row w-full" items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
-                        <Text weight="medium" colorType="primary">Lorem ipsum:</Text>
-                        <div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae accumsan erat. Praesent eu egestas lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ultricies arcu ut augue condimentum varius. Aenean metus felis, tristique ut enim et, dignissim facilisis magna. Cras vestibulum turpis quis mi tincidunt porta. Proin maximus purus facilisis est fringilla egestas. Duis scelerisque quam vitae posuere sagittis. Sed interdum quis ante non semper. Nulla vitae magna imperdiet, pulvinar tellus maximus, scelerisque ex. Donec vitae orci blandit, pretium massa ac, porta justo. Integer ac suscipit diam. Nulla facilisi. Proin a ipsum dapibus, maximus augue id, lacinia sem. Nam venenatis gravida ligula, et aliquam justo hendrerit non. Praesent efficitur aliquam finibus. Suspendisse vehicula ut magna non laoreet. Vivamus mollis bibendum ante non vehicula. Mauris massa elit, blandit a efficitur eu, dapibus et augue. Suspendisse lobortis aliquam urna, eget facilisis sapien volutpat eu. Morbi dignissim neque nec enim molestie hendrerit. Suspendisse vitae dolor massa. Fusce lacinia aliquet odio, aliquam commodo mi convallis ac. Sed iaculis pharetra erat, quis egestas lorem vestibulum non. Fusce tellus felis, feugiat ac interdum sit amet, gravida quis ex.
-                        </div>
+                        <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
+                        
                     </div>
                 </div>
                 <div className={actionsClasses}>
-                    <Button colorType="secondary" icon="chat" />
+                    <Button colorType="secondary" onlyText label={t('common.cancel')} />
                     <Button colorType="primary" label={t('teachers.book-lesson')} />
                 </div>
             </div>
