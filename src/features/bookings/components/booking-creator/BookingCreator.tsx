@@ -21,7 +21,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
     const classes = classNames(styles["booking-creator__container"]);
     const leftSideClasses = classNames("w-full h-full p-6 flex flex-col", styles["booking-creator__left-side"]);
     const rightSideClasses = classNames("w-full h-full", styles["booking-creator__right-side"]);
-    const rightSideContentClasses = classNames("flex flex-col w-full px-6 pt-6", styles["booking-creator__right-side-content"]);
+    const rightSideContentClasses = classNames("flex flex-col w-full px-6 pt-6 gap-4", styles["booking-creator__right-side-content"]);
     const actionsClasses = classNames("flex flex-row w-full justify-between p-6", styles["booking-creator__actions"]);
 
     const classOptionChildren = (classType: TeacherClassType) => (
@@ -91,26 +91,20 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
             </div>
             <div className={rightSideClasses}>
                 <div className={rightSideContentClasses}>
-                    <Text weight="medium" colorType="primary">{t('booking.choose_classtype')}</Text>
-                    <Space size={10} direction="vertical"/>
-                    <RectangleSelectionGroup items={classOptions} value={selectedClass.type} onValueChange={selectClassType} />
-                    <Space size={16} direction="vertical"/>
-                    <Text weight="medium" colorType="primary">{t('booking.lesson_duration')}</Text>
-                    <Space size={10} direction="vertical"/>
-                    <RectangleSelectionGroup className="flex-row w-full" items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
-                    <Space size={16} direction="vertical"/>
-                    
-                    {/*  */}
-                    <Text weight="medium" colorType="primary">Lorem ipsum:</Text>
-                    <Space size={10} direction="vertical"/>
-                    <div>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae accumsan erat. Praesent eu egestas lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ultricies arcu ut augue condimentum varius. Aenean metus felis, tristique ut enim et, dignissim facilisis magna. Cras vestibulum turpis quis mi tincidunt porta. Proin maximus purus facilisis est fringilla egestas. Duis scelerisque quam vitae posuere sagittis. Sed interdum quis ante non semper. Nulla vitae magna imperdiet, pulvinar tellus maximus, scelerisque ex. Donec vitae orci blandit, pretium massa ac, porta justo. Integer ac suscipit diam. Nulla facilisi. Proin a ipsum dapibus, maximus augue id, lacinia sem. Nam venenatis gravida ligula, et aliquam justo hendrerit non.
-
-Praesent efficitur aliquam finibus. Suspendisse vehicula ut magna non laoreet. Vivamus mollis bibendum ante non vehicula. Mauris massa elit, blandit a efficitur eu, dapibus et augue. Suspendisse lobortis aliquam urna, eget facilisis sapien volutpat eu. Morbi dignissim neque nec enim molestie hendrerit. Suspendisse vitae dolor massa. Fusce lacinia aliquet odio, aliquam commodo mi convallis ac. Sed iaculis pharetra erat, quis egestas lorem vestibulum non. Fusce tellus felis, feugiat ac interdum sit amet, gravida quis ex.
-
-
+                    <div className="flex flex-col gap-2 w-full">
+                        <Text weight="medium" colorType="primary">{t('booking.choose_classtype')}</Text>
+                        <RectangleSelectionGroup items={classOptions} value={selectedClass.type} onValueChange={selectClassType} />
                     </div>
-                    {/*  */}
+                    <div className="flex flex-col gap-2 w-full">
+                        <Text weight="medium" colorType="primary">{t('booking.lesson_duration')}</Text>
+                        <RectangleSelectionGroup className="flex-row w-full" items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <Text weight="medium" colorType="primary">Lorem ipsum:</Text>
+                        <div>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae accumsan erat. Praesent eu egestas lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ultricies arcu ut augue condimentum varius. Aenean metus felis, tristique ut enim et, dignissim facilisis magna. Cras vestibulum turpis quis mi tincidunt porta. Proin maximus purus facilisis est fringilla egestas. Duis scelerisque quam vitae posuere sagittis. Sed interdum quis ante non semper. Nulla vitae magna imperdiet, pulvinar tellus maximus, scelerisque ex. Donec vitae orci blandit, pretium massa ac, porta justo. Integer ac suscipit diam. Nulla facilisi. Proin a ipsum dapibus, maximus augue id, lacinia sem. Nam venenatis gravida ligula, et aliquam justo hendrerit non. Praesent efficitur aliquam finibus. Suspendisse vehicula ut magna non laoreet. Vivamus mollis bibendum ante non vehicula. Mauris massa elit, blandit a efficitur eu, dapibus et augue. Suspendisse lobortis aliquam urna, eget facilisis sapien volutpat eu. Morbi dignissim neque nec enim molestie hendrerit. Suspendisse vitae dolor massa. Fusce lacinia aliquet odio, aliquam commodo mi convallis ac. Sed iaculis pharetra erat, quis egestas lorem vestibulum non. Fusce tellus felis, feugiat ac interdum sit amet, gravida quis ex.
+                        </div>
+                    </div>
                 </div>
                 <div className={actionsClasses}>
                     <Button colorType="secondary" icon="chat" />
