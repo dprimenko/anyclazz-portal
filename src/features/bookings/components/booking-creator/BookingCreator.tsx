@@ -12,10 +12,12 @@ import { useCallback, useMemo, useState } from "react";
 import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-selection-group/RectangleSelectionGroup";
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
+import { Calendar } from "@/components/ui/calendar";
 
 export function BookingCreator({teacher}: {teacher: Teacher}) {
     const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
     const [selectedDuration, setSelectedDuration] = useState<number>(selectedClass.durations[0]);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
     const t = useTranslations();
     const classes = classNames(styles["booking-creator__container"]);
@@ -101,7 +103,13 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
-                        
+                        <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                            className="rounded-md border w-full"
+                            disabled={(date) => date < new Date()}
+                        />
                     </div>
                 </div>
                 <div className={actionsClasses}>

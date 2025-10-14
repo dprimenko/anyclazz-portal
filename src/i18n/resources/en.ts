@@ -43,4 +43,5 @@ export default {
 
     'booking.choose_classtype': 'Choose class type:',
     'booking.lesson_duration': 'Lesson duration:',
+    'booking.available_times': 'Available times:',
 }
