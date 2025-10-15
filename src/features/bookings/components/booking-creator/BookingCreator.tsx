@@ -13,6 +13,7 @@ import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { Calendar } from "@/components/ui/calendar";
+import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 
 export function BookingCreator({teacher}: {teacher: Teacher}) {
     const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
@@ -66,6 +67,10 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                 <Text weight="semibold" colorType="primary">{t('teachers.book-lesson')}</Text>
                 <Space size={10} direction="vertical" />
                 <Divider />
+                <Space size={10} direction="vertical" />
+                <div className="flex flex-row items-left">
+                    <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={96} hasVerifiedBadge={teacher.isSuperTeacher} />
+                </div>
                 <Space size={10} direction="vertical" />
                 <div className="flex flex-row gap-2 items-center">
                     <Text textLevel="h4" size="text-md" weight="medium">{teacher.name} {teacher.surname}</Text>

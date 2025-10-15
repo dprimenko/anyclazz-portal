@@ -1,7 +1,11 @@
-.rectangle-group-item:has([data-state="checked"]) {
-  outline: 1px solid var(--color-neutral-500);
+.rectangle-group-item {
   border: none;
   user-select: none;
+  outline: 1px solid var(--color-neutral-300);
+}
+
+.rectangle-group-item:has([data-state="checked"]) {
+  outline: 1px solid var(--color-neutral-500);
 }
 
 .rectangle-group-item__radio {
