@@ -1,0 +1,194 @@
+---
+import Main from '@/layout/Main.astro';
+export const prerender = false;
+import { getLangFromUrl, useTranslations } from '@/i18n';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { TextWithIcon } from '@/ui-library/components/ssr/text-with-icon/TextWithIcon';
+import { Chip } from '@/ui-library/components/ssr/chip/Chip';
+import { Icon } from '@/ui-library/components/ssr/icon/Icon';
+import { DateTime } from '@/features/shared/utils/dateConfig';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations({ lang });
+
+const teacher = {
+	id: '2',
+	name: 'Valentina',
+	surname: 'Harper',
+	email: 'valentina.harper@example.com',
+	avatar: 'https://anyclazz.b-cdn.net/43306c6f117bd1e44cfa1bac6ff614b579fbbc6a.jpg',
+	subjects: [
+		{
+			id: '2',
+			name: {
+				en: 'Science',
+				es: 'Ciencias',
+			},
+		}
+	],
+	classTypes: [
+		{	
+			type: "online_single",
+			price: {
+				amount: 15,
+				currency: 'usd',
+			},
+			durations: [30, 60],
+		},
+		{
+			type: "online_group",
+			price: {
+				amount: 10,
+				currency: 'usd',
+			},
+			durations: [60],
+		},
+		{
+			type: "onsite_single",
+			price: {
+				amount: 25,
+				currency: 'usd',
+			},
+			durations: [30, 60],
+		},
+		{
+			type: "onsite_group",
+			price: {
+				amount: 18,
+				currency: 'usd',
+			},
+			durations: [60],
+		},
+	],
+	rating: 5.0,
+	reviewsNumber: 405,
+	studentsNumber: 130,
+	lessonsNumber: 3850,
+	isSuperTeacher: true,
+	speaksLanguages: [
+		{
+			language: 'en',
+			proficiencyLevel: 'native',
+		}
+	],
+	shortPresentation: "Hello! My name is Valentina Harper, and I'm a certified English teacher based in Madrid, ES. I hold a Master's degree in Science.",
+	teacherAddress: {
+		countryISO2: 'ES',
+		cityISO2: 'ES-M',
+		fullAddress: 'Calle de Alcalá, 42, Madrid, Spain',
+	},
+	beganTeachingAt: '2015-09-10T10:26:34.468Z',
+	createdAt: '2025-10-07T10:26:34.468Z',
+};
+
+const todayFormatted = DateTime.now().toFormat('yyyy-MM-dd');
+const selectedClass = teacher.classTypes[0];
+const selectedTime = { startAt: `${todayFormatted}T08:00:00.000`, endAt: `${todayFormatted}T09:00:00.000`, timeZone: "Europe/Madrid" };
+const selectedDuration = selectedClass.durations[0];
+
+const dateFormatted = DateTime.fromISO(selectedTime.startAt, { zone: selectedTime.timeZone }).toFormat('cccc, LLLL dd, yyyy');
+const timeFormatted = DateTime.fromISO(selectedTime.startAt, { zone: selectedTime.timeZone }).toFormat('HH:mm ZZZZ');
+
+---
+
+<Main>
+	<div class="flex flex-col p-6 overflow-y-auto h-full">
+		{/* Title */}
+		<Text size="display-xs" colorType="primary" weight="semibold">{t('booking.checkout')}</Text>
+		<Divider margin={16} />
+		<div class="grid grid-cols-2 gap-5">
+			<div class="flex flex-col w-full gap-5">
+				<div class="flex flex-col w-full card rounded-xl p-5">
+					<div class="flex flex-row items-left">
+						<Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={72} hasVerifiedBadge={teacher.isSuperTeacher} />
+					</div>
+					<Space size={16} direction="vertical"/>
+					<div class="flex flex-row gap-4">
+                        <Text textLevel="h2" size="display-xs" weight="semibold" colorType="primary">{teacher.name}{' '}{teacher.surname}</Text>
+                        {teacher.isSuperTeacher && (
+                            <Chip colorType="primary" rounded>
+                                <Icon icon="verified" iconWidth={16} iconHeight={16} />
+                                <Text size="text-xs" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
+                            </Chip>
+                        )}
+                    </div>
+                    <Space size={10} direction="vertical"/>
+                    <div class="flex flex-row gap-4">
+                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary">{teacher.rating?.toFixed(1)}</TextWithIcon>
+                        <Text colorType="tertiary" textLevel="span">{teacher.reviewsNumber}{' '}{t('common.reviews')}</Text>
+                        <TextWithIcon icon="people" textLevel="span" colorType="tertiary">{teacher.studentsNumber}{' '}{t('common.students')}</TextWithIcon>
+                        <TextWithIcon icon="book" textLevel="span" colorType="tertiary">{teacher.lessonsNumber}{' '}{t('common.lessons')}</TextWithIcon>
+                    </div>
+                    <Space size={16} direction="vertical"/>
+                    <div class="flex flex-row gap-4">
+                        <Text className="w-[64ch] text-ellipsis overflow-hidden whitespace-nowrap" colorType="tertiary" size="text-md">{teacher.shortPresentation}</Text>
+                    </div>
+                    <Space size={16} direction="vertical"/>
+                    <div class="flex flex-row gap-4">
+                        {teacher.subjects.map((subject) => (
+                            <Chip colorType="secondary">
+                                <Text colorType="secondary" textLevel="span" size="text-xs" weight="medium">{subject.name[lang]}</Text>
+                            </Chip>
+                        ))}
+                    </div>
+                    <Space size={16} direction="vertical"/>
+                    <div class="flex flex-row gap-4">
+                        <Text colorType="tertiary" size="text-sm">
+                            {t('teachers.speaks')}{' '}
+                            {teacher.speaksLanguages.map((language) => (
+                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`
+                            )).join(', ')}
+                        </Text>
+                    </div>
+                </div>
+				<div class="flex flex-col gap-4 w-full card rounded-xl p-5">
+					<Text weight="medium" colorType="primary">{t('booking.lesson_details')}</Text>
+					<div class="flex flex-col gap-1.5 w-full">
+						<div class="flex flex-row justify-between">
+							<Text>{t('common.date')}</Text>
+							<!-- <Text weight="medium" colorType="primary">Sunday, August 24, 2025</Text> -->
+							<Text weight="medium" colorType="primary">{dateFormatted}</Text>
+						</div>
+						<div class="flex flex-row justify-between">
+							<Text>{t('common.time')}</Text>
+							<Text weight="medium" colorType="primary">{timeFormatted}</Text>
+						</div>
+						<div class="flex flex-row justify-between">
+							<Text>{t('common.duration')}</Text>
+							<Text weight="medium" colorType="primary">{t('common.minutes_long', {minutes: selectedDuration})}</Text>
+						</div>
+						<div class="flex flex-row justify-between">
+							<Text>{t('common.lesson_type')}</Text>
+							<Text weight="medium" colorType="primary">{t(`classtype.${selectedClass.type}`)}</Text>
+						</div>
+					</div>
+				</div>
+				<div class="flex flex-col gap-4 w-full card rounded-xl p-5">
+					<Text weight="medium" colorType="primary">{t('common.order_summary')}</Text>
+					<div class="flex flex-col gap-1.5 w-full">
+						<div class="flex flex-row justify-between">
+							<Text>{t(`classtype.${selectedClass.type}`)}</Text>
+							<Text colorType="primary">{t(`common.${selectedClass.price?.currency.toLowerCase()}_price`, { amount: selectedClass.price?.amount.toFixed(2) })}</Text>
+						</div>
+						<Divider />
+						<div class="flex flex-row justify-between">
+							<Text>{t('common.total')}</Text>
+							<Text weight="medium" size="text-lg" colorType="primary">{t(`common.${selectedClass.price?.currency.toLowerCase()}_price`, { amount: selectedClass.price?.amount.toFixed(2) })}</Text>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="flex flex-col w-full gap-5">
+				<div class="flex w-full card rounded-xl p-5 h-[400px]">
+					<Text weight="medium" colorType="primary">{t('common.payment_method')}</Text>
+				</div>
+				<div class="flex w-full card rounded-xl p-5 h-[400px]">
+					<Text weight="medium" colorType="primary">{t('reviews.students_say')}</Text>
+				</div>
+			</div>
+		</div>
+	</div>
+</Main>

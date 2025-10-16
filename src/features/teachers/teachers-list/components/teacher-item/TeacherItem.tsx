@@ -36,7 +36,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
             <div className={styles["teacher-item__content"]}>
                 <div className={styles["teacher-item__content-info"]}>
                     <div className={styles["teacher-item__content-row"]}>
-                        <Text textLevel="h3" size="text-lg" weight="semibold" underline>{teacher.name} {teacher.surname}</Text>
+                        <Text textLevel="h3" size="text-lg" weight="semibold" colorType="primary" underline>{teacher.name} {teacher.surname}</Text>
                         {teacher.isSuperTeacher && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />

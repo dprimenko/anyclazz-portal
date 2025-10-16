@@ -12,13 +12,23 @@ import { useCallback, useMemo, useState } from "react";
 import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-selection-group/RectangleSelectionGroup";
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
-import { Calendar } from "@/components/ui/calendar";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
+import { Calendar } from "@/ui-library/components/calendar/Calendar";
+import { DateTime } from "luxon";
+
+const todayFormatted = DateTime.now().toFormat('yyyy-MM-dd');
+const times = [
+    { startAt: `${todayFormatted}T08:00:00.000`, endAt: `${todayFormatted}T09:00:00.000`, timeZone: "Europe/Madrid" },
+    { startAt: `${todayFormatted}T09:00:00.000`, endAt: `${todayFormatted}T10:00:00.000`, timeZone: "Europe/Madrid" },
+    { startAt: `${todayFormatted}T10:00:00.000`, endAt: `${todayFormatted}T11:00:00.000`, timeZone: "Europe/Madrid" },
+    { startAt: `${todayFormatted}T11:00:00.000`, endAt: `${todayFormatted}T12:00:00.000`, timeZone: "Europe/Madrid" },
+];
 
 export function BookingCreator({teacher}: {teacher: Teacher}) {
     const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
     const [selectedDuration, setSelectedDuration] = useState<number>(selectedClass.durations[0]);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedTime, setSelectedTime] = useState<string | undefined>();
 
     const t = useTranslations();
     const classes = classNames(styles["booking-creator__container"]);
@@ -47,7 +57,16 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
         id: duration.toString(),
         children: (
             <div className="flex flex-row gap-1.5 w-full items-center">
-                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{duration} {t('common.minutes')}</Text>
+                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{t('common.minutes_long', { minutes: duration })}</Text>
+            </div>
+        ),
+    })), [selectedClass, t]);
+
+    const availableTimes = useMemo(() => times.map(({startAt}) => ({
+        id: startAt,
+        children: (
+            <div className="flex flex-row gap-1.5 w-full items-center">
+                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{DateTime.fromISO(startAt).toFormat('HH:mm')}</Text>
             </div>
         ),
     })), [selectedClass, t]);
@@ -61,6 +80,14 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
         setSelectedDuration(classType.durations[0]);
     }, [teacher]);
 
+    const priceAmount = useMemo(() => {
+        if (selectedClass.price === undefined) {
+            return '';
+        }
+        return t(`common.${selectedClass.price?.currency.toLowerCase()}_price`, { amount: selectedClass.price?.amount.toFixed(2) });
+    }, [selectedClass]);
+
+
     return (
         <div className={classes}>
             <div className={leftSideClasses}>
@@ -73,7 +100,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                 </div>
                 <Space size={10} direction="vertical" />
                 <div className="flex flex-row gap-2 items-center">
-                    <Text textLevel="h4" size="text-md" weight="medium">{teacher.name} {teacher.surname}</Text>
+                    <Text textLevel="h4" size="text-md" weight="medium" colorType="primary">{teacher.name} {teacher.surname}</Text>
                     {teacher.isSuperTeacher && (
                         <Chip colorType="primary" rounded>
                             <Icon icon="verified" iconWidth={16} iconHeight={16} />
@@ -95,6 +122,14 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                         )).join(', ')}
                     </Text>
                 </div>
+                <div className="flex-1"></div>
+                {selectedClass && (
+                    <div className={classNames("rounded-md bg-white p-5 w-full flex flex-col gap-2.5", styles['booking-creator__summary'])}>
+                        <Text size="text-sm" colorType="primary">{t('common.price')}</Text>
+                        <Text size="text-xl" colorType="primary" weight="medium">{priceAmount}</Text>
+                        <Text size="text-xs" colorType="primary">{t(`classtype.${selectedClass.type}`)} · {t('common.minutes_short', { minutes: selectedDuration })}</Text>
+                    </div>
+                )}
             </div>
             <div className={rightSideClasses}>
                 <div className={rightSideContentClasses}>
@@ -104,17 +139,15 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <Text weight="medium" colorType="primary">{t('booking.lesson_duration')}</Text>
-                        <RectangleSelectionGroup className="flex-row w-full" items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
+                        <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-2 gap-3"}} items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
-                        <Calendar
-                            mode="single"
-                            selected={selectedDate}
-                            onSelect={setSelectedDate}
-                            className="rounded-md border w-full"
-                            disabled={(date) => date < new Date()}
-                        />
+                        <Calendar selectedDate={selectedDate} onSelected={setSelectedDate} />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>
+                        <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-3 gap-3"}} items={availableTimes} value={selectedTime} onValueChange={(value) => setSelectedTime(value)} />
                     </div>
                 </div>
                 <div className={actionsClasses}>

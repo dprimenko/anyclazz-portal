@@ -13,6 +13,18 @@ export default {
     'common.minutes': 'Minutes',
     'common.date_and_time': 'Date and time:',
     'common.cancel': 'Cancel',
+    'common.price': 'Price',
+    'common.eur_price': '{{amount}}€',
+    'common.usd_price': '${{amount}}',
+    'common.minutes_long': '{{minutes}} minutes',
+    'common.minutes_short': '{{minutes}} min',
+    'common.date': 'Date',
+    'common.time': 'Time',
+    'common.duration': 'Duration',
+    'common.lesson_type': 'Lesson type',
+    'common.order_summary': 'Order summary',
+    'common.total': 'Total',
+    'common.payment_method': 'Payment method',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',
@@ -27,6 +39,8 @@ export default {
     'menu.support': 'Support',
     'location.placeholder': 'Where are you?',
     'location.search_not_found': 'No results found',
+
+    'reviews.students_say': 'What students say',
 
     'teachers.list.title': '{{count}} teachers in {{location}}',
     'teachers.list.subtitle': 'Book your next lesson.',
@@ -44,4 +58,6 @@ export default {
     'booking.choose_classtype': 'Choose class type:',
     'booking.lesson_duration': 'Lesson duration:',
     'booking.available_times': 'Available times:',
+    'booking.checkout': 'Checkout',
+    'booking.lesson_details': 'Lesson details',
 }

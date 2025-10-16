@@ -1,0 +1,25 @@
+.calendar__label {
+    color: var(--color-neutral-700);
+}
+
+.calendar__weekday {
+    color: var(--color-neutral-700);
+}
+
+.calendar__day {
+    color: var(--color-neutral-700);
+}
+
+.calendar__day--disabled {
+    color: var(--color-neutral-500);
+}
+
+.calendar__day__button[data-selected-single="true"] {
+    color: var(--color-neutral-100) !important;
+    background-color: var(--color-primary-700) !important;
+    outline: none;
+}
+
+.calendar__chevron {
+    color: var(--color-neutral-500);
+}

@@ -40,6 +40,7 @@ export const Text = (
 
      
             {'text-2xl' : size === 'display-xs'},
+            {'text-xl' : size === 'text-xl'},
             {'text-lg' : size === 'text-lg'},
             {'text-base' : size === 'text-md'},
             {'text-sm' : size === 'text-sm'},
