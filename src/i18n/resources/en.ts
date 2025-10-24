@@ -25,6 +25,8 @@ export default {
     'common.order_summary': 'Order summary',
     'common.total': 'Total',
     'common.payment_method': 'Payment method',
+    'common.previous': 'Previous',
+    'common.next': 'Next',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',

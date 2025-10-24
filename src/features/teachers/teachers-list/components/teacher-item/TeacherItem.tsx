@@ -101,9 +101,9 @@ export function TeacherItem({ teacher }: TeacherProps) {
                     </div>
                 </div>
             </div>
-            <Modal onClose={() => {}} width={700} height={700}>
+            {/* <Modal onClose={() => {}} width={700} height={700}>
 				<BookingCreator teacher={teacher} />
-			</Modal>
+			</Modal> */}
         </div>
     );
 }

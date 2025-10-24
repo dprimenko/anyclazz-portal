@@ -1,5 +1,10 @@
 import type { Price, Translations } from "../../shared/domain/types";
 
+export interface TeacherCategory {
+    id: string;
+    name: Translations;
+}
+
 export interface TeacherSubject {
     id: string;
     name: Translations;
@@ -35,7 +40,8 @@ export interface Teacher {
     surname: string;
     email: string;
     avatar?: string;
-    subjects: TeacherSubject[];
+    category: TeacherCategory[];
+    subject: TeacherSubject;
     classTypes: TeacherClassType[];
     rating?: number;
     reviewsNumber?: number;

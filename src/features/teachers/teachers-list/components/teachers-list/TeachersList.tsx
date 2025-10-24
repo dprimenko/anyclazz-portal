@@ -5,6 +5,9 @@ import { useTeacherList } from "../../../hooks/useTeacherList";
 import type { TeacherRepository } from "../../../domain/types";
 import { TeacherItem } from "../teacher-item/TeacherItem";
 import { Dropdown } from "../../../../../ui-library/components/form/dropdown/Dropdown";
+import { PageSelector } from "@/ui-library/components/page-selector";
+import { Space } from "@/ui-library/components/ssr/space/Space";
+import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 
 export interface TeachersListProps {
   teacherRepository: TeacherRepository;
@@ -33,13 +36,25 @@ export function TeachersList({ teacherRepository }: TeachersListProps) {
 
   return (
     <div className={styles["teachers-list__container"]}>
-      <div>
+      {/* <div>
         <Dropdown fullWidth />
-      </div>
+      </div> */}
       <div className={styles["teachers-list__content"]}>
           {teachers.map(teacher => (
             <TeacherItem key={teacher.id} teacher={teacher} />  
           ))}
+      </div>
+      <Space size={24} direction="vertical" />
+      <Divider />
+      <Space size={20} direction="vertical" />
+      <div className={styles["teachers-list__footer"]}>
+        <PageSelector
+          pages={10}
+          currentPage={1}
+          maxPages={3}
+          disabled={fetchingTeachers}
+          onChangedPage={setPage}
+        />
       </div>
     </div>
   );

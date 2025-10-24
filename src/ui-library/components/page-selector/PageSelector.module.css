@@ -1,0 +1,46 @@
+.page-selector {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.page-selector__dynamic-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.page-selector__fixed-control {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.page-selector__dynamic-control {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 100%;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+
+    color: var(--color-neutral-500);
+}
+
+.page-selector__dynamic-control--active {
+    background-color: #F9F9F9;
+    color: var(--color-neutral-700);    
+}
+
+.page-selector__dynamic-control--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
