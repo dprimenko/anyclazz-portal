@@ -11,42 +11,36 @@ export function PageSelector({ pages, currentPage, maxPages = 3, disabled, onCha
 	const [page, setPage] = useState(currentPage);
 	
 	const itemsToShow = useMemo(() => {
-		const isEllipsisNeeded = (page + (maxPages * 2) - 1) < pages;
-
 		const items: { label: string; value: string; isEllipsis?: boolean }[] = [];
+		
+		const addPages = (start: number, end: number) => {
+			for (let i = start; i <= end; i++) {
+				items.push({ label: `${i}`, value: `${i}` });
+			}
+		};
 		
 		// Si el total de páginas cabe en maxPages, mostrar todas
 		if (pages <= maxPages) {
-			for (let i = 1; i <= pages; i++) {
-				items.push({ label: `${i}`, value: `${i}` });
-			}
-		} else if (!isEllipsisNeeded) {
-			for (let i = pages - (maxPages * 2 - 1); i <= pages; i++) {
-				items.push({ label: `${i}`, value: `${i}` });
-			}
-		} else {
-			// Calcular el rango desde la página actual
-			const startPage = page;
-			const endPage = Math.min(page + maxPages - 1, pages);
-			
-			// Si llegamos hasta el final, mostrar solo ese rango
-			if (endPage === pages) {
-				for (let i = startPage; i <= endPage; i++) {
-					items.push({ label: `${i}`, value: `${i}` });
-				}
-			} else {
-				// Páginas desde la actual
-				for (let i = startPage; i <= endPage; i++) {
-					items.push({ label: `${i}`, value: `${i}` });
-				}
-				
-				items.push({ label: '...', value: 'ellipsis', isEllipsis: true });
-				
-				// Últimas 3 páginas
-				for (let i = pages - 2; i <= pages; i++) {
-					items.push({ label: `${i}`, value: `${i}` });
-				}
-			}
+			addPages(1, pages);
+			return items;
+		}
+		
+		const isEllipsisNeeded = (page + maxPages * 2 - 1) < pages;
+		
+		// Si estamos cerca del final, mostrar últimas páginas
+		if (!isEllipsisNeeded) {
+			addPages(pages - (maxPages * 2 - 1), pages);
+			return items;
+		}
+		
+		// Mostrar desde página actual
+		const endPage = Math.min(page + maxPages - 1, pages);
+		addPages(page, endPage);
+		
+		// Si no llegamos al final, añadir puntos suspensivos y últimas maxPages páginas
+		if (endPage < pages) {
+			items.push({ label: '...', value: 'ellipsis', isEllipsis: true });
+			addPages(pages - maxPages + 1, pages);
 		}
 		
 		return items;

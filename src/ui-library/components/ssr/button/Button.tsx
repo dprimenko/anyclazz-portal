@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react';
+import { useMemo, type ButtonHTMLAttributes } from 'react';
 import type { ColorType } from '../../../shared/constants';
 import classNames from 'classnames';
 import styles from './Button.module.css';
@@ -6,6 +6,7 @@ import { Icon } from '../icon/Icon';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	icon?: string;
+	size?: 'sm' | 'md' | 'lg' | 'xl';
     fullWidth?: boolean;
     label?: string;
 	colorType?: ColorType;
@@ -15,6 +16,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = ({
 	icon,
     label,
+	size = 'md',
 	colorType = 'secondary',
     className,
     fullWidth = false,
@@ -25,23 +27,43 @@ export const Button = ({
     const classes = classNames(
 		'rounded-md',
 		styles.btn,
-		{ 'px-4 py-2.5': !isIconOnly },
-		{ 'p-3': isIconOnly },
+		styles[`btn--${size}`],
+		{ [styles['btn--icon-only']]: isIconOnly },
 		{ 'w-full': fullWidth },
 		{ [styles['btn--text']]: onlyText },
+		{ [styles['btn--secondary']]: colorType === 'secondary' },
 		{ [styles['btn--primary']]: colorType === 'primary' },
 		className
 	);
+
+	const textClasess = classNames(
+		'font-semibold',
+		{'text-sm': size === 'sm' || size === 'md' },
+		{'text-md': size !== 'sm' && size !== 'md' },
+	);
+
+	const iconSize = useMemo(() => {
+		switch (size) {
+			case 'sm':
+				return 14;
+			case 'md':
+				return 14;
+			case 'lg':
+				return 16;
+			case 'xl':
+				return 16;
+			default:
+				return 14;
+		}
+	}, [size]);
 
 	return (
 		<button
 			className={classes}
 			{...props}
 		>
-			{/* {icon && <ButtonIcon data-testid={`${dataTestId}-icon`}>{icon}</ButtonIcon>}
-			{label && <ButtonLabel data-testid={`${dataTestId}-label`}>{label}</ButtonLabel>} */}
-            {icon && <Icon icon={icon} iconWidth={20} iconHeight={20} />}
-			{label && <span className="text-base font-semibold">{label}</span>}
+            {icon && <Icon icon={icon} iconWidth={iconSize} iconHeight={iconSize} />}
+			{label && <span className={textClasess}>{label}</span>}
 		</button>
 	);
 };

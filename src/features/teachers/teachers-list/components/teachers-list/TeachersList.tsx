@@ -45,17 +45,21 @@ export function TeachersList({ teacherRepository }: TeachersListProps) {
           ))}
       </div>
       <Space size={24} direction="vertical" />
-      <Divider />
-      <Space size={20} direction="vertical" />
-      <div className={styles["teachers-list__footer"]}>
-        <PageSelector
-          pages={10}
-          currentPage={1}
-          maxPages={3}
-          disabled={fetchingTeachers}
-          onChangedPage={setPage}
-        />
-      </div>
+      {pages > 1 && (
+        <>
+          <Divider />
+          <Space size={20} direction="vertical" />
+          <div className={styles["teachers-list__footer"]}>
+            <PageSelector
+              pages={pages}
+              currentPage={page}
+              maxPages={3}
+              disabled={fetchingTeachers}
+              onChangedPage={setPage}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

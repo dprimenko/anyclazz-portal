@@ -111,7 +111,7 @@ const timeFormatted = DateTime.fromISO(selectedTime.startAt, { zone: selectedTim
                         {teacher.isSuperTeacher && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />
-                                <Text size="text-xs" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
+                                <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
                             </Chip>
                         )}
                     </div>
@@ -130,7 +130,7 @@ const timeFormatted = DateTime.fromISO(selectedTime.startAt, { zone: selectedTim
                     <div class="flex flex-row gap-4">
                         {teacher.subjects.map((subject) => (
                             <Chip colorType="secondary">
-                                <Text colorType="secondary" textLevel="span" size="text-xs" weight="medium">{subject.name[lang]}</Text>
+                                <Text colorType="secondary" textLevel="span" size="inherit" weight="medium">{subject.name[lang]}</Text>
                             </Chip>
                         ))}
                     </div>

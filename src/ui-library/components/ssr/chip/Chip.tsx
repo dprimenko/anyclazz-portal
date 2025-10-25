@@ -6,13 +6,16 @@ export const Chip = ({
 	colorType,
 	children,
 	className,
+	size = 'sm',
 	rounded = false,
 	...props
 }: ChipProps) => {
 	const classes = classNames(
 		className,
-		'py-1 px-1.5',
 		styles.chip,
+		styles[`chip--${size}`],
+		{ 'text-xs': size === 'sm' },
+		{ 'text-sm': size === 'md' || size === 'lg' },
 		{ 'rounded-md': !rounded },
 		{ 'rounded-full': rounded },
 		{ [styles['chip--primary']]: colorType === 'primary' },

@@ -25,7 +25,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
         <div className={classNames('card', styles["teacher-item__container"])}>
             <div>
                 <div className={styles["teacher-item__avatar-container"]}>
-                    <img className={styles["teacher-item__avatar"]} src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} />
+                    <img className={styles["teacher-item__avatar"]} src={`${teacher.avatar}?height=190&width=150`} alt={`${teacher.name} ${teacher.surname}`} onError={e => e.currentTarget.style.display='none'}/>
                     {teacher.isSuperTeacher && (
                         <div className={styles["teacher-item__super-tutor-badge"]}>
                             <Icon icon="verified" iconWidth={32} iconHeight={32} />
@@ -40,7 +40,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                         {teacher.isSuperTeacher && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />
-                                <Text size="text-xs" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
+                                <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
                             </Chip>
                         )}
                     </div>
@@ -76,9 +76,9 @@ export function TeacherItem({ teacher }: TeacherProps) {
                 <div className={styles["teacher-item__actions"]}>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-row gap-3">
-                            <Button colorType="secondary" icon="heart-outline" />
-                            <Button colorType="secondary" icon="chat" />
-                            <Button colorType="primary" label={t('teachers.book-lesson')} />
+                            <Button colorType="secondary" size="lg" icon="heart-outline" />
+                            <Button colorType="secondary" size="lg" icon="chat" />
+                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} />
                         </div>
                         <div className="flex flex-column">
                             <div className={classNames('flex flex-col w-full card p-3 rounded-lg gap-[0.625rem]',styles["teacher-item__class-types"])}>

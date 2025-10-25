@@ -1,17 +1,66 @@
 .btn {
-  height: 2.75rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-12);
   color: var(--color-neutral-700);
+  cursor: pointer;
 
   outline-width: 1px;
   outline-offset: 0;
   box-shadow: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
   box-shadow: 0px -2px 0px 0px rgba(10, 13, 18, 0.05) inset;
   box-shadow: 0px 0px 0px 1px rgba(10, 13, 18, 0.18) inset;
+}
+
+.btn:disabled {
+  outline-color: var(--color-neutral-200);
+  user-select: none;
+  cursor: not-allowed;
+  color: #A4A7AE;
+
+  box-shadow: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
+}
+
+.btn--icon-only {
+  padding: 0 !important;
+}
+
+.btn--sm {
+  height: 36px;
+  padding: 0 var(--spacing-14);
+}
+
+.btn--sm.btn--icon-only {
+  width: 36px;
+}
+
+.btn--md {
+  height: 40px;
+  padding: 0 var(--spacing-16);
+}
+
+.btn--md.btn--icon-only {
+  width: 40px;
+}
+
+.btn--lg {
+  height: 44px;
+  padding: 0 var(--spacing-18);
+}
+
+.btn--lg.btn--icon-only {
+  width: 44px;
+}
+
+.btn--xl {
+  height: 48px;
+  padding: 0 var(--spacing-20);
+}
+
+.btn--xl.btn--icon-only {
+  width: 48px;
 }
 
 .btn--text {
@@ -26,6 +75,19 @@
   border-image-source: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
+.btn--primary:hover {
+  background-color: var(--color-primary-600);
+}
+
+.btn--primary:disabled {
+  background-color: var(--color-bg-tertiary);
+}
+
 .btn--secondary {
   outline-color: var(--color-neutral-300);
+  background-color: var(--color-neutral-100);
+}
+
+.btn--secondary:hover {
+  background-color: #F9F9F9;
 }

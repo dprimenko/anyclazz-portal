@@ -104,7 +104,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                     {teacher.isSuperTeacher && (
                         <Chip colorType="primary" rounded>
                             <Icon icon="verified" iconWidth={16} iconHeight={16} />
-                            <Text size="text-xs" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
+                            <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
                         </Chip>
                     )}
                 </div>

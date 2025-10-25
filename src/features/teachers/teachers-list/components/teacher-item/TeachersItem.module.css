@@ -39,6 +39,7 @@
     width: 150px;
     height: 190px;
     border-radius: var(--radius-8);
+    background-color: var(--color-primary-100);
 }
 
 .teacher-item__avatar {
