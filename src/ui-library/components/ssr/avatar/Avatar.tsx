@@ -9,14 +9,18 @@ export interface AvatarProps {
     size?: number;
     text?: string;
     hasVerifiedBadge?: boolean;
+    hasOutline?: boolean;
 }
 
 const DEFAULT_SIZE = 40;
 
-export function Avatar({ src, alt, size = DEFAULT_SIZE, text, hasVerifiedBadge }: AvatarProps) {
+export function Avatar({ src, alt, size = DEFAULT_SIZE, text, hasVerifiedBadge, hasOutline }: AvatarProps) {
     const avatarContainer = classNames(
         'relative rounded-full',
-        styles['avatar__container']
+        styles['avatar__container'],
+        {
+            [styles['avatar__container--outlined']]: hasOutline
+        }
     );
     
     const avatarContent = classNames(
@@ -31,9 +35,11 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, text, hasVerifiedBadge }
             <div className={avatarContent}>
                 {src && <img src={src} alt={alt} className="rounded-full w-full h-full object-cover" />}
             </div>
-            <div className="absolute bottom-[1px] right-[1px] z-10">
-                <Icon icon="verified" iconWidth={verifiedBadgeSize} iconHeight={verifiedBadgeSize} />
-            </div>
+            {hasVerifiedBadge && (
+                <div className="absolute bottom-[1px] right-[1px] z-10">
+                    <Icon icon="verified" iconWidth={verifiedBadgeSize} iconHeight={verifiedBadgeSize} />
+                </div>
+            )}  
         </div>
     );
 }

@@ -103,7 +103,7 @@ const timeFormatted = DateTime.fromISO(selectedTime.startAt, { zone: selectedTim
 			<div class="flex flex-col w-full gap-5">
 				<div class="flex flex-col w-full card rounded-xl p-5">
 					<div class="flex flex-row items-left">
-						<Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={72} hasVerifiedBadge={teacher.isSuperTeacher} />
+						<Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={72} hasVerifiedBadge={teacher.isSuperTeacher} hasOutline />
 					</div>
 					<Space size={16} direction="vertical"/>
 					<div class="flex flex-row gap-4">

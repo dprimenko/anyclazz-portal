@@ -31,14 +31,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
   try {
     session = await getSession(context.request);
   } catch (error) {
-    // Manejar error de PKCE expirado
-    if (error instanceof Error && error.message.includes('pkceCodeVerifier')) {
-      console.log('❌ PKCE code verifier error detected in middleware');
-      // Solo redirigir a login si no estamos ya en una ruta pública o de auth
+    // Manejar error de PKCE expirado o inválido
+    if (error instanceof Error && (error.message.includes('pkceCodeVerifier') || error.message.includes('InvalidCheck'))) {
+      console.log('❌ PKCE code verifier error detected in middleware, clearing auth cookies');
+      
+      // Limpiar todas las cookies de autenticación
+      const response = context.redirect('/api/auth/clear-cookies');
+      
+      // Redirigir al login con mensaje de error solo si no estamos en ruta pública
       if (!isPublicRoute(pathname) && !pathname.startsWith('/api/auth')) {
         const callbackUrl = encodeURIComponent(`${pathname}${new URL(context.request.url).search}`);
         return context.redirect(`${routeConfig.loginRoute}?error=SessionExpired&callbackUrl=${callbackUrl}`);
       }
+      
       // Si estamos en una ruta pública, continuar
       return next();
     }

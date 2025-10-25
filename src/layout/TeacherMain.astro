@@ -2,8 +2,6 @@
 import Base from './Base.astro';
 import Menu from '../features/menu/ssr/Menu.astro';
 import LoggedUser from '../features/auth/ssr/components/logged-user/LoggedUser.astro';
-import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
-import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
 const isDark = false;
 const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
@@ -21,17 +19,6 @@ const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
                 <LoggedUser />
             </div>
         </nav>
-        <header class="header__container mobile-only">
-            <div class="header__logo">
-                <img src={logo} alt="Anyclazz Logo" />
-            </div>
-            <div class="header__actions">
-                <Avatar src="https://anyclazz.b-cdn.net/08a3b47613f2d0f6aced2c3c467602e3aa1638f1.jpg" size={40} />
-                <div class="header__menu">
-                    <Icon icon="menu" iconWidth={24} iconHeight={24} />
-                </div>
-            </div>
-        </header>
         <main class='main__container'>
             <slot/>
         </main>

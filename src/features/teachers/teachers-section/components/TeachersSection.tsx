@@ -22,8 +22,8 @@ export function TeachersSection() {
 
   return (
     <div className={styles["teachers-section__container"]}>
-      <Text size="display-xs" colorType="primary" weight="semibold">{t('teachers.list.title', {count: countTeachers, location: teachersLocation})}</Text>
-      <Text colorType="tertiary">{t('teachers.list.subtitle')}</Text>
+      <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('teachers.list.title', {count: countTeachers, location: teachersLocation})}</Text>
+      <Text textLevel="h4" colorType="tertiary">{t('teachers.list.subtitle')}</Text>
       <Divider margin={16} />
       <Space size={16} direction="vertical" />
       <TeachersList teacherRepository={teacherRepository} />

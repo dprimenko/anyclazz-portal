@@ -96,7 +96,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                 <Divider />
                 <Space size={10} direction="vertical" />
                 <div className="flex flex-row items-left">
-                    <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={96} hasVerifiedBadge={teacher.isSuperTeacher} />
+                    <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={96} hasVerifiedBadge={teacher.isSuperTeacher} hasOutline />
                 </div>
                 <Space size={10} direction="vertical" />
                 <div className="flex flex-row gap-2 items-center">

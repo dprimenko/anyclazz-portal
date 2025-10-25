@@ -26,10 +26,16 @@ export const GET: APIRoute = async ({ request, redirect, url }) => {
   } catch (error) {
     console.error('Error in auth callback:', error);
     
-    // Manejar específicamente el error de PKCE expirado
-    if (error instanceof Error && error.message.includes('pkceCodeVerifier')) {
-      console.log('PKCE code verifier expired, redirecting to login with session expired message');
-      return redirect(`${routeConfig.loginRoute}?error=SessionExpired`);
+    // Manejar específicamente el error de PKCE expirado o inválido
+    if (error instanceof Error && (error.message.includes('pkceCodeVerifier') || error.message.includes('InvalidCheck'))) {
+      console.log('PKCE code verifier error in callback, clearing cookies and redirecting to login');
+      
+      // Obtener callbackUrl de la URL actual si existe
+      const callbackUrl = url.searchParams.get('callbackUrl');
+      const callbackParam = callbackUrl ? `&callbackUrl=${callbackUrl}` : '';
+      
+      // Redirigir al endpoint que limpia las cookies
+      return redirect(`/api/auth/clear-cookies?error=SessionExpired${callbackParam}`);
     }
     
     return redirect(routeConfig.defaultRedirectRoute);

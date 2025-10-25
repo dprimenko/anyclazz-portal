@@ -37,7 +37,7 @@ export default defineConfig({
         sameSite: 'lax',
         path: '/',
         secure: false, // false en desarrollo (localhost)
-        maxAge: 60 * 15, // 15 minutos (aumentado desde los 5 min por defecto para evitar expiraciones)
+        maxAge: 60 * 30, // 30 minutos (aumentado para evitar expiraciones durante el flujo de login)
       },
     },
   },

@@ -39,7 +39,7 @@ export const Text = (
             { [styles.tertiary]: colorType === 'tertiary' },
 
      
-            {'text-2xl' : size === 'display-xs'},
+            {'text-xl lg:text-2xl' : size === 'display-xs'},
             {'text-xl' : size === 'text-xl'},
             {'text-lg' : size === 'text-lg'},
             {'text-base' : size === 'text-md'},
