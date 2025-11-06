@@ -33,7 +33,7 @@
 }
 
 .btn--sm.btn--icon-only {
-  width: 36px;
+  min-width: 36px;
 }
 
 .btn--md {
@@ -51,7 +51,7 @@
 }
 
 .btn--lg.btn--icon-only {
-  width: 44px;
+  min-width: 44px;
 }
 
 .btn--xl {
@@ -60,7 +60,7 @@
 }
 
 .btn--xl.btn--icon-only {
-  width: 48px;
+  min-width: 48px;
 }
 
 .btn--text {

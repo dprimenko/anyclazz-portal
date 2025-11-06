@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Teacher, TeacherRepository } from "../domain/types";
 import { usePrevious } from "../../shared/hooks/usePrevious";
 import { useTranslations } from "../../../i18n";
@@ -54,6 +54,10 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
 		fetchTeachers();
 	}, [page, search, teachers]);
 
+	const noResults = useMemo(() => {
+		return !fetchingTeachers && teachers.length === 0;
+	}, [fetchingTeachers, teachers]);
+
     useEffect(() => {
 		if (!previousPage || previousPage === page) return;
 		fetchTeachers();
@@ -73,5 +77,6 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
 		refreshTeachers,
 		search,
 		setSearch,
+		noResults,
     };
 }

@@ -1,0 +1,241 @@
+---
+import { ClassType } from "@/features/teachers/domain/types";
+import { Chip } from "@/ui-library/components/ssr/chip/Chip.tsx";
+import { Icon } from "@/ui-library/components/ssr/icon/Icon.tsx";
+import { Space } from "@/ui-library/components/ssr/space/Space.tsx";
+import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
+import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon.tsx";
+import { getLangFromUrl, useTranslations } from "@/i18n/index.ts";
+import Main from "@/layout/Main.astro";
+import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
+import { Button } from "@/ui-library/components/ssr/button/Button";
+import { ClassTypes } from "@/features/teachers/components/class-types/ClassTypes";
+export const prerender = false;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations({ lang });
+
+const teacher = {
+    id: "2",
+    name: "Valentina",
+    surname: "Harper",
+    email: "valentina.harper@example.com",
+    avatar: "https://anyclazz.b-cdn.net/43306c6f117bd1e44cfa1bac6ff614b579fbbc6a.jpg",
+    portrait:
+        "https://anyclazz.b-cdn.net/fe57ea75605c476cadd30a1f53474fc1eacc7c28.jpg",
+    subjects: [
+        {
+            id: "2",
+            name: {
+                en: "Science",
+                es: "Ciencias",
+            },
+        },
+    ],
+    classTypes: [
+        {
+            type: ClassType.onlineSingle,
+            price: {
+                amount: 15,
+                currency: "eur",
+            },
+            durations: [30, 60],
+        },
+        {
+            type: ClassType.onlineGroup,
+            price: {
+                amount: 10,
+                currency: "eur",
+            },
+            durations: [60],
+        },
+        {
+            type: ClassType.onsiteSingle,
+            price: {
+                amount: 25,
+                currency: "eur",
+            },
+            durations: [30, 60],
+        },
+        {
+            type: ClassType.onsiteGroup,
+            price: {
+                amount: 18,
+                currency: "eur",
+            },
+            durations: [60],
+        },
+    ],
+    rating: 5.0,
+    reviewsNumber: 405,
+    studentsNumber: 130,
+    lessonsNumber: 3850,
+    isSuperTeacher: true,
+    speaksLanguages: [
+        {
+            language: "en",
+            proficiencyLevel: "native",
+        },
+    ],
+    shortPresentation:
+        "Hello! My name is Valentina Harper, and I'm a certified English teacher based in Madrid, ES. I hold a Master's degree in Science.",
+    teacherAddress: {
+        countryISO2: "ES",
+        cityISO2: "ES-M",
+        fullAddress: "Calle de Alcalá, 42, Madrid, Spain",
+    },
+    beganTeachingAt: "2015-09-10T10:26:34.468Z",
+    createdAt: "2025-10-07T10:26:34.468Z",
+};
+---
+
+<Main>
+    <div class="relative p-1">
+        <div
+            style={{ backgroundImage: `url(${teacher.portrait})` }}
+            class="w-full h-[170px] bg-cover bg-center rounded-xl"
+        >
+            <div class="flex flex-col md:flex-row w-full pt-[134px] md:pt-[170px] px-4 md:px-8">
+                <div class="w-full md:pt-6">
+                    <div class="flex flex-col md:flex-row md:gap-5">
+                        <div class="relative md:w-[148px] md:h-[148px]">
+                            <div class="md:absolute md:top-[-60px]">
+                                <div class="block md:hidden">
+                                    <Avatar
+                                        size={88}
+                                        src={teacher.avatar}
+                                        alt={`${teacher.name} ${teacher.surname}`}
+                                        hasVerifiedBadge={teacher.isSuperTeacher}
+                                        hasOutline
+                                    />
+                                </div>
+                                <div class="hidden md:block">
+                                    <Avatar
+                                        size={148}
+                                        src={teacher.avatar}
+                                        alt={`${teacher.name} ${teacher.surname}`}
+                                        hasVerifiedBadge={teacher.isSuperTeacher}
+                                        hasOutline
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col mt-6 md:mt-0">
+                            <div class="flex flex-row gap-4">
+                                <Text
+                                    textLevel="h2"
+                                    size="display-xs"
+                                    weight="semibold"
+                                    colorType="primary"
+                                    >{teacher.name}{" "}{teacher.surname}</Text
+                                >
+                                {
+                                    teacher.isSuperTeacher && (
+                                        <Chip colorType="primary" rounded>
+                                            <Icon
+                                                icon="verified"
+                                                iconWidth={16}
+                                                iconHeight={16}
+                                            />
+                                            <Text
+                                                size="inherit"
+                                                textLevel="span"
+                                                weight="medium"
+                                                colorType="accent"
+                                            >
+                                                {t("teachers.super-tutor")}
+                                            </Text>
+                                        </Chip>
+                                    )
+                                }
+                            </div>
+                            <Space size={10} direction="vertical" />
+                            <div class="flex flex-row gap-4">
+                                <Text
+                                    className="w-[64ch] text-ellipsis overflow-hidden whitespace-nowrap"
+                                    colorType="tertiary"
+                                    size="text-md"
+                                    >{teacher.shortPresentation}</Text
+                                >
+                            </div>
+                            <Space size={16} direction="vertical" />
+                            <div class="flex flex-row gap-4 flex-wrap">
+                                <TextWithIcon
+                                    icon="star"
+                                    textLevel="span"
+                                    weight="medium"
+                                    colorType="primary"
+                                    >{teacher.rating?.toFixed(1)}</TextWithIcon
+                                >
+                                <Text colorType="tertiary" textLevel="span"
+                                    >{teacher.reviewsNumber}{" "}{
+                                        t("common.reviews")
+                                    }</Text
+                                >
+                                <TextWithIcon
+                                    icon="people"
+                                    textLevel="span"
+                                    colorType="tertiary"
+                                    >{teacher.studentsNumber}{" "}{
+                                        t("common.students")
+                                    }</TextWithIcon
+                                >
+                                <TextWithIcon
+                                    icon="book"
+                                    textLevel="span"
+                                    colorType="tertiary"
+                                    >{teacher.lessonsNumber}{" "}{
+                                        t("common.lessons")
+                                    }</TextWithIcon
+                                >
+                            </div>
+                            <Space size={16} direction="vertical" />
+                            <div class="flex flex-row gap-4">
+                                {
+                                    teacher.subjects.map((subject) => (
+                                        <Chip colorType="secondary">
+                                            <Text
+                                                colorType="secondary"
+                                                textLevel="span"
+                                                size="inherit"
+                                                weight="medium"
+                                            >
+                                                {subject.name[lang]}
+                                            </Text>
+                                        </Chip>
+                                    ))
+                                }
+                            </div>
+                            <Space size={16} direction="vertical" />
+                            <div class="flex flex-row gap-4">
+                                <Text colorType="tertiary" size="text-sm">
+                                    {t("teachers.speaks")}{" "}
+                                    {
+                                        teacher.speaksLanguages
+                                            .map(
+                                                (language) =>
+                                                    `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
+                                            )
+                                            .join(", ")
+                                    }
+                                </Text>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex flex-col">
+                    <div class="flex flex-col-reverse gap-4 md:flex-col">
+                        <div class="flex flex-row gap-3 w-full">
+                            <Button colorType="secondary" size="lg" icon="heart-outline" />
+                            <Button colorType="secondary" size="lg" icon="chat" />
+                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
+                        </div>
+                        <ClassTypes classTypes={teacher.classTypes} />
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Main>

@@ -27,6 +27,10 @@ export default {
     'common.payment_method': 'Payment method',
     'common.previous': 'Previous',
     'common.next': 'Next',
+    'common.no_results': 'No results found',
+    'common.reset_filters': 'Reset filters',
+    'common.hour': 'Hour',
+    'common.page_of_pages': 'Page {{currentPage}} of {{totalPages}}',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',
@@ -51,6 +55,7 @@ export default {
     'teachers.speaks': 'Speaks:',
     'teachers.book-lesson': 'Book a lesson',
     'teachers.class-types-pricing': 'Class type & prices:',
+    'teachers.no_results': 'We couldn\'t find any teachers that match your search. Try adjusting your filters or using different keywords.',
 
     'classtype.online_single': '1:1 Online',
     'classtype.online_group': 'Group Online',

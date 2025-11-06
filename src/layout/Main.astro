@@ -5,24 +5,27 @@ import LoggedUser from '../features/auth/ssr/components/logged-user/LoggedUser.a
 import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
-const isDark = false;
-const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
+const logo = '/images/logo.svg';
 ---
 
-
 <Base {...Astro.props}>
-    <div class:list={['app', isDark && 'dark']}>
-        <nav class="not-mobile left-sidebar__container">
-            <div class="left-sidebar__logo">
-                <img src={logo} alt="Anyclazz Logo" />
-            </div>
-            <Menu isDark={isDark} />
-            <div class="left-sidebar__footer">
-                <LoggedUser />
-            </div>
-        </nav>
+    <div class:list={['app']}>
+        <div class="left-sidebar__container hidden md:flex">
+            <nav class="left-sidebar__content">
+                <div class="left-sidebar__logo logo">
+                    <img src={logo} alt="Anyclazz Logo" />
+                </div>
+                <Menu />
+                <div class="left-sidebar__footer">
+                    <!-- <LoggedUser /> -->
+                </div>
+            </nav>
+            <div class="left-sidebar__close md:hidden">
+                <Icon icon="close" iconWidth={24} iconHeight={24} />
+            </div>   
+        </div>
         <header class="header__container mobile-only">
-            <div class="header__logo">
+            <div class="header__logo logo">
                 <img src={logo} alt="Anyclazz Logo" />
             </div>
             <div class="header__actions">
@@ -37,3 +40,31 @@ const logo = isDark ? '/images/logo-negative.svg' : '/images/logo.svg';
         </main>
     </div>
 </Base>
+
+<script>
+    const openLeftSidebar = document.querySelector('.header__menu');
+    const closeLeftSidebar = document.querySelector('.left-sidebar__close');
+    const leftSidebar = document.querySelector('.left-sidebar__container');
+
+    const toggleLeftSidebar = (e: Event) => {
+        e.preventDefault();
+        if (!leftSidebar) return;
+
+        leftSidebar.classList.toggle('hidden');
+    };
+
+    if (leftSidebar) {
+        leftSidebar.addEventListener('click', (event) => {
+            if (event.target !== leftSidebar) return;
+            toggleLeftSidebar(event);
+        });
+    }
+
+    if (closeLeftSidebar) {
+        closeLeftSidebar.addEventListener('click', toggleLeftSidebar);
+    }
+
+    if (openLeftSidebar) {
+        openLeftSidebar.addEventListener('click', toggleLeftSidebar);
+    }
+</script>

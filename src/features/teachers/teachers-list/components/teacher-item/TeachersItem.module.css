@@ -1,9 +1,15 @@
 .teacher-item__container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: var(--spacing-20);
     padding: var(--spacing-16);
     border-radius: var(--radius-16);
+}
+
+@media (min-width: 768px) {
+    .teacher-item__container {
+        flex-direction: row;
+    }
 }
 
 .teacher-item__super-tutor-badge {
@@ -14,9 +20,16 @@
 
 .teacher-item__content {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: var(--spacing-16);
     width: 100%;
+}
+
+@media (min-width: 768px) {
+    .teacher-item__content {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }
 
 .teacher-item__content-info {
@@ -25,13 +38,14 @@
 }
 
 .teacher-item__content-presentation {
-    width: 64ch;
-    word-wrap: break-word;
+    width: 100%;
 }
 
-.teacher-item__actions {
-    display: flex;
-    flex-direction: column;
+@media (min-width: 768px) {
+    .teacher-item__content-presentation {
+        width: 64ch;
+        word-wrap: break-word;
+    }
 }
 
 .teacher-item__avatar-container {
@@ -53,8 +67,5 @@
     display: flex;
     flex-direction: row;
     gap: var(--spacing-16);
-}
-
-.teacher-item__class-types {
-    
+    flex-wrap: wrap;
 }

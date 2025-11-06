@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import styles from "./Avatar.module.css";
 import { Icon } from "../icon/Icon";
-import { useMemo } from "react";
 
 export interface AvatarProps {
     src?: string;
@@ -28,7 +27,7 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, text, hasVerifiedBadge, 
         styles['avatar__content']
     );
 
-    const verifiedBadgeSize = useMemo(() => size * 0.25, [size]);
+    const verifiedBadgeSize = size * 0.25;
 
     return (
         <div className={avatarContainer} style={{width: `${size}px`, height: `${size}px`}}>

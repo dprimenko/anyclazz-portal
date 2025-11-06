@@ -5,6 +5,7 @@ export interface IconProps extends React.HTMLAttributes<HTMLImageElement> {
     iconColor?: string;
     iconWidth?: number;
     iconHeight?: number;
+    classNames?: string;
 }
 
 export const Icon = (
@@ -13,6 +14,7 @@ export const Icon = (
         iconColor,
         iconWidth,
         iconHeight,
+        classNames,
         ...props
     }: IconProps) => {
 

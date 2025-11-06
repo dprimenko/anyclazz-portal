@@ -8,11 +8,11 @@ import { Icon } from "../../../../../ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "../../../../../ui-library/components/ssr/space/Space.tsx";
 import { Button } from "../../../../../ui-library/components/ssr/button/Button.tsx";
 import classNames from "classnames";
-import { Divider } from "../../../../../ui-library/components/ssr/divider/Divider.tsx";
-import { Fragment } from "react";
 import { Modal } from "@/ui-library/components/modal/Modal.tsx";
 import { BookingCreator } from "@/features/bookings/components/booking-creator/BookingCreator.tsx";
-import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon.ts";
+import { useIsMobile } from "@/ui-library/hooks/useIsMobile.ts";
+import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar.tsx";
+import { ClassTypes } from "../../../components/class-types/ClassTypes.tsx";
 
 export interface TeacherProps {
     teacher: Teacher;
@@ -21,9 +21,11 @@ export interface TeacherProps {
 export function TeacherItem({ teacher }: TeacherProps) {
     const t = useTranslations();
 
+    const isMobile = useIsMobile();
+
     return (
         <div className={classNames('card', styles["teacher-item__container"])}>
-            <div>
+            {!isMobile && (
                 <div className={styles["teacher-item__avatar-container"]}>
                     <img className={styles["teacher-item__avatar"]} src={`${teacher.avatar}?height=190&width=150`} alt={`${teacher.name} ${teacher.surname}`} onError={e => e.currentTarget.style.display='none'}/>
                     {teacher.isSuperTeacher && (
@@ -32,7 +34,15 @@ export function TeacherItem({ teacher }: TeacherProps) {
                         </div>
                     )}
                 </div>
-            </div>
+            )}
+            {isMobile && (
+                <Avatar
+                    src={`${teacher.avatar}?height=190&width=150`}
+                    alt={`${teacher.name} ${teacher.surname}`}
+                    hasVerifiedBadge={teacher.isSuperTeacher}
+                    size={64}
+                />
+            )}
             <div className={styles["teacher-item__content"]}>
                 <div className={styles["teacher-item__content-info"]}>
                     <div className={styles["teacher-item__content-row"]}>
@@ -73,31 +83,14 @@ export function TeacherItem({ teacher }: TeacherProps) {
                         </Text>
                     </div>
                 </div>
-                <div className={styles["teacher-item__actions"]}>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-row gap-3">
+                <div className="flex flex-col">
+                    <div className="flex flex-col-reverse gap-4 md:flex-col">
+                        <div className="flex flex-row gap-3 w-full">
                             <Button colorType="secondary" size="lg" icon="heart-outline" />
                             <Button colorType="secondary" size="lg" icon="chat" />
-                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} />
+                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
                         </div>
-                        <div className="flex flex-column">
-                            <div className={classNames('flex flex-col w-full card p-3 rounded-lg gap-[0.625rem]',styles["teacher-item__class-types"])}>
-                                <Text colorType="primary" size="text-sm" weight="semibold">{t('teachers.class-types-pricing')}</Text>
-                                {teacher.classTypes.map((classType, index) => (
-                                    <Fragment key={classType.type}>
-                                        <div className="flex flex-row gap-1.5">
-                                            <Icon icon={getClassTypeIcon(classType.type)} />
-                                            <Text className="flex-1" textLevel="span" colorType="primary" size="text-sm">{t(`classtype.${classType.type}`)}</Text>
-                                            <div className="flex flex-row gap-0.5 items-baseline">
-                                                <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{classType.price?.amount}</Text>
-                                                <Text colorType="primary" textLevel="span" size="text-xs">{classType.price?.currency.toUpperCase()}</Text>
-                                            </div>
-                                        </div>
-                                        {teacher.classTypes.length > 1 && index < teacher.classTypes.length - 1 && <Divider dotted />}
-                                    </Fragment>
-                                ))}
-                            </div>
-                        </div>
+                        <ClassTypes classTypes={teacher.classTypes} />
                     </div>
                 </div>
             </div>

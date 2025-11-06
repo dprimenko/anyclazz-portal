@@ -54,9 +54,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   console.log(`🛡️  Auth Middleware - Path: ${pathname}, Session: ${!!session?.user}, Validation: ${validationLevel}`);
   
   // Si hay un error de refresh token, invalidar la sesión
+  // PERO solo si NO estamos ya en una ruta de logout/auth para evitar loops
   if (session && (session as any).error === 'RefreshAccessTokenError') {
-    console.log('❌ RefreshAccessTokenError detected, invalidating session');
-    return invalidateSession(context, 'Refresh token expired or invalid');
+    // Evitar loop: no redirigir si ya estamos en logout o clear-cookies
+    if (!pathname.includes('/keycloak-logout') && !pathname.includes('/clear-cookies')) {
+      console.log('❌ RefreshAccessTokenError detected, invalidating session');
+      return invalidateSession(context, 'Refresh token expired or invalid');
+    } else {
+      console.log('⚠️  RefreshAccessTokenError detected but already in logout flow, continuing');
+    }
   }
   
   if (isHomePage(pathname)) {

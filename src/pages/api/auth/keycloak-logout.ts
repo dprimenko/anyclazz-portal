@@ -8,9 +8,18 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
     console.log('🚪 Starting logout process...');
     
     // Obtener la sesión actual para acceder al id_token y refresh_token
-    const session = await getSession(request);
-    const idToken = (session as any)?.idToken;
-    const refreshToken = (session as any)?.refreshToken;
+    let session;
+    let idToken;
+    let refreshToken;
+    
+    try {
+      session = await getSession(request);
+      idToken = (session as any)?.idToken;
+      refreshToken = (session as any)?.refreshToken;
+    } catch (error) {
+      // Si falla al obtener la sesión (por error de refresh token), continuar con logout
+      console.log('⚠️  Could not get session (likely expired), proceeding with cookie cleanup');
+    }
     
     console.log('🔑 ID Token found:', !!idToken);
     console.log('🔄 Refresh Token found:', !!refreshToken);

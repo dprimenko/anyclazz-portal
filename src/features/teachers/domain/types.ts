@@ -40,6 +40,7 @@ export interface Teacher {
     surname: string;
     email: string;
     avatar?: string;
+    portrait?: string;
     category: TeacherCategory[];
     subject: TeacherSubject;
     classTypes: TeacherClassType[];

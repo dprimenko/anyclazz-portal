@@ -4,10 +4,11 @@ import styles from "./TeachersList.module.css";
 import { useTeacherList } from "../../../hooks/useTeacherList";
 import type { TeacherRepository } from "../../../domain/types";
 import { TeacherItem } from "../teacher-item/TeacherItem";
-import { Dropdown } from "../../../../../ui-library/components/form/dropdown/Dropdown";
 import { PageSelector } from "@/ui-library/components/page-selector";
 import { Space } from "@/ui-library/components/ssr/space/Space";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
+import { Text } from "@/ui-library/components/ssr/text/Text";
+import { Button } from "@/ui-library/components/ssr/button/Button";
 
 export interface TeachersListProps {
   teacherRepository: TeacherRepository;
@@ -15,20 +16,14 @@ export interface TeachersListProps {
 
 export function TeachersList({ teacherRepository }: TeachersListProps) {
   const t = useTranslations();
-
   const { 
-		teachers, 
+    teachers,
 		fetchingTeachers, 
 		page,
 		setPage,
 		pages,
-		search,
-		setSearch,
+    noResults
 	} = useTeacherList({ teacherRepository });
-
-  const countTeachers = useMemo(() => {
-    return 232;
-  }, []);
 
   const teachersLocation = useMemo(() => {
     return "Madrid";
@@ -40,12 +35,23 @@ export function TeachersList({ teacherRepository }: TeachersListProps) {
         <Dropdown fullWidth />
       </div> */}
       <div className={styles["teachers-list__content"]}>
-          {teachers.map(teacher => (
-            <TeacherItem key={teacher.id} teacher={teacher} />  
-          ))}
+          <>
+            {noResults && (
+              <div className="flex flex-col items-center justify-center self-center md:w-[45ch]">
+                <Text colorType="primary" size="text-md" weight="semibold">{t("common.no_results")}</Text>
+                <Space size={4} direction="vertical" />
+                <Text colorType="tertiary" size="text-sm" textalign="center">{t("teachers.no_results")}</Text>
+                <Space size={24} direction="vertical" />
+                <Button colorType="primary" label={t("common.reset_filters")} onClick={() => {}} />
+              </div>
+            )}
+            {teachers.map(teacher => (
+              <TeacherItem key={teacher.id} teacher={teacher} />  
+            ))}
+          </>
       </div>
       <Space size={24} direction="vertical" />
-      {pages > 1 && (
+      {pages > 0 && (
         <>
           <Divider />
           <Space size={20} direction="vertical" />

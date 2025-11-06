@@ -9,15 +9,11 @@
     overflow: hidden;
 }
 
-.app.dark {
-    background-color: var(--color-basic-black);
-}
-
 @media (min-width: 768px) { /* mobile-max breakpoint */
     .app {
         height: 100dvh;
         grid-template-areas:
-              "nav head"
+              "nav main"
               "nav main";
         grid-template-columns: 18.5rem auto;
     }
@@ -45,11 +41,12 @@
 
 .header__logo {
     height: 100%;
-    margin-left: 1rem;
+    margin-left: 1.375rem;
 }
 
-.header__logo img {
-    height: 100%;
+.logo img {
+    width: auto;
+    height: 46px;
 }
 
 .header__menu {
@@ -62,21 +59,41 @@
 
 
 .left-sidebar__container {
-    display: none;
+    position: absolute;
+    z-index: var(--z-index-3);
+    width: 100%;
     height: 100%;
-    border-right: 1px solid var(--color-neutral-200);
+    background-color: #CECFD2;
 }
 
-.dark .left-sidebar__container {
-    border-right: 1px solid transparent;
+.left-sidebar__close {
+    position: absolute;
+    top: var(--spacing-12);
+    right: var(--spacing-8);
+    padding: var(--spacing-8);
 }
 
 @media (min-width: 768px) { /* mobile-max breakpoint */
     .left-sidebar__container {
-        display: flex;
-        flex-direction: column;
+        position: relative;
+        grid-area: nav;
+    }
+}
+
+.left-sidebar__content {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-8) 1.375rem;
+    gap: var(--spacing-24);
+    width: 80dvw;
+    height: 100%;
+    border-right: 1px solid var(--color-neutral-200);
+    background-color: var(--color-neutral-100);
+}
+
+@media (min-width: 768px) { /* mobile-max breakpoint */
+    .left-sidebar__content {
         padding: var(--spacing-24);
-        gap: var(--spacing-24);
         width: 100%;
     }
 }
@@ -86,11 +103,6 @@
     justify-content: start;
     align-items: start;
     padding: 0 var(--spacing-8);
-}
-
-.left-sidebar__logo img {
-    width: auto;
-    height: 46px;
 }
 
 .left-sidebar__footer {
@@ -107,12 +119,12 @@
     margin-top: 4rem;
     display: flex;
     flex-direction: column;
-    height: 100dvh;
     overflow: auto;
 }
 
 @media (min-width: 768px) { /* mobile-max breakpoint */
     .main__container {
         margin-top: 0;
+        overflow: hidden;
     }
 }
