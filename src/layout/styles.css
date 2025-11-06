@@ -13,7 +13,6 @@
     .app {
         height: 100dvh;
         grid-template-areas:
-              "nav main"
               "nav main";
         grid-template-columns: 18.5rem auto;
     }
@@ -125,6 +124,5 @@
 @media (min-width: 768px) { /* mobile-max breakpoint */
     .main__container {
         margin-top: 0;
-        overflow: hidden;
     }
 }
