@@ -1,5 +1,5 @@
 ---
-import { ClassType } from "@/features/teachers/domain/types";
+import { ClassType, type Teacher } from "@/features/teachers/domain/types";
 import { Chip } from "@/ui-library/components/ssr/chip/Chip.tsx";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "@/ui-library/components/ssr/space/Space.tsx";
@@ -10,6 +10,7 @@ import Main from "@/layout/Main.astro";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { ClassTypes } from "@/features/teachers/components/class-types/ClassTypes";
+import { TeacherDetail } from "@/features/teachers/teacher-detail/components/TeacherDetail.tsx";
 export const prerender = false;
 
 const lang = getLangFromUrl(Astro.url);
@@ -84,6 +85,27 @@ const teacher = {
         cityISO2: "ES-M",
         fullAddress: "Calle de Alcalá, 42, Madrid, Spain",
     },
+    about: "<p>Valentina Harper is a passionate English teacher with over 12 years of experience instructing students of all ages and backgrounds, ranging from teenagers to professionals seeking to refine their advanced language skills. Born in London and currently residing in New York, Valentina blends a modern pedagogical approach with evidence-based methods rooted in applied linguistics and immersive cultural experiences. Her teaching philosophy emphasizes developing both communicative competence and confidence in using English across academic, professional, and everyday contexts.</p><p>Valentina holds a Master's degree in Science from the University of London and is TEFL certified. She has worked in various educational settings, including language schools, universities, and corporate training programs. Her expertise spans exam preparation (IELTS, TOEFL, Cambridge), business English, conversational skills, and academic writing.</p>",
+    academicBackground: 
+        "<ul>" +
+        "<li>PhD in Applied Linguistics with a focus on English as a Second Language, University of Oxford, 2015</li>" +
+        "<li>Master's in Teaching English to Speakers of Other Languages (TESOL), University of Cambridge, 2010</li>" +
+        "<li>BA in English Philology, King's College London, 2008</li>" +
+        "</ul>",
+    certifications: 
+        "<ul>" +
+        "<li>CELTA (Certificate in English Language Teaching to Adults), Cambridge, 2009</li>" +
+        "<li>Advanced Certificate in Online Teaching and E-Learning, Harvard University, 2020</li>" +
+        "</ul>",
+    skills: 
+        "<ul>" +
+        "<li>Advanced English proficiency (C2)</li>" +
+        "<li>Academic and business English</li>" +
+        "<li>Exam preparation (IELTS, TOEFL, Cambridge C1/C2)</li>" +
+        "<li>Curriculum design and lesson planning</li>" +
+        "<li>Cross-cultural communication</li>" +
+        "<li>Online and hybrid teaching methods</li>" +
+        "</ul>",
     beganTeachingAt: "2015-09-10T10:26:34.468Z",
     createdAt: "2025-10-07T10:26:34.468Z",
 };
@@ -159,7 +181,7 @@ const teacher = {
                         <Space size={10} direction="vertical" />
                         <div class="flex flex-row gap-4">
                             <Text
-                                className="max-w-[64ch] text-ellipsis overflow-hidden whitespace-nowrap"
+                                className="max-w-[64ch] text-ellipsis overflow-hidden"
                                 colorType="tertiary"
                                 size="text-md"
                                 >{teacher.shortPresentation}</Text
@@ -228,6 +250,12 @@ const teacher = {
                             </Text>
                         </div>
                     </div>
+                </div>
+
+                <Space size={32} direction="vertical" />
+
+                <div>
+                    <TeacherDetail teacher={teacher as unknown as Teacher} client:only />
                 </div>
 
                 <!-- Right side en mobile: aparece aquí debajo -->

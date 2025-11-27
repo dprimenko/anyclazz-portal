@@ -173,7 +173,7 @@ a {
     }
 }
 
-/* Custom Scrollbar Styles */
+/* Custom Scrollbar Styles
 * {
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
@@ -215,7 +215,7 @@ a {
 
 .dark *::-webkit-scrollbar-thumb:active {
     background-color: rgba(255, 255, 255, 0.4);
-}
+} */
 
 .dark * {
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;

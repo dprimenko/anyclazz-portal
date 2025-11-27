@@ -53,6 +53,9 @@ export interface Teacher {
     shortPresentation?: string;
     videoPresentation?: string;
     about?: string;
+    academicBackground?: string;
+    certifications?: string;
+    skills?: string;
     beganTeachingAt: string;
     teacherAddress: TeacherAddress;
     createdAt: string;
