@@ -37,6 +37,7 @@ export const Text = (
             { [styles.primary]: colorType === 'primary' },
             { [styles.secondary]: colorType === 'secondary' },
             { [styles.tertiary]: colorType === 'tertiary' },
+            { [styles.quaternary]: colorType === 'quaternary' },
 
      
             {'text-xl lg:text-2xl' : size === 'display-xs'},

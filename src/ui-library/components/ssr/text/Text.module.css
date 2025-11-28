@@ -1,8 +1,4 @@
 .primary {
-  color: var(--color-primary-700);
-}
-
-.primary {
   color: var(--color-neutral-900);
 }
 
@@ -12,4 +8,8 @@
 
 .tertiary {
   color: var(--color-neutral-600);
+}
+
+.quaternary {
+  color: var(--color-neutral-500);
 }

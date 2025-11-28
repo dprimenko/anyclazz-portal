@@ -1,0 +1,37 @@
+.clazzmateCard {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.clazzmateIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-accent-600) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.referralLinkContainer {
+    background-color: var(--color-neutral-50);
+    border: 1px solid var(--color-neutral-200);
+}
+
+.copyButton {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background-color: white;
+    border: 1px solid var(--color-neutral-200);
+    color: var(--color-neutral-600);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copyButton:hover {
+    background-color: var(--color-neutral-50);
+    color: var(--color-neutral-900);
+}

@@ -1,0 +1,31 @@
+.lessonCard {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.lessonCard:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.statusOnline {
+    background-color: var(--color-accent-50);
+    color: var(--color-accent-700);
+}
+
+.statusOnsite {
+    background-color: var(--color-neutral-100);
+    color: var(--color-neutral-700);
+}
+
+.actionButton {
+    min-width: 36px;
+}
+
+.moreButton {
+    color: var(--color-neutral-600);
+    transition: color 0.2s ease;
+}
+
+.moreButton:hover {
+    color: var(--color-neutral-900);
+}

@@ -49,6 +49,7 @@ export interface Teacher {
     studentsNumber?: number;
     lessonsNumber?: number;
     isSuperTeacher: boolean;
+    isOnline?: boolean;
     speaksLanguages: TeacherLanguage[];
     shortPresentation?: string;
     videoPresentation?: string;

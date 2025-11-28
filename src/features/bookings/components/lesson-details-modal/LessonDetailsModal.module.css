@@ -1,0 +1,81 @@
+.modal {
+    background: white;
+    width: 100%;
+    padding: 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.closeButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-neutral-600);
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton:hover {
+    background-color: var(--color-neutral-100);
+    color: var(--color-neutral-900);
+}
+
+.dateHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-neutral-600);
+}
+
+.detailsSection {
+    background-color: var(--color-neutral-50);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+.detailsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.detailRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.teacherSection {
+    margin-top: 0.5rem;
+}
+
+.teacherInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}

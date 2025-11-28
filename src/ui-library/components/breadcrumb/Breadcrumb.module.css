@@ -1,0 +1,13 @@
+.itemLast {
+    background-color: #F9F9F9;
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.link:hover {
+    opacity: 0.8;
+}

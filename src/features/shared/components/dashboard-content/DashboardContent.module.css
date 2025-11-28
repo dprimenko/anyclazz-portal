@@ -1,0 +1,330 @@
+.dashboard {
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.headerButtons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.lessonsColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.section {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.viewAll {
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.viewAll:hover {
+    opacity: 0.7;
+}
+
+/* Mobile Cards Container */
+.mobileCards {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.mobileCards::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cards Inner Wrapper */
+.mobileCards > * {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    flex-wrap: nowrap;
+}
+
+.lessonCard {
+    min-width: 280px;
+    max-width: 280px;
+    flex-shrink: 0;
+    background: white;
+    border: 1px solid var(--color-neutral-200);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.cardDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Table Styles */
+.table {
+    width: 100%;
+    display: none;
+}
+
+.tableHeader {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 100px;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 100px;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-neutral-100);
+    align-items: center;
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.tableRow:hover {
+    background-color: var(--color-neutral-50);
+}
+
+.col1, .col2, .col3, .col4, .col5 {
+    display: flex;
+    align-items: center;
+}
+
+.teacher {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.badgeOnline, .badgeOnsite {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badgeOnline {
+    background-color: var(--color-accent-50);
+    color: var(--color-accent-700);
+}
+
+.badgeOnsite {
+    background-color: var(--color-info-50);
+    color: var(--color-info-700);
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.menuWrapper {
+    position: relative;
+}
+
+.menuButton {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-neutral-600);
+    transition: all 0.2s;
+}
+
+.menuButton:hover {
+    background-color: var(--color-neutral-100);
+}
+
+.dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.25rem);
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    z-index: 10;
+    min-width: 160px;
+    padding: 0.5rem;
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: background 0.2s;
+}
+
+.dropdownItem:hover {
+    background-color: var(--color-neutral-50);
+}
+
+/* Clazzmate Card */
+.clazzmateCard {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.clazzmateHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.clazzmateIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-accent-600) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.referralLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--color-neutral-50);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.copyButton {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background: white;
+    border: 1px solid var(--color-neutral-200);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.copyButton:hover {
+    background-color: var(--color-neutral-50);
+}
+
+.clazzmateStats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Saved Teachers */
+.savedTeachersSection {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.teachersList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.savedTeacher {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.savedTeacher:hover {
+    background-color: var(--color-neutral-50);
+}
+
+.onlineDot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--color-success-500);
+    border: 2px solid white;
+}
+
+/* Responsive */
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr 380px;
+    }
+
+    .mobileCards {
+        display: none;
+    }
+
+    .table {
+        display: block;
+    }
+}
