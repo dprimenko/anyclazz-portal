@@ -43,12 +43,8 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...(query ? { query } : {}),
 		};
 
-		const oidc = await getOidc();
-		const { accessToken } = await oidc.getTokens();
-
 		const apiTeachersResponse = await this.httpClient.get({
 			url: '/teachers',
-			token: accessToken,
 			data,
 		});
 

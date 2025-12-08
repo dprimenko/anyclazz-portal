@@ -1,115 +1,21 @@
 ---
 import Main from '../layout/Main.astro';
 import { Text } from '@/ui-library/components/ssr/text/Text';
-import type { BookingWithTeacher } from '../features/bookings/domain/types';
-import type { Teacher } from '../features/teachers/domain/types';
-import { ClassType } from '../features/teachers/domain/types';
 import { useTranslations, getLangFromUrl } from '@/i18n';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import { Space } from '@/ui-library/components/ssr/space/Space';
+import { DateTime } from '@/features/shared/utils/dateConfig';
+import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
+import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
+
+const repository = new AnyclazzMyBookingsRepository();
+const bookings = await repository.getUpcomingBookings(Astro.request);
 
 export const prerender = false;
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
-
-// Mock data for teacher
-const mockTeacher: Teacher = {
-    id: '1',
-    name: 'Valentina',
-    surname: 'Harper',
-    email: 'valentina@example.com',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    category: [],
-    subject: {
-        id: '1',
-        name: {
-            en: 'English teacher',
-            es: 'Profesora de inglés'
-        }
-    },
-    classTypes: [{
-        type: ClassType.onlineSingle,
-        price: { amount: 25, currency: 'eur' },
-        durations: [60]
-    }],
-    rating: 4.9,
-    reviewsNumber: 128,
-    studentsNumber: 45,
-    lessonsNumber: 320,
-    isSuperTeacher: true,
-    speaksLanguages: [
-        { language: 'en', proficiencyLevel: 'native' },
-        { language: 'es', proficiencyLevel: 'c1' }
-    ],
-    beganTeachingAt: '2020-01-01',
-    teacherAddress: {
-        countryISO2: 'US',
-        cityISO2: 'NY',
-        fullAddress: 'New York, USA'
-    },
-    createdAt: '2020-01-01'
-};
-
-// Mock upcoming lessons
-const upcomingLessons: BookingWithTeacher[] = [
-    {
-        id: '1',
-        teacherId: '1',
-        studentId: 'student1',
-        classTypeId: 'online_single',
-        startAt: '2025-11-28T13:00:00.000Z',
-        endAt: '2025-11-28T14:00:00.000Z',
-        teacher: mockTeacher,
-        classType: 'Spanish - Advanced',
-        status: 'online'
-    },
-    {
-        id: '2',
-        teacherId: '1',
-        studentId: 'student1',
-        classTypeId: 'online_single',
-        startAt: '2025-11-28T13:00:00.000Z',
-        endAt: '2025-11-28T14:00:00.000Z',
-        teacher: mockTeacher,
-        classType: 'Spanish - Advanced',
-        status: 'on-site'
-    }
-];
-
-// Mock last lessons
-const lastLessons: BookingWithTeacher[] = [
-    {
-        id: '3',
-        teacherId: '1',
-        studentId: 'student1',
-        classTypeId: 'online_single',
-        startAt: '2025-11-20T13:00:00.000Z',
-        endAt: '2025-11-20T14:00:00.000Z',
-        teacher: mockTeacher,
-        classType: 'Spanish - Advanced',
-        status: 'online'
-    },
-    {
-        id: '4',
-        teacherId: '1',
-        studentId: 'student1',
-        classTypeId: 'online_single',
-        startAt: '2025-11-19T13:00:00.000Z',
-        endAt: '2025-11-19T14:00:00.000Z',
-        teacher: mockTeacher,
-        classType: 'Spanish - Advanced',
-        status: 'on-site'
-    }
-];
-
-// Mock saved teachers
-const savedTeachers: Teacher[] = [
-    { ...mockTeacher, isOnline: true },
-    { ...mockTeacher, id: '2', name: 'Maria', surname: 'Garcia', isOnline: true },
-    { ...mockTeacher, id: '3', name: 'John', surname: 'Smith', isSuperTeacher: false, isOnline: false }
-];
 
 // Mock clazzmate data
 const clazzmate = {
@@ -117,6 +23,8 @@ const clazzmate = {
     friendsInvited: 3,
     creditsEarned: 20.00
 };
+
+const upcomingLessons = bookings.slice(0, 5); // Take first 5 as upcoming lessons
 ---
 
 <style>
@@ -447,35 +355,34 @@ const clazzmate = {
         clazzmate={clazzmate}
     /> -->
 
-	<div class="px-4 py-2 sm:p-6">
+	<div class="px-4 py-2 sm:p-8">
 		<Breadcrumb
 			items={[
 				{ label: t('menu.dashboard'), href: '/dashboard' },
 			]}
 		/>
 		<Space size={16} direction="vertical" />
-		<div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-			<div>
-				<Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('dashboard.welcome_back', { name: `${mockTeacher.name} ${mockTeacher.surname}` })}</Text>
+		<div class="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
+			<div class="flex-1 min-w-0">
+				<!-- <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('dashboard.welcome_back', { name: `${mockTeacher.name} ${mockTeacher.surname}` })}</Text> -->
       			<Text textLevel="h4" colorType="tertiary">{t('dashboard.ready_to_continue')}</Text>
 			</div>
-			<div class="flex gap-[0.75rem]">
+			<div class="flex gap-[0.75rem] w-full md:w-auto md:flex-shrink-0">
 				<Button 
 					icon="calendar-plus" 
 					label={t('dashboard.schedule_lesson')} 
 					colorType="secondary"
-					fullWidth
+					className="flex-1 md:flex-none"
 				/>
 				<Button 
 					icon="search" 
 					label={t('dashboard.find_teacher')} 
 					colorType="primary"
-					fullWidth
+					className="flex-1 md:flex-none"
 				/>
 			</div>
 		</div>
 
-		{/* Main Content Grid */}
 		<div class="flex flex-col gap-2">
 			{/* Left Column - Lessons */}
 			<div class="flex flex-col gap-2">
@@ -565,21 +472,22 @@ const clazzmate = {
 						</div>
 					</div>
 
-					{/* Desktop Table View */}
-					<div className={styles.table}>
-						<div className={styles.tableHeader}>
+					-->
+
+					<div class={styles.table}>
+						<div class={styles.tableHeader}>
 							<Text size="text-xs" colorType="tertiary" className={styles.col1}>Teacher</Text>
 							<Text size="text-xs" colorType="tertiary" className={styles.col2}>Class</Text>
 							<Text size="text-xs" colorType="tertiary" className={styles.col3}>Date</Text>
 							<Text size="text-xs" colorType="tertiary" className={styles.col4}>Type</Text>
-							<div className={styles.col5}></div>
+							<div class={styles.col5}></div>
 						</div>
 						{upcomingLessons.map((lesson) => {
 							const startTime = DateTime.fromISO(lesson.startAt);
 							return (
 								<div key={lesson.id} className={styles.tableRow}>
-									<div className={styles.col1}>
-										<div className={styles.teacher}>
+									<div class={styles.col1}>
+										<div class={styles.teacher}>
 											<Avatar src={lesson.teacher.avatar} size={40} hasVerifiedBadge={lesson.teacher.isSuperTeacher} />
 											<div>
 												<Text size="text-sm" weight="semibold" colorType="primary">{lesson.teacher.name} {lesson.teacher.surname}</Text>
@@ -587,21 +495,21 @@ const clazzmate = {
 											</div>
 										</div>
 									</div>
-									<div className={styles.col2}>
+									<div class={styles.col2}>
 										<Text size="text-sm" colorType="secondary">{lesson.classType}</Text>
 									</div>
-									<div className={styles.col3}>
+									<div class={styles.col3}>
 										<Text size="text-sm" colorType="secondary">{startTime.toFormat('ccc HH:mm')}</Text>
 									</div>
-									<div className={styles.col4}>
+									<div class={styles.col4}>
 										<span className={lesson.status === 'online' ? styles.badgeOnline : styles.badgeOnsite}>
 											{lesson.status === 'online' ? 'Online' : 'On-site'}
 										</span>
 									</div>
-									<div className={styles.col5}>
-										<div className={styles.actions}>
+									<div class={styles.col5}>
+										<div class={styles.actions}>
 											<Button label={t('common.join')} colorType="primary" />
-											<PopMenu
+											{/* <PopMenu
 												trigger={<Icon icon="more-vertical" iconWidth={20} iconHeight={20} />}
 												items={[
 													{
@@ -620,13 +528,13 @@ const clazzmate = {
 														onClick: () => console.log('Cancel lesson')
 													}
 												]}
-											/>
+											/> */}
 										</div>
 									</div>
 								</div>
 							);
 						})}
-					</div> -->
+					</div>
 				</section>
 
 				{/* Last Lessons */}

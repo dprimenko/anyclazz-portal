@@ -6,7 +6,7 @@ export class AnyclazzAuthRepository implements AuthRepository {
         const session = await getSession(request);
 
         if (!session?.user) return null;
-        
+
         return {
             id: session.user.id || '',
             email: session.user.email || '',

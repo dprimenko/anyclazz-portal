@@ -11,7 +11,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
 			
 			return (
 				<div key={item.label} className="flex flex-row items-center gap-[0.25rem]">
-					<div className={isLast ? `${styles.itemLast} px-2 py` : ''}>
+					<div className={isLast ? `${styles.itemLast} px-2 py-1` : ''}>
 						<a 
 							className={styles.link} 
 							href={item.href}

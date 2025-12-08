@@ -36,7 +36,6 @@ export class FetchClient {
 			headers: {
 				...headers,
 				'Content-Type': contentType,
-				'Referer': window.location.origin,
 				'Accept': accept,
 				...(token ? { 'Authorization': `Bearer ${token}` } : {})
 			},
@@ -54,7 +53,6 @@ export class FetchClient {
 			headers: {
 				...headers,
 				'Content-Type': contentType,
-				'Referer': window.location.origin,
 				...(token ? { 'Authorization': `Bearer ${token}` } : {})
 			},
 			body: JSON.stringify(data),
@@ -92,7 +90,6 @@ export class FetchClient {
 			method: 'POST',
 			headers: {
 				...headers,
-				'Referer': window.location.origin,
 				...(token ? { 'Authorization': `Bearer ${token}` } : {})
 			},
 			body: formData,
@@ -111,7 +108,6 @@ export class FetchClient {
 			headers: {
 				...headers,
 				'Content-Type': contentType,
-				'Referer': window.location.origin,
 				...(token ? { 'Authorization': `Bearer ${token}` } : {})
 			},
 			body: JSON.stringify(data),
@@ -129,7 +125,6 @@ export class FetchClient {
 			headers: {
 				...headers,
 				'Content-Type': contentType,
-				'Referer': window.location.origin,
 				...(token ? { 'Authorization': `Bearer ${token}` } : {})
 			},
 			signal

@@ -16,3 +16,7 @@ export interface BookingWithTeacher extends Booking {
     classType: string;
     status: 'online' | 'on-site';
 }
+
+export interface BookingsRepository {
+    getUpcomingBookings(request: Request): Promise<BookingWithTeacher[]>;
+}
