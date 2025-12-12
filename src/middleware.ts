@@ -25,6 +25,13 @@ function invalidateSession(context: any, reason: string) {
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = new URL(context.request.url);
+  
+  // SALIR TEMPRANO si estamos en rutas de autenticación para evitar loops
+  if (pathname.startsWith('/api/auth/')) {
+    console.log(`✅ Auth API route, skipping middleware: ${pathname}`);
+    return next();
+  }
+  
   const validationLevel = getValidationLevel(pathname);
   
   let session;
