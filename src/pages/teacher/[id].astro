@@ -1,5 +1,5 @@
 ---
-import { ClassType, type Teacher } from "@/features/teachers/domain/types";
+import { type Teacher } from "@/features/teachers/domain/types";
 import { Chip } from "@/ui-library/components/ssr/chip/Chip.tsx";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "@/ui-library/components/ssr/space/Space.tsx";
@@ -21,11 +21,7 @@ const t = useTranslations({ lang });
 
 const { id } = Astro.params;
 
-console.log('🔍 Astro.params:', Astro.params);
-console.log('🔍 Teacher ID:', id);
-
 if (!id) {
-    console.log('❌ No ID found, redirecting...');
     return Astro.redirect('/teachers');
 }
 
@@ -33,7 +29,6 @@ const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
 
 if (!accessToken) {
-    console.log('❌ No accessToken, redirecting to login...');
     return Astro.redirect('/login');
 }
 
@@ -43,15 +38,15 @@ const teacher = await teacherRepository.getTeacher({
     teacherId: id 
 });
 
-console.log('✅ Teacher fetched successfully:', teacher.name);
 ---
 
 <Main>
     <div class="relative p-1">
-        <div
-            style={`background-image: url(${teacher.portrait})`}
-            class="w-full h-[170px] bg-cover bg-center rounded-xl"
-        ></div>
+        <img
+            src={teacher.portrait || "https://anyclazz.b-cdn.net/fe57ea75605c476cadd30a1f53474fc1eacc7c28.jpg"}
+            alt={`${teacher.name} ${teacher.surname}`}
+            class="w-full h-[170px] object-cover rounded-xl"
+        />
         <div class="flex flex-col px-4 md:px-8 md:pt-6 md:flex-row gap-6 md:gap-8">
         <!-- Left side: Información del profesor -->
         <div class="flex-1 md:min-w-0">
