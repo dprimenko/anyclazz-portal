@@ -5,11 +5,12 @@ import { useTranslations } from "../../../i18n";
 
 export interface TeachersPageProps {
     teacherRepository: TeacherRepository;
+    accessToken: string;
 }
 
 export const DEFAULT_PAGE_SIZE = 10;
 
-export function useTeacherList({ teacherRepository }: TeachersPageProps) {
+export function useTeacherList({ teacherRepository, accessToken }: TeachersPageProps) {
     const t = useTranslations();
     const [teachers, setTeachers] = useState<Teacher[]>([]);
 	const [alreadyFetched, setAlreadyFetched] = useState(false);
@@ -20,6 +21,7 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
     const [page, setPage] = useState(1);
     const previousPage = usePrevious(page);
 	const [pages, setPages] = useState(1);
+	const [totalTeachers, setTotalTeachers] = useState(0);
 
     const fetchTeachers = useCallback(async () => {
 		if (alreadyFetched || fetchingTeachers) return;
@@ -30,12 +32,14 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
 
 		async function fetch() {
 			const teachers = await teacherRepository.listTeachers({ 
+				token: accessToken,
 				page,
 				size: DEFAULT_PAGE_SIZE,
 				query: search || undefined,
 			});
 			setTeachers(teachers.teachers);
 			setPages(teachers.meta.lastPage);
+			setTotalTeachers(teachers.meta.total);
 		}
     
 		Promise.allSettled([
@@ -69,6 +73,7 @@ export function useTeacherList({ teacherRepository }: TeachersPageProps) {
 
     return {
         teachers,
+		totalTeachers,
 		fetchingTeachers,
 		errorFetchingTeachers,
 		page,

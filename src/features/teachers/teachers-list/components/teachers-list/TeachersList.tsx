@@ -1,8 +1,6 @@
-import { useMemo } from "react";
 import { useTranslations } from "../../../../../i18n";
 import styles from "./TeachersList.module.css";
-import { useTeacherList } from "../../../hooks/useTeacherList";
-import type { TeacherRepository } from "../../../domain/types";
+import { useTeachers } from "../../../providers/TeachersProvider";
 import { TeacherItem } from "../teacher-item/TeacherItem";
 import { PageSelector } from "@/ui-library/components/page-selector";
 import { Space } from "@/ui-library/components/ssr/space/Space";
@@ -10,24 +8,16 @@ import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 
-export interface TeachersListProps {
-  teacherRepository: TeacherRepository;
-}
-
-export function TeachersList({ teacherRepository }: TeachersListProps) {
+export function TeachersList() {
   const t = useTranslations();
   const { 
     teachers,
-		fetchingTeachers, 
-		page,
-		setPage,
-		pages,
+    fetchingTeachers, 
+    page,
+    setPage,
+    pages,
     noResults
-	} = useTeacherList({ teacherRepository });
-
-  const teachersLocation = useMemo(() => {
-    return "Madrid";
-  }, []);
+  } = useTeachers();
 
   return (
     <div className={styles["teachers-list__container"]}>

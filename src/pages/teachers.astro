@@ -1,9 +1,18 @@
 ---
 import { TeachersSection } from '../features/teachers/teachers-section/components/TeachersSection';
 import Main from '../layout/Main.astro';
+import { getSession } from 'auth-astro/server';
+
 export const prerender = false;
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
 ---
 
 <Main title="Teachers">
-	<TeachersSection client:only />
+	<TeachersSection client:only accessToken={accessToken} />
 </Main>

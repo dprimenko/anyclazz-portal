@@ -11,281 +11,213 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { ClassTypes } from "@/features/teachers/components/class-types/ClassTypes";
 import { TeacherDetail } from "@/features/teachers/teacher-detail/components/TeacherDetail.tsx";
+import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
+import { getSession } from 'auth-astro/server';
+
 export const prerender = false;
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
 
-const teacher = {
-    id: "2",
-    name: "Valentina",
-    surname: "Harper",
-    email: "valentina.harper@example.com",
-    avatar: "https://anyclazz.b-cdn.net/43306c6f117bd1e44cfa1bac6ff614b579fbbc6a.jpg",
-    portrait:
-        "https://anyclazz.b-cdn.net/fe57ea75605c476cadd30a1f53474fc1eacc7c28.jpg",
-    subjects: [
-        {
-            id: "2",
-            name: {
-                en: "Science",
-                es: "Ciencias",
-            },
-        },
-    ],
-    classTypes: [
-        {
-            type: ClassType.onlineSingle,
-            price: {
-                amount: 15,
-                currency: "eur",
-            },
-            durations: [30, 60] as (30 | 60)[],
-        },
-        {
-            type: ClassType.onlineGroup,
-            price: {
-                amount: 10,
-                currency: "eur",
-            },
-            durations: [60] as (30 | 60)[],
-        },
-        {
-            type: ClassType.onsiteSingle,
-            price: {
-                amount: 25,
-                currency: "eur",
-            },
-            durations: [30, 60] as (30 | 60)[],
-        },
-        {
-            type: ClassType.onsiteGroup,
-            price: {
-                amount: 18,
-                currency: "eur",
-            },
-            durations: [60] as (30 | 60)[],
-        },
-    ],
-    rating: 5.0,
-    reviewsNumber: 405,
-    studentsNumber: 130,
-    lessonsNumber: 3850,
-    isSuperTeacher: true,
-    speaksLanguages: [
-        {
-            language: "en",
-            proficiencyLevel: "native",
-        },
-    ],
-    shortPresentation:
-        "Hello! My name is Valentina Harper, and I'm a certified English teacher based in Madrid, ES. I hold a Master's degree in Science.",
-    teacherAddress: {
-        countryISO2: "ES",
-        cityISO2: "ES-M",
-        fullAddress: "Calle de Alcalá, 42, Madrid, Spain",
-    },
-    about: "<p>Valentina Harper is a passionate English teacher with over 12 years of experience instructing students of all ages and backgrounds, ranging from teenagers to professionals seeking to refine their advanced language skills. Born in London and currently residing in New York, Valentina blends a modern pedagogical approach with evidence-based methods rooted in applied linguistics and immersive cultural experiences. Her teaching philosophy emphasizes developing both communicative competence and confidence in using English across academic, professional, and everyday contexts.</p><p>Valentina holds a Master's degree in Science from the University of London and is TEFL certified. She has worked in various educational settings, including language schools, universities, and corporate training programs. Her expertise spans exam preparation (IELTS, TOEFL, Cambridge), business English, conversational skills, and academic writing.</p>",
-    academicBackground: 
-        "<ul>" +
-        "<li>PhD in Applied Linguistics with a focus on English as a Second Language, University of Oxford, 2015</li>" +
-        "<li>Master's in Teaching English to Speakers of Other Languages (TESOL), University of Cambridge, 2010</li>" +
-        "<li>BA in English Philology, King's College London, 2008</li>" +
-        "</ul>",
-    certifications: 
-        "<ul>" +
-        "<li>CELTA (Certificate in English Language Teaching to Adults), Cambridge, 2009</li>" +
-        "<li>Advanced Certificate in Online Teaching and E-Learning, Harvard University, 2020</li>" +
-        "</ul>",
-    skills: 
-        "<ul>" +
-        "<li>Advanced English proficiency (C2)</li>" +
-        "<li>Academic and business English</li>" +
-        "<li>Exam preparation (IELTS, TOEFL, Cambridge C1/C2)</li>" +
-        "<li>Curriculum design and lesson planning</li>" +
-        "<li>Cross-cultural communication</li>" +
-        "<li>Online and hybrid teaching methods</li>" +
-        "</ul>",
-    beganTeachingAt: "2015-09-10T10:26:34.468Z",
-    createdAt: "2025-10-07T10:26:34.468Z",
-};
+const { id } = Astro.params;
+
+console.log('🔍 Astro.params:', Astro.params);
+console.log('🔍 Teacher ID:', id);
+
+if (!id) {
+    console.log('❌ No ID found, redirecting...');
+    return Astro.redirect('/teachers');
+}
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+    console.log('❌ No accessToken, redirecting to login...');
+    return Astro.redirect('/login');
+}
+
+const teacherRepository = new ApiTeacherRepository();
+const teacher = await teacherRepository.getTeacher({ 
+    token: accessToken,
+    teacherId: id 
+});
+
+console.log('✅ Teacher fetched successfully:', teacher.name);
 ---
 
 <Main>
     <div class="relative p-1">
-        <!-- Header con imagen de fondo -->
         <div
-            style={{ backgroundImage: `url(${teacher.portrait})` }}
+            style={`background-image: url(${teacher.portrait})`}
             class="w-full h-[170px] bg-cover bg-center rounded-xl"
         ></div>
-
-        <!-- Contenedor principal con layout responsive -->
         <div class="flex flex-col px-4 md:px-8 md:pt-6 md:flex-row gap-6 md:gap-8">
-            <!-- Left side: Información del profesor -->
-            <div class="flex-1 md:min-w-0">
-                <div class="flex flex-col md:flex-row md:gap-5">
-                    <!-- Avatar -->
-                    <div class="relative md:w-[148px] md:h-[148px]">
-                        <div class="mt-[-34px] md:mt-[-60px]">
-                            <div class="block md:hidden">
-                                <Avatar
-                                    size={88}
-                                    src={teacher.avatar}
-                                    alt={`${teacher.name} ${teacher.surname}`}
-                                    hasVerifiedBadge={teacher.isSuperTeacher}
-                                    hasOutline
-                                />
-                            </div>
-                            <div class="hidden md:block">
-                                <Avatar
-                                    size={148}
-                                    src={teacher.avatar}
-                                    alt={`${teacher.name} ${teacher.surname}`}
-                                    hasVerifiedBadge={teacher.isSuperTeacher}
-                                    hasOutline
-                                />
-                            </div>
+        <!-- Left side: Información del profesor -->
+        <div class="flex-1 md:min-w-0">
+            <div class="flex flex-col md:flex-row md:gap-5">
+                <!-- Avatar -->
+                <div class="relative md:w-[148px] md:h-[148px]">
+                    <div class="mt-[-34px] md:mt-[-60px]">
+                        <div class="block md:hidden">
+                            <Avatar
+                                size={88}
+                                src={teacher.avatar}
+                                alt={`${teacher.name} ${teacher.surname}`}
+                                hasVerifiedBadge={teacher.isSuperTeacher}
+                                hasOutline
+                            />
+                        </div>
+                        <div class="hidden md:block">
+                            <Avatar
+                                size={148}
+                                src={teacher.avatar}
+                                alt={`${teacher.name} ${teacher.surname}`}
+                                hasVerifiedBadge={teacher.isSuperTeacher}
+                                hasOutline
+                            />
                         </div>
                     </div>
+                </div>
 
-                    <!-- Información del profesor -->
-                    <div class="flex flex-col mt-6 md:mt-0 flex-1">
-                        <div class="flex flex-row gap-4 items-center flex-wrap">
-                            <Text
-                                textLevel="h2"
-                                size="display-xs"
-                                weight="semibold"
-                                colorType="primary"
-                                >{teacher.name}{" "}{teacher.surname}</Text
-                            >
+                <!-- Información del profesor -->
+                <div class="flex flex-col mt-6 md:mt-0 flex-1">
+                    <div class="flex flex-row gap-4 items-center flex-wrap">
+                        <Text
+                            textLevel="h2"
+                            size="display-xs"
+                            weight="semibold"
+                            colorType="primary"
+                            >{teacher.name}{" "}{teacher.surname}</Text
+                        >
+                        {
+                            teacher.isSuperTeacher && (
+                                <Chip colorType="primary" rounded>
+                                    <Icon
+                                        icon="verified"
+                                        iconWidth={16}
+                                        iconHeight={16}
+                                    />
+                                    <Text
+                                        size="inherit"
+                                        textLevel="span"
+                                        weight="medium"
+                                        colorType="accent"
+                                    >
+                                        {t("teachers.super-tutor")}
+                                    </Text>
+                                </Chip>
+                            )
+                        }
+                    </div>
+                    <Space size={10} direction="vertical" />
+                    <div class="flex flex-row gap-4">
+                        <Text
+                            className="max-w-[64ch] text-ellipsis overflow-hidden"
+                            colorType="tertiary"
+                            size="text-md"
+                            >{teacher.shortPresentation}</Text
+                        >
+                    </div>
+                    <Space size={16} direction="vertical" />
+                    <div class="flex flex-row gap-4 flex-wrap">
+                        <TextWithIcon
+                            icon="star"
+                            textLevel="span"
+                            weight="medium"
+                            colorType="primary"
+                            >{teacher.rating?.toFixed(1)}</TextWithIcon
+                        >
+                        <Text colorType="tertiary" textLevel="span"
+                            >{teacher.reviewsNumber}{" "}{
+                                t("common.reviews")
+                            }</Text
+                        >
+                        <TextWithIcon
+                            icon="people"
+                            textLevel="span"
+                            colorType="tertiary"
+                            >{teacher.studentsNumber}{" "}{
+                                t("common.students")
+                            }</TextWithIcon
+                        >
+                        <TextWithIcon
+                            icon="book"
+                            textLevel="span"
+                            colorType="tertiary"
+                            >{teacher.lessonsNumber}{" "}{
+                                t("common.lessons")
+                            }</TextWithIcon
+                        >
+                    </div>
+                    <Space size={16} direction="vertical" />
+                    <div class="flex flex-row gap-4 flex-wrap">
+                        {
+                            teacher.subjects.map((subject) => (
+                                <Chip colorType="secondary">
+                                    <Text
+                                        colorType="secondary"
+                                        textLevel="span"
+                                        size="inherit"
+                                        weight="medium"
+                                    >
+                                        {subject.name[lang]}
+                                    </Text>
+                                </Chip>
+                            ))
+                        }
+                    </div>
+                    <Space size={16} direction="vertical" />
+                    <div class="flex flex-row gap-4">
+                        <Text colorType="tertiary" size="text-sm">
+                            {t("teachers.speaks")}{" "}
                             {
-                                teacher.isSuperTeacher && (
-                                    <Chip colorType="primary" rounded>
-                                        <Icon
-                                            icon="verified"
-                                            iconWidth={16}
-                                            iconHeight={16}
-                                        />
-                                        <Text
-                                            size="inherit"
-                                            textLevel="span"
-                                            weight="medium"
-                                            colorType="accent"
-                                        >
-                                            {t("teachers.super-tutor")}
-                                        </Text>
-                                    </Chip>
-                                )
+                                teacher.speaksLanguages
+                                    .map(
+                                        (language) =>
+                                            `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
+                                    )
+                                    .join(", ")
                             }
-                        </div>
-                        <Space size={10} direction="vertical" />
-                        <div class="flex flex-row gap-4">
-                            <Text
-                                className="max-w-[64ch] text-ellipsis overflow-hidden"
-                                colorType="tertiary"
-                                size="text-md"
-                                >{teacher.shortPresentation}</Text
-                            >
-                        </div>
-                        <Space size={16} direction="vertical" />
-                        <div class="flex flex-row gap-4 flex-wrap">
-                            <TextWithIcon
-                                icon="star"
-                                textLevel="span"
-                                weight="medium"
-                                colorType="primary"
-                                >{teacher.rating?.toFixed(1)}</TextWithIcon
-                            >
-                            <Text colorType="tertiary" textLevel="span"
-                                >{teacher.reviewsNumber}{" "}{
-                                    t("common.reviews")
-                                }</Text
-                            >
-                            <TextWithIcon
-                                icon="people"
-                                textLevel="span"
-                                colorType="tertiary"
-                                >{teacher.studentsNumber}{" "}{
-                                    t("common.students")
-                                }</TextWithIcon
-                            >
-                            <TextWithIcon
-                                icon="book"
-                                textLevel="span"
-                                colorType="tertiary"
-                                >{teacher.lessonsNumber}{" "}{
-                                    t("common.lessons")
-                                }</TextWithIcon
-                            >
-                        </div>
-                        <Space size={16} direction="vertical" />
-                        <div class="flex flex-row gap-4 flex-wrap">
-                            {
-                                teacher.subjects.map((subject) => (
-                                    <Chip colorType="secondary">
-                                        <Text
-                                            colorType="secondary"
-                                            textLevel="span"
-                                            size="inherit"
-                                            weight="medium"
-                                        >
-                                            {subject.name[lang]}
-                                        </Text>
-                                    </Chip>
-                                ))
-                            }
-                        </div>
-                        <Space size={16} direction="vertical" />
-                        <div class="flex flex-row gap-4">
-                            <Text colorType="tertiary" size="text-sm">
-                                {t("teachers.speaks")}{" "}
-                                {
-                                    teacher.speaksLanguages
-                                        .map(
-                                            (language) =>
-                                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
-                                        )
-                                        .join(", ")
-                                }
-                            </Text>
-                        </div>
+                        </Text>
                     </div>
                 </div>
-
-                <Space size={32} direction="vertical" />
-
-                <div>
-                    <TeacherDetail teacher={teacher as unknown as Teacher} client:only />
-                </div>
-
-                <!-- Right side en mobile: aparece aquí debajo -->
-                <div class="block md:hidden mt-6">
-                    <div class="flex flex-col md:flex-col-reverse gap-4">
-                        <ClassTypes classTypes={teacher.classTypes} client:load />
-                        <div class="flex flex-row gap-3 w-full">
-                            <Button colorType="secondary" size="lg" icon="heart-outline" />
-                            <Button colorType="secondary" size="lg" icon="chat" />
-                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-full bg-gray-100" />
             </div>
 
-            <!-- Right side en desktop: sticky a la derecha -->
-            <div class="hidden md:block md:w-[320px] md:flex-shrink-0">
-                <div class="sticky top-6">
-                    <div class="flex flex-col gap-4">
-                        <div class="flex flex-row gap-3 w-full">
-                            <Button colorType="secondary" size="lg" icon="heart-outline" />
-                            <Button colorType="secondary" size="lg" icon="chat" />
-                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
-                        </div>
-                        <ClassTypes classTypes={teacher.classTypes} client:load />
+            <Space size={32} direction="vertical" />
+
+            <div>
+                <TeacherDetail teacher={teacher as unknown as Teacher} client:load />
+            </div>
+
+            <!-- Right side en mobile: aparece aquí debajo -->
+            <div class="block md:hidden mt-6">
+                <div class="flex flex-col md:flex-col-reverse gap-4">
+                    <ClassTypes classTypes={teacher.classTypes} client:load />
+                    <div class="flex flex-row gap-3 w-full">
+                        <Button colorType="secondary" size="lg" icon="heart-outline" />
+                        <Button colorType="secondary" size="lg" icon="chat" />
+                        <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
                     </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-gray-100" />
+        </div>
+
+        <!-- Right side en desktop: sticky a la derecha -->
+        <div class="hidden md:block md:w-[320px] md:flex-shrink-0">
+            <div class="sticky top-6">
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-row gap-3 w-full">
+                        <Button colorType="secondary" size="lg" icon="heart-outline" />
+                        <Button colorType="secondary" size="lg" icon="chat" />
+                        <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
+                    </div>
+                    <ClassTypes classTypes={teacher.classTypes} client:load />
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </Main>

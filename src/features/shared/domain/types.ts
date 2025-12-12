@@ -26,4 +26,8 @@ export interface Price {
     currency: string;
 }
 
+export interface CommonParams {
+	token: string;
+}
+
 export {};

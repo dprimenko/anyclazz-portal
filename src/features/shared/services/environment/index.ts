@@ -1,5 +1,7 @@
+import { API_URL } from 'astro:env/client'
+
 export const getApiUrl = () => {
-	return import.meta.env.API_URL;
+	return API_URL;
 };
 
 export const getOidcConfig = () => {

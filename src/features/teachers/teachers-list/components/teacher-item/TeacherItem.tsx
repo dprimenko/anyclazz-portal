@@ -27,7 +27,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
         <div className={classNames('card', styles["teacher-item__container"])}>
             {!isMobile && (
                 <div className={styles["teacher-item__avatar-container"]}>
-                    <img className={styles["teacher-item__avatar"]} src={`${teacher.avatar}?height=190&width=150`} alt={`${teacher.name} ${teacher.surname}`} onError={e => e.currentTarget.style.display='none'}/>
+                    <img className={styles["teacher-item__avatar"]} src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} onError={e => e.currentTarget.style.display='none'}/>
                     {teacher.isSuperTeacher && (
                         <div className={styles["teacher-item__super-tutor-badge"]}>
                             <Icon icon="verified" iconWidth={32} iconHeight={32} />
@@ -46,7 +46,9 @@ export function TeacherItem({ teacher }: TeacherProps) {
             <div className={styles["teacher-item__content"]}>
                 <div className={styles["teacher-item__content-info"]}>
                     <div className={styles["teacher-item__content-row"]}>
-                        <Text textLevel="h3" size="text-lg" weight="semibold" colorType="primary" underline>{teacher.name} {teacher.surname}</Text>
+                        <a href={`/teacher/${teacher.id}`} className="no-underline">
+                            <Text textLevel="h3" size="text-lg" weight="semibold" colorType="primary" underline>{teacher.name} {teacher.surname}</Text>
+                        </a>
                         {teacher.isSuperTeacher && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />

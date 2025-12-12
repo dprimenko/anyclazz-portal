@@ -1,8 +1,7 @@
-import { getOidc } from '../../../Auth/oidc';
-import { getApiUrl } from '../../../Shared/services/environment';
-import { FetchClient } from '../../../Shared/services/httpClient';
-import { ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository } from '../domain/types';
+import { FetchClient } from '@/features/shared/services/httpClient';
 import type { ApiTeacher } from './types';
+import type { ClassType, GetTeacherParams, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository } from '../domain/types';
+import { getApiUrl } from '@/features/shared/services/environment';
 
 export class ApiTeacherRepository implements TeacherRepository {
 
@@ -12,31 +11,20 @@ export class ApiTeacherRepository implements TeacherRepository {
 		this.httpClient = new FetchClient(getApiUrl());
 	}
 
-	private toListTeacher(apiTeacher: ApiTeacher): Teacher {
+	private toTeacher(apiTeacher: ApiTeacher): Teacher {
 		return {
-			id: apiTeacher.id,
-			name: apiTeacher.name,
-			surname: apiTeacher.surname,
-			email: apiTeacher.email,
-			subjects: apiTeacher.subjects,
-			classTypes: apiTeacher.classTypes,
-			about: apiTeacher.about,
-			beganTeachingAt: apiTeacher.beganTeachingAt,
-			createdAt: apiTeacher.createdAt,
-			id: '',
-			name: '',
-			surname: '',
-			email: '',
-			subjects: [],
-			classTypes: [],
-			isSuperTeacher: false,
-			speaksLanguages: [],
-			beganTeachingAt: '',
-			teacherAddress: apiTeacher.teacherAddress,
+			...apiTeacher,
+			classTypes: apiTeacher.classTypes.map((classType) => ({
+				type: classType.type as unknown as ClassType,
+				price: {
+					amount: classType.price.price,
+					currency: classType.price.currencyCode,
+				}
+			})),
 		};
 	}
 
-	async listTeachers({ page, size, query }: ListTeachersParams): Promise<ListTeachersResponse> {
+	async listTeachers({ token, page, size, query }: ListTeachersParams): Promise<ListTeachersResponse> {		
 		const data: Record<string, string | number> = {
 			page: page,
 			size: size,
@@ -45,13 +33,26 @@ export class ApiTeacherRepository implements TeacherRepository {
 
 		const apiTeachersResponse = await this.httpClient.get({
 			url: '/teachers',
+			token: token,
 			data,
 		});
 
 		const teachers = await apiTeachersResponse.json();
 		return {
-			teachers: teachers.teachers.map((teacher: ApiTeacher) => this.toListTeacher(teacher)),
+			teachers: teachers.teachers.map(this.toTeacher),
 			meta: teachers.meta,
 		};
+	}
+
+	async getTeacher({ token, teacherId}: GetTeacherParams): Promise<Teacher> {		
+		const apiTeacherResponse = await this.httpClient.get({
+			url: `/teachers/${teacherId}`,
+			token: token,
+		});
+
+		console.log('API TEACHER RESPONSE', apiTeacherResponse);
+
+		const apiTeacher = await apiTeacherResponse.json();
+		return this.toTeacher(apiTeacher);
 	}
 }

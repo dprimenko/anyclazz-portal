@@ -1,4 +1,4 @@
-import type { Price, Translations } from "../../shared/domain/types";
+import type { CommonParams, Price, Translations } from "../../shared/domain/types";
 
 export interface TeacherCategory {
     id: string;
@@ -25,7 +25,7 @@ export interface TeacherLanguage {
 export interface TeacherClassType {
     type: ClassType;
     price?: Price;
-    durations: (30 | 60)[];
+    // durations: (30 | 60)[];
 }
 
 export interface TeacherAddress {
@@ -42,7 +42,7 @@ export interface Teacher {
     avatar?: string;
     portrait?: string;
     category: TeacherCategory[];
-    subject: TeacherSubject;
+    subjects: TeacherSubject[];
     classTypes: TeacherClassType[];
     rating?: number;
     reviewsNumber?: number;
@@ -62,11 +62,11 @@ export interface Teacher {
     createdAt: string;
 }
 
-export interface GetTeacherParams {
-    id: string;
+export interface GetTeacherParams extends CommonParams {
+    teacherId: string;
 }
 
-export interface ListTeachersParams {
+export interface ListTeachersParams extends CommonParams {
     page: number;
     size: number;
     query?: string;
@@ -89,7 +89,7 @@ export interface DeleteTeacherParams {
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
-    createTeacher(teacher: Teacher): Promise<void>;
-    updateTeacher(teacher: Teacher): Promise<void>;
-    deleteTeacher(params: DeleteTeacherParams): Promise<void>;
+    // createTeacher(teacher: Teacher): Promise<void>;
+    // updateTeacher(teacher: Teacher): Promise<void>;
+    // deleteTeacher(params: DeleteTeacherParams): Promise<void>;
 }

@@ -1,20 +1,34 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "../../../../i18n";
 import { Text } from "../../../../ui-library/components/ssr/text/Text";
 import styles from "./TeachersSection.module.css";
 import { Divider } from "../../../../ui-library/components/ssr/divider/Divider";
 import { Space } from "../../../../ui-library/components/ssr/space/Space";
 import { TeachersList } from "../../teachers-list/components/teachers-list/TeachersList";
-import { MockTeacherRepository } from "../../infrastructure/MockTeacherRepository";
+import { ApiTeacherRepository } from "../../infrastructure/ApiTeacherRepository";
+import { TeachersProvider, useTeachers } from "../../providers/TeachersProvider";
 
-const teacherRepository = new MockTeacherRepository();
+const teacherRepository = new ApiTeacherRepository();
 
-export function TeachersSection() {
+export interface TeachersSectionProps {
+  accessToken: string;
+}
+
+export function TeachersSection({ accessToken }: TeachersSectionProps) {
+  return (
+    <TeachersProvider teacherRepository={teacherRepository} accessToken={accessToken}>
+      <TeachersSectionContent />
+    </TeachersProvider>
+  );
+}
+
+function TeachersSectionContent() {
   const t = useTranslations();
+  const { totalTeachers } = useTeachers();
 
   const countTeachers = useMemo(() => {
-    return 232;
-  }, []);
+    return totalTeachers || 0;
+  }, [totalTeachers]);
 
   const teachersLocation = useMemo(() => {
     return "Madrid";
@@ -26,7 +40,7 @@ export function TeachersSection() {
       <Text textLevel="h4" colorType="tertiary">{t('teachers.list.subtitle')}</Text>
       <Divider margin={16} />
       <Space size={16} direction="vertical" />
-      <TeachersList teacherRepository={teacherRepository} />
+      <TeachersList />
     </div>
   );
 }
