@@ -2,6 +2,7 @@ import type { Teacher, TeacherClassType } from "@/features/teachers/domain/types
 import { useCallback, useEffect, useState } from "react";
 import { AnyclazzMyBookingsRepository } from "../infrastructure/AnyclazzMyBookingsRepository";
 import { DateTime } from "luxon";
+import type { CreateBookingParams } from "../domain/types";
 
 export interface BookingCreatorProps {
     teacher: Teacher;
@@ -54,18 +55,22 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         });
     }, [teacher, accessToken, selectedDuration, fetchingAvailableSlots]);
 
+    const createBooking = useCallback(async (bookingData: CreateBookingParams) => {
+        console.log('Creating booking with data:', bookingData);
+        //await repository.createBooking(bookingData);
+    }, []);
+
     const selectClassType = useCallback((classTypeId: string) => {
         const classType = teacher.classTypes.find((ct) => ct.type === classTypeId);
         if (!classType) {
             return;
         }
         setSelectedClass(classType);
-        setSelectedDuration(30);
     }, [teacher]);
 
     useEffect(() => {
         fetchAvailability();
-    }, []);
+    }, [selectedDuration, selectedDate]);
     
     return {
         availableSlots,
@@ -77,5 +82,6 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         selectedTime,
         setSelectedTime,
         selectClassType,
+        createBooking,
     };
 }

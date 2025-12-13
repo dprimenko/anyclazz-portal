@@ -8,7 +8,7 @@ import { Chip } from "@/ui-library/components/ssr/chip/Chip";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import type { Teacher, TeacherClassType } from "@/features/teachers/domain/types";
 import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon";
-import { use, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-selection-group/RectangleSelectionGroup";
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
@@ -17,7 +17,7 @@ import { Calendar } from "@/ui-library/components/calendar/Calendar";
 import { DateTime } from "luxon";
 import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
-// import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import type { CreateBookingParams } from "../../domain/types";
 
 export interface BookingCreatorProps {
     teacher: Teacher;
@@ -34,15 +34,17 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         availableSlots,
         selectedClass,
         selectClassType,
+        selectedDuration,
+        setSelectedDuration,
+        selectedDate,
+        setSelectedDate,
+        selectedTime,
+        setSelectedTime,
+        createBooking
     } = useBookingCreator({
         teacher,
         accessToken,
     });
-
-    // const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
-    // const [selectedDuration, setSelectedDuration] = useState<number>(30);
-    // const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-    // const [selectedTime, setSelectedTime] = useState<string | undefined>();
 
     const t = useTranslations();
     const classes = classNames(styles["booking-creator__container"]);
@@ -76,11 +78,11 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         ),
     })), [selectedClass, t]);
 
-    const availableTimes = useMemo(() => availableSlots.map(({startAt}) => ({
-        id: startAt,
+    const availableTimes = useMemo(() => availableSlots.map(({from}) => ({
+        id: from,
         children: (
             <div className="flex flex-row gap-1.5 w-full items-center">
-                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{DateTime.fromISO(startAt).toFormat('HH:mm')}</Text>
+                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{DateTime.fromISO(from).toFormat('HH:mm')}</Text>
             </div>
         ),
     })), [availableSlots, t]);
@@ -92,9 +94,29 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         return t(`common.${selectedClass.price?.currency.toLowerCase()}_price`, { amount: selectedClass.price?.amount.toFixed(2) });
     }, [selectedClass]);
 
+    const formSubmitHandler = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!selectedTime) {
+            
+            return;
+        };
+        const startAt = DateTime.fromISO(selectedTime!, { zone: 'Europe/Madrid' });
+        const endAt = startAt.plus({ minutes: selectedDuration });
+        
+        const bookingData: CreateBookingParams = {
+            teacherId: teacher.id,
+            token: accessToken!,
+            classTypeId: selectedClass.type,
+            startAt: startAt.toISO()!,
+            endAt: endAt.toISO()!,
+            timeZone: 'Europe/Madrid',
+        };
+        
+        createBooking(bookingData);
+    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken]);
 
     return (
-        <div className={classes}>
+        <form ref={formRef} onSubmit={formSubmitHandler} className={classes}>
             <div className={leftSideClasses}>
                 <Text weight="semibold" colorType="primary">{t('teachers.book-lesson')}</Text>
                 <Space size={10} direction="vertical" />
@@ -157,9 +179,9 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                 </div>
                 <div className={actionsClasses}>
                     <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} />
-                    <Button colorType="primary" label={t('teachers.book-lesson')} />
+                    <Button colorType="primary" label={t('teachers.book-lesson')} type="submit"/>
                 </div>
             </div>
-        </div>
+        </form>
     );
 }

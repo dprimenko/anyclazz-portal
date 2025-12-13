@@ -18,6 +18,14 @@ export interface BookingWithTeacher extends Booking {
     status: 'online' | 'on-site';
 }
 
+export interface CreateBookingParams extends CommonParams {
+    teacherId: string;
+    classTypeId: string;
+    startAt: string;
+    endAt: string;
+    timeZone: string;
+}
+
 export interface GetTeacherAvailabilityParams extends CommonParams {
     teacherId: string;
     from: string;
@@ -25,7 +33,11 @@ export interface GetTeacherAvailabilityParams extends CommonParams {
     duration: number;
 }
 
+export interface GetUpcomingBookingsParams extends CommonParams {
+    
+}
+
 export interface BookingsRepository {
-    getUpcomingBookings(request: Request): Promise<BookingWithTeacher[]>;
+    getUpcomingBookings(params: GetUpcomingBookingsParams): Promise<BookingWithTeacher[]>;
     getTeacherAvailability(params: GetTeacherAvailabilityParams): Promise<any>;
 }
