@@ -1,3 +1,4 @@
+import type { CommonParams } from "@/features/shared/domain/types";
 import type { Teacher } from "@/features/teachers/domain/types";
 
 export interface Booking {
@@ -17,6 +18,14 @@ export interface BookingWithTeacher extends Booking {
     status: 'online' | 'on-site';
 }
 
+export interface GetTeacherAvailabilityParams extends CommonParams {
+    teacherId: string;
+    from: string;
+    to: string;
+    duration: number;
+}
+
 export interface BookingsRepository {
     getUpcomingBookings(request: Request): Promise<BookingWithTeacher[]>;
+    getTeacherAvailability(params: GetTeacherAvailabilityParams): Promise<any>;
 }

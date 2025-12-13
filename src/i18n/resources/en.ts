@@ -78,6 +78,7 @@ export default {
     'teachers.super-tutor': 'Super Tutor',
     'teachers.speaks': 'Speaks:',
     'teachers.book-lesson': 'Book a lesson',
+    'teachers.back-to-teachers': 'back to teachers',
     'teachers.class-types-pricing': 'Class type & prices:',
     'teachers.no_results': 'We couldn\'t find any teachers that match your search. Try adjusting your filters or using different keywords.',
 

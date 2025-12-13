@@ -8,27 +8,41 @@ import { Chip } from "@/ui-library/components/ssr/chip/Chip";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import type { Teacher, TeacherClassType } from "@/features/teachers/domain/types";
 import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon";
-import { useCallback, useMemo, useState } from "react";
+import { use, useCallback, useMemo, useRef, useState } from "react";
 import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-selection-group/RectangleSelectionGroup";
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Calendar } from "@/ui-library/components/calendar/Calendar";
 import { DateTime } from "luxon";
+import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
+import { useBookingCreator } from "../../hooks/useBookingCreator";
+// import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-const todayFormatted = DateTime.now().toFormat('yyyy-MM-dd');
-const times = [
-    { startAt: `${todayFormatted}T08:00:00.000`, endAt: `${todayFormatted}T09:00:00.000`, timeZone: "Europe/Madrid" },
-    { startAt: `${todayFormatted}T09:00:00.000`, endAt: `${todayFormatted}T10:00:00.000`, timeZone: "Europe/Madrid" },
-    { startAt: `${todayFormatted}T10:00:00.000`, endAt: `${todayFormatted}T11:00:00.000`, timeZone: "Europe/Madrid" },
-    { startAt: `${todayFormatted}T11:00:00.000`, endAt: `${todayFormatted}T12:00:00.000`, timeZone: "Europe/Madrid" },
-];
+export interface BookingCreatorProps {
+    teacher: Teacher;
+    onClose?: () => void;
+}
 
-export function BookingCreator({teacher}: {teacher: Teacher}) {
-    const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
-    const [selectedDuration, setSelectedDuration] = useState<number>(selectedClass.durations[0]);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-    const [selectedTime, setSelectedTime] = useState<string | undefined>();
+export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
+    const formRef = useRef<HTMLFormElement>(null);
+    const { 
+        accessToken,
+    } = useTeachers();
+
+    const {
+        availableSlots,
+        selectedClass,
+        selectClassType,
+    } = useBookingCreator({
+        teacher,
+        accessToken,
+    });
+
+    // const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
+    // const [selectedDuration, setSelectedDuration] = useState<number>(30);
+    // const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    // const [selectedTime, setSelectedTime] = useState<string | undefined>();
 
     const t = useTranslations();
     const classes = classNames(styles["booking-creator__container"]);
@@ -53,7 +67,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
         children: classOptionChildren(classType),
     })), [teacher]);
 
-    const classDurations = useMemo(() => selectedClass.durations.map((duration) => ({
+    const classDurations = useMemo(() => [30,60].map((duration) => ({
         id: duration.toString(),
         children: (
             <div className="flex flex-row gap-1.5 w-full items-center">
@@ -62,23 +76,14 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
         ),
     })), [selectedClass, t]);
 
-    const availableTimes = useMemo(() => times.map(({startAt}) => ({
+    const availableTimes = useMemo(() => availableSlots.map(({startAt}) => ({
         id: startAt,
         children: (
             <div className="flex flex-row gap-1.5 w-full items-center">
                 <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{DateTime.fromISO(startAt).toFormat('HH:mm')}</Text>
             </div>
         ),
-    })), [selectedClass, t]);
-
-    const selectClassType = useCallback((classTypeId: string) => {
-        const classType = teacher.classTypes.find((ct) => ct.type === classTypeId);
-        if (!classType) {
-            return;
-        }
-        setSelectedClass(classType);
-        setSelectedDuration(classType.durations[0]);
-    }, [teacher]);
+    })), [availableSlots, t]);
 
     const priceAmount = useMemo(() => {
         if (selectedClass.price === undefined) {
@@ -151,7 +156,7 @@ export function BookingCreator({teacher}: {teacher: Teacher}) {
                     </div>
                 </div>
                 <div className={actionsClasses}>
-                    <Button colorType="secondary" onlyText label={t('common.cancel')} />
+                    <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} />
                     <Button colorType="primary" label={t('teachers.book-lesson')} />
                 </div>
             </div>

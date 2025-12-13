@@ -51,7 +51,7 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 			setFetchingTeachers(false);
 			setAlreadyFetched(false);
 		});
-	}, [teachers, page, teacherRepository, search]) ;
+	}, [teachers, page, teacherRepository, search]);
 
     const refreshTeachers = useCallback(() => {
 		setTeachers([]);
@@ -72,6 +72,7 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 	}, [search]);
 
     return {
+		accessToken,
         teachers,
 		totalTeachers,
 		fetchingTeachers,

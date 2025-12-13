@@ -13,6 +13,7 @@ import { BookingCreator } from "@/features/bookings/components/booking-creator/B
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile.ts";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar.tsx";
 import { ClassTypes } from "../../../components/class-types/ClassTypes.tsx";
+import { useState } from "react";
 
 export interface TeacherProps {
     teacher: Teacher;
@@ -20,6 +21,7 @@ export interface TeacherProps {
 
 export function TeacherItem({ teacher }: TeacherProps) {
     const t = useTranslations();
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
     const isMobile = useIsMobile();
 
@@ -37,7 +39,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
             )}
             {isMobile && (
                 <Avatar
-                    src={`${teacher.avatar}?height=190&width=150`}
+                    src={`${teacher.avatar}`}
                     alt={`${teacher.name} ${teacher.surname}`}
                     hasVerifiedBadge={teacher.isSuperTeacher}
                     size={64}
@@ -90,15 +92,17 @@ export function TeacherItem({ teacher }: TeacherProps) {
                         <div className="flex flex-row gap-3 w-full">
                             <Button colorType="secondary" size="lg" icon="heart-outline" />
                             <Button colorType="secondary" size="lg" icon="chat" />
-                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
+                            <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth onClick={() => setIsBookingModalOpen(true)} />
                         </div>
                         <ClassTypes classTypes={teacher.classTypes} />
                     </div>
                 </div>
             </div>
-            {/* <Modal onClose={() => {}} width={700} height={700}>
-				<BookingCreator teacher={teacher} />
-			</Modal> */}
+            {isBookingModalOpen && (
+                <Modal width={700} height={700}>
+                    <BookingCreator teacher={teacher} onClose={() => setIsBookingModalOpen(false)} />
+                </Modal>
+            )}
         </div>
     );
 }

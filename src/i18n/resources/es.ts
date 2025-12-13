@@ -14,4 +14,5 @@ export default {
     'menu.support': 'Soporte',
     'location.placeholder': '¿Dónde estás?',
     'location.search_not_found': 'No se encontraron resultados',
+    'teachers.back-to-teachers': 'volver a profesores',
 }

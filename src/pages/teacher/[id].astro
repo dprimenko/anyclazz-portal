@@ -47,6 +47,18 @@ const teacher = await teacherRepository.getTeacher({
             alt={`${teacher.name} ${teacher.surname}`}
             class="w-full h-[170px] object-cover rounded-xl"
         />
+        
+        <!-- Back to teachers button -->
+        <div class="absolute top-6 left-6">
+            <a 
+                href="/teachers" 
+                class="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-md hover:bg-white transition-colors"
+            >
+                <Icon icon="arrow-left" iconWidth={20} iconHeight={20} />
+                <Text size="text-sm" weight="medium" colorType="primary">{t('teachers.back-to-teachers')}</Text>
+            </a>
+        </div>
+
         <div class="flex flex-col px-4 md:px-8 md:pt-6 md:flex-row gap-6 md:gap-8">
         <!-- Left side: Información del profesor -->
         <div class="flex-1 md:min-w-0">

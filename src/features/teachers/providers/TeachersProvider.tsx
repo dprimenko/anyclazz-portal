@@ -3,6 +3,7 @@ import { useTeacherList, type TeachersPageProps } from "../hooks/useTeacherList"
 import type { Teacher } from "../domain/types";
 
 interface TeachersContextValue {
+    accessToken: string;
     teachers: Teacher[];
     totalTeachers: number;
     fetchingTeachers: boolean;
