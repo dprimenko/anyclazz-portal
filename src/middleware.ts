@@ -32,6 +32,28 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
   
+  // Verificar si el usuario acaba de hacer logout ANTES de obtener la sesión
+  const loggedOutCookie = context.cookies.get('user_logged_out');
+  const isLoggingOut = loggedOutCookie?.value === 'true';
+  
+  if (isLoggingOut) {
+    console.log('🚪 User logged out flag detected, ignoring session');
+    
+    // NO eliminar la cookie aquí, dejar que login.astro la lea también
+    // La cookie expirará automáticamente después de 120 segundos
+    
+    // Si estamos en una ruta pública (login, home), continuar sin validar sesión
+    if (isPublicRoute(pathname) || pathname === '/') {
+      console.log(`✅ Public route after logout: ${pathname}`);
+      return next();
+    }
+    
+    // Si estamos en una ruta protegida, redirigir a login
+    console.log(`🚫 Protected route after logout: ${pathname} -> redirecting to login`);
+    const callbackUrl = encodeURIComponent(`${pathname}${new URL(context.request.url).search}`);
+    return context.redirect(`${routeConfig.loginRoute}?callbackUrl=${callbackUrl}`);
+  }
+  
   const validationLevel = getValidationLevel(pathname);
   
   let session;

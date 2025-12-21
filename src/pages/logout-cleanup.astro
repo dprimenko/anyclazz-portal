@@ -1,0 +1,48 @@
+---
+// Esta página limpia las cookies del lado del cliente
+const nextUrl = Astro.url.searchParams.get('next') || '/login';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrando sesión...</title>
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;">
+        <p>Cerrando sesión...</p>
+    </div>
+    
+    <script define:inline is:inline>
+        // Limpiar todas las cookies relacionadas con auth
+        const cookiesToClear = [
+            'authjs.pkce.code_verifier',
+            'authjs.callback-url',
+            'authjs.csrf-token',
+            'authjs.session-token',
+            '__Secure-authjs.session-token',
+            '__Host-authjs.csrf-token',
+        ];
+        
+        console.log('🧹 Clearing cookies from client side...');
+        
+        cookiesToClear.forEach(cookieName => {
+            // Borrar con diferentes paths y domains
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;`;
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;`;
+            console.log(`🗑️  Cleared ${cookieName}`);
+        });
+        
+        console.log('✅ Cookies cleared, redirecting to login...');
+        
+        // Redirigir después de limpiar las cookies
+        const nextUrl = new URLSearchParams(window.location.search).get('next') || '/login';
+        setTimeout(() => {
+            window.location.href = nextUrl;
+        }, 100);
+    </script>
+</body>
+</html>

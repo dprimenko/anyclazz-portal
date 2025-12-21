@@ -4,9 +4,20 @@ import Base from '../layout/Base.astro';
 import { getSession } from 'auth-astro/server';
 import {routeConfig} from '../config/routes.ts';
 
+// Verificar si el usuario acaba de hacer logout
+const loggedOutCookie = Astro.cookies.get('user_logged_out');
+const isLoggingOut = loggedOutCookie?.value === 'true';
+
+// Si está en proceso de logout, eliminar la cookie para futuras solicitudes
+if (isLoggingOut) {
+  Astro.cookies.delete('user_logged_out', { path: '/' });
+  console.log('🗑️ Cleared user_logged_out cookie in login page');
+}
+
 const session = await getSession(Astro.request);
 
-if (session?.user) {
+// Solo redirigir si hay sesión Y NO está en proceso de logout
+if (session?.user && !isLoggingOut) {
   // Si hay sesión, redirigir (el middleware ya maneja el callbackUrl)
   return Astro.redirect(routeConfig.defaultRedirectRoute);
 }

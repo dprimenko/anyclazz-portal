@@ -10,15 +10,16 @@ interface LoggedUserClientProps {
 }
 
 export function LoggedUserClient({ user }: LoggedUserClientProps) {
-    const handleLogout = async () => {
+    const handleLogout = () => {
         console.log('🚪 Logout button clicked');
+        console.log('📍 Current location:', window.location.href);
+        console.log('🍪 Current cookies:', document.cookie);
+        console.log('➡️  Redirecting to: /api/auth/keycloak-logout');
         
-        // Crear un form y enviarlo vía POST
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/api/auth/keycloak-logout';
-        document.body.appendChild(form);
-        form.submit();
+        // Redirigir GET al endpoint
+        window.location.href = '/api/auth/keycloak-logout';
+        
+        console.log('✅ Redirect initiated');
     };
 
     const handleSettings = () => {

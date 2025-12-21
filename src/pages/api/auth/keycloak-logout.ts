@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
 import { getSession } from 'auth-astro/server';
 
-export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
+export const POST: APIRoute = async ({ request, redirect, cookies, url, locals }) => {
   try {
     const origin = new URL(request.url).origin;
     
     console.log('🚪 Starting logout process...');
     
-    // Obtener la sesión actual para acceder al id_token y refresh_token
+    // Obtener la sesión actual para acceder al id_token ANTES de limpiarlo
     let session;
     let idToken;
     let refreshToken;
@@ -16,25 +16,22 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
       session = await getSession(request);
       idToken = (session as any)?.idToken;
       refreshToken = (session as any)?.refreshToken;
+      console.log('🔑 ID Token found:', !!idToken);
+      console.log('🔄 Refresh Token found:', !!refreshToken);
     } catch (error) {
-      // Si falla al obtener la sesión (por error de refresh token), continuar con logout
-      console.log('⚠️  Could not get session (likely expired), proceeding with cookie cleanup');
+      console.log('⚠️  Could not get session, proceeding with logout');
     }
     
-    console.log('🔑 ID Token found:', !!idToken);
-    console.log('🔄 Refresh Token found:', !!refreshToken);
+    // Guardar el id_token antes de limpiar
+    const savedIdToken = idToken;
     
-    // Obtener el callbackUrl de los parámetros
     const callbackUrl = url.searchParams.get('callbackUrl');
-    
-    // Si hay callbackUrl = logout automático por expiración -> volver a login con callback
-    // Si NO hay callbackUrl = logout explícito -> ir a login sin callback
     const redirectPath = callbackUrl ? `/login?callbackUrl=${callbackUrl}` : '/login';
     
     console.log(`Logout type: ${callbackUrl ? 'Automatic (expired)' : 'Explicit (user action)'}`);
     console.log(`Will redirect to: ${redirectPath}`);
     
-    // Si hay refresh token, revocarlo explícitamente en Keycloak
+    // Revocar refresh token si existe
     if (refreshToken) {
       try {
         console.log('🗑️  Revoking refresh token in Keycloak...');
@@ -61,7 +58,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
       }
     }
     
-    // Limpiar TODAS las cookies posibles de auth
+    // Limpiar todas las cookies de autenticación manualmente
     const cookiesToDelete = [
       'authjs.session-token',
       '__Secure-authjs.session-token',
@@ -69,6 +66,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
       '__Host-authjs.csrf-token',
       'authjs.callback-url',
       '__Secure-authjs.callback-url',
+      'authjs.pkce.code_verifier',
     ];
     
     cookiesToDelete.forEach(cookieName => {
@@ -77,15 +75,25 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
       console.log(`🗑️  Deleted cookie: ${cookieName}`);
     });
     
-    // Intentar hacer logout en Keycloak
+    // Establecer una cookie de señal para indicar que el usuario hizo logout
+    // Esta cookie la verificará el middleware para invalidar la sesión
+    cookies.set('user_logged_out', 'true', {
+      path: '/',
+      maxAge: 120, // 120 segundos para completar el flujo de logout
+      httpOnly: false,
+      sameSite: 'lax'
+    });
+    
+    console.log('🏴 Set user_logged_out flag cookie');
+    
+    // Ahora redirigir a Keycloak logout usando el id_token que guardamos
     try {
-      // Obtener la URL de logout de Keycloak
       const keycloakLogoutUrl = new URL('http://localhost:8081/realms/anyclazz/protocol/openid-connect/logout');
       keycloakLogoutUrl.searchParams.set('post_logout_redirect_uri', `${origin}${redirectPath}`);
       
-      // Solo agregar id_token_hint si existe y parece válido
-      if (idToken && idToken.split('.').length === 3) {
-        keycloakLogoutUrl.searchParams.set('id_token_hint', idToken);
+      // Usar el id_token que guardamos antes de limpiar las cookies
+      if (savedIdToken && savedIdToken.split('.').length === 3) {
+        keycloakLogoutUrl.searchParams.set('id_token_hint', savedIdToken);
         console.log('🔓 Keycloak logout with id_token_hint');
       } else {
         console.log('🔓 Keycloak logout without id_token_hint (token missing or invalid)');
@@ -93,8 +101,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
       
       console.log('🔓 Keycloak logout URL:', keycloakLogoutUrl.toString());
       
-      // Redirigir a Keycloak logout
-      return redirect(keycloakLogoutUrl.toString());
+      return redirect(keycloakLogoutUrl.toString(), 302);
     } catch (error) {
       console.warn('⚠️  Error during Keycloak logout, redirecting directly:', error);
       return redirect(redirectPath);
@@ -106,6 +113,6 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
   }
 };
 
-export const GET: APIRoute = async ({ request, redirect, cookies, url }) => {
-  return POST({ request, redirect, cookies, url } as any);
+export const GET: APIRoute = async (context) => {
+  return POST(context);
 };
