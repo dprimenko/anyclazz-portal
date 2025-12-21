@@ -1,6 +1,7 @@
 .menuWrapper {
     position: relative;
     display: inline-block;
+    width: 100%;
 }
 
 .trigger {
@@ -11,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .trigger:hover {
@@ -27,6 +29,21 @@
     z-index: 50;
     min-width: 160px;
     padding: 0.25rem 0;
+    width: 100%;
+}
+
+.dropdown.up {
+    top: auto;
+    bottom: calc(100% + 0.5rem);
+}
+
+.dropdown.down {
+    top: calc(100% + 0.5rem);
+}
+
+.dropdown.fullWidth {
+    width: 100%;
+    min-width: auto;
 }
 
 .dropdown.right {

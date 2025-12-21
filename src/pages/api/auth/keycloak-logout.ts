@@ -77,21 +77,28 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
       console.log(`🗑️  Deleted cookie: ${cookieName}`);
     });
     
-    // Si no hay idToken, redirigir directamente sin pasar por Keycloak
-    if (!idToken) {
-      console.log('⚠️  No ID token, redirecting directly to login');
+    // Intentar hacer logout en Keycloak
+    try {
+      // Obtener la URL de logout de Keycloak
+      const keycloakLogoutUrl = new URL('http://localhost:8081/realms/anyclazz/protocol/openid-connect/logout');
+      keycloakLogoutUrl.searchParams.set('post_logout_redirect_uri', `${origin}${redirectPath}`);
+      
+      // Solo agregar id_token_hint si existe y parece válido
+      if (idToken && idToken.split('.').length === 3) {
+        keycloakLogoutUrl.searchParams.set('id_token_hint', idToken);
+        console.log('🔓 Keycloak logout with id_token_hint');
+      } else {
+        console.log('🔓 Keycloak logout without id_token_hint (token missing or invalid)');
+      }
+      
+      console.log('🔓 Keycloak logout URL:', keycloakLogoutUrl.toString());
+      
+      // Redirigir a Keycloak logout
+      return redirect(keycloakLogoutUrl.toString());
+    } catch (error) {
+      console.warn('⚠️  Error during Keycloak logout, redirecting directly:', error);
       return redirect(redirectPath);
     }
-    
-    // Obtener la URL de logout de Keycloak
-    const keycloakLogoutUrl = new URL('http://localhost:8081/realms/anyclazz/protocol/openid-connect/logout');
-    keycloakLogoutUrl.searchParams.set('post_logout_redirect_uri', `${origin}${redirectPath}`);
-    keycloakLogoutUrl.searchParams.set('id_token_hint', idToken);
-    
-    console.log('🔓 Keycloak logout URL:', keycloakLogoutUrl.toString());
-    
-    // Redirigir directamente a Keycloak logout
-    return redirect(keycloakLogoutUrl.toString());
     
   } catch (error) {
     console.error('❌ Error during Keycloak logout:', error);

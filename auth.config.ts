@@ -64,6 +64,7 @@ export default defineConfig({
             token.userRole = payload.userRole || payload.roles?.[0] || null;
             token.realmRoles = payload.realm_roles || [];
             token.roles = payload.roles || [];
+            token.platformId = payload.platformId || payload.platform_id || null;
             
           } catch (error) {
             console.error('Error decoding JWT:', error);
@@ -122,6 +123,7 @@ export default defineConfig({
               token.userRole = payload.userRole || payload.roles?.[0] || null;
               token.realmRoles = payload.realm_roles || [];
               token.roles = payload.roles || [];
+              token.platformId = payload.platformId || payload.platform_id || null;
             } catch (error) {
               console.error('Error decoding refreshed JWT:', error);
             }
@@ -154,6 +156,7 @@ export default defineConfig({
         (session as any).idToken = token.idToken;
         (session as any).refreshToken = token.refreshToken; // Necesario para revocación
         (session as any).userRole = token.userRole;
+        (session as any).platformId = token.platformId;
         // Solo pasar el primer role en lugar de todos los arrays
         const roles = (token.roles as string[]) || [];
         const realmRoles = (token.realmRoles as string[]) || [];

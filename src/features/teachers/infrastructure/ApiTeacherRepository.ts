@@ -16,10 +16,13 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...apiTeacher,
 			classTypes: apiTeacher.classTypes.map((classType) => ({
 				type: classType.type as unknown as ClassType,
-				price: {
-					amount: classType.price.price,
-					currency: classType.price.currencyCode,
-				}
+				durations: classType.durations.map((duration) => ({
+					duration: duration.duration,
+					price: {
+						amount: duration.price.price,
+						currency: duration.price.currencyCode,
+					}
+				}))
 			})),
 		};
 	}
@@ -50,7 +53,11 @@ export class ApiTeacherRepository implements TeacherRepository {
 			token: token,
 		});
 
+		console.log('apiTeacherResponse');
+
 		const apiTeacher = await apiTeacherResponse.json();
+		console.log(apiTeacherResponse);
+
 		return this.toTeacher(apiTeacher);
 	}
 }

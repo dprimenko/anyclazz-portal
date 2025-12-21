@@ -97,7 +97,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
     const formSubmitHandler = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!selectedTime) {
-            
+            alert(t('booking.select_time_required'));
             return;
         };
         const startAt = DateTime.fromISO(selectedTime!, { zone: 'Europe/Madrid' });
@@ -112,7 +112,9 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             timeZone: 'Europe/Madrid',
         };
         
-        createBooking(bookingData);
+        const booking = await createBooking(bookingData);
+
+        // window.location.href = `/booking/checkout/${booking?.id}`;
     }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken]);
 
     return (

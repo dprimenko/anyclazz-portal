@@ -1,3 +1,5 @@
+import type { Session } from "@auth/core/types";
+
 export interface AuthUser {
     id: string;
     email: string;
@@ -7,5 +9,5 @@ export interface AuthUser {
 }
 
 export interface AuthRepository {
-    getCurrentUser(request: Request): Promise<AuthUser | null>;
+    getCurrentUser(session: Session | null): AuthUser | null;
 }

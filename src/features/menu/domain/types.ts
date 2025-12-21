@@ -8,6 +8,7 @@ export interface MenuItem {
 }
 
 export interface MenuRepository {
+    getTeacherMenuItems: () => MenuItem[];
     getStudentMenuItems: () => MenuItem[];
     getCommonMenuItems: () => MenuItem[];
 }

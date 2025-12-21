@@ -10,6 +10,11 @@ export interface TeacherSubject {
     name: Translations;
 }
 
+export interface TeacherLanguage {
+    language: string;
+    proficiencyLevel: string;
+}
+
 export enum ClassType {
     onlineSingle = 'online_single',
     onlineGroup = 'online_group',
@@ -17,15 +22,14 @@ export enum ClassType {
     onsiteGroup = 'onsite_group'
 }
 
-export interface TeacherLanguage {
-    language: string;
-    proficiencyLevel: string;
+export interface DurationPrice {
+    duration: 30 | 60;
+    price: Price;
 }
 
 export interface TeacherClassType {
     type: ClassType;
-    price?: Price;
-    // durations: (30 | 60)[];
+    durations: DurationPrice[];
 }
 
 export interface TeacherAddress {

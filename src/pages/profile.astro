@@ -1,0 +1,199 @@
+---
+import { type Teacher } from "@/features/teachers/domain/types";
+import { Chip } from "@/ui-library/components/ssr/chip/Chip.tsx";
+import { Icon } from "@/ui-library/components/ssr/icon/Icon.tsx";
+import { Space } from "@/ui-library/components/ssr/space/Space.tsx";
+import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
+import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon.tsx";
+import { getLangFromUrl, useTranslations } from "@/i18n/index.ts";
+import Main from "@/layout/Main.astro";
+import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
+import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
+import { getSession } from 'auth-astro/server';
+import { TeacherProfile } from "@/features/teachers/teacher-profile/TeacherProfile";
+import { AnyclazzAuthRepository } from "@/features/auth/ssr/infrastructure/AnyclazzAuthRepository";
+
+export const prerender = false;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations({ lang });
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+    return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(await getSession(Astro.request));
+const teacherRepository = new ApiTeacherRepository();
+const teacher = await teacherRepository.getTeacher({ 
+    token: accessToken,
+    teacherId: user?.id
+});
+
+---
+
+<Main>
+    <div class="relative p-1">
+        <img
+            src={teacher.portrait || "https://anyclazz.b-cdn.net/fe57ea75605c476cadd30a1f53474fc1eacc7c28.jpg"}
+            alt={`${teacher.name} ${teacher.surname}`}
+            class="w-full h-[170px] object-cover rounded-xl"
+        />
+        
+        <!-- Back to teachers button -->
+        <div class="absolute top-6 left-6">
+            <a 
+                href="/teachers" 
+                class="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-md hover:bg-white transition-colors"
+            >
+                <Icon icon="arrow-left" iconWidth={20} iconHeight={20} />
+                <Text size="text-sm" weight="medium" colorType="primary">{t('teachers.back-to-teachers')}</Text>
+            </a>
+        </div>
+
+        <div class="flex flex-col px-4 md:px-8 md:pt-6 md:flex-row gap-6 md:gap-8">
+        <!-- Left side: Información del profesor -->
+        <div class="flex-1 md:min-w-0">
+            <div class="flex flex-col md:flex-row md:gap-5">
+                <!-- Avatar -->
+                <div class="relative md:w-[148px] md:h-[148px]">
+                    <div class="mt-[-34px] md:mt-[-60px]">
+                        <div class="block md:hidden">
+                            <Avatar
+                                size={88}
+                                src={teacher.avatar}
+                                alt={`${teacher.name} ${teacher.surname}`}
+                                hasVerifiedBadge={teacher.isSuperTeacher}
+                                hasOutline
+                            />
+                        </div>
+                        <div class="hidden md:block">
+                            <Avatar
+                                size={148}
+                                src={teacher.avatar}
+                                alt={`${teacher.name} ${teacher.surname}`}
+                                hasVerifiedBadge={teacher.isSuperTeacher}
+                                hasOutline
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del profesor -->
+                <div class="flex flex-col mt-6 md:mt-0 flex-1">
+                    <div class="flex flex-row gap-4 items-center flex-wrap">
+                        <Text
+                            textLevel="h2"
+                            size="display-xs"
+                            weight="semibold"
+                            colorType="primary"
+                            >{teacher.name}{" "}{teacher.surname}</Text
+                        >
+                        {
+                            teacher.isSuperTeacher && (
+                                <Chip colorType="primary" rounded>
+                                    <Icon
+                                        icon="verified"
+                                        iconWidth={16}
+                                        iconHeight={16}
+                                    />
+                                    <Text
+                                        size="inherit"
+                                        textLevel="span"
+                                        weight="medium"
+                                        colorType="accent"
+                                    >
+                                        {t("teachers.super-tutor")}
+                                    </Text>
+                                </Chip>
+                            )
+                        }
+                    </div>
+                    <Space size={10} direction="vertical" />
+                    <div class="flex flex-row gap-4">
+                        <Text
+                            className="max-w-[64ch] text-ellipsis overflow-hidden"
+                            colorType="tertiary"
+                            size="text-md"
+                            >{teacher.shortPresentation}</Text
+                        >
+                    </div>
+                    <Space size={16} direction="vertical" />
+                    <div class="flex flex-row gap-4 flex-wrap">
+                        <TextWithIcon
+                            icon="star"
+                            textLevel="span"
+                            weight="medium"
+                            colorType="primary"
+                            >{teacher.rating?.toFixed(1)}</TextWithIcon
+                        >
+                        <Text colorType="tertiary" textLevel="span"
+                            >{teacher.reviewsNumber}{" "}{
+                                t("common.reviews")
+                            }</Text
+                        >
+                        <TextWithIcon
+                            icon="people"
+                            textLevel="span"
+                            colorType="tertiary"
+                            >{teacher.studentsNumber}{" "}{
+                                t("common.students")
+                            }</TextWithIcon
+                        >
+                        <TextWithIcon
+                            icon="book"
+                            textLevel="span"
+                            colorType="tertiary"
+                            >{teacher.lessonsNumber}{" "}{
+                                t("common.lessons")
+                            }</TextWithIcon
+                        >
+                    </div>
+                    <Space size={16} direction="vertical" />
+                    <div class="flex flex-row gap-4 flex-wrap">
+                        {
+                            teacher.subjects.map((subject) => (
+                                <Chip colorType="secondary">
+                                    <Text
+                                        colorType="secondary"
+                                        textLevel="span"
+                                        size="inherit"
+                                        weight="medium"
+                                    >
+                                        {subject.name[lang]}
+                                    </Text>
+                                </Chip>
+                            ))
+                        }
+                    </div>
+                    <Space size={16} direction="vertical" />
+                    <div class="flex flex-row gap-4">
+                        <Text colorType="tertiary" size="text-sm">
+                            {t("teachers.speaks")}{" "}
+                            {
+                                teacher.speaksLanguages
+                                    .map(
+                                        (language) =>
+                                            `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
+                                    )
+                                    .join(", ")
+                            }
+                        </Text>
+                    </div>
+                </div>
+            </div>
+
+            <Space size={32} direction="vertical" />
+
+            <div>
+                <TeacherProfile teacher={teacher as unknown as Teacher} client:load />
+            </div>
+
+            <div class="w-full bg-gray-100" />
+        </div>
+    </div>
+    </div>
+</Main>

@@ -7,6 +7,7 @@ declare module '@auth/core/types' {
     refreshToken?: string;
     userRole?: string;
     primaryRole?: string | null;
+    platformId?: string;
     error?: string;
   }
 
@@ -17,6 +18,7 @@ declare module '@auth/core/types' {
     userRole?: string;
     realmRoles?: string[];
     roles?: string[];
+    platformId?: string;
     accessTokenExpires?: number;
     error?: string;
     hasRefreshToken?: boolean;

@@ -9,13 +9,6 @@ export interface BookingCreatorProps {
     accessToken: string;
 }
 
-// const times = [
-//     { startAt: `${todayFormatted}T08:00:00.000`, endAt: `${todayFormatted}T09:00:00.000`, timeZone: "Europe/Madrid" },
-//     { startAt: `${todayFormatted}T09:00:00.000`, endAt: `${todayFormatted}T10:00:00.000`, timeZone: "Europe/Madrid" },
-//     { startAt: `${todayFormatted}T10:00:00.000`, endAt: `${todayFormatted}T11:00:00.000`, timeZone: "Europe/Madrid" },
-//     { startAt: `${todayFormatted}T11:00:00.000`, endAt: `${todayFormatted}T12:00:00.000`, timeZone: "Europe/Madrid" },
-// ];
-
 const repository = new AnyclazzMyBookingsRepository();
 
 export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps) {
@@ -56,8 +49,17 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
     }, [teacher, accessToken, selectedDuration, fetchingAvailableSlots]);
 
     const createBooking = useCallback(async (bookingData: CreateBookingParams) => {
-        console.log('Creating booking with data:', bookingData);
-        //await repository.createBooking(bookingData);
+        try {
+            const booking = await repository.createBooking(bookingData);
+            return booking;
+        } catch (error: unknown) {
+            if (error instanceof Error && error.cause === 'TIME_SLOT_UNAVAILABLE') {
+                alert("El slot ya ha sido reservado. Por favor, selecciona otro.");
+                return;
+            }
+            alert("Ha ocurrido un error al crear la reserva. Por favor, inténtalo de nuevo.");
+            return;
+        }
     }, []);
 
     const selectClassType = useCallback((classTypeId: string) => {

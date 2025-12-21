@@ -1,5 +1,6 @@
 import { useState, useRef, type ReactNode } from "react";
 import { useClickOutside } from "@/ui-library/hooks/useClickOutside";
+import classNames from "classnames";
 import styles from "./PopMenu.module.css";
 
 export interface PopMenuItem {
@@ -12,9 +13,10 @@ export interface PopMenuProps {
     trigger: ReactNode;
     items: PopMenuItem[];
     align?: "left" | "right";
+    direction?: "up" | "down";
 }
 
-export function PopMenu({ trigger, items, align = "right" }: PopMenuProps) {
+export function PopMenu({ trigger, items, align = "right", direction = "down" }: PopMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +45,7 @@ export function PopMenu({ trigger, items, align = "right" }: PopMenuProps) {
                 {trigger}
             </button>
             {isOpen && (
-                <div className={`${styles.dropdown} ${styles[align]}`}>
+                <div className={classNames(styles.dropdown, styles[align], styles[direction])}>
                     {items.map((item, index) => (
                         <button
                             key={index}

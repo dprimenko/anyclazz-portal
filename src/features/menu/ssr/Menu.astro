@@ -4,14 +4,25 @@ import './styles.css';
 import { LocalMenuRepository } from '../infrastructure/LocalMenuRepository';
 import type { MenuItem } from '../domain/types';
 import { Icon } from '../../../ui-library/components/ssr/icon/Icon';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { getSession } from 'auth-astro/server';
 
 const { class: className, isDark } = Astro.props;
 const { pathname } = Astro.url;
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
 
+const authRepository = new AnyclazzAuthRepository();
+const user = authRepository.getCurrentUser(await getSession(Astro.request));
+
 const menuRepository = new LocalMenuRepository();
-const menuItems: MenuItem[] = menuRepository.getStudentMenuItems();
+let menuItems: MenuItem[] = [];
+if (user?.role === 'teacher') {
+    menuItems = menuRepository.getTeacherMenuItems();
+} else if (user?.role === 'student') {
+    menuItems = menuRepository.getStudentMenuItems();
+}
+
 const commonMenuItems: MenuItem[] = menuRepository.getCommonMenuItems();
 
 const isItemSelected = (item: MenuItem): boolean => {

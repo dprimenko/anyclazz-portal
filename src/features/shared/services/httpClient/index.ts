@@ -42,6 +42,10 @@ export class FetchClient {
 			signal
 		});
 		if (!response.ok) {
+			const body = await response.json();
+			if (body.error) {
+				throw new Error(response.status.toString(), { cause: body.error });
+			}
 			throw new Error('HTTP error ' + response.status);
 		}
 		return response;
@@ -59,6 +63,10 @@ export class FetchClient {
 			signal
 		});
 		if (!response.ok) {
+			const body = await response.json();
+			if (body.error) {
+				throw new Error(response.status.toString(), { cause: body.error });
+			}
 			throw new Error('HTTP error ' + response.status);
 		}
 		return response;

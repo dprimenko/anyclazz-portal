@@ -1,48 +1,16 @@
 ---
 import './styles.css'
 import { AnyclazzAuthRepository } from "../../infrastructure/AnyclazzAuthRepository"
+import { getSession } from 'auth-astro/server';
+import { LoggedUserClient } from './LoggedUserClient';
 
 const loggedUser = new AnyclazzAuthRepository();
-const user = await loggedUser.getCurrentUser(Astro.request);
+const user = await loggedUser.getCurrentUser(await getSession(Astro.request));
 ---
 
-<div class="logged-user">
-    {user && (
-        <div class="logged-user__container">
-            <span class="logged-user__name">{user.name}</span>
-            <button 
-                class="logged-user__logout-btn" 
-                id="logout-btn"
-            >
-                Cerrar sesión
-            </button>
-        </div>
-    )}
-</div>
-
-<script>
-    const logoutBtn = document.getElementById('logout-btn');
-    
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            
-            console.log('🚪 Logout button clicked');
-            
-            try {
-                // Primero llamar a signOut de auth-astro para limpiar la sesión local
-                const { signOut } = await import("auth-astro/client");
-                console.log('🔓 Calling signOut...');
-                await signOut();
-                
-                // Después redirigir al logout de Keycloak
-                console.log('➡️  Redirecting to Keycloak logout...');
-                window.location.href = '/api/auth/keycloak-logout';
-            } catch (error) {
-                console.error('❌ Error during logout:', error);
-                // Si falla signOut, intentar ir directamente al endpoint
-                window.location.href = '/api/auth/keycloak-logout';
-            }
-        });
-    }
-</script>
+{user && (
+    <LoggedUserClient 
+        user={user} 
+        client:load
+    />
+)}

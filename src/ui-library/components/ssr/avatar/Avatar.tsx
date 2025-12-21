@@ -13,7 +13,7 @@ export interface AvatarProps {
 
 const DEFAULT_SIZE = 40;
 
-export function Avatar({ src, alt, size = DEFAULT_SIZE, text, hasVerifiedBadge, hasOutline }: AvatarProps) {
+export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOutline }: AvatarProps) {
     const avatarContainer = classNames(
         'relative rounded-full',
         styles['avatar__container'],
@@ -30,7 +30,7 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, text, hasVerifiedBadge, 
     const verifiedBadgeSize = size * 0.25;
 
     return (
-        <div className={avatarContainer} style={{width: `${size}px`, height: `${size}px`}}>
+        <div className={avatarContainer} style={{width: `${size}px`, minWidth: `${size}px`, height: `${size}px`, minHeight: `${size}px`}}>
             <div className={avatarContent}>
                 {src && <img src={src} alt={alt} className="rounded-full w-full h-full object-cover" />}
             </div>

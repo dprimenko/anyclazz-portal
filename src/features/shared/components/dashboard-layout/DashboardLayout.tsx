@@ -146,7 +146,7 @@ export function DashboardLayout({ children, currentPath = '/dashboard', userName
                                 <Icon icon="settings" iconWidth={20} iconHeight={20} />
                             </button>
                             <button className={styles.iconButton}>
-                                <Icon icon="log-out" iconWidth={20} iconHeight={20} />
+                                <Icon icon="sign-out" iconWidth={20} iconHeight={20} />
                             </button>
                         </div>
                     </div>

@@ -8,6 +8,9 @@ export const Chip = ({
 	className,
 	size = 'sm',
 	rounded = false,
+	textColor,
+	bgColor,
+	borderColor,
 	...props
 }: ChipProps) => {
 	const classes = classNames(
@@ -23,7 +26,7 @@ export const Chip = ({
 	);
 
 	return (
-		<div className={classes} {...props}>
+		<div className={classes} style={{color: textColor, backgroundColor: bgColor, outline: `1px solid ${borderColor} !important`}} {...props}>
 			{children}
 		</div>
 	);
