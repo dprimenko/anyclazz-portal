@@ -36,6 +36,7 @@ export default {
     'common.student': 'Student',
     'common.online': 'Online',
     'common.onsite': 'On-site',
+    'common.pay': 'Pay',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',

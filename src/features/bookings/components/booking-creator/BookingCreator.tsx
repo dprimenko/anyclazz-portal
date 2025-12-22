@@ -114,7 +114,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         
         const booking = await createBooking(bookingData);
 
-        // window.location.href = `/booking/checkout/${booking?.id}`;
+        window.location.href = `/booking/checkout/${booking?.id}`;
     }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken]);
 
     return (

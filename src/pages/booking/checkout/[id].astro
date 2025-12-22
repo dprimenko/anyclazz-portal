@@ -6,12 +6,12 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
 import { Space } from '@/ui-library/components/ssr/space/Space';
-import { TextWithIcon } from '@/ui-library/components/ssr/text-with-icon/TextWithIcon';
 import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { DateTime } from '@/features/shared/utils/dateConfig';
 import { getSession } from 'auth-astro/server';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
+import { PaymentForm } from '@/features/bookings/components/payment-form/PaymentForm';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
@@ -217,8 +217,14 @@ const durationFormatted = (startAt: string, endAt: string) => {
 				</div>
 			</div>
 			<div class="flex flex-col w-full gap-5">
-				<div class="flex w-full card rounded-xl p-5 h-[400px]">
-					<Text weight="medium" colorType="primary">{t('common.payment_method')}</Text>
+				<div class="flex flex-col w-full card rounded-xl p-5">
+					<Text weight="medium" colorType="primary" className="mb-4">{t('common.payment_method')}</Text>
+					<PaymentForm 
+						bookingId={id}
+						amount={booking.classType.price?.amount || 0}
+						currency={booking.classType.price?.currency || 'EUR'}
+						client:load
+					/>
 				</div>
 				<!-- <div class="flex w-full card rounded-xl p-5 h-[400px]">
 					<Text weight="medium" colorType="primary">{t('reviews.students_say')}</Text>

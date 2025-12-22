@@ -4,6 +4,7 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import type { AuthUser } from '@/features/auth/domain/types';
 import { Card } from '@/ui-library/components/ssr/card/Card';
+import { UserCache } from '@/features/auth/infrastructure/userCache';
 
 interface LoggedUserClientProps {
     user: AuthUser;
@@ -12,6 +13,12 @@ interface LoggedUserClientProps {
 export function LoggedUserClient({ user }: LoggedUserClientProps) {
     const handleLogout = () => {
         console.log('🚪 Logout button clicked');
+        
+        // Limpiar caché del usuario
+        const userCache = new UserCache();
+        userCache.clear();
+        console.log('🗑️  User cache cleared');
+        
         console.log('📍 Current location:', window.location.href);
         console.log('🍪 Current cookies:', document.cookie);
         console.log('➡️  Redirecting to: /api/auth/keycloak-logout');

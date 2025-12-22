@@ -1,22 +1,63 @@
+import { useState } from 'react';
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import type { Teacher, TeacherClassType } from "../domain/types";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { ClassModalitySelector } from "./components/ClassModalitySelector";
 import { WeeklyAvailabilitySelector, type DayAvailability } from "./components/WeeklyAvailabilitySelector";
+import { TeacherAvailabilityRepository } from "../infrastructure/TeacherAvailabilityRepository";
+import { TeacherModalitiesRepository } from "../infrastructure/TeacherModalitiesRepository";
+import { Button } from "@/ui-library/components/ssr/button/Button";
+import { Space } from '@/ui-library/components/ssr/space/Space';
 
 export interface AvailabilityAndModalitiesManagerProps {
     teacher: Teacher;
+    accessToken: string;
 }
 
-export function AvailabilityAndModalitiesManager({ teacher }: AvailabilityAndModalitiesManagerProps) {
+const availabilityRepo = new TeacherAvailabilityRepository();
+const modalitiesRepo = new TeacherModalitiesRepository();
+
+export function AvailabilityAndModalitiesManager({ teacher, accessToken }: AvailabilityAndModalitiesManagerProps) {
+    const [selectedModalities, setSelectedModalities] = useState<TeacherClassType[]>(teacher.classTypes);
+    const [selectedAvailability, setSelectedAvailability] = useState<DayAvailability[]>([]);
+    const [isSaving, setIsSaving] = useState(false);
+
     const handleModalitiesChange = (modalities: TeacherClassType[]) => {
         console.log('Selected modalities:', modalities);
-        // Aquí puedes manejar el cambio, por ejemplo actualizar el estado o llamar una API
+        setSelectedModalities(modalities);
     };
 
     const handleAvailabilityChange = (availability: DayAvailability[]) => {
         console.log('Selected availability:', availability);
-        // Aquí puedes manejar el cambio de disponibilidad
+        setSelectedAvailability(availability);
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            // Guardar modalidades
+            if (selectedModalities.length > 0) {
+                //await modalitiesRepo.saveClassTypes(teacher.id, selectedModalities, accessToken);
+            }
+
+            console.log('Selected availability to save:', selectedAvailability);
+            
+            // Guardar disponibilidad
+            if (selectedAvailability.length > 0) {
+                await availabilityRepo.saveAvailability(
+                    teacher.id,
+                    selectedAvailability,
+                    accessToken,
+                    'Europe/Madrid'
+                );
+            }
+            
+            console.log('Configuration saved successfully');
+        } catch (error) {
+            console.error('Failed to save configuration:', error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -35,6 +76,18 @@ export function AvailabilityAndModalitiesManager({ teacher }: AvailabilityAndMod
             <WeeklyAvailabilitySelector 
                 onChange={handleAvailabilityChange}
             />
+
+            <div className="flex justify-end mt-8">
+                <Button 
+                    onClick={handleSave}
+                    colorType="primary"
+                    disabled={isSaving}
+                    label={isSaving ? 'Guardando...' : 'Guardar'}
+                >
+                    
+                </Button>
+            </div> 
+            <Space size={16} />
         </div>
     );
 }

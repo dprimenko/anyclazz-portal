@@ -18,6 +18,18 @@ import {
 function invalidateSession(context: any, reason: string) {
   console.log(`Invalidating session: ${reason}`);
   clearAccountValidationCache();
+  
+  // Limpiar caché de usuario - solo en cliente
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem('anyclazz_user_profile');
+      localStorage.removeItem('anyclazz_user_profile_expiry');
+      console.log('🗑️  User cache cleared');
+    } catch (error) {
+      console.error('Error clearing user cache:', error);
+    }
+  }
+  
   const { pathname } = new URL(context.request.url);
   const callbackUrl = encodeURIComponent(pathname);
   return context.redirect(`/api/auth/keycloak-logout?callbackUrl=${callbackUrl}`);

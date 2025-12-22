@@ -1,8 +1,6 @@
 ---
 import Main from '../layout/Main.astro';
-import { Text } from '@/ui-library/components/ssr/text/Text';
 import { useTranslations, getLangFromUrl } from '@/i18n';
-import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
@@ -18,7 +16,7 @@ if (!accessToken) {
 }
 
 const authRepository = new AnyclazzAuthRepository();
-const user = authRepository.getCurrentUser(session);
+const user = await authRepository.getCurrentUser(session);
 
 const repository = new AnyclazzMyBookingsRepository();
 const upcomingBookings = await repository.getUpcomingBookings({token: accessToken});

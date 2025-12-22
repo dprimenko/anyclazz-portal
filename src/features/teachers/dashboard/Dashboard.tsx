@@ -27,7 +27,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
         <>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                 <div className="flex-1 min-w-0">
-                    {user && <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('dashboard.welcome_back', { name: user.name })}</Text>}
+                    {user && <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('dashboard.welcome_back', { name: user.firstName })}</Text>}
                     <Text textLevel="h4" colorType="tertiary">{t('dashboard.ready_to_teach')}</Text>
                 </div>
                 <div className="flex gap-[0.75rem] w-full md:w-auto md:flex-shrink-0">
@@ -62,7 +62,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 					</div>
 					
 					{upcomingLessons.length > 0 && (
-						<div className="w-full hidden lg:block">
+						<div className="w-full lg:block">
 							<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-3 border-b border-neutral-200">
 								<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
 								<Text size="text-xs" colorType="tertiary">{t('common.date')}</Text>
@@ -84,6 +84,17 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 												</div>
 											</div>
 										)}
+										{lesson.teacher && (
+											<div className="flex items-center">
+												<div className="flex items-center gap-3">
+													<Avatar src={lesson.teacher.avatar} size={40} />
+													<div>
+														<Text size="text-sm" weight="semibold" colorType="primary">{lesson.teacher.name}{' '}{lesson.teacher.surname}</Text>
+														<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
+													</div>
+												</div>
+											</div>
+										)}
 										<div className="flex items-center">
 											<Text size="text-sm" colorType="secondary">{startTime.toFormat('ccc HH:mm')}</Text>
 										</div>
@@ -96,7 +107,16 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 										</div>
 										<div className="flex items-center">
 											<div className="flex gap-2 justify-end">
-												<Button label={t('common.join')} colorType="primary" />
+												{user?.role === 'student' && lesson.paymentStatus !== 'completed' ? (
+													<a href={`/booking/checkout/${lesson.id}`}>
+														<Button 
+															label={t('common.pay')} 
+															colorType="secondary"
+														/>
+													</a>
+												) : (
+													<Button label={t('common.join')} colorType="primary" />
+												)}
 											</div>
 										</div>
 									</div>

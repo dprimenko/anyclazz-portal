@@ -189,7 +189,7 @@ const teacher = await teacherRepository.getTeacher({
             <Space size={32} direction="vertical" />
 
             <div>
-                <TeacherProfile teacher={teacher as unknown as Teacher} client:load />
+                <TeacherProfile teacher={teacher as unknown as Teacher} accessToken={accessToken} client:load />
             </div>
 
             <div class="w-full bg-gray-100" />

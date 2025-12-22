@@ -13,10 +13,11 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
 
 const authRepository = new AnyclazzAuthRepository();
-const user = authRepository.getCurrentUser(await getSession(Astro.request));
+const user = await authRepository.getCurrentUser(await getSession(Astro.request));
 
 const menuRepository = new LocalMenuRepository();
 let menuItems: MenuItem[] = [];
+console.log('User role in Menu:', user?.role);
 if (user?.role === 'teacher') {
     menuItems = menuRepository.getTeacherMenuItems();
 } else if (user?.role === 'student') {

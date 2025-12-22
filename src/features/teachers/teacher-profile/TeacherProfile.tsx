@@ -7,9 +7,10 @@ import { AvailabilityAndModalitiesManager } from "../availability_and_modalities
 
 export interface TeacherProfileProps {
     teacher: Teacher;
+    accessToken: string;
 }
 
-export function TeacherProfile({ teacher }: TeacherProfileProps) {
+export function TeacherProfile({ teacher, accessToken }: TeacherProfileProps) {
     const t = useTranslations();
 
     const tabs = [
@@ -47,7 +48,7 @@ export function TeacherProfile({ teacher }: TeacherProfileProps) {
             <Tabs tabs={tabs} onChange={onTabChange} />
             
             {selectedTab === "availability_and_modalities" && (
-                <AvailabilityAndModalitiesManager teacher={teacher} />
+                <AvailabilityAndModalitiesManager teacher={teacher} accessToken={accessToken} />
             )}
         </div>
     );
