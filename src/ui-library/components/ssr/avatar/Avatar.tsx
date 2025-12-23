@@ -51,7 +51,7 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOut
                 )}
             </div>
             {hasVerifiedBadge && (
-                <div className="absolute bottom-[1px] right-[1px] z-10">
+                <div className="absolute bottom-[1px] right-[1px] z-9">
                     <Icon icon="verified" iconWidth={verifiedBadgeSize} iconHeight={verifiedBadgeSize} />
                 </div>
             )}  

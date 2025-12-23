@@ -36,12 +36,14 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
                         label={t('dashboard.schedule_lesson')} 
                         colorType="secondary"
                         className="flex-1 md:flex-none"
+						onClick={() => window.location.href = '/teachers'}
                     />
                     <Button 
                         icon="search" 
                         label={t('dashboard.find_teacher')} 
                         colorType="primary"
                         className="flex-1 md:flex-none"
+						onClick={() => window.location.href = '/teachers'}
                     />
                 </div>
             </div>
@@ -72,7 +74,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 							{upcomingLessons.map((lesson) => {
 								const startTime = DateTime.fromISO(lesson.startAt);
 								return (
-									<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
+									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
 										{lesson.student && (
 											<div className="flex items-center">
 												<div className="flex items-center gap-3">
@@ -228,7 +230,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 							{lastLessons.map((lesson) => {
 								const startTime = DateTime.fromISO(lesson.startAt);
 								return (
-									<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
+									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
 										<div className="flex items-center">
 											{lesson.student && (
 												<div className="flex items-center">
@@ -237,6 +239,17 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 														<div>
 															<Text size="text-sm" weight="semibold" colorType="primary">{lesson.student.name}{' '}{lesson.student.surname}</Text>
 															<Text size="text-xs" colorType="tertiary">{t('common.student')}</Text>
+														</div>
+													</div>
+												</div>
+											)}
+											{lesson.teacher && (
+												<div className="flex items-center">
+													<div className="flex items-center gap-3">
+														<Avatar src={lesson.teacher.avatar} size={40} />
+														<div>
+															<Text size="text-sm" weight="semibold" colorType="primary">{lesson.teacher.name}{' '}{lesson.teacher.surname}</Text>
+															<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
 														</div>
 													</div>
 												</div>
@@ -254,7 +267,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 										</div>
 										<div className="flex items-center">
 											<div className="flex gap-2 justify-end">
-												<Button label={t('common.join')} colorType="primary" />
+												{/* <Button label={t('common.join')} colorType="primary" /> */}
 											</div>
 										</div>
 									</div>

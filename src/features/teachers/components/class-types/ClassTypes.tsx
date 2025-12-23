@@ -14,6 +14,8 @@ export interface ClassTypesProps {
 export function ClassTypes({ classTypes }: ClassTypesProps) {
     const t = useTranslations();
 
+    console.log('classTypes', classTypes);
+
     return (
         <div className={classNames('flex flex-col w-full card p-3 rounded-lg gap-[0.625rem]')}>
             <Text colorType="primary" size="text-sm" weight="semibold">{t('teachers.class-types-pricing')}</Text>
@@ -22,11 +24,21 @@ export function ClassTypes({ classTypes }: ClassTypesProps) {
                     <div className="flex flex-row gap-1.5">
                         <Icon icon={getClassTypeIcon(classType.type)} />
                         <Text className="flex-1" textLevel="span" colorType="primary" size="text-sm">{t(`classtype.${classType.type}`)}</Text>
-                        {classType.price && (
-                            <div className="flex flex-row gap-0.5 items-baseline">
-                                <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${classType.price?.currency.toLowerCase()}_price`, { amount: classType.price.amount })}</Text>
-                                <Text colorType="primary" textLevel="span" size="text-xs">{t('common.hour')}</Text>
-                            </div>
+                        {classType.durations && classType.durations.length > 0 && (
+                            <>
+                                {classType.durations.some((duration) => duration.duration === 60) ? (
+                                    <div className="flex flex-row gap-0.5 items-baseline">
+                                        <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${classType.durations.find(duration => duration.duration === 60)?.price?.currency.toLowerCase()}_price`, { amount: classType.durations.find(duration => duration.duration === 60)?.price.amount })}</Text>
+                                        <Text colorType="primary" textLevel="span" size="text-xs">{t('common.hour')}</Text>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-row gap-0.5 items-baseline">
+                                        <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${classType.durations[0].price?.currency.toLowerCase()}_price`, { amount: classType.durations[0].price.amount })}</Text>
+                                        <Text colorType="primary" textLevel="span" size="text-xs">{classType.durations[0].duration}min</Text>
+                                    </div>
+                                )}
+                            </>
+                            
                         )}
                     </div>
                     {classTypes.length > 1 && index < classTypes.length - 1 && <Divider dotted />}

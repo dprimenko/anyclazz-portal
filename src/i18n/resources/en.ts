@@ -104,6 +104,9 @@ export default {
     'booking.select_time_required': 'Please select a time for your lesson',
     'booking.checkout': 'Checkout',
     'booking.lesson_details': 'Lesson details',
+    'booking.payment_successful': 'Payment Successful',
+    'booking.payment_successful_message': 'Your payment has been processed successfully. Your lesson is now confirmed — you\'ll receive a reminder before it starts.',
+    'booking.go_to_agenda': 'Go to My Agenda',
 
     'teacher-profile.availability_and_modalities': 'Availability & Modalities',
     'teacher-profile.class_modality': 'Class modality',

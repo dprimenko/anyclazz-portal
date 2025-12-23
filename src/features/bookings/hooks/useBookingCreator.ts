@@ -23,11 +23,10 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
 
 
     const fetchAvailability = useCallback(async () => {
-        if (fetchingAvailableSlots) return;
-        
         setFetchingAvailableSlots(true);
+        setSelectedTime(undefined); // Reset selected time when fetching new slots
 
-        async function fetch() {
+        try {
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
                 teacherId: teacher.id,
@@ -36,17 +35,13 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
                 duration: selectedDuration,
             });
             setAvailableSlots(slots);
-        }
-    
-        Promise.allSettled([
-            fetch()
-        ]).then(() => {
-        }).catch(() => {
-            // setErrorFetchingAvailableSlots(t('teachers.error_fetching_teachers'));
-        }).finally(() => {
+        } catch (error) {
+            console.error('Error fetching availability:', error);
+            setAvailableSlots([]);
+        } finally {
             setFetchingAvailableSlots(false);
-        });
-    }, [teacher, accessToken, selectedDuration, fetchingAvailableSlots]);
+        }
+    }, [accessToken, teacher.id, selectedDate, selectedDuration]);
 
     const createBooking = useCallback(async (bookingData: CreateBookingParams) => {
         try {
@@ -72,7 +67,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
 
     useEffect(() => {
         fetchAvailability();
-    }, [selectedDuration, selectedDate]);
+    }, [fetchAvailability]);
     
     return {
         availableSlots,

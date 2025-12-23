@@ -32,6 +32,9 @@ export default {
     'location.search_not_found': 'No se encontraron resultados',
     'teachers.back-to-teachers': 'volver a profesores',
     'booking.select_time_required': 'Por favor selecciona una hora para tu clase',
+    'booking.payment_successful': 'Pago Exitoso',
+    'booking.payment_successful_message': 'Tu pago ha sido procesado exitosamente. Tu clase está confirmada — recibirás un recordatorio antes de que comience.',
+    'booking.go_to_agenda': 'Ir a Mi Agenda',
     
     'common.cancel': 'Cancelar',
     'common.price': 'Precio',

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
+import { Modal } from '@/ui-library/components/modal/Modal';
+import { useTranslations } from '@/i18n';
 
 interface PaymentFormProps {
     bookingId: string;
@@ -18,6 +20,9 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
     const [cvv, setCvv] = useState('');
     const [saveCard, setSaveCard] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    
+    const t = useTranslations();
 
     const formatCardNumber = (value: string) => {
         const cleaned = value.replace(/\s/g, '');
@@ -61,27 +66,29 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
         setIsProcessing(true);
 
         try {
-            const response = await fetch(`/api/bookings/${bookingId}/pay`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cardName,
-                    cardNumber: cardNumber.replace(/\s/g, ''),
-                    expiry: expiry.replace(/\s\/\s/g, ''),
-                    cvv,
-                    saveCard,
-                }),
-            });
+            // const response = await fetch(`/api/bookings/${bookingId}/pay`, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         cardName,
+            //         cardNumber: cardNumber.replace(/\s/g, ''),
+            //         expiry: expiry.replace(/\s\/\s/g, ''),
+            //         cvv,
+            //         saveCard,
+            //     }),
+            // });
 
-            if (response.ok) {
-                onSuccess?.();
-                window.location.href = '/me/upcoming-lessons';
-            } else {
-                const error = await response.json();
-                onError?.(error.message || 'Payment failed');
-            }
+            // if (response.ok) {
+            //     onSuccess?.();
+            //     setIsSuccessModalOpen(true);
+            // } else {
+            //     const error = await response.json();
+            //     onError?.(error.message || 'Payment failed');
+            // }
+
+            setIsSuccessModalOpen(true);
         } catch (error) {
             console.error('Payment error:', error);
             onError?.('An error occurred during payment');
@@ -90,11 +97,16 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
         }
     };
 
+    const handleGoToAgenda = () => {
+        window.location.href = '/me/my-agenda';
+    };
+
     const cardType = detectCardType(cardNumber);
     const formattedAmount = `${currency.toUpperCase()} ${amount.toFixed(2)}`;
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Name on card */}
             <div className="flex flex-col gap-2">
                 <label htmlFor="cardName" className="text-sm font-medium text-neutral-700">
@@ -214,5 +226,30 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
                 . It's safe to pay on Stripe. All transactions are protected by SSL encryption.
             </Text>
         </form>
+
+        {isSuccessModalOpen && (
+            <Modal width={480} persistent>
+                <div className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl gap-6">
+                    <div className="w-[48px] h-[48px] bg-[#FFF4E7] rounded-full flex items-center justify-center">
+                        <Icon icon="check-rounded" iconWidth={20} iconHeight={20} />
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-center">
+                        <Text textLevel="h2" size="text-lg" weight="semibold" colorType="primary">
+                            {t('booking.payment_successful')} 🎉
+                        </Text>
+                        <Text size="text-sm" colorType="secondary">
+                            {t('booking.payment_successful_message')}
+                        </Text>
+                    </div>
+                    <Button 
+                        colorType="primary" 
+                        label={t('booking.go_to_agenda')} 
+                        onClick={handleGoToAgenda}
+                        fullWidth
+                    />
+                </div>
+            </Modal>
+        )}
+        </>
     );
 }

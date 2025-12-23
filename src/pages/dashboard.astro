@@ -48,7 +48,7 @@ const lastLessons = lastBookings.slice(0, 3);
 		/>
 		<Space size={16} direction="vertical" />
 
-		<TeacherDashboard lang={lang} upcomingLessons={upcomingLessons} lastLessons={lastLessons} user={user} />
+		<TeacherDashboard lang={lang} upcomingLessons={upcomingLessons} lastLessons={lastLessons} user={user} client:load />
 
 		<!-- {selectedLesson && (
 			<LessonDetailsModal
