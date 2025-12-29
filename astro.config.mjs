@@ -1,6 +1,6 @@
 import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
-import netlify from '@astrojs/netlify';
+import node from '@astrojs/node';
 
 import auth from 'auth-astro';
 
@@ -10,7 +10,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   integrations: [react(), auth()],
   output: 'server',
-  adapter: netlify(),
+  adapter: node({
+    mode: 'standalone'
+  }),
 
   vite: {
     server: {
