@@ -40,7 +40,21 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-ara runtime
+
+# Crear un usuario no-root para mayor seguridad
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S astro -u 1001
+
+# Cambiar ownership de los archivos
+RUN chown -R astro:nodejs /app
+
+# Cambiar a usuario no-root
+USER astro
+
+# Exponer el puerto
+EXPOSE 4321
+
+# Variables de entorno para runtime
 ENV HOST=0.0.0.0
 ENV PORT=4321
 ENV NODE_ENV=production
