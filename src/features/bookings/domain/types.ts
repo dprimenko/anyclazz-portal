@@ -43,8 +43,18 @@ export interface GetBookingByIdParams extends CommonParams {
     bookingId: string;
 }
 
+export interface PayBookingParams extends CommonParams {
+    bookingId: string;
+    cardName: string;
+    cardNumber: string;
+    expiry: string;
+    cvv: string;
+    saveCard: boolean;
+}
+
 export interface BookingsRepository {
     getUpcomingBookings(params: GetUpcomingBookingsParams): Promise<BookingWithTeacher[]>;
     getTeacherAvailability(params: GetTeacherAvailabilityParams): Promise<any>;
     getBookingById(params: GetBookingByIdParams): Promise<BookingWithTeacher>;
+    payBooking(params: PayBookingParams): Promise<any>;
 }

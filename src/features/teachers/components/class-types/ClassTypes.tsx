@@ -14,8 +14,6 @@ export interface ClassTypesProps {
 export function ClassTypes({ classTypes }: ClassTypesProps) {
     const t = useTranslations();
 
-    console.log('classTypes', classTypes);
-
     return (
         <div className={classNames('flex flex-col w-full card p-3 rounded-lg gap-[0.625rem]')}>
             <Text colorType="primary" size="text-sm" weight="semibold">{t('teachers.class-types-pricing')}</Text>

@@ -240,39 +240,82 @@ function TimeRangeRow({ range, onDelete, onEdit, onConfirm, onCancel }: TimeRang
     }
 
     return (
-        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-            <div className="flex items-center gap-4">
-                <div className="flex flex-col">
-                    <Text textLevel="span" size="text-xs" colorType="tertiary">
-                        {t('teacher-profile.from')}
-                    </Text>
-                    <Text textLevel="span" size="text-sm" weight="medium" colorType="primary">
-                        {range.from}
-                    </Text>
+        <>
+            {/* <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
+                    <div className="flex flex-col gap-1 w-full sm:w-auto">
+                        <Text textLevel="label" size="text-xs" colorType="tertiary">
+                            {t('teacher-profile.from')}
+                        </Text>
+                        <input
+                            type="time"
+                            value={from}
+                            onChange={(e) => setFrom(e.target.value)}
+                            className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1 w-full sm:w-auto">
+                        <Text textLevel="label" size="text-xs" colorType="tertiary">
+                            {t('teacher-profile.to')}
+                        </Text>
+                        <input
+                            type="time"
+                            value={to}
+                            onChange={(e) => setTo(e.target.value)}
+                            className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
+                        />
+                    </div>
                 </div>
-                <div className="flex flex-col">
-                    <Text textLevel="span" size="text-xs" colorType="tertiary">
-                        {t('teacher-profile.to')}
-                    </Text>
-                    <Text textLevel="span" size="text-sm" weight="medium" colorType="primary">
-                        {range.to}
-                    </Text>
+                <div className="flex items-center gap-2 self-end sm:self-auto">
+                    <button
+                        onClick={onCancel}
+                        className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
+                    >
+                        {t('common.cancel')}
+                    </button>
+                    <button
+                        onClick={() => onConfirm(from, to)}
+                        className="text-[#F4A43A] text-sm font-medium hover:opacity-80 transition-opacity"
+                    >
+                        {t('teacher-profile.confirm')}
+                    </button>
+                </div>
+            </div> */}
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
+                    <div className="flex flex-col gap-1 w-full sm:w-auto">
+                        <Text textLevel="span" size="text-xs" colorType="tertiary">
+                            {t('teacher-profile.from')}
+                        </Text>
+                        <Text textLevel="span" size="text-sm" weight="medium" colorType="primary">
+                            {range.from}
+                        </Text>
+                    </div>
+                    <div className="flex flex-col gap-1 w-full sm:w-auto">
+                        <Text textLevel="span" size="text-xs" colorType="tertiary">
+                            {t('teacher-profile.to')}
+                        </Text>
+                        <Text textLevel="span" size="text-sm" weight="medium" colorType="primary">
+                            {range.to}
+                        </Text>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 self-end sm:self-auto">
+                    <button
+                        onClick={onDelete}
+                        className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
+                    >
+                        {t('teacher-profile.delete')}
+                    </button>
+                    <button
+                        onClick={onEdit}
+                        className="text-[#F4A43A] text-sm font-medium hover:opacity-80 transition-opacity"
+                    >
+                        {t('teacher-profile.edit')}
+                    </button>
                 </div>
             </div>
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={onDelete}
-                    className="text-red-500 text-sm font-medium hover:opacity-80 transition-opacity"
-                >
-                    {t('teacher-profile.delete')}
-                </button>
-                <button
-                    onClick={onEdit}
-                    className="text-[#F4A43A] text-sm font-medium hover:opacity-80 transition-opacity"
-                >
-                    {t('teacher-profile.edit')}
-                </button>
-            </div>
-        </div>
+        </>
     );
 }

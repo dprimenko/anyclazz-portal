@@ -28,18 +28,19 @@ export function DashboardContent({ userName, upcomingLessons, lastLessons, saved
     const [copied, setCopied] = useState(false);
     const [selectedLesson, setSelectedLesson] = useState<BookingWithTeacher | null>(null);
 
-    const handleCopyLink = () => {
-        navigator.clipboard.writeText(clazzmate.referralLink);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
     const openLessonDetails = (lesson: BookingWithTeacher) => {
         setSelectedLesson(lesson);
     };
 
     const closeLessonDetails = () => {
         setSelectedLesson(null);
+    };
+
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(clazzmate.referralLink);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (

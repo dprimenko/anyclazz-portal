@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
-const mql = window.matchMedia(`(max-width: ${768 - 1}px)`);
+// const mql = window.matchMedia(`(max-width: ${768 - 1}px)`);
 
 export function useIsMobile() {
 
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+	// const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-	useEffect(() => {
+	// useEffect(() => {
 
-		const onChange = () => {
-			setIsMobile(window.innerWidth < 768);
-		};
+	// 	const onChange = () => {
+	// 		setIsMobile(window.innerWidth < 768);
+	// 	};
 
-		mql.addEventListener('change', onChange);
+	// 	mql.addEventListener('change', onChange);
 
-		return () => {
-			mql.removeEventListener('change', onChange);
-		};
-	}, [isMobile]);
+	// 	return () => {
+	// 		mql.removeEventListener('change', onChange);
+	// 	};
+	// }, [isMobile]);
 
-	return isMobile;
+	// return isMobile;
+	return false;
 }

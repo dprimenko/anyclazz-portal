@@ -6,8 +6,95 @@
     overflow: hidden;
 }
 
+@media (max-width: 767px) {
+    .booking-creator__container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+}
+
+/* Mobile Header - solo visible en móvil */
+.booking-creator__mobile-header {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .booking-creator__mobile-header {
+        display: block;
+        padding: 0 1rem 0 1rem;
+        background-color: white;
+        flex-shrink: 0;
+    }
+}
+
+/* Mobile Content - scrollable en móvil */
+.booking-creator__mobile-content {
+    display: contents;
+}
+
+@media (max-width: 767px) {
+    .booking-creator__mobile-content {
+        display: block;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        min-height: 0;
+    }
+}
+
+/* Mobile Footer - solo visible en móvil */
+.booking-creator__mobile-footer {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .booking-creator__mobile-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 10;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 1rem;
+        border-top: 1px solid var(--color-neutral-200);
+        background-color: white;
+        flex-shrink: 0;
+    }
+}
+
+.booking-creator__desktop-title {
+    padding-bottom: 1rem;
+}
+
+/* Ocultar título y elementos de desktop en móvil */
+@media (max-width: 767px) {
+    .booking-creator__desktop-title {
+        display: none !important;
+    }
+
+    .booking-creator__desktop-summary {
+        display: none !important;
+    }
+
+    .booking-creator__desktop-actions {
+        display: none !important;
+    }
+}
+
 .booking-creator__left-side {
     background-color: var(--color-bg-tertiary);
+}
+
+@media (max-width: 767px) {
+    .booking-creator__left-side {
+        padding: 1rem !important;
+        background-color: transparent;
+    }
 }
 
 .booking-creator__right-side {
@@ -17,11 +104,26 @@
     overflow: hidden;
 }
 
+@media (max-width: 767px) {
+    .booking-creator__right-side {
+        height: auto;
+        overflow: visible;
+    }
+}
+
 .booking-creator__right-side-content {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     padding-bottom: 24px;
+}
+
+@media (max-width: 767px) {
+    .booking-creator__right-side-content {
+        overflow: visible;
+        padding: 1rem;
+        margin-bottom: 88px;
+    }
 }
 
 .booking-creator__summary {
@@ -32,4 +134,18 @@
     flex-shrink: 0;
     border-top: 1px solid var(--color-neutral-200);
     background-color: var(--color-neutral-100);
+}
+
+@media (max-width: 767px) {
+    .booking-creator__actions {
+        position: sticky;
+        bottom: 0;
+        padding: 1rem !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .booking-creator__actions button {
+        width: 100%;
+    }
 }

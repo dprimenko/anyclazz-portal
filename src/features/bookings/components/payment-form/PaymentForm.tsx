@@ -4,16 +4,20 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Modal } from '@/ui-library/components/modal/Modal';
 import { useTranslations } from '@/i18n';
+import { AnyclazzMyBookingsRepository } from '../../infrastructure/AnyclazzMyBookingsRepository';
 
 interface PaymentFormProps {
     bookingId: string;
     amount: number;
     currency: string;
+    accessToken: string;
     onSuccess?: () => void;
     onError?: (error: string) => void;
 }
 
-export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }: PaymentFormProps) {
+const repository = new AnyclazzMyBookingsRepository();
+
+export function PaymentForm({ bookingId, amount, currency, accessToken, onSuccess, onError }: PaymentFormProps) {
     const [cardName, setCardName] = useState('');
     const [cardNumber, setCardNumber] = useState('');
     const [expiry, setExpiry] = useState('');
@@ -66,28 +70,17 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
         setIsProcessing(true);
 
         try {
-            // const response = await fetch(`/api/bookings/${bookingId}/pay`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         cardName,
-            //         cardNumber: cardNumber.replace(/\s/g, ''),
-            //         expiry: expiry.replace(/\s\/\s/g, ''),
-            //         cvv,
-            //         saveCard,
-            //     }),
-            // });
+            await repository.payBooking({
+                bookingId,
+                cardName,
+                cardNumber: cardNumber.replace(/\s/g, ''),
+                expiry: expiry.replace(/\s\/\s/g, ''),
+                cvv,
+                saveCard,
+                token: accessToken,
+            });
 
-            // if (response.ok) {
-            //     onSuccess?.();
-            //     setIsSuccessModalOpen(true);
-            // } else {
-            //     const error = await response.json();
-            //     onError?.(error.message || 'Payment failed');
-            // }
-
+            onSuccess?.();
             setIsSuccessModalOpen(true);
         } catch (error) {
             console.error('Payment error:', error);
@@ -98,7 +91,7 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
     };
 
     const handleGoToAgenda = () => {
-        window.location.href = '/me/my-agenda';
+        window.location.href = '/dashboard';
     };
 
     const cardType = detectCardType(cardNumber);
@@ -143,7 +136,7 @@ export function PaymentForm({ bookingId, amount, currency, onSuccess, onError }:
             </div>
 
             {/* Card number and CVV */}
-            <div className="flex gap-3">
+            <div className="flex flex-col md:flex-row gap-3">
                 <div className="flex flex-col gap-2 flex-[2]">
                     <label htmlFor="cardNumber" className="text-sm font-medium text-neutral-700">
                         Card number <span className="text-red-500">*</span>

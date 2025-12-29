@@ -11,6 +11,7 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { ClassTypes } from "@/features/teachers/components/class-types/ClassTypes";
 import { TeacherDetail } from "@/features/teachers/teacher-detail/components/TeacherDetail.tsx";
+import { TeacherBookingButton } from "@/features/teachers/teacher-detail/components/TeacherBookingButton.tsx";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
 import { getSession } from 'auth-astro/server';
 
@@ -133,7 +134,7 @@ const teacher = await teacherRepository.getTeacher({
                             textLevel="span"
                             weight="medium"
                             colorType="primary"
-                            >{teacher.rating?.toFixed(1)}</TextWithIcon
+                            >{teacher.rating?.toFixed(1) ?? 0}</TextWithIcon
                         >
                         <Text colorType="tertiary" textLevel="span"
                             >{teacher.reviewsNumber}{" "}{
@@ -191,22 +192,24 @@ const teacher = await teacherRepository.getTeacher({
                 </div>
             </div>
 
-            <Space size={32} direction="vertical" />
-
-            <div>
-                <TeacherDetail teacher={teacher as unknown as Teacher} client:load />
-            </div>
+            <Space size={16} direction="vertical" />
 
             <!-- Right side en mobile: aparece aquí debajo -->
-            <div class="block md:hidden mt-6">
+            <div class="block md:hidden">
                 <div class="flex flex-col md:flex-col-reverse gap-4">
                     <ClassTypes classTypes={teacher.classTypes} client:load />
                     <div class="flex flex-row gap-3 w-full">
                         <Button colorType="secondary" size="lg" icon="heart-outline" />
                         <Button colorType="secondary" size="lg" icon="chat" />
-                        <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
+                        <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
                     </div>
                 </div>
+            </div>
+
+            <Space size={32} direction="vertical" />
+
+            <div class="mb-4">
+                <TeacherDetail teacher={teacher as unknown as Teacher} client:load />
             </div>
 
             <div class="w-full bg-gray-100" />
@@ -219,7 +222,7 @@ const teacher = await teacherRepository.getTeacher({
                     <div class="flex flex-row gap-3 w-full">
                         <Button colorType="secondary" size="lg" icon="heart-outline" />
                         <Button colorType="secondary" size="lg" icon="chat" />
-                        <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth />
+                        <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
                     </div>
                     <ClassTypes classTypes={teacher.classTypes} client:load />
                 </div>

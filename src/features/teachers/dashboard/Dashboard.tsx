@@ -8,6 +8,8 @@ import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import type { BookingWithTeacher } from '@/features/bookings/domain/types';
 import { EmptyState } from '@/ui-library/components/ssr/empty-state/EmptyState';
 import type { AuthUser } from '@/features/auth/domain/types';
+import { LessonDetailsModal } from '@/features/bookings/components/lesson-details-modal/LessonDetailsModal';
+import { useState } from 'react';
 
 interface DashboardProps {
     lang: string;
@@ -23,29 +25,46 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
         return lessonTypeId.includes('online');
     }
 
+	const [selectedLesson, setSelectedLesson] = useState<BookingWithTeacher | null>(null);
+	
+	const openLessonDetails = (lesson: BookingWithTeacher) => {
+		setSelectedLesson(lesson);
+	};
+
+	const closeLessonDetails = () => {
+		setSelectedLesson(null);
+	};
+
     return (
         <>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                 <div className="flex-1 min-w-0">
                     {user && <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('dashboard.welcome_back', { name: user.firstName })}</Text>}
-                    <Text textLevel="h4" colorType="tertiary">{t('dashboard.ready_to_teach')}</Text>
+					{user?.role === 'teacher' && (
+						<Text textLevel="h4" colorType="tertiary">{t('dashboard.ready_to_teach')}</Text>
+					)}
+                    {user?.role === 'student' && (
+						<Text textLevel="h4" colorType="tertiary">{t('dashboard.ready_to_continue')}</Text>
+					)}
                 </div>
-                <div className="flex gap-[0.75rem] w-full md:w-auto md:flex-shrink-0">
-                    <Button 
-                        icon="calendar-plus" 
-                        label={t('dashboard.schedule_lesson')} 
-                        colorType="secondary"
-                        className="flex-1 md:flex-none"
-						onClick={() => window.location.href = '/teachers'}
-                    />
-                    <Button 
-                        icon="search" 
-                        label={t('dashboard.find_teacher')} 
-                        colorType="primary"
-                        className="flex-1 md:flex-none"
-						onClick={() => window.location.href = '/teachers'}
-                    />
-                </div>
+				{user?.role === 'student' && (
+					<div className="flex gap-[0.75rem] w-full md:w-auto md:flex-shrink-0">
+						<Button 
+							icon="calendar-plus" 
+							label={t('dashboard.schedule_lesson')} 
+							colorType="secondary"
+							className="flex-1 md:flex-none"
+							onClick={() => window.location.href = '/teachers'}
+						/>
+						<Button 
+							icon="search" 
+							label={t('dashboard.find_teacher')} 
+							colorType="primary"
+							className="flex-1 md:flex-none"
+							onClick={() => window.location.href = '/teachers'}
+						/>
+					</div>
+				)}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -65,7 +84,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 					
 					{upcomingLessons.length > 0 && (
 						<div className="w-full lg:block">
-							<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-3 border-b border-neutral-200">
+							<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-3 border-b border-neutral-200">
 								<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
 								<Text size="text-xs" colorType="tertiary">{t('common.date')}</Text>
 								<Text size="text-xs" colorType="tertiary">{t('common.lesson_type')}</Text>
@@ -74,7 +93,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 							{upcomingLessons.map((lesson) => {
 								const startTime = DateTime.fromISO(lesson.startAt);
 								return (
-									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
+									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50" onClick={() => openLessonDetails(lesson)}>
 										{lesson.student && (
 											<div className="flex items-center">
 												<div className="flex items-center gap-3">
@@ -107,8 +126,9 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 												</span>
 											</Chip>
 										</div>
-										<div className="flex items-center">
+										<div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
 											<div className="flex gap-2 justify-end">
+												
 												{user?.role === 'student' && lesson.paymentStatus !== 'completed' ? (
 													<a href={`/booking/checkout/${lesson.id}`}>
 														<Button 
@@ -127,7 +147,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 						</div>
 					)}
 
-					{upcomingLessons.length === 0 && (
+					{upcomingLessons.length === 0 && user?.role === 'student' && (
 						<EmptyState
 							title={t('dashboard.no_upcoming_lessons')}
 							description={t('dashboard.no_upcoming_lessons_description')}
@@ -135,6 +155,12 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 							buttonIcon="search"
 							onClickAction={() => window.location.href = '/teachers'}
 							buttonColorType="primary"
+						/>
+					)}
+					{upcomingLessons.length === 0 && user?.role === 'teacher' && (
+						<EmptyState
+							title={t('dashboard.no_upcoming_lessons.teacher')}
+							description={t('dashboard.no_upcoming_lessons_description.teacher')}
 						/>
 					)}
 				</Card>
@@ -221,7 +247,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 
 					{lastLessons.length > 0 && (
 						<>
-							<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-3 border-b border-neutral-200">
+							<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-3 border-b border-neutral-200">
 								<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
 								<Text size="text-xs" colorType="tertiary">{t('common.date')}</Text>
 								<Text size="text-xs" colorType="tertiary">{t('common.lesson_type')}</Text>
@@ -230,7 +256,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 							{lastLessons.map((lesson) => {
 								const startTime = DateTime.fromISO(lesson.startAt);
 								return (
-									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr_100px] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
+									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
 										<div className="flex items-center">
 											{lesson.student && (
 												<div className="flex items-center">
@@ -275,13 +301,19 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 							})}
 						</>
 					)}
-					{lastLessons.length === 0 && (
+					{lastLessons.length === 0 && user?.role === 'student' && (
 						<EmptyState
 							title={t('dashboard.no_past_lessons')}
 							description={t('dashboard.no_past_lessons_description')}
 							buttonLabel={t('dashboard.book_first_lesson')}
 							onClickAction={() => window.location.href = '/teachers'}
 							buttonColorType="primary"
+						/>
+					)}
+					{lastLessons.length === 0 && user?.role === 'teacher' && (
+						<EmptyState
+							title={t('dashboard.no_past_lessons.teacher')}
+							description={t('dashboard.no_past_lessons_description.teacher')}
 						/>
 					)}
 				</Card>
@@ -359,6 +391,24 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 				</section>
 			</div> */}
 		</div>
+			{selectedLesson && (
+				<LessonDetailsModal
+					lesson={selectedLesson}
+					onClose={closeLessonDetails}
+					onCancel={() => {
+						console.log('Cancel lesson');
+						closeLessonDetails();
+					}}
+					onSendMessage={() => {
+						console.log('Send message');
+						closeLessonDetails();
+					}}
+					onJoin={() => {
+						console.log('Join lesson');
+						closeLessonDetails();
+					}}
+				/>
+			)}
         </>
     );
 }

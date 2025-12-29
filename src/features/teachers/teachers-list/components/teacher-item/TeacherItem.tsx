@@ -60,7 +60,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                     </div>
                     <Space size={10} direction="vertical"/>
                     <div className={styles["teacher-item__content-row"]}>
-                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary">{teacher.rating?.toFixed(1)}</TextWithIcon>
+                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary">{teacher.rating?.toFixed(1)??0}</TextWithIcon>
                         <Text colorType="tertiary" textLevel="span" underline>{teacher.reviewsNumber} {t('common.reviews')}</Text>
                         <TextWithIcon icon="people" textLevel="span" colorType="tertiary">{teacher.studentsNumber} {t('common.students')}</TextWithIcon>
                         <TextWithIcon icon="book" textLevel="span" colorType="tertiary">{teacher.lessonsNumber} {t('common.lessons')}</TextWithIcon>

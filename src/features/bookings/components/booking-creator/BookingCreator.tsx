@@ -18,6 +18,7 @@ import { DateTime } from "luxon";
 import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
 import type { CreateBookingParams } from "../../domain/types";
+import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
 
 export interface BookingCreatorProps {
     teacher: Teacher;
@@ -29,6 +30,8 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
     const { 
         accessToken,
     } = useTeachers();
+
+    const isMobile = useIsMobile();
 
     const {
         availableSlots,
@@ -88,11 +91,15 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
     })), [availableSlots, t]);
 
     const priceAmount = useMemo(() => {
-        if (selectedClass.price === undefined) {
+        if (selectedClass.durations === undefined) {
             return '';
         }
-        return t(`common.${selectedClass.price?.currency.toLowerCase()}_price`, { amount: selectedClass.price?.amount.toFixed(2) });
-    }, [selectedClass]);
+        const selectedPriceDuration = selectedClass.durations.find(d => d.duration === selectedDuration);
+        if (!selectedPriceDuration) {
+            return '';
+        }
+        return t(`common.${selectedPriceDuration.price?.currency.toLowerCase()}_price`, { amount: selectedPriceDuration.price?.amount.toFixed(2) });
+    }, [selectedClass, selectedDuration, t]);
 
     const formSubmitHandler = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -119,70 +126,95 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
 
     return (
         <form ref={formRef} onSubmit={formSubmitHandler} className={classes}>
-            <div className={leftSideClasses}>
-                <Text weight="semibold" colorType="primary">{t('teachers.book-lesson')}</Text>
-                <Space size={10} direction="vertical" />
-                <Divider />
-                <Space size={10} direction="vertical" />
-                <div className="flex flex-row items-left">
-                    <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={96} hasVerifiedBadge={teacher.isSuperTeacher} hasOutline />
+            {/* Mobile Header - solo visible en móvil */}
+            <div className={styles['booking-creator__mobile-header']}>
+                <div className="flex items-center justify-between">
+                    <Text weight="semibold" colorType="primary">{t('teachers.book-lesson')}</Text>
+                    <button type="button" onClick={onClose} className="p-2">
+                        <Icon icon="close" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />
+                    </button>
                 </div>
-                <Space size={10} direction="vertical" />
-                <div className="flex flex-row gap-2 items-center">
-                    <Text textLevel="h4" size="text-md" weight="medium" colorType="primary">{teacher.name} {teacher.surname}</Text>
-                    {teacher.isSuperTeacher && (
-                        <Chip colorType="primary" rounded>
-                            <Icon icon="verified" iconWidth={16} iconHeight={16} />
-                            <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
-                        </Chip>
+            </div>
+
+            {/* Mobile Content - contenido scrollable en móvil */}
+            <div className={styles['booking-creator__mobile-content']}>
+                <div className={leftSideClasses}>
+                    <Text weight="semibold" colorType="primary" className={styles['booking-creator__desktop-title']}>{t('teachers.book-lesson')}</Text>
+                    <Divider className={styles['booking-creator__desktop-title']} />
+                    <Space size={10} direction="vertical" className={styles['booking-creator__desktop-title']} />
+                    <div className="flex flex-row items-left">
+                        <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={isMobile ? 72 : 96} hasVerifiedBadge={teacher.isSuperTeacher} hasOutline />
+                    </div>
+                    <Space size={10} direction="vertical" />
+                    <div className="flex flex-row gap-2 items-center">
+                        <Text textLevel="h4" size="text-md" weight="medium" colorType="primary">{teacher.name} {teacher.surname}</Text>
+                        {teacher.isSuperTeacher && (
+                            <Chip colorType="primary" rounded>
+                                <Icon icon="verified" iconWidth={16} iconHeight={16} />
+                                <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
+                            </Chip>
+                        )}
+                    </div>
+                    <Space size={10} direction="vertical"/>
+                    <div className="flex flex-row gap-2 items-center">
+                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary" size="text-sm">{teacher.rating?.toFixed(1)}</TextWithIcon>
+                        <Text colorType="tertiary" textLevel="span" size="text-sm">{teacher.reviewsNumber} {t('common.reviews')}</Text>
+                    </div>
+                    <Space size={16} direction="vertical"/>
+                    <div className="flex flex-row items-center">
+                        <Text colorType="tertiary" size="text-sm">
+                            {t('teachers.speaks')}{' '}
+                            {teacher.speaksLanguages.map((language) => (
+                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`
+                            )).join(', ')}
+                        </Text>
+                    </div>
+                    <div className="flex-1"></div>
+                    {selectedClass && (
+                        <div className={classNames("rounded-md bg-white p-5 w-full flex flex-col gap-2.5", styles['booking-creator__summary'], styles['booking-creator__desktop-summary'])}>
+                            <Text size="text-sm" colorType="primary">{t('common.price')}</Text>
+                            <Text size="text-xl" colorType="primary" weight="medium">{priceAmount}</Text>
+                            <Text size="text-xs" colorType="primary">{t(`classtype.${selectedClass.type}`)} · {t('common.minutes_short', { minutes: selectedDuration })}</Text>
+                        </div>
                     )}
                 </div>
-                <Space size={10} direction="vertical"/>
-                <div className="flex flex-row gap-2 items-center">
-                    <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary" size="text-sm">{teacher.rating?.toFixed(1)}</TextWithIcon>
-                    <Text colorType="tertiary" textLevel="span" size="text-sm">{teacher.reviewsNumber} {t('common.reviews')}</Text>
+                <div className={rightSideClasses}>
+                    <div className={rightSideContentClasses}>
+                        <div className="flex flex-col gap-2 w-full">
+                            <Text weight="medium" colorType="primary">{t('booking.choose_classtype')}</Text>
+                            <RectangleSelectionGroup items={classOptions} value={selectedClass.type} onValueChange={selectClassType} />
+                        </div>
+                        <div className="flex flex-col gap-2 w-full">
+                            <Text weight="medium" colorType="primary">{t('booking.lesson_duration')}</Text>
+                            <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-2 gap-3"}} items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
+                        </div>
+                        <div className="flex flex-col gap-2 w-full">
+                            <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
+                            <Calendar selectedDate={selectedDate} onSelected={setSelectedDate} />
+                        </div>
+                        <div className="flex flex-col gap-2 w-full">
+                            <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>
+                            <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-3 gap-3"}} items={availableTimes} value={selectedTime} onValueChange={(value) => setSelectedTime(value)} />
+                        </div>
+                    </div>
+                    <div className={classNames(actionsClasses, styles['booking-creator__desktop-actions'])}>
+                        <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} />
+                        <Button colorType="primary" label={t('teachers.book-now')} type="submit"/>
+                    </div>
                 </div>
-                <Space size={16} direction="vertical"/>
-                <div className="flex flex-row items-center">
-                    <Text colorType="tertiary" size="text-sm">
-                        {t('teachers.speaks')}{' '}
-                        {teacher.speaksLanguages.map((language) => (
-                            `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`
-                        )).join(', ')}
-                    </Text>
-                </div>
-                <div className="flex-1"></div>
+            </div>
+
+            {/* Mobile Footer - solo visible en móvil */}
+            <div className={styles['booking-creator__mobile-footer']}>
                 {selectedClass && (
-                    <div className={classNames("rounded-md bg-white p-5 w-full flex flex-col gap-2.5", styles['booking-creator__summary'])}>
-                        <Text size="text-sm" colorType="primary">{t('common.price')}</Text>
-                        <Text size="text-xl" colorType="primary" weight="medium">{priceAmount}</Text>
-                        <Text size="text-xs" colorType="primary">{t(`classtype.${selectedClass.type}`)} · {t('common.minutes_short', { minutes: selectedDuration })}</Text>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <Text size="text-xl" colorType="primary" weight="medium">{priceAmount}</Text>
+                            <Text size="text-xs" colorType="secondary">{t(`classtype.${selectedClass.type}`)} · {t('common.minutes_short', { minutes: selectedDuration })}</Text>
+                        </div>
                     </div>
                 )}
-            </div>
-            <div className={rightSideClasses}>
-                <div className={rightSideContentClasses}>
-                    <div className="flex flex-col gap-2 w-full">
-                        <Text weight="medium" colorType="primary">{t('booking.choose_classtype')}</Text>
-                        <RectangleSelectionGroup items={classOptions} value={selectedClass.type} onValueChange={selectClassType} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <Text weight="medium" colorType="primary">{t('booking.lesson_duration')}</Text>
-                        <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-2 gap-3"}} items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
-                        <Calendar selectedDate={selectedDate} onSelected={setSelectedDate} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>
-                        <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-3 gap-3"}} items={availableTimes} value={selectedTime} onValueChange={(value) => setSelectedTime(value)} />
-                    </div>
-                </div>
-                <div className={actionsClasses}>
-                    <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} />
-                    <Button colorType="primary" label={t('teachers.book-lesson')} type="submit"/>
-                </div>
+                <Button colorType="primary" label={t('teachers.book-now')} type="submit" />
             </div>
         </form>
     );

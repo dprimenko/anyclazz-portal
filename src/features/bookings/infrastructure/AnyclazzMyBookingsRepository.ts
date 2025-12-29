@@ -1,5 +1,5 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
-import type { BookingsRepository, BookingWithTeacher, CreateBookingParams, GetBookingByIdParams, GetTeacherAvailabilityParams } from '../domain/types';
+import type { BookingsRepository, BookingWithTeacher, CreateBookingParams, GetBookingByIdParams, GetTeacherAvailabilityParams, PayBookingParams } from '../domain/types';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { ClassType } from '@/features/teachers/domain/types';
 
@@ -23,6 +23,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         });
 
         const data = await apiResponse.json();
+        
         console.log('Fetched upcoming bookings:', data);
         return data;
     }
@@ -97,5 +98,24 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         };
 
         return data;
+    }
+
+    async payBooking({bookingId, cardName, cardNumber, expiry, cvv, saveCard, token}: PayBookingParams): Promise<any> {
+        const params = {
+            cardName,
+            cardNumber,
+            expiry,
+            cvv,
+            saveCard,
+        };
+
+        const apiResponse = await this.httpClient.post({
+            url: `/bookings/${bookingId}/pay`,
+            token: token,
+            data: params,
+        });
+
+        const response = await apiResponse.json();
+        return response;
     }
 }

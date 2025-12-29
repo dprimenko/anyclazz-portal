@@ -38,16 +38,16 @@ export function RectangleSelectionGroup({items, value, cnn, onValueChange}: Rect
         <RadioGroup value={value} onValueChange={onValueChange}>
             <div className={overrideClassNames.container}>
                 {items.map((item) => (
-                    <div
+                    <label
                         key={item.id}
                         className={overrideClassNames.item}
-                        onClick={() => onValueChange(item.id)}
+                        htmlFor={item.id}
                     >
                         <div className="flex items-center gap-3 w-full">
                             <RadioGroupItem className={style["rectangle-group-item__radio"]} value={item.id} id={item.id} />
                             {item.children}
                         </div>
-                    </div>
+                    </label>
                 ))}
             </div>
         </RadioGroup>

@@ -58,7 +58,9 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
     }, []);
 
     const selectClassType = useCallback((classTypeId: string) => {
+        console.log('Selected class typeid:', classTypeId);
         const classType = teacher.classTypes.find((ct) => ct.type === classTypeId);
+        console.log('Selected class type:', classType);
         if (!classType) {
             return;
         }

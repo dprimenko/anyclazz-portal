@@ -1,5 +1,5 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
-import type { DayAvailability } from '../availability_and_modalities/components/WeeklyAvailabilitySelector';
+import type { DayAvailability, TimeRange } from '../availability_and_modalities/components/WeeklyAvailabilitySelector';
 import { getApiUrl } from '@/features/shared/services/environment';
 
 interface AvailabilitySlot {
@@ -28,15 +28,15 @@ export class TeacherAvailabilityRepository {
         const threeMonthsFromNow = new Date();
         threeMonthsFromNow.setMonth(today.getMonth() + 3);
 
-        // Map day names to numbers (0 = Sunday, 1 = Monday, etc.)
+        // Map day names to JavaScript Date.getDay() numbers (0 = Sunday, 1 = Monday, etc.)
         const dayNameToNumber: Record<string, number> = {
-            sunday: 0,
             monday: 1,
             tuesday: 2,
             wednesday: 3,
             thursday: 4,
             friday: 5,
             saturday: 6,
+            sunday: 0,
         };
 
         // Iterate through each day from today to 3 months from now
@@ -76,6 +76,79 @@ export class TeacherAvailabilityRepository {
         }
 
         return slots;
+    }
+
+    /**
+     * Transform date/time slots into weekly availability pattern
+     */
+    private transformSlotsToWeekly(slots: AvailabilitySlot[]): DayAvailability[] {
+        const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const weeklyMap = new Map<string, Map<string, TimeRange>>();
+
+        // Initialize all days
+        dayNames.forEach(day => {
+            weeklyMap.set(day, new Map());
+        });
+
+        // Group slots by day of week and time range
+        slots.forEach(slot => {
+            const date = new Date(slot.startAt);
+            // Adjust getDay() to make Monday = 0 instead of Sunday = 0
+            const dayIndex = (date.getDay() + 6) % 7;
+            const dayOfWeek = dayNames[dayIndex];
+            const from = date.toTimeString().slice(0, 5); // HH:mm
+            const endDate = new Date(slot.endAt);
+            const to = endDate.toTimeString().slice(0, 5); // HH:mm
+            
+            const timeRangeKey = `${from}-${to}`;
+            const dayMap = weeklyMap.get(dayOfWeek)!;
+            
+            if (!dayMap.has(timeRangeKey)) {
+                dayMap.set(timeRangeKey, {
+                    id: `${Date.now()}-${Math.random()}`,
+                    from,
+                    to,
+                    isEditing: false
+                });
+            }
+        });
+
+        // Convert to DayAvailability array
+        return dayNames.map(day => {
+            const timeRangesMap = weeklyMap.get(day)!;
+            const timeRanges = Array.from(timeRangesMap.values());
+            
+            return {
+                day,
+                isAvailable: timeRanges.length > 0,
+                timeRanges
+            };
+        });
+    }
+
+    /**
+     * Get teacher availability and transform to weekly format
+     */
+    async getAvailability(
+        teacherId: string,
+        token: string
+    ): Promise<DayAvailability[]> {
+        try {
+            const response = await this.client.get({
+                url: `/teacher-availability`,
+                token,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to get availability: ${response.statusText}`);
+            }
+
+            const slots: AvailabilitySlot[] = await response.json();
+            return this.transformSlotsToWeekly(slots);
+        } catch (error) {
+            console.error('Error getting teacher availability:', error);
+            throw error;
+        }
     }
 
     /**

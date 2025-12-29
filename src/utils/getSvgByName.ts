@@ -39,13 +39,13 @@ export function getSvgByName(
   
   let modifiedSvg = svg;
   
-  // Apply color by adding or updating fill attribute on the svg element
+  // Apply color by replacing fill and stroke attributes throughout the SVG
   if (options?.color) {
-    // Remove existing fill attribute from svg tag
-    modifiedSvg = modifiedSvg.replace(/\s*fill="[^"]*"/g, '');
+    // Replace all fill attributes with the new color
+    modifiedSvg = modifiedSvg.replace(/fill="[^"]*"/g, `fill="${options.color}"`);
     
-    // Add fill attribute to svg tag
-    modifiedSvg = modifiedSvg.replace('<svg', `<svg fill="${options.color}"`);
+    // Replace all stroke attributes with the new color
+    modifiedSvg = modifiedSvg.replace(/stroke="[^"]*"/g, `stroke="${options.color}"`);
   }
   
   // Convert SVG to data URI

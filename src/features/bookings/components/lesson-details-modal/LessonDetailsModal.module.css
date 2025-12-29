@@ -35,6 +35,12 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
+    border-radius: 12px;
+    background-color: #FFFDFB;
+    padding: 4px 20px;
+    border: 1px solid #E9EAEB;
+    width: max-content;
+    align-self: center;
 }
 
 .infoRow {

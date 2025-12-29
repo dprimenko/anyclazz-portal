@@ -7,6 +7,7 @@ import type { BookingWithTeacher } from "../../domain/types";
 import { DateTime } from "luxon";
 import { useTranslations } from "@/i18n";
 import styles from "./LessonDetailsModal.module.css";
+import { useEffect } from "react";
 
 export interface LessonDetailsModalProps {
     lesson: BookingWithTeacher;
@@ -22,30 +23,31 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
     const endTime = DateTime.fromISO(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
 
+    useEffect(() => {
+        console.log('Lesson details modal opened for lesson:', lesson);
+    }, []);
+
     return (
         <Modal onClose={onClose} width={480}>
             <div className={styles.modal}>
                 {/* Close Button */}
                 <button onClick={onClose} className={styles.closeButton}>
-                    <Icon icon="close" iconWidth={24} iconHeight={24} />
+                    <Icon icon="close" iconWidth={24} iconHeight={24} iconColor="#A4A7AE" />
                 </button>
 
                 {/* Date Header */}
                 <div className={styles.dateHeader}>
-                    <Text size="text-xs" colorType="accent" weight="semibold" uppercase>
+                    <Text size="text-xs" colorType="tertiary" weight="semibold" uppercase>
                         {startTime.toFormat('MMM').toUpperCase()}
                     </Text>
-                    <Text size="text-xl" colorType="accent" weight="semibold">
+                    <Text size="text-xl" color="#F4A43A" weight="semibold">
                         {startTime.toFormat('dd')}
                     </Text>
                 </div>
 
                 {/* Class Title */}
-                <Text textLevel="h2" size="text-lg" weight="semibold" colorType="primary" className="mb-1">
-                    Class: {lesson.classType}
-                </Text>
-                <Text size="text-sm" colorType="tertiary" className="mb-6">
-                    {lesson.teacher.name} {lesson.teacher.surname} - {startTime.toFormat('cccc, MMM dd, yyyy')}
+                <Text textLevel="h2" size="text-lg" weight="semibold" colorType="primary" className="mb-1" textalign="center">
+                    {t(`classtype.${lesson.classTypeId}`)}
                 </Text>
 
                 {/* Date and Time */}
@@ -57,7 +59,7 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
                 </div>
 
                 <div className={styles.infoRow}>
-                    <Icon icon="clock" iconWidth={20} iconHeight={20} />
+                    <Icon icon="time" iconWidth={20} iconHeight={20} />
                     <Text size="text-sm" colorType="secondary">
                         {startTime.toFormat('h:mm a')} - {endTime.toFormat('h:mm a')}
                     </Text>
@@ -66,77 +68,105 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
                 {/* Lesson Details Section */}
                 <div className={styles.detailsSection}>
                     <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
-                        Lesson details
+                        {t('booking.lesson_details')}
                     </Text>
 
                     <div className={styles.detailsGrid}>
                         <div className={styles.detailRow}>
-                            <Text size="text-sm" colorType="tertiary">Duration</Text>
-                            <Text size="text-sm" colorType="secondary" weight="medium">{duration} minutes</Text>
+                            <Text size="text-sm" colorType="tertiary">{t('common.duration')}</Text>
+                            <Text size="text-sm" colorType="secondary" weight="medium">{t('common.minutes_long', { minutes: duration })}</Text>
                         </div>
                         <div className={styles.detailRow}>
-                            <Text size="text-sm" colorType="tertiary">Lesson type</Text>
+                            <Text size="text-sm" colorType="tertiary">{t('common.lesson_type')}</Text>
                             <Text size="text-sm" colorType="secondary" weight="medium">
-                                {lesson.status === 'online' ? 'Online' : 'On-site'}
+                                {t(`classtype.${lesson.classTypeId}`)}
                             </Text>
                         </div>
                         <div className={styles.detailRow}>
-                            <Text size="text-sm" colorType="tertiary">Mode</Text>
-                            <Text size="text-sm" colorType="secondary" weight="medium">Individual</Text>
-                        </div>
-                        <div className={styles.detailRow}>
-                            <Text size="text-sm" colorType="tertiary">Online class</Text>
+                            <Text size="text-sm" colorType="tertiary">{t('common.price')}</Text>
                             <Text size="text-sm" colorType="secondary" weight="medium">
-                                €{lesson.teacher.classTypes[0]?.price?.amount.toFixed(2) || '0.00'}
+                                {lesson.classType.price.price ? `${t(`common.${lesson.classType.price.currencyCode.toLowerCase()}_price`, { amount: lesson.classType.price.price })}` : '-'}
                             </Text>
                         </div>
                     </div>
                 </div>
 
                 {/* Teacher Section */}
-                <div className={styles.teacherSection}>
-                    <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
-                        Teacher
-                    </Text>
-                    <div className={styles.teacherInfo}>
-                        <Avatar 
-                            src={lesson.teacher.avatar} 
-                            size={48} 
-                            hasVerifiedBadge={lesson.teacher.isSuperTeacher}
-                        />
-                        <div>
-                            <Text size="text-sm" weight="semibold" colorType="primary">
-                                {lesson.teacher.name} {lesson.teacher.surname}
-                            </Text>
-                            <Text size="text-xs" colorType="tertiary">
-                                {lesson.teacher.subject.name.en}
-                            </Text>
+                {lesson.teacher && (
+                    <div className={styles.teacherSection}>
+                        <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
+                            {t('common.teacher')}
+                        </Text>
+                        <div className={styles.teacherInfo}>
+                            <Avatar 
+                                src={lesson.teacher.avatar} 
+                                size={48} 
+                                hasVerifiedBadge={lesson.teacher.isSuperTeacher}
+                            />
+                            <div>
+                                <Text size="text-sm" weight="semibold" colorType="primary">
+                                    {lesson.teacher.name} {lesson.teacher.surname}
+                                </Text>
+                                {lesson.teacher.subjects.length > 0 && (
+                                    <Text size="text-xs" colorType="tertiary">
+                                        {lesson.teacher.subjects[0].name["en"]}
+                                    </Text>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
+
+                {lesson.student && (
+                    <div className={styles.teacherSection}>
+                        <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
+                            {t('common.student')}
+                        </Text>
+                        <div className={styles.teacherInfo}>
+                            <Avatar 
+                                src={lesson.student.avatar} 
+                                size={48} 
+                            />
+                            <div>
+                                <Text size="text-sm" weight="semibold" colorType="primary">
+                                    {lesson.student.name} {lesson.student.surname}
+                                </Text>
+                                <Text size="text-xs" colorType="tertiary">
+                                    {t('common.student')}
+                                </Text>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className={styles.actions}>
-                    <Button 
-                        label="Cancel lesson" 
-                        colorType="secondary" 
-                        fullWidth 
-                        onClick={onCancel}
-                    />
-                    <Button 
-                        label="Send message" 
-                        colorType="secondary" 
-                        fullWidth 
-                        onClick={onSendMessage}
-                    />
+                    {onCancel && (
+                        <Button 
+                            label={t('dashboard.cancel_lesson')} 
+                            colorType="secondary" 
+                            fullWidth 
+                            onClick={onCancel}
+                        />
+                    )}
+                    {onSendMessage && (
+                        <Button 
+                            label={t('dashboard.chat')} 
+                            colorType="secondary" 
+                            fullWidth 
+                            onClick={onSendMessage}
+                        />
+                    )}
                 </div>
 
-                <Button 
-                    label="Join" 
-                    colorType="primary" 
-                    fullWidth 
-                    onClick={onJoin}
-                />
+                {onJoin && (
+                    <Button 
+                        label={t('common.join')} 
+                        colorType="primary" 
+                        fullWidth 
+                        onClick={onJoin}
+                    />
+                )}
             </div>
         </Modal>
     );

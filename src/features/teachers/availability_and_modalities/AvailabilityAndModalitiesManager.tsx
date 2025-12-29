@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import type { Teacher, TeacherClassType } from "../domain/types";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
@@ -8,6 +8,7 @@ import { TeacherAvailabilityRepository } from "../infrastructure/TeacherAvailabi
 import { TeacherModalitiesRepository } from "../infrastructure/TeacherModalitiesRepository";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { Space } from '@/ui-library/components/ssr/space/Space';
+import { useTranslations } from '@/i18n';
 
 export interface AvailabilityAndModalitiesManagerProps {
     teacher: Teacher;
@@ -18,9 +19,27 @@ const availabilityRepo = new TeacherAvailabilityRepository();
 const modalitiesRepo = new TeacherModalitiesRepository();
 
 export function AvailabilityAndModalitiesManager({ teacher, accessToken }: AvailabilityAndModalitiesManagerProps) {
+    const t = useTranslations();
     const [selectedModalities, setSelectedModalities] = useState<TeacherClassType[]>(teacher.classTypes);
     const [selectedAvailability, setSelectedAvailability] = useState<DayAvailability[]>([]);
     const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const loadAvailability = async () => {
+            try {
+                setIsLoading(true);
+                const availability = await availabilityRepo.getAvailability(teacher.id, accessToken);
+                setSelectedAvailability(availability);
+            } catch (error) {
+                console.error('Failed to load availability:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadAvailability();
+    }, [teacher.id, accessToken]);
 
     const handleModalitiesChange = (modalities: TeacherClassType[]) => {
         console.log('Selected modalities:', modalities);
@@ -37,7 +56,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
         try {
             // Guardar modalidades
             if (selectedModalities.length > 0) {
-                //await modalitiesRepo.saveClassTypes(teacher.id, selectedModalities, accessToken);
+                await modalitiesRepo.saveClassTypes(teacher.id, selectedModalities, accessToken);
             }
 
             console.log('Selected availability to save:', selectedAvailability);
@@ -63,8 +82,8 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
     return (
         <div className="mt-6 flex flex-col gap-8">
             <div className="flex flex-col gap-[2px]">
-                <Text size="text-lg" weight="semibold" colorType="primary">Set Your Availability & Modalities</Text>
-                <Text size="text-md" colorType="tertiary">Manage your teaching formats, availability, and lesson pricing — all in one place. Select how you teach, when you're available, and the duration of your lessons. Prices will automatically adjust based on the formats and durations you set. You can update this anytime if your schedule or preferences change.</Text>
+                <Text size="text-lg" weight="semibold" colorType="primary">{t('teacher-profile.set_availability_modalities')}</Text>
+                <Text size="text-md" colorType="tertiary">{t('teacher-profile.set_availability_modalities_description')}</Text>
             </div>
             <Divider margin={24}/>
 
@@ -73,9 +92,12 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                 onChange={handleModalitiesChange}
             />
 
-            <WeeklyAvailabilitySelector 
-                onChange={handleAvailabilityChange}
-            />
+            {!isLoading && (
+                <WeeklyAvailabilitySelector 
+                    availability={selectedAvailability}
+                    onChange={handleAvailabilityChange}
+                />
+            )}
 
             <div className="flex justify-end mt-8">
                 <Button 
