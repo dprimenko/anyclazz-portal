@@ -32,7 +32,13 @@ Guarda este valor, lo necesitarás para configurar las variables de entorno.
 
 ### 3. Configurar Variables de Entorno en Dokploy
 
-En el panel de Dokploy, configura las siguientes variables de entorno:
+En el panel de Dokploy, configura las siguientes variables de entorno **tanto para Build como para Runtime**:
+
+#### ⚠️ IMPORTANTE: Configurar en BUILD TIME y RUNTIME
+
+Las variables deben estar disponibles en ambas fases:
+1. **Build Variables** (Build-time environment variables)
+2. **Environment Variables** (Runtime environment variables)
 
 #### Variables Requeridas:
 
@@ -53,6 +59,19 @@ HOST=0.0.0.0
 PORT=4321
 NODE_ENV=production
 ```
+
+#### 📝 Cómo configurar en Dokploy:
+
+1. **Build Variables (Build-time):**
+   - Ve a la sección "Build" o "Advanced" en tu aplicación
+   - Busca "Build Arguments" o "Build-time Environment Variables"
+   - Agrega todas las variables listadas arriba
+
+2. **Environment Variables (Runtime):**
+   - Ve a la sección "Environment" o "Environment Variables"
+   - Agrega las mismas variables
+
+💡 **Tip:** Copia y pega las mismas variables en ambas secciones.
 
 #### ⚠️ Importante:
 - Reemplaza `tudominio.com` con tu dominio real
