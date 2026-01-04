@@ -31,7 +31,8 @@ export default defineConfig({
 
   env: {
     schema: {
-      API_URL: envField.string({ context: "server", access: "public" }),
+      PUBLIC_API_URL: envField.string({ context: "client", access: "public", optional: false }),
+      API_URL: envField.string({ context: "server", access: "public", optional: false }),
       KEYCLOAK_ISSUER: envField.string({ context: "server", access: "public" }),
       KEYCLOAK_CLIENT_ID: envField.string({ context: "server", access: "public" }),
       KEYCLOAK_CLIENT_SECRET: envField.string({ context: "server", access: "public" }),

@@ -45,6 +45,7 @@ Las variables deben estar disponibles en ambas fases:
 ```env
 # API Configuration
 API_URL=https://api.tudominio.com/api/v1
+PUBLIC_API_URL=https://api.tudominio.com/api/v1
 
 # Keycloak Configuration
 KEYCLOAK_ISSUER=https://keycloak.tudominio.com/realms/anyclazz

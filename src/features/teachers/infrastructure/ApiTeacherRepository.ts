@@ -1,7 +1,7 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { ApiTeacher } from './types';
 import type { ClassType, GetTeacherParams, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository } from '../domain/types';
-import { getApiUrl } from '@/features/shared/services/environment';
+import { getApiUrl } from '@/features/shared/services/environment/server';
 
 export class ApiTeacherRepository implements TeacherRepository {
 
