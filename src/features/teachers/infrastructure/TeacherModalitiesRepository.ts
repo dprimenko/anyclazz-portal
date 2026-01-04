@@ -1,6 +1,6 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { TeacherClassType } from '../domain/types';
-import { getApiUrl } from '@/features/shared/services/environment/server';
+import { getApiUrl } from '@/features/shared/services/environment';
 
 interface ClassTypesPayload {
     classTypes: {

@@ -3,14 +3,13 @@ import { defineConfig } from 'auth-astro';
 import type { JWT } from '@auth/core/jwt';
 import type { Session, User } from '@auth/core/types';
 import './src/types/auth.d.ts';
-import { KEYCLOAK_ISSUER, KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET, AUTH_SECRET } from 'astro:env/server';
 
-const keycloakIssuer = KEYCLOAK_ISSUER || "http://localhost:8081/realms/anyclazz";
-const keycloakClientId = KEYCLOAK_CLIENT_ID || "anyclazz-app";
-const keycloakClientSecret = KEYCLOAK_CLIENT_SECRET || "anyclazz-app-secret-2024";
+const keycloakIssuer = import.meta.env.KEYCLOAK_ISSUER || "http://localhost:8081/realms/anyclazz";
+const keycloakClientId = import.meta.env.KEYCLOAK_CLIENT_ID || "anyclazz-app";
+const keycloakClientSecret = import.meta.env.KEYCLOAK_CLIENT_SECRET || "anyclazz-app-secret-2024";
 
 export default defineConfig({
-  secret: AUTH_SECRET || "gy07h9vlgxrjb0gdtsIRDLf4GxaN9HFY",
+  secret: import.meta.env.AUTH_SECRET || "gy07h9vlgxrjb0gdtsIRDLf4GxaN9HFY",
   debug: false,
   providers: [
     Keycloak({

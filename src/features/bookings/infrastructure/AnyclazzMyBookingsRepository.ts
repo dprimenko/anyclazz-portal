@@ -1,6 +1,6 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { BookingsRepository, BookingWithTeacher, CreateBookingParams, GetBookingByIdParams, GetTeacherAvailabilityParams, PayBookingParams } from '../domain/types';
-import { getApiUrl } from '@/features/shared/services/environment/server';
+import { getApiUrl } from '@/features/shared/services/environment';
 import type { ClassType } from '@/features/teachers/domain/types';
 
 export class AnyclazzMyBookingsRepository implements BookingsRepository {

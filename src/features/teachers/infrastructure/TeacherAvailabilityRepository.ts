@@ -1,6 +1,6 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { DayAvailability, TimeRange } from '../availability_and_modalities/components/WeeklyAvailabilitySelector';
-import { getApiUrl } from '@/features/shared/services/environment/server';
+import { getApiUrl } from '@/features/shared/services/environment';
 
 interface AvailabilitySlot {
     startAt: string;

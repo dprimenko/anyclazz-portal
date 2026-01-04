@@ -1,7 +1,7 @@
 import type { Session } from "@auth/core/types";
 import type { AuthRepository, AuthUser, ProfileApiResponse } from "../../domain/types";
 import { FetchClient } from '@/features/shared/services/httpClient';
-import { getApiUrl } from '@/features/shared/services/environment/server';
+import { getApiUrl } from '@/features/shared/services/environment';
 import { UserCache } from '../../infrastructure/userCache';
 
 export class AnyclazzAuthRepository implements AuthRepository {
