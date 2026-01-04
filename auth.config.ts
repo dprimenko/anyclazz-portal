@@ -3,23 +3,29 @@ import { defineConfig } from 'auth-astro';
 import type { JWT } from '@auth/core/jwt';
 import type { Session, User } from '@auth/core/types';
 import './src/types/auth.d.ts';
+import { KEYCLOAK_ISSUER, KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET, AUTH_SECRET } from 'astro:env/server';
+
+const keycloakIssuer = KEYCLOAK_ISSUER || "http://localhost:8081/realms/anyclazz";
+const keycloakClientId = KEYCLOAK_CLIENT_ID || "anyclazz-app";
+const keycloakClientSecret = KEYCLOAK_CLIENT_SECRET || "anyclazz-app-secret-2024";
 
 export default defineConfig({
-  secret: process.env.AUTH_SECRET || "gy07h9vlgxrjb0gdtsIRDLf4GxaN9HFY",
-  debug: false, // Cambiado a false para reducir logs y tamaño
+  secret: AUTH_SECRET || "gy07h9vlgxrjb0gdtsIRDLf4GxaN9HFY",
+  debug: false,
   providers: [
     Keycloak({
-      clientId: "anyclazz-app",
-      clientSecret: "anyclazz-app-secret-2024",
-      issuer: "http://localhost:8081/realms/anyclazz",
+      clientId: keycloakClientId,
+      clientSecret: keycloakClientSecret,
+      issuer: keycloakIssuer,
       authorization: {
+        url: `${keycloakIssuer}/protocol/openid-connect/auth`,
         params: {
           prompt: "login",
           scope: "openid profile email roles"
         }
       },
-      token: "http://localhost:8081/realms/anyclazz/protocol/openid-connect/token",
-      userinfo: "http://localhost:8081/realms/anyclazz/protocol/openid-connect/userinfo",
+      token: `${keycloakIssuer}/protocol/openid-connect/token`,
+      userinfo: `${keycloakIssuer}/protocol/openid-connect/userinfo`,
       client: {
         token_endpoint_auth_method: "client_secret_post",
       },
@@ -36,8 +42,8 @@ export default defineConfig({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false, // false en desarrollo (localhost)
-        maxAge: 60 * 30, // 30 minutos (aumentado para evitar expiraciones durante el flujo de login)
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 30,
       },
     },
   },
@@ -89,14 +95,15 @@ export default defineConfig({
         console.log('🔄 Access token expiring soon, refreshing...');
         
         try {
-          const response = await fetch('http://localhost:8081/realms/anyclazz/protocol/openid-connect/token', {
+          const tokenUrl = `${keycloakIssuer}/protocol/openid-connect/token`;
+          const response = await fetch(tokenUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
-              client_id: 'anyclazz-app',
-              client_secret: 'anyclazz-app-secret-2024',
+              client_id: keycloakClientId,
+              client_secret: keycloakClientSecret,
               grant_type: 'refresh_token',
               refresh_token: token.refreshToken as string,
             }),
