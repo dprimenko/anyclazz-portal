@@ -30,6 +30,10 @@ export class FetchClient {
 	public async get({ url, token, data = {}, headers = {}, contentType = 'application/json', accept = 'application/json', signal } : GetParams): Promise<Response> {
 		const queryParams = new URLSearchParams(data as Record<string, string>).toString();
 		const fullUrl = queryParams ? `${this.baseUrl}${url}?${queryParams}` : `${this.baseUrl}${url}`;
+		
+		console.log('🌐 FetchClient GET:', fullUrl);
+		console.log('🔑 Base URL:', this.baseUrl);
+		console.log('📍 Path:', url);
       
 		const response = await fetch(fullUrl, {
 			method: 'GET', 
