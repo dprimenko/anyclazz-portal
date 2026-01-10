@@ -1,7 +1,7 @@
 import Keycloak from '@auth/core/providers/keycloak';
 import { defineConfig } from 'auth-astro';
 import type { JWT } from '@auth/core/jwt';
-import type { Session, User } from '@auth/core/types';
+import type { Session } from '@auth/core/types';
 import './src/types/auth.d.ts';
 
 const keycloakIssuer = import.meta.env.KEYCLOAK_ISSUER || "http://localhost:8081/realms/anyclazz";
@@ -66,7 +66,7 @@ export default defineConfig({
             
             // Extraer solo la información esencial
             token.name = payload.name || `${payload.given_name || ''} ${payload.family_name || ''}`.trim() || payload.preferred_username || payload.email;
-            token.userRole = payload.userRole || payload.roles?.[0] || null;
+            token.userRole = payload.selectedRoleForSession || payload.userRole || payload.roles?.[0] || null;
             token.realmRoles = payload.realm_roles || [];
             token.roles = payload.roles || [];
             token.platformId = payload.platformId || payload.platform_id || null;
@@ -126,7 +126,7 @@ export default defineConfig({
             // Actualizar información del usuario desde el nuevo token
             try {
               const payload = JSON.parse(atob(refreshedTokens.access_token.split('.')[1]));
-              token.userRole = payload.userRole || payload.roles?.[0] || null;
+              token.userRole = payload.selectedRoleForSession || payload.userRole || payload.roles?.[0] || null;
               token.realmRoles = payload.realm_roles || [];
               token.roles = payload.roles || [];
               token.platformId = payload.platformId || payload.platform_id || null;

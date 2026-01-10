@@ -16,6 +16,8 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
             sort: 'asc'
         };
 
+        console.log(token);
+
         const apiResponse = await this.httpClient.get({
             url: '/me/bookings',
             token: token,
