@@ -45,6 +45,8 @@ export interface Teacher {
     email: string;
     avatar?: string;
     portrait?: string;
+    studentLevel?: string;
+    subject?: string;
     category: TeacherCategory[];
     subjects: TeacherSubject[];
     classTypes: TeacherClassType[];
@@ -90,10 +92,15 @@ export interface DeleteTeacherParams {
     id: string;
 }
 
+export interface UpdateTeacherParams extends CommonParams {
+    teacherId: string;
+    data: Partial<Omit<Teacher, 'id' | 'email' | 'isSuperTeacher' | 'status' | 'createdAt' | 'updatedAt'>>;
+}
+
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
+    updateTeacher(params: UpdateTeacherParams): Promise<Teacher>;
     // createTeacher(teacher: Teacher): Promise<void>;
-    // updateTeacher(teacher: Teacher): Promise<void>;
     // deleteTeacher(params: DeleteTeacherParams): Promise<void>;
 }

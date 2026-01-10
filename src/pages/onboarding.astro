@@ -1,0 +1,11 @@
+---
+import Base from '@/layout/Base.astro';
+import OnboardingLayout from '@/features/teachers/onboarding/OnboardingLayout';
+import OnboardingStep1 from '@/features/teachers/onboarding/OnboardingStep1';
+---
+
+<Base>
+    <OnboardingLayout currentStep={1} client:load>
+        <OnboardingStep1 client:load />
+    </OnboardingLayout>
+</Base>

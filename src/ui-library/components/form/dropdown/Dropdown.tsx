@@ -1,4 +1,4 @@
-import { useState, type HTMLAttributes, type ReactNode } from 'react';
+import { type HTMLAttributes, type ReactNode } from 'react';
 import type { ColorType } from '@/ui-library/shared/constants';
 import classNames from 'classnames';
 import styles from './Dropdown.module.css';
@@ -7,43 +7,39 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
-export interface DropdownProps extends HTMLAttributes<HTMLSelectElement> {
+export interface DropdownItem {
+  value: string;
+  label: string;
+  renderItem?: (item: DropdownItem, isSelected: boolean) => ReactNode;
+}
+
+export interface DropdownProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
 	prepend?: ReactNode;
     fullWidth?: boolean;
     label?: string;
 	colorType?: ColorType;
-	onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+    placeholder?: string;
+    items?: DropdownItem[];
+    value?: string;
+	onChange?: (value: string) => void;
 }
-
-const items = [
-  { value: "1", label: 'Wade Cooper' },
-  { value: "2", label: 'Arlene Mccoy' },
-  { value: "3", label: 'Devon Webb' },
-  { value: "4", label: 'Tom Cook' },
-  { value: "5", label: 'Tanya Fox' },
-  { value: "6", label: 'Hellen Schmidt' },
-  { value: "7", label: 'Caroline Schultz' },
-  { value: "8", label: 'Mason Heaney' },
-  { value: "9", label: 'Claudie Smitham' },
-  { value: "10", label: 'Emil Schaefer' },
-]
 
 export const Dropdown = ({
 	prepend,
     label,
     className,
     fullWidth = false,
+    placeholder,
+    items = [],
+    value,
 	onChange,
 	...props
 }: DropdownProps) => {
-	const [selected, setSelected] = useState()
-
     const classes = classNames(
         'px-4 py-2.5 rounded-lg control control--input text-base',
 		styles.dropdown,
@@ -51,18 +47,33 @@ export const Dropdown = ({
 		className
 	);
 
+	const selectedItem = items.find(item => item.value === value);
+	const displayValue = selectedItem ? selectedItem.label : undefined;
+
 	return (
-		<Select>
-			<SelectTrigger prefix={<Icon icon="flags/es" />} className={classes}>
-				<SelectValue placeholder="Any price" />
+		<Select value={value} onValueChange={onChange}>
+			<SelectTrigger prefix={prepend} className={classes}>
+				<SelectValue placeholder={placeholder}>
+					{displayValue || placeholder}
+				</SelectValue>
 			</SelectTrigger>
-			<SelectContent>
+			<SelectContent className="max-h-[320px] overflow-y-auto">
 				<SelectGroup>
-				{items.map((item) => (
-					<SelectItem key={item.value} value={item.value}>
-						{item.label}
-					</SelectItem>
-				))}
+				{items.map((item) => {
+                    const isSelected = value === item.value;
+                    return (
+                        <SelectItem key={item.value} value={item.value} textValue={item.label}>
+                            {item.renderItem ? (
+                                item.renderItem(item, isSelected)
+                            ) : (
+                                <div className="flex items-center justify-between w-full">
+                                    <span>{item.label}</span>
+                                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[#F4A43A]" />}
+                                </div>
+                            )}
+                        </SelectItem>
+                    );
+                })}
 				</SelectGroup>
 			</SelectContent>
 		</Select>
