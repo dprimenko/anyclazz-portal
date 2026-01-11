@@ -41,6 +41,7 @@ export const Text = (
 
      
             {'text-xl lg:text-2xl' : size === 'display-xs'},
+            {'text-2xl' : size === 'text-2xl'},
             {'text-xl' : size === 'text-xl'},
             {'text-lg' : size === 'text-lg'},
             {'text-base' : size === 'text-md'},
