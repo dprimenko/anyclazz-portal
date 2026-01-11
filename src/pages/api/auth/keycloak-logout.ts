@@ -1,6 +1,10 @@
 import type { APIRoute } from 'astro';
 import { getSession } from 'auth-astro/server';
 
+const keycloakIssuer = import.meta.env.KEYCLOAK_ISSUER || "http://localhost:8081/realms/anyclazz";
+const keycloakClientId = import.meta.env.KEYCLOAK_CLIENT_ID || "anyclazz-app";
+const keycloakClientSecret = import.meta.env.KEYCLOAK_CLIENT_SECRET || "anyclazz-app-secret-2024";
+
 export const POST: APIRoute = async ({ request, redirect, cookies, url, locals }) => {
   try {
     const origin = new URL(request.url).origin;
@@ -35,14 +39,14 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url, locals }
     if (refreshToken) {
       try {
         console.log('🗑️  Revoking refresh token in Keycloak...');
-        const revokeResponse = await fetch('http://localhost:8081/realms/anyclazz/protocol/openid-connect/revoke', {
+        const revokeResponse = await fetch(`${keycloakIssuer}/protocol/openid-connect/revoke`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            client_id: 'anyclazz-app',
-            client_secret: 'anyclazz-app-secret-2024',
+            client_id: keycloakClientId,
+            client_secret: keycloakClientSecret,
             token: refreshToken,
             token_type_hint: 'refresh_token',
           }),
@@ -88,7 +92,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url, locals }
     
     // Ahora redirigir a Keycloak logout usando el id_token que guardamos
     try {
-      const keycloakLogoutUrl = new URL('http://localhost:8081/realms/anyclazz/protocol/openid-connect/logout');
+      const keycloakLogoutUrl = new URL(`${keycloakIssuer}/protocol/openid-connect/logout`);
       keycloakLogoutUrl.searchParams.set('post_logout_redirect_uri', `${origin}${redirectPath}`);
       
       // Usar el id_token que guardamos antes de limpiar las cookies
