@@ -36,6 +36,16 @@ const nextUrl = Astro.url.searchParams.get('next') || '/login';
             console.log(`🗑️  Cleared ${cookieName}`);
         });
         
+        // Limpiar localStorage (incluyendo el caché de usuario)
+        console.log('🧹 Clearing localStorage...');
+        try {
+            localStorage.removeItem('anyclazz_user_profile');
+            localStorage.removeItem('anyclazz_user_profile_expiry');
+            console.log('✅ User cache cleared');
+        } catch (error) {
+            console.error('Error clearing localStorage:', error);
+        }
+        
         console.log('✅ Cookies cleared, redirecting to login...');
         
         // Redirigir después de limpiar las cookies

@@ -35,7 +35,7 @@ export interface TeacherClassType {
 export interface TeacherAddress {
     countryISO2: string;
     cityISO2: string;
-    fullAddress: string;
+    fullAddress?: string;
 }
 
 export interface Teacher {

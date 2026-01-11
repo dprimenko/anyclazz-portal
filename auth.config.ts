@@ -64,12 +64,20 @@ export default defineConfig({
           try {
             const payload = JSON.parse(atob(account.access_token.split('.')[1]));
             
+            // 🔍 DEBUG: Ver todo el payload del token
+            console.log('🔍 JWT Payload completo:', JSON.stringify(payload, null, 2));
+            console.log('🔍 selectedRoleForSession:', payload.selectedRoleForSession);
+            console.log('🔍 userRole:', payload.userRole);
+            console.log('🔍 roles:', payload.roles);
+            
             // Extraer solo la información esencial
             token.name = payload.name || `${payload.given_name || ''} ${payload.family_name || ''}`.trim() || payload.preferred_username || payload.email;
             token.userRole = payload.selectedRoleForSession || payload.userRole || payload.roles?.[0] || null;
             token.realmRoles = payload.realm_roles || [];
             token.roles = payload.roles || [];
             token.platformId = payload.platformId || payload.platform_id || null;
+            
+            console.log('✅ token.userRole asignado:', token.userRole);
             
           } catch (error) {
             console.error('Error decoding JWT:', error);
@@ -126,10 +134,16 @@ export default defineConfig({
             // Actualizar información del usuario desde el nuevo token
             try {
               const payload = JSON.parse(atob(refreshedTokens.access_token.split('.')[1]));
+              
+              console.log('🔄 JWT Payload en refresh:', JSON.stringify(payload, null, 2));
+              console.log('🔄 selectedRoleForSession:', payload.selectedRoleForSession);
+              
               token.userRole = payload.selectedRoleForSession || payload.userRole || payload.roles?.[0] || null;
               token.realmRoles = payload.realm_roles || [];
               token.roles = payload.roles || [];
               token.platformId = payload.platformId || payload.platform_id || null;
+              
+              console.log('✅ token.userRole actualizado:', token.userRole);
             } catch (error) {
               console.error('Error decoding refreshed JWT:', error);
             }
@@ -167,6 +181,8 @@ export default defineConfig({
         const roles = (token.roles as string[]) || [];
         const realmRoles = (token.realmRoles as string[]) || [];
         (session as any).primaryRole = roles[0] || realmRoles[0] || null;
+        
+        console.log('📦 Session userRole final:', (session as any).userRole);
       }
       
       // Asegurar que el nombre esté disponible en la sesión

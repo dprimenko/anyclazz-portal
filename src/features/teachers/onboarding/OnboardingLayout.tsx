@@ -120,7 +120,7 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
                     </div>
 
                     {/* Step Icon - Mobile */}
-                    <div className="md:hidden mb-6 flex justify-center">
+                    <div className="mb-6 flex justify-center">
                         <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-[#FEF8F0]">
                             <Icon 
                                 icon={steps[currentStep - 1]?.icon} 

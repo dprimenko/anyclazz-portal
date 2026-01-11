@@ -11,14 +11,14 @@ interface OnboardingStep1Props {
         category?: string;
         subject?: string;
     };
-    onContinue: (data: { studentLevel: string; category: string; subject: string }) => void;
 }
 
-export default function OnboardingStep1({ initialData, onContinue }: OnboardingStep1Props) {
+export default function OnboardingStep1({ initialData }: OnboardingStep1Props) {
     const t = useTranslations();
     const [studentLevel, setStudentLevel] = useState<string>(initialData?.studentLevel || '');
     const [category, setCategory] = useState<string>(initialData?.category || '');
     const [subject, setSubject] = useState<string>(initialData?.subject || '');
+    const [isSaving, setIsSaving] = useState(false);
 
     const studentLevelItems: RectangleSelectionGroupItem[] = [
         { id: 'kids', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.student_level.kids')}</span> },
@@ -198,8 +198,21 @@ export default function OnboardingStep1({ initialData, onContinue }: OnboardingS
         setCategory(categoryId);
     };
 
-    const handleContinue = () => {
-        onContinue({ studentLevel, category, subject });
+    const handleContinue = async () => {
+        if (!isFormValid) return;
+        
+        setIsSaving(true);
+        try {
+            // TODO: Llamar a updateTeacher API
+            console.log('Saving:', { studentLevel, category, subject });
+            
+            // Navegar a la siguiente página
+            window.location.href = '/onboarding/class-modality';
+        } catch (error) {
+            console.error('Error saving step 1:', error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const isFormValid = studentLevel !== '' && category !== '' && subject !== '';
@@ -261,16 +274,16 @@ export default function OnboardingStep1({ initialData, onContinue }: OnboardingS
             {/* Continue Button */}
             <button
                 onClick={handleContinue}
-                disabled={!isFormValid}
+                disabled={!isFormValid || isSaving}
                 className={`
                     w-full py-3 px-6 rounded-lg text-sm font-semibold transition-all
-                    ${isFormValid
+                    ${isFormValid && !isSaving
                         ? 'bg-[var(--color-primary-700)] text-white hover:bg-[var(--color-primary-800)]'
                         : 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-400)] cursor-not-allowed'
                     }
                 `}
             >
-                {t('onboarding.continue')}
+                {isSaving ? t('onboarding.saving') : t('onboarding.continue')}
             </button>
         </>
     );

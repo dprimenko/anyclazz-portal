@@ -80,10 +80,21 @@ export class AnyclazzAuthRepository implements AuthRepository {
             return cachedUser || fallbackUser;
         }
 
-        // Determinar el rol y el perfil correspondiente
-        const isStudent = profileData.roles.includes('ROLE_STUDENT');
-        const profile = isStudent ? profileData.studentProfile : profileData.teacherProfile;
-        const role = isStudent ? 'student' : 'teacher';
+        // Determinar el rol basado en el selectedRoleForSession de la sesión
+        // Esto respeta la selección del usuario en el selector de roles
+        const selectedRole = (session as any).userRole || 'student';
+        
+        // Validar que el usuario tenga el rol seleccionado
+        const hasSelectedRole = selectedRole === 'teacher' 
+            ? profileData.roles.includes('ROLE_TEACHER')
+            : profileData.roles.includes('ROLE_STUDENT');
+        
+        // Si no tiene el rol seleccionado, usar el primero disponible
+        const role = hasSelectedRole 
+            ? selectedRole 
+            : (profileData.roles.includes('ROLE_STUDENT') ? 'student' : 'teacher');
+        
+        const profile = role === 'student' ? profileData.studentProfile : profileData.teacherProfile;
 
         const user: AuthUser = {
             id: profileData.user.id,
