@@ -9,7 +9,7 @@ export interface City {
 
 export const cities: City[] = [
     // España
-    { cityISO2: 'md', countryISO2: 'es', name: { es: 'Madrid', en: 'Madrid' } },
+    { cityISO2: 'm', countryISO2: 'es', name: { es: 'Madrid', en: 'Madrid' } },
     { cityISO2: 'b', countryISO2: 'es', name: { es: 'Barcelona', en: 'Barcelona' } },
     { cityISO2: 'v', countryISO2: 'es', name: { es: 'Valencia', en: 'Valencia' } },
     { cityISO2: 'se', countryISO2: 'es', name: { es: 'Sevilla', en: 'Seville' } },

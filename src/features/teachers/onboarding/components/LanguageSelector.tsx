@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Dropdown, type DropdownItem } from '@/ui-library/components/form/dropdown';
+import { Combobox, type ComboboxItem } from '@/ui-library/components/form/combobox/Combobox';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Button } from '@/ui-library/components/ssr/button/Button';
@@ -19,8 +19,8 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [selectedLevel, setSelectedLevel] = useState<string>('');
 
-    // Transform languages to dropdown items
-    const languageItems: DropdownItem[] = useMemo(() => 
+    // Transform languages to combobox items
+    const languageItems: ComboboxItem[] = useMemo(() => 
         languages
             .filter(l => !value.some(v => v.language === l.code))
             .map(language => ({
@@ -30,8 +30,8 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
         [lang, value]
     );
 
-    // Transform proficiency levels to dropdown items
-    const levelItems: DropdownItem[] = useMemo(() => 
+    // Transform proficiency levels to combobox items
+    const levelItems: ComboboxItem[] = useMemo(() => 
         proficiencyLevels.map(level => ({
             value: level.code,
             label: level.name[lang as keyof typeof level.name],
@@ -64,13 +64,14 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
     const canAdd = selectedLanguage !== '' && selectedLevel !== '';
 
     return (
-        <div className="space-y-4">
+        <div>
             {label && (
-                <label className="block text-sm font-semibold text-[var(--color-neutral-900)]">
+                <label className="block text-sm font-semibold text-[var(--color-neutral-900)] mb-3">
                     {label} {required && <span className="text-[var(--color-primary-700)]">*</span>}
                 </label>
             )}
 
+            <div className="space-y-4">
             {/* Selected Languages List */}
             {value.length > 0 && (
                 <div className="space-y-2 mb-4">
@@ -93,10 +94,10 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
                                 className="p-1 hover:bg-[var(--color-neutral-200)] rounded-md transition-colors"
                             >
                                 <Icon 
-                                    icon="x" 
+                                    icon="close" 
                                     iconWidth={16} 
                                     iconHeight={16}
-                                    className="text-[var(--color-neutral-500)]"
+                                    iconColor="#181d27"
                                 />
                             </button>
                         </div>
@@ -107,18 +108,22 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
             {/* Add Language Section */}
             <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Dropdown
+                    <Combobox
                         items={languageItems}
                         value={selectedLanguage}
                         onChange={setSelectedLanguage}
                         placeholder={lang === 'es' ? 'Seleccionar idioma' : 'Select language'}
+                        searchPlaceholder={lang === 'es' ? 'Buscar idioma...' : 'Search language...'}
+                        emptyMessage={lang === 'es' ? 'No se encontraron idiomas' : 'No languages found'}
                         fullWidth
                     />
-                    <Dropdown
+                    <Combobox
                         items={levelItems}
                         value={selectedLevel}
                         onChange={setSelectedLevel}
                         placeholder={lang === 'es' ? 'Nivel' : 'Level'}
+                        searchPlaceholder={lang === 'es' ? 'Buscar nivel...' : 'Search level...'}
+                        emptyMessage={lang === 'es' ? 'No se encontraron niveles' : 'No levels found'}
                         fullWidth
                         disabled={!selectedLanguage}
                     />
@@ -132,6 +137,7 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
                     label={lang === 'es' ? 'Añadir idioma' : 'Add language'}
                     fullWidth
                 />
+            </div>
             </div>
         </div>
     );

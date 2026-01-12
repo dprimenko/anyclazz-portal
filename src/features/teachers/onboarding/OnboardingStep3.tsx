@@ -1,24 +1,34 @@
-import { useState } from 'react';
-import { useTranslations, getLangFromUrl } from '@/i18n';
+import { useState, useMemo, useEffect } from 'react';
+import { useTranslations } from '@/i18n';
 import { Combobox, type ComboboxItem } from '@/ui-library/components/form/combobox/Combobox';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { cities } from './data/cities';
 import { countries } from './data/countries';
 import { LanguageSelector } from './components/LanguageSelector';
 import type { TeacherLanguage } from '../domain/types';
+import { ApiTeacherRepository } from '../infrastructure/ApiTeacherRepository';
 import esFlag from '@/assets/images/icons/flags/es.svg';
 import usFlag from '@/assets/images/icons/flags/us.svg';
 
 interface OnboardingStep3Props {
     lang: string;
+    teacherId: string;
+    token: string;
+    initialData?: {
+        nationalityId?: string;
+        cityISO2?: string;
+        speaksLanguages?: TeacherLanguage[];
+    };
 }
 
-export default function OnboardingStep3({ lang }: OnboardingStep3Props) {
+export default function OnboardingStep3({ lang, teacherId, token, initialData }: OnboardingStep3Props) {
     const t = useTranslations();
-    const [selectedNationality, setSelectedNationality] = useState<string>('');
-    const [selectedCity, setSelectedCity] = useState<string>('');
-    const [selectedLanguages, setSelectedLanguages] = useState<TeacherLanguage[]>([]);
+    const [selectedNationality, setSelectedNationality] = useState<string>(initialData?.nationalityId || '');
+    const [selectedCity, setSelectedCity] = useState<string>(initialData?.cityISO2 || '');
+    const [selectedLanguages, setSelectedLanguages] = useState<TeacherLanguage[]>(initialData?.speaksLanguages || []);
     const [isSaving, setIsSaving] = useState(false);
+
+    const repository = useMemo(() => new ApiTeacherRepository(), []);
 
     // const getFlagForCountry = (countryISO2: string): string => {
     //     const flags: Record<string, string> = {
@@ -46,18 +56,31 @@ export default function OnboardingStep3({ lang }: OnboardingStep3Props) {
 
         setIsSaving(true);
         try {
-            // TODO: Call API to update teacher location
-            // const selectedCityData = cities.find(c => c.cityISO2 === selectedCity);
-            // await updateTeacher({ 
-            //   teacherAddress: { 
-            //     countryISO2: selectedCityData.countryISO2,
-            //     cityISO2: selectedCityData.cityISO2 
-            //   }
-            // });
+            // Obtener la información completa de la ciudad seleccionada
+            const selectedCityData = cities.find(c => c.cityISO2 === selectedCity);
+            
+            if (!selectedCityData) {
+                console.error('City data not found');
+                return;
+            }
+
+            // Llamar al repositorio para actualizar los datos del profesor
+            await repository.updateTeacher({
+                token,
+                teacherId,
+                data: {
+                    nationalityId: selectedNationality,
+                    address: {
+                        countryISO2: selectedCityData.countryISO2,
+                        cityISO2: selectedCityData.cityISO2,
+                    },
+                    speaksLanguages: selectedLanguages,
+                },
+            });
             
             window.location.href = '/onboarding/quick-intro';
         } catch (error) {
-            console.error('Error saving location:', error);
+            console.error('Error saving location and languages:', error);
         } finally {
             setIsSaving(false);
         }

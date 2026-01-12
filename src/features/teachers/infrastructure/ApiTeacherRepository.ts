@@ -69,6 +69,11 @@ export class ApiTeacherRepository implements TeacherRepository {
 				...(data.subjectId ? { subjectId: data.subjectId } : {}),
 				...(data.subjectCategoryId ? { subjectCategoryId: data.subjectCategoryId } : {}),
 				...(data.studentLevelId ? { studentLevelId: data.studentLevelId } : {}),
+				...(data.nationalityId ? { nationalityId: data.nationalityId } : {}),
+				...(data.address ? { address: data.address } : {}),
+				...(data.speaksLanguages ? { speaksLanguages: data.speaksLanguages } : {}),
+				...(data.beganTeachingAt ? { beganTeachingAt: data.beganTeachingAt } : {}),
+				...(data.shortPresentation ? { shortPresentation: data.shortPresentation } : {}),
 			},
 		});
 	}

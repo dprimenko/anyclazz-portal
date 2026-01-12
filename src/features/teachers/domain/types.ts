@@ -100,6 +100,15 @@ export interface UpdateTeacherData {
     studentLevelId?: string;
     subjectCategoryId?: string;
     subjectId?: string;
+    nationalityId?: string;
+    address?: {
+        countryISO2: string;
+        cityISO2: string;
+        fullAddress?: string;
+    };
+    speaksLanguages?: TeacherLanguage[];
+    beganTeachingAt?: string;
+    shortPresentation?: string;
 }
 
 export interface UpdateTeacherParams extends CommonParams {

@@ -51,11 +51,10 @@ export const Dropdown = ({
 	return (
 		<Select value={value} onValueChange={onChange}>
 			<SelectTrigger prefix={prepend} className={classes}>
-				<SelectValue 
-					placeholder={placeholder}
-					className={selectedItem ? 'text-[var(--color-neutral-900)]' : 'text-[var(--color-neutral-400)]'}
-				>
-					{displayValue || placeholder}
+				<SelectValue placeholder={placeholder}>
+					<span className="text-[var(--color-neutral-900)]">
+						{displayValue}
+					</span>
 				</SelectValue>
 			</SelectTrigger>
 			<SelectContent className="max-h-[300px] overflow-y-auto">

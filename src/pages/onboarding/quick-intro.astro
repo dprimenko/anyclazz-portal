@@ -1,7 +1,7 @@
 ---
 import Base from '@/layout/Base.astro';
 import OnboardingLayout from '@/features/teachers/onboarding/OnboardingLayout';
-import OnboardingStep3 from '@/features/teachers/onboarding/OnboardingStep3';
+import OnboardingStep4 from '@/features/teachers/onboarding/OnboardingStep4';
 import { getLangFromUrl } from '@/i18n';
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
@@ -43,14 +43,13 @@ try {
 
 // Preparar datos iniciales del formulario
 const initialData = teacher ? {
-  nationalityId: teacher.teacherAddress?.countryISO2,
-  cityISO2: teacher.teacherAddress?.cityISO2,
-  speaksLanguages: teacher.speaksLanguages,
+  beganTeachingAt: teacher.beganTeachingAt,
+  shortPresentation: teacher.shortPresentation,
 } : undefined;
 ---
 
 <Base>
-    <OnboardingLayout currentStep={3} client:load>
-        <OnboardingStep3 lang={lang} teacherId={teacherId} token={token} initialData={initialData} client:load />
+    <OnboardingLayout currentStep={4} client:load>
+        <OnboardingStep4 lang={lang} teacherId={teacherId} token={token} initialData={initialData} client:load />
     </OnboardingLayout>
 </Base>

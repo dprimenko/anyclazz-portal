@@ -32,11 +32,14 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOut
     // Obtener iniciales del nombre
     const getInitials = (name?: string) => {
         if (!name) return '?';
-        const parts = name.split(' ');
-        if (parts.length >= 2) {
-            return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+        const parts = name.trim().split(' ').filter(part => part.length > 0);
+        
+        if (parts.length === 0) return '?';
+        if (parts.length === 1) {
+            return parts[0].slice(0, 2).toUpperCase();
         }
-        return name.slice(0, 2).toUpperCase();
+        // Si hay 2 o más palabras, tomar primera letra de la primera y última
+        return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
     };
 
     return (
@@ -45,7 +48,7 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOut
                 {src ? (
                     <img src={src} alt={alt} className="rounded-full w-full h-full object-cover" />
                 ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-semibold" style={{fontSize: `${size * 0.4}px`}}>
+                    <div className="w-full h-full rounded-full bg-[var(--color-primary-200)] flex items-center justify-center text-[var(--color-primary-700)] font-semibold" style={{fontSize: `${size * 0.4}px`}}>
                         {getInitials(alt)}
                     </div>
                 )}
