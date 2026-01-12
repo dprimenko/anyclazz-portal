@@ -1,221 +1,122 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslations } from '@/i18n';
 import { RectangleSelectionGroup, type RectangleSelectionGroupItem } from '@/ui-library/components/form/rectangle-selection-group';
 import { Dropdown, type DropdownItem } from '@/ui-library/components/form/dropdown';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Text } from '@/ui-library/components/ssr/text/Text';
+import { STUDENT_LEVELS, SUBJECT_CATEGORIES, SUBJECTS_BY_CATEGORY } from './constants';
+import { ApiTeacherRepository } from '../infrastructure/ApiTeacherRepository';
 
 interface OnboardingStep1Props {
+    lang: string;
     initialData?: {
         studentLevel?: string;
         category?: string;
         subject?: string;
     };
+    teacherId: string;
+    token: string;
 }
 
-export default function OnboardingStep1({ initialData }: OnboardingStep1Props) {
+export default function OnboardingStep1({ lang, initialData, teacherId, token }: OnboardingStep1Props) {
     const t = useTranslations();
+    const repository = useMemo(() => new ApiTeacherRepository(), []);
+    
+    // Por defecto selecciona la primera categoría
+    const defaultCategory = SUBJECT_CATEGORIES[0].id;
+    
     const [studentLevel, setStudentLevel] = useState<string>(initialData?.studentLevel || '');
-    const [category, setCategory] = useState<string>(initialData?.category || '');
+    const [category, setCategory] = useState<string>(initialData?.category || defaultCategory);
     const [subject, setSubject] = useState<string>(initialData?.subject || '');
     const [isSaving, setIsSaving] = useState(false);
 
-    const studentLevelItems: RectangleSelectionGroupItem[] = [
-        { id: 'kids', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.student_level.kids')}</span> },
-        { id: 'high_school', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.student_level.high_school')}</span> },
-        { id: 'university', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.student_level.university')}</span> },
-        { id: 'adults', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.student_level.adults')}</span> },
-    ];
+    // Cambiar subjects cuando cambia la categoría
+    useEffect(() => {
+        // Si cambia la categoría, reinicia el subject seleccionado
+        if (category && !initialData?.subject) {
+            setSubject('');
+        }
+    }, [category, initialData?.subject]);
 
-    const categoryItems: RectangleSelectionGroupItem[] = [
-        { id: 'academic_education', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.category.academic_education')}</span> },
-        { id: 'sports_wellness', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.category.sports_wellness')}</span> },
-        { id: 'language', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.category.language')}</span> },
-        { id: 'arts_crafts_hobbies', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.category.arts_crafts_hobbies')}</span> },
-        { id: 'activities_nearby', children: <span className="text-sm font-medium text-[var(--color-neutral-900)]">{t('onboarding.category.activities_nearby')}</span> },
-    ];
+    // Convertir student levels a items del selector
+    const studentLevelItems: RectangleSelectionGroupItem[] = useMemo(() => 
+        STUDENT_LEVELS.map(level => ({
+            id: level.id,
+            children: () => (
+                <span className={`text-sm font-medium text-[var(--color-neutral-900)]`}>
+                    {level.name[lang]}
+                </span>
+            ),
+        })),
+        [lang]
+    );
 
-    const subjectItems: DropdownItem[] = [
-        { 
-            value: 'business_administration', 
-            label: t('onboarding.subject.business_administration'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'psychology', 
-            label: t('onboarding.subject.psychology'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'nursing', 
-            label: t('onboarding.subject.nursing'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'biology', 
-            label: t('onboarding.subject.biology'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'computer_science', 
-            label: t('onboarding.subject.computer_science'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'economics', 
-            label: t('onboarding.subject.economics'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'engineering', 
-            label: t('onboarding.subject.engineering'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'mathematics', 
-            label: t('onboarding.subject.mathematics'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'physics', 
-            label: t('onboarding.subject.physics'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'chemistry', 
-            label: t('onboarding.subject.chemistry'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'literature', 
-            label: t('onboarding.subject.literature'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'history', 
-            label: t('onboarding.subject.history'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'philosophy', 
-            label: t('onboarding.subject.philosophy'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'law', 
-            label: t('onboarding.subject.law'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-        { 
-            value: 'medicine', 
-            label: t('onboarding.subject.medicine'),
-            renderItem: (item, isSelected) => (
-                <div className="flex items-center justify-between w-full">
-                    <span>{item.label}</span>
-                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                </div>
-            )
-        },
-    ];
+    // Convertir categories a items del selector
+    const categoryItems: RectangleSelectionGroupItem[] = useMemo(() =>
+        SUBJECT_CATEGORIES.map(cat => ({
+            id: cat.id,
+            children: () => (
+                <span className={`text-sm font-medium text-[var(--color-neutral-900)]`}>
+                    {cat.name[lang]}
+                </span>
+            ),
+        })),
+        [lang]
+    );
 
-    const selectStudentLevel = (levelId: string) => {
+    // Obtener subjects según la categoría seleccionada
+    const subjectItems: DropdownItem[] = useMemo(() => {
+        const subjects = SUBJECTS_BY_CATEGORY[category] || [];
+        return subjects.map(subj => ({
+            value: subj.id,
+            label: subj.name[lang],
+            renderItem: (item, isSelected) => (
+                <div className="flex items-center justify-between w-full">
+                    <span>{item.label}</span>
+                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
+                </div>
+            ),
+        }));
+    }, [category, lang]);
+
+    const isFormValid = useMemo(() => {
+        return studentLevel !== '' && category !== '' && subject !== '';
+    }, [studentLevel, category, subject]);
+
+    const selectStudentLevel = useCallback((levelId: string) => {
         console.log('Selected student level:', levelId);
         setStudentLevel(levelId);
-    };
+    }, []);
 
-    const selectCategory = (categoryId: string) => {
+    const selectCategory = useCallback((categoryId: string) => {
         console.log('Selected category:', categoryId);
         setCategory(categoryId);
-    };
+    }, []);
 
-    const handleContinue = async () => {
+    const handleContinue = useCallback(async () => {
         if (!isFormValid) return;
         
         setIsSaving(true);
         try {
-            // TODO: Llamar a updateTeacher API
-            console.log('Saving:', { studentLevel, category, subject });
+            await repository.updateTeacher({
+                teacherId,
+                token,
+                data: {
+                    studentLevelId: studentLevel,
+                    subjectCategoryId: category,
+                    subjectId: subject,
+                }
+            });
             
             // Navegar a la siguiente página
-            window.location.href = '/onboarding/class-modality';
+            window.location.href = `/onboarding/class-modality`;
         } catch (error) {
             console.error('Error saving step 1:', error);
+            // TODO: Mostrar mensaje de error al usuario
         } finally {
             setIsSaving(false);
         }
-    };
-
-    const isFormValid = studentLevel !== '' && category !== '' && subject !== '';
+    }, [isFormValid, repository, teacherId, token, studentLevel, category, subject, lang]);
 
     return (
         <>

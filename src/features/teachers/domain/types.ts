@@ -1,11 +1,16 @@
 import type { CommonParams, Price, Translations } from "../../shared/domain/types";
 
-export interface TeacherCategory {
+export interface TeacherSubjectCategory {
     id: string;
     name: Translations;
 }
 
 export interface TeacherSubject {
+    id: string;
+    name: Translations;
+}
+
+export interface TeacherStudentLevel {
     id: string;
     name: Translations;
 }
@@ -29,7 +34,7 @@ export interface DurationPrice {
 
 export interface TeacherClassType {
     type: ClassType;
-    durations: DurationPrice[];
+    durations?: DurationPrice[];
 }
 
 export interface TeacherAddress {
@@ -45,10 +50,9 @@ export interface Teacher {
     email: string;
     avatar?: string;
     portrait?: string;
-    studentLevel?: string;
-    subject?: string;
-    category: TeacherCategory[];
-    subjects: TeacherSubject[];
+    studentLevel?: TeacherStudentLevel;
+    subjectCategory: TeacherSubjectCategory;
+    subject: TeacherSubject;
     classTypes: TeacherClassType[];
     rating?: number;
     reviewsNumber?: number;
@@ -56,15 +60,15 @@ export interface Teacher {
     lessonsNumber?: number;
     isSuperTeacher: boolean;
     isOnline?: boolean;
-    speaksLanguages: TeacherLanguage[];
+    speaksLanguages?: TeacherLanguage[];
     shortPresentation?: string;
     videoPresentation?: string;
     about?: string;
     academicBackground?: string;
     certifications?: string;
     skills?: string;
-    beganTeachingAt: string;
-    teacherAddress: TeacherAddress;
+    beganTeachingAt?: string;
+    teacherAddress?: TeacherAddress;
     createdAt: string;
 }
 
@@ -92,15 +96,19 @@ export interface DeleteTeacherParams {
     id: string;
 }
 
+export interface UpdateTeacherData {
+    studentLevelId?: string;
+    subjectCategoryId?: string;
+    subjectId?: string;
+}
+
 export interface UpdateTeacherParams extends CommonParams {
     teacherId: string;
-    data: Partial<Omit<Teacher, 'id' | 'email' | 'isSuperTeacher' | 'status' | 'createdAt' | 'updatedAt'>>;
+    data: UpdateTeacherData;
 }
 
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
-    updateTeacher(params: UpdateTeacherParams): Promise<Teacher>;
-    // createTeacher(teacher: Teacher): Promise<void>;
-    // deleteTeacher(params: DeleteTeacherParams): Promise<void>;
+    updateTeacher(params: UpdateTeacherParams): Promise<void>;
 }

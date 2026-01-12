@@ -2,10 +2,61 @@
 import Base from '@/layout/Base.astro';
 import OnboardingLayout from '@/features/teachers/onboarding/OnboardingLayout';
 import OnboardingStep1 from '@/features/teachers/onboarding/OnboardingStep1';
+import { getLangFromUrl } from '@/i18n';
+import { getSession } from 'auth-astro/server';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
+
+const session = await getSession(Astro.request);
+const token = session?.accessToken as string;
+
+if (!token) {
+  return Astro.redirect('/login');
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+// Obtener el perfil completo del usuario
+const authRepository = new AnyclazzAuthRepository();
+const profileData = await authRepository.getUserProfile(token);
+
+if (!profileData || !profileData.teacherProfile) {
+  return Astro.redirect('/login');
+}
+
+// El teacherId viene del teacherProfile
+const teacherId = profileData.teacherProfile.id;
+
+// Obtener el teacher completo con sus datos
+const teacherRepository = new ApiTeacherRepository();
+let teacher = null;
+
+try {
+  teacher = await teacherRepository.getTeacher({ 
+    token,
+    teacherId
+  });
+} catch (error) {
+  console.error('Error loading teacher data:', error);
+  // Continuar sin datos previos si falla la carga
+}
+
+// Preparar datos iniciales del formulario
+const initialData = teacher ? {
+  studentLevel: teacher.studentLevel?.id,
+  category: teacher.subjectCategory?.id,
+  subject: teacher.subject?.id,
+} : undefined;
 ---
 
 <Base>
     <OnboardingLayout currentStep={1} totalSteps={4} client:load>
-        <OnboardingStep1 client:load />
+        <OnboardingStep1 
+          lang={lang} 
+          teacherId={teacherId} 
+          token={token} 
+          initialData={initialData}
+          client:load 
+        />
     </OnboardingLayout>
 </Base>

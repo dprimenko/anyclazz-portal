@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ClassType } from '@/features/teachers/domain/types';
+import { ClassType, type TeacherClassType } from '@/features/teachers/domain/types';
 import { cn } from '@/lib/utils';
+import { TeacherModalitiesRepository } from '../infrastructure/TeacherModalitiesRepository';
 
 interface OnboardingStep2Props {
+    lang: string;
     initialData?: {
-        classModalities?: ClassType[];
+        classModalities?: TeacherClassType[];
     };
+    teacherId: string;
+    token: string;
 }
 
 interface ModalityOption {
@@ -17,9 +21,17 @@ interface ModalityOption {
     description: string;
 }
 
-export default function OnboardingStep2({ initialData }: OnboardingStep2Props) {
+export default function OnboardingStep2({ lang, initialData, teacherId, token }: OnboardingStep2Props) {
     const t = useTranslations();
-    const [selectedModalities, setSelectedModalities] = useState<ClassType[]>(initialData?.classModalities || []);
+    const repository = useMemo(() => new TeacherModalitiesRepository(), []);
+    
+    // Extraer los tipos de las modalidades iniciales
+    const initialClassTypes = useMemo(() => 
+        initialData?.classModalities?.map(m => m.type) || [], 
+        [initialData]
+    );
+    
+    const [selectedModalities, setSelectedModalities] = useState<ClassType[]>(initialClassTypes);
     const [isSaving, setIsSaving] = useState(false);
 
     const modalityOptions: ModalityOption[] = [
@@ -45,32 +57,39 @@ export default function OnboardingStep2({ initialData }: OnboardingStep2Props) {
         }
     ];
 
-    const handleToggle = (modalityId: ClassType) => {
-        if (selectedModalities.includes(modalityId)) {
-            setSelectedModalities(selectedModalities.filter(id => id !== modalityId));
-        } else {
-            setSelectedModalities([...selectedModalities, modalityId]);
-        }
-    };
+    const isFormValid = useMemo(() => selectedModalities.length > 0, [selectedModalities]);
 
-    const handleContinue = async () => {
+    const handleToggle = useCallback((modalityId: ClassType) => {
+        setSelectedModalities(prev => {
+            if (prev.includes(modalityId)) {
+                return prev.filter(id => id !== modalityId);
+            } else {
+                return [...prev, modalityId];
+            }
+        });
+    }, []);
+
+    const handleContinue = useCallback(async () => {
         if (!isFormValid) return;
         
         setIsSaving(true);
         try {
-            // TODO: Llamar a updateTeacher API con classTypes
-            console.log('Saving modalities:', selectedModalities);
+            // Transformar selectedModalities a TeacherClassType[] con precios por defecto
+            const classTypes: TeacherClassType[] = selectedModalities.map(type => ({
+                type
+            }));
+            
+            await repository.saveClassTypes(teacherId, classTypes, token);
             
             // Navegar a la siguiente página
-            window.location.href = '/onboarding/profile-basics';
+            window.location.href = `/onboarding/profile-basics`;
         } catch (error) {
             console.error('Error saving step 2:', error);
+            // TODO: Mostrar mensaje de error al usuario
         } finally {
             setIsSaving(false);
         }
-    };
-
-    const isFormValid = selectedModalities.length > 0;
+    }, [isFormValid, repository, teacherId, token, selectedModalities, lang]);
 
     return (
         <>

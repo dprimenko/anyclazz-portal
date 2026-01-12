@@ -36,6 +36,10 @@ export class AnyclazzAuthRepository implements AuthRepository {
         }
     }
 
+    async getUserProfile(accessToken: string): Promise<ProfileApiResponse | null> {
+        return this.fetchUserProfile(accessToken);
+    }
+
     async getCurrentUser(session: Session | null): Promise<AuthUser | null> {
         if (!session?.user) {
             // Si no hay sesión, limpiar el caché
@@ -55,11 +59,12 @@ export class AnyclazzAuthRepository implements AuthRepository {
         
         if (!accessToken) {
             console.warn('No access token found in session');
+            const sessionRole = (session as any).userRole;
             const fallbackUser = {
                 id: session.platformId || '',
                 email: session.user.email || '',
                 name: session.user.name || '',
-                role: session.userRole || 'student',
+                role: typeof sessionRole === 'string' ? sessionRole : 'student',
             };
             this.cache.save(fallbackUser);
             return fallbackUser;

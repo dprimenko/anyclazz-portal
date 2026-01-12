@@ -71,11 +71,9 @@ export function TeacherItem({ teacher }: TeacherProps) {
                     </div>
                     <Space size={16} direction="vertical"/>
                     <div className={styles["teacher-item__content-row"]}>
-                        {teacher.subjects.map((subject) => (
-                            <Chip key={subject.id} colorType="secondary">
-                                <Text colorType="secondary" textLevel="span" size="text-xs" weight="medium">{subject.name[getLangFromUrl(new URL(window.location.href))]}</Text>
-                            </Chip>
-                        ))}
+                        <Chip colorType="secondary">
+                            <Text colorType="secondary" textLevel="span" size="text-xs" weight="medium">{teacher.subject.name[getLangFromUrl(new URL(window.location.href))]}</Text>
+                        </Chip>
                     </div>
                     <Space size={16} direction="vertical"/>
                     <div className={styles["teacher-item__content-row"]}>

@@ -51,9 +51,8 @@ export function Combobox({
                         'flex items-center justify-between px-4 py-3 text-left',
                         'border border-[var(--color-neutral-200)] rounded-lg',
                         'bg-white transition-all',
-                        'hover:border-[var(--color-neutral-300)]',
-                        'focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-700)] focus:ring-opacity-20',
-                        open && 'border-[var(--color-primary-700)] ring-2 ring-[var(--color-primary-700)] ring-opacity-20',
+                        'focus:border-2 focus:border-[var(--color-primary-700)]',
+                        open && 'border-2 border-[var(--color-primary-700)]',
                         disabled && 'opacity-50 cursor-not-allowed',
                         fullWidth ? 'w-full' : 'min-w-[200px]'
                     )}
@@ -112,8 +111,9 @@ export function Combobox({
                                     return (
                                         <Command.Item
                                             key={item.value}
-                                            value={item.value}
-                                            onSelect={handleSelect}
+                                            value={item.label}
+                                            keywords={[item.value]}
+                                            onSelect={() => handleSelect(item.value)}
                                             className={cn(
                                                 'relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 text-sm outline-none',
                                                 'transition-colors',

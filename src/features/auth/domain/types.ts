@@ -43,4 +43,5 @@ export interface ProfileApiResponse {
 
 export interface AuthRepository {
     getCurrentUser(session: Session | null): Promise<AuthUser | null>;
+    getUserProfile(accessToken: string): Promise<ProfileApiResponse | null>;
 }

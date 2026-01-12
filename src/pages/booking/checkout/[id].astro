@@ -163,11 +163,10 @@ const durationFormatted = (startAt: string, endAt: string) => {
                     </div>
                     <Space size={16} direction="vertical"/>
                     <div class="flex flex-row gap-4">
-                        {booking.teacher.subjects.map((subject) => (
-                            <Chip colorType="secondary">
-                                <Text colorType="secondary" textLevel="span" size="inherit" weight="medium">{subject.name[lang]}</Text>
-                            </Chip>
-                        ))}
+                        <Chip colorType="secondary">
+                            <Text colorType="secondary" textLevel="span" size="inherit" weight="medium">{booking.teacher.subject.name[lang]}</Text>
+                        </Chip>
+                    </div>
                     </div>
                     <Space size={16} direction="vertical"/>
                     <div class="flex flex-row gap-4">

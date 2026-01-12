@@ -5,7 +5,7 @@ import { useMemo } from "react";
 
 export interface RectangleSelectionGroupItem {
     id: string;
-    children: React.ReactNode;
+    children: () => React.ReactNode;
 }
 
 interface DefaultClassNames {
@@ -54,7 +54,7 @@ export function RectangleSelectionGroup({items, value, cnn, colorType = 'default
                         >
                             <div className="flex items-center gap-3 w-full">
                                 <RadioGroupItem className={style["rectangle-group-item__radio"]} value={item.id} id={item.id} />
-                                {item.children}
+                                {item.children()}
                             </div>
                         </label>
                     );

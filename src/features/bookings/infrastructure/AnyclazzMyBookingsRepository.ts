@@ -89,7 +89,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
 
 
         const data = await apiResponse.json();
-        console.log('Fetched booking data:', data.teacher.subjects);
+        console.log('Fetched booking data:', data.teacher.subject);
 
         data['classType'] = {
             type: data['classType'].type as unknown as ClassType,

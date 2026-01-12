@@ -7,15 +7,20 @@ const teachers = <Teacher[]>[
 		surname: 'Mitchell',
 		email: 'john.doe@example.com',
 		avatar: 'https://anyclazz.b-cdn.net/5fd301ae7fbc505a1f7be380dacafdfb10005231.jpg',
-		subjects: <TeacherSubject[]>[
-			{
-				id: '1',
-				name: {
-					en: 'Math',
-					es: 'Matemáticas',
-				},
-			}
-		],
+		subjectCategory: {
+			id: 'academic_education',
+			name: {
+				en: 'Academic Education',
+				es: 'Educación Académica',
+			},
+		},
+		subject: {
+			id: '1',
+			name: {
+				en: 'Math',
+				es: 'Matemáticas',
+			},
+		},
 		classTypes: [
 			{
 				type: ClassType.onlineSingle,
@@ -56,15 +61,20 @@ const teachers = <Teacher[]>[
 		surname: 'Harper',
 		email: 'valentina.harper@example.com',
 		avatar: 'https://anyclazz.b-cdn.net/43306c6f117bd1e44cfa1bac6ff614b579fbbc6a.jpg',
-		subjects: <TeacherSubject[]>[
-			{
-				id: '2',
-				name: {
-					en: 'Science',
-					es: 'Ciencias',
-				},
-			}
-		],
+		subjectCategory: {
+			id: 'academic_education',
+			name: {
+				en: 'Academic Education',
+				es: 'Educación Académica',
+			},
+		},
+		subject: {
+			id: '2',
+			name: {
+				en: 'Science',
+				es: 'Ciencias',
+			},
+		},
 		classTypes: [
 		    {	
 			    type: ClassType.onlineSingle,
@@ -125,15 +135,20 @@ const teachers = <Teacher[]>[
 		surname: 'Walls',
 		email: 'marie.walls@example.com',
 		avatar: 'https://anyclazz.b-cdn.net/bb86af181a995ff3f8897991997ad484c9d3351b.jpg',
-		subjects: <TeacherSubject[]>[
-			{
-				id: '3',
-				name: {
-					en: 'History',
-					es: 'Historia',
-				},
-			}
-		],
+		subjectCategory: {
+			id: 'academic_education',
+			name: {
+				en: 'Academic Education',
+				es: 'Educación Académica',
+			},
+		},
+		subject: {
+			id: '3',
+			name: {
+				en: 'History',
+				es: 'Historia',
+			},
+		},
 		classTypes: [
 		    {	
 			    type: ClassType.onlineSingle,

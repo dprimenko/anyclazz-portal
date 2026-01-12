@@ -107,11 +107,9 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
                                 <Text size="text-sm" weight="semibold" colorType="primary">
                                     {lesson.teacher.name} {lesson.teacher.surname}
                                 </Text>
-                                {lesson.teacher.subjects.length > 0 && (
-                                    <Text size="text-xs" colorType="tertiary">
-                                        {lesson.teacher.subjects[0].name["en"]}
-                                    </Text>
-                                )}
+                                <Text size="text-xs" colorType="tertiary">
+                                    {lesson.teacher.subject.name["en"]}
+                                </Text>
                             </div>
                         </div>
                     </div>

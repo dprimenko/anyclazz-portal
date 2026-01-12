@@ -16,13 +16,13 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...apiTeacher,
 			classTypes: apiTeacher.classTypes.map((classType) => ({
 				type: classType.type as unknown as ClassType,
-				durations: classType.durations.map((duration) => ({
+				...(classType.durations ? classType.durations.map((duration) => ({
 					duration: duration.duration,
 					price: {
 						amount: duration.price.price,
 						currency: duration.price.currencyCode,
 					}
-				}))
+				})) : null),
 			})),
 		};
 	}
@@ -53,22 +53,23 @@ export class ApiTeacherRepository implements TeacherRepository {
 			token: token,
 		});
 
-		console.log('apiTeacherResponse');
-
 		const apiTeacher = await apiTeacherResponse.json();
-		console.log(apiTeacherResponse);
-
+		console.log("API TEACHER");
+		console.log(token);
+		console.log(token);
+		console.log(apiTeacher);
 		return this.toTeacher(apiTeacher);
 	}
 
-	async updateTeacher({ token, teacherId, data }: UpdateTeacherParams): Promise<Teacher> {
-		const apiTeacherResponse = await this.httpClient.put({
+	async updateTeacher({ token, teacherId, data }: UpdateTeacherParams): Promise<void> {
+		await this.httpClient.put({
 			url: `/teachers/${teacherId}`,
 			token: token,
-			data: data,
+			data: {
+				...(data.subjectId ? { subjectId: data.subjectId } : {}),
+				...(data.subjectCategoryId ? { subjectCategoryId: data.subjectCategoryId } : {}),
+				...(data.studentLevelId ? { studentLevelId: data.studentLevelId } : {}),
+			},
 		});
-
-		const apiTeacher = await apiTeacherResponse.json();
-		return this.toTeacher(apiTeacher);
 	}
 }

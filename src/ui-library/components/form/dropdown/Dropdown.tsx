@@ -41,9 +41,7 @@ export const Dropdown = ({
 	...props
 }: DropdownProps) => {
     const classes = classNames(
-        'px-4 py-2.5 rounded-lg control control--input text-base',
-		styles.dropdown,
-		{ 'w-full': fullWidth },
+        { 'w-full': fullWidth },
 		className
 	);
 
@@ -53,11 +51,14 @@ export const Dropdown = ({
 	return (
 		<Select value={value} onValueChange={onChange}>
 			<SelectTrigger prefix={prepend} className={classes}>
-				<SelectValue placeholder={placeholder}>
+				<SelectValue 
+					placeholder={placeholder}
+					className={selectedItem ? 'text-[var(--color-neutral-900)]' : 'text-[var(--color-neutral-400)]'}
+				>
 					{displayValue || placeholder}
 				</SelectValue>
 			</SelectTrigger>
-			<SelectContent className="max-h-[320px] overflow-y-auto">
+			<SelectContent className="max-h-[300px] overflow-y-auto">
 				<SelectGroup>
 				{items.map((item) => {
                     const isSelected = value === item.value;
@@ -68,7 +69,7 @@ export const Dropdown = ({
                             ) : (
                                 <div className="flex items-center justify-between w-full">
                                     <span>{item.label}</span>
-                                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[#F4A43A]" />}
+                                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
                                 </div>
                             )}
                         </SelectItem>

@@ -5,7 +5,7 @@ import { getApiUrl } from '@/features/shared/services/environment';
 interface ClassTypesPayload {
     classTypes: {
         type: string;
-        durations: {
+        durations?: {
             duration: number;
             price: {
                 price: number;
@@ -29,13 +29,13 @@ export class TeacherModalitiesRepository {
         return {
             classTypes: classTypes.map(ct => ({
                 type: ct.type,
-                durations: ct.durations.map(d => ({
+                ...(ct.durations ? ct.durations.map(d => ({
                     duration: d.duration,
                     price: {
                         price: d.price.amount,
                         currencyCode: d.price.currency,
                     },
-                })),
+                })) : {}),
             })),
         };
     }
