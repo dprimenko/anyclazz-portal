@@ -54,10 +54,6 @@ export class ApiTeacherRepository implements TeacherRepository {
 		});
 
 		const apiTeacher = await apiTeacherResponse.json();
-		console.log("API TEACHER");
-		console.log(token);
-		console.log(token);
-		console.log(apiTeacher);
 		return this.toTeacher(apiTeacher);
 	}
 

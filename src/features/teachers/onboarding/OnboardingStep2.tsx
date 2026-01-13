@@ -74,9 +74,13 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
         
         setIsSaving(true);
         try {
-            // Transformar selectedModalities a TeacherClassType[] con precios por defecto
+            // Transformar selectedModalities a TeacherClassType[] con duraciones por defecto (sin precios)
             const classTypes: TeacherClassType[] = selectedModalities.map(type => ({
-                type
+                type,
+                durations: [
+                    { duration: 30 },
+                    { duration: 60 }
+                ]
             }));
             
             await repository.saveClassTypes(teacherId, classTypes, token);

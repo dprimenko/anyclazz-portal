@@ -58,7 +58,10 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                 ...classTypes,
                 {
                     type: modalityId,
-                    durations: []
+                    durations: [
+                        { duration: 30 },
+                        { duration: 60 }
+                    ]
                 }
             ];
             setClassTypes(newClassTypes);
@@ -72,9 +75,15 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
         
         if (classTypeIndex !== -1) {
             const classType = newClassTypes[classTypeIndex];
+            
+            // Asegurar que durations es un array
+            if (!Array.isArray(classType.durations)) {
+                classType.durations = [];
+            }
+            
             const durationIndex = classType.durations.findIndex(d => d.duration === duration);
             
-            if (priceAmount !== undefined) {
+            if (priceAmount !== undefined && priceAmount > 0) {
                 const durationPrice: DurationPrice = {
                     duration,
                     price: {
@@ -91,9 +100,11 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                     classType.durations.push(durationPrice);
                 }
             } else {
-                // Si el precio es undefined, eliminar la duración
+                // Si el precio es undefined o 0, mantener la duración sin precio
                 if (durationIndex !== -1) {
-                    classType.durations.splice(durationIndex, 1);
+                    classType.durations[durationIndex] = { duration };
+                } else {
+                    classType.durations.push({ duration });
                 }
             }
         }
@@ -106,8 +117,8 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
     
     const getPrice = (modalityId: ClassType, duration: 30 | 60): number | undefined => {
         const classType = classTypes.find(ct => ct.type === modalityId);
-        const durationPrice = classType?.durations.find(d => d.duration === duration);
-        return durationPrice?.price.amount;
+        const durationPrice = classType?.durations?.find(d => d.duration === duration);
+        return durationPrice?.price?.amount;
     };
 
     const CLASS_MODALITY_OPTIONS = getClassModalityOptions(t);

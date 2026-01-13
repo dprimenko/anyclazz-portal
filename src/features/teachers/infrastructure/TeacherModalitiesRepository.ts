@@ -7,7 +7,7 @@ interface ClassTypesPayload {
         type: string;
         durations?: {
             duration: number;
-            price: {
+            price?: {
                 price: number;
                 currencyCode: string;
             };
@@ -29,13 +29,21 @@ export class TeacherModalitiesRepository {
         return {
             classTypes: classTypes.map(ct => ({
                 type: ct.type,
-                ...(ct.durations ? ct.durations.map(d => ({
-                    duration: d.duration,
-                    price: {
-                        price: d.price.amount,
-                        currencyCode: d.price.currency,
-                    },
-                })) : {}),
+                durations: ct.durations?.map(d => {
+                    const durationData: any = {
+                        duration: d.duration,
+                    };
+                    
+                    // Solo incluir price si tiene un valor asignado (mayor a 0)
+                    if (d.price && d.price.amount > 0) {
+                        durationData.price = {
+                            price: d.price.amount,
+                            currencyCode: d.price.currency,
+                        };
+                    }
+                    
+                    return durationData;
+                }),
             })),
         };
     }

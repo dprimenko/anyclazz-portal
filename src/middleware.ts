@@ -14,6 +14,8 @@ import {
   validateUserAccount,
   clearAccountValidationCache 
 } from "./utils/authValidation";
+import { AnyclazzAuthRepository } from "./features/auth/ssr/infrastructure/AnyclazzAuthRepository";
+import { ApiTeacherRepository } from "./features/teachers/infrastructure/ApiTeacherRepository";
 
 function invalidateSession(context: any, reason: string) {
   console.log(`Invalidating session: ${reason}`);
@@ -33,6 +35,62 @@ function invalidateSession(context: any, reason: string) {
   const { pathname } = new URL(context.request.url);
   const callbackUrl = encodeURIComponent(pathname);
   return context.redirect(`/api/auth/keycloak-logout?callbackUrl=${callbackUrl}`);
+}
+
+async function checkTeacherOnboarding(session: any, pathname: string): Promise<{ needsOnboarding: boolean; redirectTo?: string }> {
+  try {
+    // Verificar si el usuario es teacher
+    const userRole = (session as any).userRole;
+    if (userRole !== 'teacher') {
+      return { needsOnboarding: false };
+    }
+    
+    // No verificar si ya estamos en onboarding, login o logout
+    if (pathname.startsWith('/onboarding/') || pathname.startsWith('/api/auth/') || pathname === '/login' || pathname === '/logout') {
+      return { needsOnboarding: false };
+    }
+    
+    const token = (session as any).accessToken;
+    if (!token) {
+      return { needsOnboarding: false };
+    }
+    
+    // Obtener el perfil del usuario
+    const authRepository = new AnyclazzAuthRepository();
+    const profileData = await authRepository.getUserProfile(token);
+    
+    if (!profileData || !profileData.teacherProfile) {
+      return { needsOnboarding: false };
+    }
+    
+    const teacherId = profileData.teacherProfile.id;
+    
+    // Obtener los datos completos del teacher
+    const teacherRepository = new ApiTeacherRepository();
+    const teacher = await teacherRepository.getTeacher({ token, teacherId });
+    
+    // Verificar si tiene todos los campos del onboarding completos
+    const hasAllFields = 
+      teacher.studentLevel?.id &&
+      teacher.subjectCategory?.id &&
+      teacher.subject?.id &&
+      teacher.teacherAddress?.countryISO2 &&
+      teacher.teacherAddress?.cityISO2 &&
+      teacher.speaksLanguages && teacher.speaksLanguages.length > 0 &&
+      teacher.beganTeachingAt &&
+      teacher.shortPresentation;
+    
+    if (!hasAllFields) {
+      console.log('🎓 Teacher onboarding incomplete, redirecting to onboarding');
+      return { needsOnboarding: true, redirectTo: '/onboarding/what-do-you-teach' };
+    }
+    
+    return { needsOnboarding: false };
+  } catch (error) {
+    console.error('Error checking teacher onboarding:', error);
+    // En caso de error, permitir continuar
+    return { needsOnboarding: false };
+  }
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -171,6 +229,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
     
     console.log(`✅ Session validation passed for ${validationLevel} level`);
+  }
+  
+  // Verificar onboarding del teacher
+  if (session?.user) {
+    const onboardingCheck = await checkTeacherOnboarding(session, pathname);
+    if (onboardingCheck.needsOnboarding && onboardingCheck.redirectTo) {
+      console.log(`🎓 Redirecting to onboarding: ${onboardingCheck.redirectTo}`);
+      return context.redirect(onboardingCheck.redirectTo);
+    }
   }
   
   return next();

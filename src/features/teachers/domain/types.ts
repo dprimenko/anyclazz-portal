@@ -29,7 +29,7 @@ export enum ClassType {
 
 export interface DurationPrice {
     duration: 30 | 60;
-    price: Price;
+    price?: Price;
 }
 
 export interface TeacherClassType {
