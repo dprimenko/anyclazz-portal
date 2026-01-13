@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import styles from "./Avatar.module.css";
 import { Icon } from "../icon/Icon";
+import { useState } from "react";
 
 export interface AvatarProps {
     src?: string;
@@ -14,6 +15,8 @@ export interface AvatarProps {
 const DEFAULT_SIZE = 40;
 
 export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOutline }: AvatarProps) {
+    const [imageError, setImageError] = useState(false);
+    
     const avatarContainer = classNames(
         'relative rounded-full',
         styles['avatar__container'],
@@ -42,11 +45,18 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOut
         return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
     };
 
+    const shouldShowImage = src && src.trim() !== '' && !imageError;
+
     return (
         <div className={avatarContainer} style={{width: `${size}px`, minWidth: `${size}px`, height: `${size}px`, minHeight: `${size}px`}}>
             <div className={avatarContent}>
-                {src ? (
-                    <img src={src} alt={alt} className="rounded-full w-full h-full object-cover" />
+                {shouldShowImage ? (
+                    <img 
+                        src={src} 
+                        alt={alt} 
+                        className="rounded-full w-full h-full object-cover" 
+                        onError={() => setImageError(true)}
+                    />
                 ) : (
                     <div className="w-full h-full rounded-full bg-[var(--color-primary-200)] flex items-center justify-center text-[var(--color-primary-700)] font-semibold" style={{fontSize: `${size * 0.4}px`}}>
                         {getInitials(alt)}

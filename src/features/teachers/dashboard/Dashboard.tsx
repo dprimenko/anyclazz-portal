@@ -97,7 +97,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 										{lesson.student && (
 											<div className="flex items-center">
 												<div className="flex items-center gap-3">
-													<Avatar src={lesson.student.avatar} size={40} />
+													<Avatar src={lesson.student.avatar} size={40} alt={`${lesson.student.name} ${lesson.student.surname}`} />
 													<div>
 														<Text size="text-sm" weight="semibold" colorType="primary">{lesson.student.name}{' '}{lesson.student.surname}</Text>
 														<Text size="text-xs" colorType="tertiary">{t('common.student')}</Text>
@@ -108,7 +108,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 										{lesson.teacher && (
 											<div className="flex items-center">
 												<div className="flex items-center gap-3">
-													<Avatar src={lesson.teacher.avatar} size={40} />
+													<Avatar src={lesson.teacher.avatar} size={40} alt={`${lesson.teacher.name} ${lesson.teacher.surname}`} />
 													<div>
 														<Text size="text-sm" weight="semibold" colorType="primary">{lesson.teacher.name}{' '}{lesson.teacher.surname}</Text>
 														<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
