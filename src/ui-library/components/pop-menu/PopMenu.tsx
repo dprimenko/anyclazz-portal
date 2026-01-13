@@ -11,14 +11,24 @@ export interface PopMenuItem {
 
 export interface PopMenuProps {
     trigger: ReactNode;
-    items: PopMenuItem[];
+    items?: PopMenuItem[];
+    children?: ReactNode;
     align?: "left" | "right";
     direction?: "up" | "down";
+    isOpen?: boolean;
+    onClose?: () => void;
 }
 
-export function PopMenu({ trigger, items, align = "right", direction = "down" }: PopMenuProps) {
-    const [isOpen, setIsOpen] = useState(false);
+export function PopMenu({ trigger, items, children, align = "right", direction = "down", isOpen: controlledIsOpen, onClose }: PopMenuProps) {
+    const [internalIsOpen, setInternalIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+
+    // Use controlled or uncontrolled state
+    const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+    const setIsOpen = onClose ? (value: boolean) => {
+        if (!value) onClose();
+        else setInternalIsOpen(value);
+    } : setInternalIsOpen;
 
     useClickOutside(menuRef, () => {
         if (isOpen) {
@@ -37,16 +47,15 @@ export function PopMenu({ trigger, items, align = "right", direction = "down" }:
 
     return (
         <div className={styles.menuWrapper} ref={menuRef}>
-            <button 
+            <div 
                 className={styles.trigger} 
                 onClick={handleToggle}
-                type="button"
             >
                 {trigger}
-            </button>
+            </div>
             {isOpen && (
                 <div className={classNames(styles.dropdown, styles[align], styles[direction])}>
-                    {items.map((item, index) => (
+                    {children ? children : items?.map((item, index) => (
                         <button
                             key={index}
                             className={styles.dropdownItem}

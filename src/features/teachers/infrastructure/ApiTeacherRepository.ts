@@ -27,11 +27,16 @@ export class ApiTeacherRepository implements TeacherRepository {
 		};
 	}
 
-	async listTeachers({ token, page, size, query }: ListTeachersParams): Promise<ListTeachersResponse> {		
+	async listTeachers({ token, page, size, query, countryISO2, cityISO2, classTypeId, minPrice, maxPrice }: ListTeachersParams): Promise<ListTeachersResponse> {		
 		const data: Record<string, string | number> = {
 			page: page,
 			size: size,
 			...(query ? { query } : {}),
+			...(countryISO2 ? { countryISO2 } : {}),
+			...(cityISO2 ? { cityISO2 } : {}),
+			...(classTypeId ? { classTypeId } : {}),
+			...(minPrice !== undefined ? { minPrice } : {}),
+			...(maxPrice !== undefined ? { maxPrice } : {}),
 		};
 
 		const apiTeachersResponse = await this.httpClient.get({

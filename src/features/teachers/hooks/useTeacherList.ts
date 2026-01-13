@@ -8,6 +8,15 @@ export interface TeachersPageProps {
     accessToken: string;
 }
 
+export interface TeacherFilters {
+    search?: string;
+    countryISO2?: string;
+    cityISO2?: string;
+    classTypeId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+}
+
 export const DEFAULT_PAGE_SIZE = 10;
 
 export function useTeacherList({ teacherRepository, accessToken }: TeachersPageProps) {
@@ -17,7 +26,7 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 	const [fetchingTeachers, setFetchingTeachers] = useState(false);
     const [errorFetchingTeachers, setErrorFetchingTeachers] = useState<string | undefined>(undefined);
 
-    const [search, setSearch] = useState('');
+    const [filters, setFilters] = useState<TeacherFilters>({});
     const [page, setPage] = useState(1);
     const previousPage = usePrevious(page);
 	const [pages, setPages] = useState(1);
@@ -35,7 +44,12 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 				token: accessToken,
 				page,
 				size: DEFAULT_PAGE_SIZE,
-				query: search || undefined,
+				query: filters.search || undefined,
+				countryISO2: filters.countryISO2,
+				cityISO2: filters.cityISO2,
+				classTypeId: filters.classTypeId,
+				minPrice: filters.minPrice,
+				maxPrice: filters.maxPrice,
 			});
 			setTeachers(teachers.teachers);
 			setPages(teachers.meta.lastPage);
@@ -51,16 +65,26 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 			setFetchingTeachers(false);
 			setAlreadyFetched(false);
 		});
-	}, [teachers, page, teacherRepository, search]);
+	}, [teachers, page, teacherRepository, filters]);
 
     const refreshTeachers = useCallback(() => {
 		setTeachers([]);
 		fetchTeachers();
-	}, [page, search, teachers]);
+	}, [page, filters, teachers]);
 
 	const noResults = useMemo(() => {
 		return !fetchingTeachers && teachers.length === 0;
 	}, [fetchingTeachers, teachers]);
+
+	const updateFilters = useCallback((newFilters: Partial<TeacherFilters>) => {
+		setFilters(prev => ({ ...prev, ...newFilters }));
+		setPage(1); // Reset to page 1 when filters change
+	}, []);
+
+	const clearFilters = useCallback(() => {
+		setFilters({});
+		setPage(1);
+	}, []);
 
     useEffect(() => {
 		if (!previousPage || previousPage === page) return;
@@ -69,7 +93,7 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 
 	useEffect(() => {
 		refreshTeachers();
-	}, [search]);
+	}, [filters]);
 
     return {
 		accessToken,
@@ -81,8 +105,9 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 		setPage,
 		pages,
 		refreshTeachers,
-		search,
-		setSearch,
+		filters,
+		updateFilters,
+		clearFilters,
 		noResults,
     };
 }

@@ -7,6 +7,7 @@ import { Space } from "@/ui-library/components/ssr/space/Space";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
+import { TeachersFilters } from "../../../teachers-section/components/TeachersFilters";
 
 export function TeachersList() {
   const t = useTranslations();
@@ -16,14 +17,21 @@ export function TeachersList() {
     page,
     setPage,
     pages,
-    noResults
+    noResults,
+    updateFilters,
+    clearFilters,
   } = useTeachers();
 
   return (
     <div className={styles["teachers-list__container"]}>
-      {/* <div>
-        <Dropdown fullWidth />
-      </div> */}
+      {/* Filters */}
+      <TeachersFilters 
+        onFiltersChange={updateFilters}
+        onClear={clearFilters}
+      />
+      
+      <Space size={24} direction="vertical" />
+      
       <div className={styles["teachers-list__content"]}>
           <>
             {noResults && (
@@ -32,7 +40,7 @@ export function TeachersList() {
                 <Space size={4} direction="vertical" />
                 <Text colorType="tertiary" size="text-sm" textalign="center">{t("teachers.no_results")}</Text>
                 <Space size={24} direction="vertical" />
-                <Button colorType="primary" label={t("common.reset_filters")} onClick={() => {}} />
+                <Button colorType="primary" label={t("common.reset_filters")} onClick={clearFilters} />
               </div>
             )}
             {teachers.map(teacher => (

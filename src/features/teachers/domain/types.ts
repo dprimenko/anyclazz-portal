@@ -80,6 +80,11 @@ export interface ListTeachersParams extends CommonParams {
     page: number;
     size: number;
     query?: string;
+    countryISO2?: string;
+    cityISO2?: string;
+    classTypeId?: string;
+    minPrice?: number;
+    maxPrice?: number;
 }
 
 export interface ListTeachersResponse {

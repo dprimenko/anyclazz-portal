@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from "react";
-import { useTeacherList, type TeachersPageProps } from "../hooks/useTeacherList";
+import { useTeacherList, type TeachersPageProps, type TeacherFilters } from "../hooks/useTeacherList";
 import type { Teacher } from "../domain/types";
 
 interface TeachersContextValue {
@@ -12,8 +12,9 @@ interface TeachersContextValue {
     setPage: (page: number) => void;
     pages: number;
     refreshTeachers: () => void;
-    search: string;
-    setSearch: (search: string) => void;
+    filters: TeacherFilters;
+    updateFilters: (filters: Partial<TeacherFilters>) => void;
+    clearFilters: () => void;
     noResults: boolean;
 }
 
