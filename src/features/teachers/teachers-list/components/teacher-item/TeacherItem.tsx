@@ -22,14 +22,39 @@ export interface TeacherProps {
 export function TeacherItem({ teacher }: TeacherProps) {
     const t = useTranslations();
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const isMobile = useIsMobile();
+    
+    // Obtener iniciales del nombre
+    const getInitials = (name: string, surname: string) => {
+        return `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
+    };
 
     return (
         <div className={classNames('card', styles["teacher-item__container"])}>
             {!isMobile && (
                 <div className={styles["teacher-item__avatar-container"]}>
-                    <img className={styles["teacher-item__avatar"]} src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} onError={e => e.currentTarget.style.display='none'}/>
+                    {teacher.avatar && !imageError ? (
+                        <img 
+                            className={styles["teacher-item__avatar"]} 
+                            src={teacher.avatar} 
+                            alt={`${teacher.name} ${teacher.surname}`} 
+                            onError={() => setImageError(true)}
+                        />
+                    ) : (
+                        <div className={styles["teacher-item__avatar"]} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'var(--color-primary-100)',
+                            fontSize: '2.5rem',
+                            fontWeight: 600,
+                            color: 'var(--color-primary-700)'
+                        }}>
+                            {getInitials(teacher.name, teacher.surname)}
+                        </div>
+                    )}
                     {teacher.isSuperTeacher && (
                         <div className={styles["teacher-item__super-tutor-badge"]}>
                             <Icon icon="verified" iconWidth={32} iconHeight={32} />
@@ -39,7 +64,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
             )}
             {isMobile && (
                 <Avatar
-                    src={`${teacher.avatar}`}
+                    src={teacher.avatar}
                     alt={`${teacher.name} ${teacher.surname}`}
                     hasVerifiedBadge={teacher.isSuperTeacher}
                     size={64}

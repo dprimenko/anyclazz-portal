@@ -105,9 +105,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                     colorType="primary"
                     disabled={isSaving}
                     label={isSaving ? 'Guardando...' : 'Guardar'}
-                >
-                    
-                </Button>
+                />
             </div> 
             <Space size={16} />
         </div>

@@ -69,12 +69,12 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
 
     const classOptions = useMemo(() => teacher.classTypes.map((classType) => ({
         id: classType.type,
-        children: classOptionChildren(classType),
+        children: () => classOptionChildren(classType),
     })), [teacher]);
 
     const classDurations = useMemo(() => [30,60].map((duration) => ({
         id: duration.toString(),
-        children: (
+        children: () => (
             <div className="flex flex-row gap-1.5 w-full items-center">
                 <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{t('common.minutes_long', { minutes: duration })}</Text>
             </div>
@@ -83,7 +83,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
 
     const availableTimes = useMemo(() => availableSlots.map(({from}) => ({
         id: from,
-        children: (
+        children: () => (
             <div className="flex flex-row gap-1.5 w-full items-center">
                 <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{DateTime.fromISO(from).toFormat('HH:mm')}</Text>
             </div>

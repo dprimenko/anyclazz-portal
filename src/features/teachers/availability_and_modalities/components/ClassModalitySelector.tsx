@@ -42,7 +42,13 @@ export interface ClassModalitySelectorProps {
 
 export function ClassModalitySelector({ selectedClassTypes = [], onChange }: ClassModalitySelectorProps) {
     const t = useTranslations();
-    const [classTypes, setClassTypes] = useState<TeacherClassType[]>(selectedClassTypes);
+    
+    // Asegurar que selectedClassTypes está bien formateado
+    const validClassTypes = selectedClassTypes.filter(ct => 
+        ct.type && Array.isArray(ct.durations)
+    );
+    
+    const [classTypes, setClassTypes] = useState<TeacherClassType[]>(validClassTypes);
 
     const handleToggle = (modalityId: ClassType) => {
         const exists = classTypes.find(ct => ct.type === modalityId);
@@ -54,13 +60,13 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
             onChange?.(newClassTypes);
         } else {
             // Seleccionar: agregar modalidad con duraciones vacías
-            const newClassTypes = [
+            const newClassTypes: TeacherClassType[] = [
                 ...classTypes,
                 {
                     type: modalityId,
                     durations: [
-                        { duration: 30 },
-                        { duration: 60 }
+                        { duration: 30 as const },
+                        { duration: 60 as const }
                     ]
                 }
             ];
@@ -102,9 +108,9 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
             } else {
                 // Si el precio es undefined o 0, mantener la duración sin precio
                 if (durationIndex !== -1) {
-                    classType.durations[durationIndex] = { duration };
+                    classType.durations[durationIndex] = { duration: duration as 30 | 60 };
                 } else {
-                    classType.durations.push({ duration });
+                    classType.durations.push({ duration: duration as 30 | 60 });
                 }
             }
         }

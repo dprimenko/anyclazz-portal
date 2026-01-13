@@ -16,13 +16,13 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...apiTeacher,
 			classTypes: apiTeacher.classTypes.map((classType) => ({
 				type: classType.type as unknown as ClassType,
-				...(classType.durations ? classType.durations.map((duration) => ({
+				durations: classType.durations?.map((duration) => ({
 					duration: duration.duration,
-					price: {
+					price: duration.price ? {
 						amount: duration.price.price,
 						currency: duration.price.currencyCode,
-					}
-				})) : null),
+					} : undefined,
+				})),
 			})),
 		};
 	}
