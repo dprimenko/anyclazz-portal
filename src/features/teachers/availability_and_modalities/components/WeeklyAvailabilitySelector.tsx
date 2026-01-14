@@ -8,7 +8,6 @@ export interface TimeRange {
     id: string;
     from: string;
     to: string;
-    isEditing?: boolean;
 }
 
 export interface DayAvailability {
@@ -60,8 +59,7 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
         const newTimeRange: TimeRange = {
             id: `${Date.now()}-${Math.random()}`,
             from: "09:00",
-            to: "12:00",
-            isEditing: true
+            to: "12:00"
         };
         updated[dayIndex].timeRanges.push(newTimeRange);
         setWeekAvailability(updated);
@@ -77,41 +75,12 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
         onChange?.(updated);
     };
 
-    const handleEditTimeRange = (dayIndex: number, rangeId: string) => {
+    const handleTimeChange = (dayIndex: number, rangeId: string, field: 'from' | 'to', value: string) => {
         const updated = [...weekAvailability];
         const range = updated[dayIndex].timeRanges.find(r => r.id === rangeId);
         if (range) {
-            range.isEditing = true;
+            range[field] = value;
         }
-        setWeekAvailability(updated);
-    };
-
-    const handleConfirmTimeRange = (dayIndex: number, rangeId: string, from: string, to: string) => {
-        const updated = [...weekAvailability];
-        const range = updated[dayIndex].timeRanges.find(r => r.id === rangeId);
-        if (range) {
-            range.from = from;
-            range.to = to;
-            range.isEditing = false;
-        }
-        setWeekAvailability(updated);
-        onChange?.(updated);
-    };
-
-    const handleCancelEdit = (dayIndex: number, rangeId: string) => {
-        const updated = [...weekAvailability];
-        const rangeIndex = updated[dayIndex].timeRanges.findIndex(r => r.id === rangeId);
-        
-        if (rangeIndex !== -1) {
-            const range = updated[dayIndex].timeRanges[rangeIndex];
-            if (range.isEditing && range.from === "09:00" && range.to === "12:00") {
-                // Si es un nuevo rango sin confirmar, eliminarlo
-                updated[dayIndex].timeRanges.splice(rangeIndex, 1);
-            } else {
-                range.isEditing = false;
-            }
-        }
-        
         setWeekAvailability(updated);
         onChange?.(updated);
     };
@@ -154,9 +123,7 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
                                         key={range.id}
                                         range={range}
                                         onDelete={() => handleDeleteTimeRange(dayIndex, range.id)}
-                                        onEdit={() => handleEditTimeRange(dayIndex, range.id)}
-                                        onConfirm={(from, to) => handleConfirmTimeRange(dayIndex, range.id, from, to)}
-                                        onCancel={() => handleCancelEdit(dayIndex, range.id)}
+                                        onTimeChange={(field, value) => handleTimeChange(dayIndex, range.id, field, value)}
                                     />
                                 ))}
                                 
@@ -184,138 +151,46 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
 interface TimeRangeRowProps {
     range: TimeRange;
     onDelete: () => void;
-    onEdit: () => void;
-    onConfirm: (from: string, to: string) => void;
-    onCancel: () => void;
+    onTimeChange: (field: 'from' | 'to', value: string) => void;
 }
 
-function TimeRangeRow({ range, onDelete, onEdit, onConfirm, onCancel }: TimeRangeRowProps) {
+function TimeRangeRow({ range, onDelete, onTimeChange }: TimeRangeRowProps) {
     const t = useTranslations();
-    const [from, setFrom] = useState(range.from);
-    const [to, setTo] = useState(range.to);
-
-    if (range.isEditing) {
-        return (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
-                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                        <Text textLevel="label" size="text-xs" colorType="tertiary">
-                            {t('teacher-profile.from')}
-                        </Text>
-                        <input
-                            type="time"
-                            value={from}
-                            onChange={(e) => setFrom(e.target.value)}
-                            className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                        <Text textLevel="label" size="text-xs" colorType="tertiary">
-                            {t('teacher-profile.to')}
-                        </Text>
-                        <input
-                            type="time"
-                            value={to}
-                            onChange={(e) => setTo(e.target.value)}
-                            className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center gap-2 self-end sm:self-auto">
-                    <button
-                        onClick={onCancel}
-                        className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
-                    >
-                        {t('common.cancel')}
-                    </button>
-                    <button
-                        onClick={() => onConfirm(from, to)}
-                        className="text-[#F4A43A] text-sm font-medium hover:opacity-80 transition-opacity"
-                    >
-                        {t('teacher-profile.confirm')}
-                    </button>
-                </div>
-            </div>
-        );
-    }
 
     return (
-        <>
-            {/* <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
-                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                        <Text textLevel="label" size="text-xs" colorType="tertiary">
-                            {t('teacher-profile.from')}
-                        </Text>
-                        <input
-                            type="time"
-                            value={from}
-                            onChange={(e) => setFrom(e.target.value)}
-                            className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                        <Text textLevel="label" size="text-xs" colorType="tertiary">
-                            {t('teacher-profile.to')}
-                        </Text>
-                        <input
-                            type="time"
-                            value={to}
-                            onChange={(e) => setTo(e.target.value)}
-                            className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
-                        />
-                    </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
+                <div className="flex flex-col gap-1 w-full sm:w-auto">
+                    <Text textLevel="label" size="text-xs" colorType="tertiary">
+                        {t('teacher-profile.from')}
+                    </Text>
+                    <input
+                        type="time"
+                        value={range.from}
+                        onChange={(e) => onTimeChange('from', e.target.value)}
+                        className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
+                    />
                 </div>
-                <div className="flex items-center gap-2 self-end sm:self-auto">
-                    <button
-                        onClick={onCancel}
-                        className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
-                    >
-                        {t('common.cancel')}
-                    </button>
-                    <button
-                        onClick={() => onConfirm(from, to)}
-                        className="text-[#F4A43A] text-sm font-medium hover:opacity-80 transition-opacity"
-                    >
-                        {t('teacher-profile.confirm')}
-                    </button>
-                </div>
-            </div> */}
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
-                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                        <Text textLevel="span" size="text-xs" colorType="tertiary">
-                            {t('teacher-profile.from')}
-                        </Text>
-                        <Text textLevel="span" size="text-sm" weight="medium" colorType="primary">
-                            {range.from}
-                        </Text>
-                    </div>
-                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                        <Text textLevel="span" size="text-xs" colorType="tertiary">
-                            {t('teacher-profile.to')}
-                        </Text>
-                        <Text textLevel="span" size="text-sm" weight="medium" colorType="primary">
-                            {range.to}
-                        </Text>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2 self-end sm:self-auto">
-                    <button
-                        onClick={onDelete}
-                        className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
-                    >
-                        {t('teacher-profile.delete')}
-                    </button>
-                    <button
-                        onClick={onEdit}
-                        className="text-[#F4A43A] text-sm font-medium hover:opacity-80 transition-opacity"
-                    >
-                        {t('teacher-profile.edit')}
-                    </button>
+                <div className="flex flex-col gap-1 w-full sm:w-auto">
+                    <Text textLevel="label" size="text-xs" colorType="tertiary">
+                        {t('teacher-profile.to')}
+                    </Text>
+                    <input
+                        type="time"
+                        value={range.to}
+                        onChange={(e) => onTimeChange('to', e.target.value)}
+                        className="px-3 py-2 border border-gray-200 rounded-md text-sm w-full sm:w-32"
+                    />
                 </div>
             </div>
-        </>
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+                <button
+                    onClick={onDelete}
+                    className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
+                >
+                    {t('teacher-profile.delete')}
+                </button>
+            </div>
+        </div>
     );
 }
