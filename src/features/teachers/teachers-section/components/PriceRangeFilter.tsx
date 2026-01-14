@@ -9,10 +9,11 @@ import { cn } from "@/lib/utils";
 export interface PriceRangeFilterProps {
     minPrice?: number;
     maxPrice?: number;
+    fullWidth?: boolean;
     onPriceChange: (minPrice?: number, maxPrice?: number) => void;
 }
 
-export function PriceRangeFilter({ minPrice, maxPrice, onPriceChange }: PriceRangeFilterProps) {
+export function PriceRangeFilter({ minPrice, maxPrice, fullWidth, onPriceChange }: PriceRangeFilterProps) {
     const t = useTranslations();
     const [localMin, setLocalMin] = useState<string>(minPrice?.toString() || '');
     const [localMax, setLocalMax] = useState<string>(maxPrice?.toString() || '');
@@ -55,12 +56,13 @@ export function PriceRangeFilter({ minPrice, maxPrice, onPriceChange }: PriceRan
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
                     className={cn(
-                        'flex items-center justify-between px-4 py-3 text-left min-w-[200px]',
+                        'flex items-center justify-between px-4 py-2.5 text-left min-w-[200px]',
                         'border border-[var(--color-neutral-200)] rounded-lg',
                         'bg-white transition-all',
                         'hover:border-[var(--color-neutral-300)]',
-                        'focus:outline-none focus:border-2 focus:border-[var(--color-primary-700)]',
-                        isOpen && 'border-2 border-[var(--color-primary-700)]'
+                        'focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]',
+                        isOpen && 'outline outline-2 outline-[var(--color-primary-700)]',
+                        fullWidth && 'w-full'
                     )}
                 >
                     <div className="flex items-center gap-2 flex-1">
@@ -70,9 +72,7 @@ export function PriceRangeFilter({ minPrice, maxPrice, onPriceChange }: PriceRan
                             iconHeight={16}
                             className="text-[var(--color-neutral-500)]"
                         />
-                        <span className="text-sm text-[var(--color-neutral-900)]">
-                            {getDisplayText()}
-                        </span>
+                        {getDisplayText()}
                     </div>
                     <Icon 
                         icon="chevron-down" 

@@ -15,6 +15,7 @@ export interface MoreFiltersProps {
     speakLanguage?: string;
     studentLevelId?: string;
     lang: string;
+    fullWidth?: boolean;
     onFiltersChange: (filters: {
         subjectCategoryId?: string;
         subjectId?: string;
@@ -29,6 +30,7 @@ export function MoreFilters({
     speakLanguage, 
     studentLevelId,
     lang,
+    fullWidth,
     onFiltersChange 
 }: MoreFiltersProps) {
     const t = useTranslations();
@@ -139,13 +141,14 @@ export function MoreFilters({
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
                     className={cn(
-                        'flex items-center justify-between px-4 py-3 text-left min-w-[200px]',
+                        'flex items-center justify-between px-4 py-2.5 text-left min-w-[200px]',
                         'border border-[var(--color-neutral-200)] rounded-lg',
                         'bg-white transition-all',
                         'hover:border-[var(--color-neutral-300)]',
-                        'focus:outline-none focus:border-2 focus:border-[var(--color-primary-700)]',
-                        isOpen && 'border-2 border-[var(--color-primary-700)]',
-                        hasActiveFilters && 'border-[var(--color-primary-700)]'
+                        'focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]',
+                        isOpen && 'outline outline-2 outline-[var(--color-primary-700)]',
+                        hasActiveFilters && 'border-[var(--color-primary-700)]',
+                        fullWidth && 'w-full'
                     )}
                 >
                     <div className="flex items-center gap-2 flex-1">
@@ -159,7 +162,6 @@ export function MoreFilters({
                             )}
                         />
                         <span className={cn(
-                            'text-sm',
                             hasActiveFilters ? 'text-[var(--color-primary-700)] font-medium' : 'text-[var(--color-neutral-900)]'
                         )}>
                             {getDisplayText()}

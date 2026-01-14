@@ -2,6 +2,7 @@ import { type HTMLAttributes, type ReactNode } from 'react';
 import type { ColorType } from '@/ui-library/shared/constants';
 import classNames from 'classnames';
 import styles from './Dropdown.module.css';
+
 import {
   Select,
   SelectContent,
@@ -76,7 +77,7 @@ export const Dropdown = ({
 				{clearable && (
 					<SelectItem value="__clear__" textValue={clearText}>
 						<div className="flex items-center justify-between w-full">
-							<span className="text-[var(--color-neutral-500)]">{clearText}</span>
+							<span className="text-[var(--color-neutral-700)]">{clearText}</span>
 						</div>
 					</SelectItem>
 				)}

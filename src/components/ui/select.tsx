@@ -46,11 +46,11 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex items-center justify-between gap-2 px-4 py-3 text-left",
+        "flex items-center justify-between gap-2 px-4 py-2.5 text-left",
         "border border-[var(--color-neutral-200)] rounded-lg",
         "bg-white transition-all",
-        "focus:border-2 focus:border-[var(--color-primary-700)] focus:outline-none",
-        "data-[state=open]:border-2 data-[state=open]:border-[var(--color-primary-700)]",
+        "focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]",
+        "data-[state=open]:outline data-[state=open]:outline-2 data-[state=open]:outline-[var(--color-primary-700)]",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         "text-sm",
         "[&_svg:not([class*='text-'])]:text-[var(--color-neutral-500)]",

@@ -51,9 +51,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         CLASS_TYPE_OPTIONS.map(option => ({
             value: option.id,
             label: t(option.labelKey),
-            renderItem: (item, isSelected) => (
+            renderItem: (item) => (
                 <div className="flex items-center gap-2">
-                    <span>{CLASS_TYPE_OPTIONS.find(opt => opt.id === item.value)?.icon}</span>
                     <span>{item.label}</span>
                 </div>
             )
@@ -170,43 +169,46 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
     return (
         <div className="flex flex-col gap-4">
             {/* Filters Row */}
-            <div className="flex gap-2 flex-wrap items-start">
-                {/* City Filter */}
-                <div className="min-w-[250px]">
-                    <CitySelector
-                        value={selectedCity}
-                        onChange={handleCityChange}
-                        lang={lang as 'es' | 'en'}
-                        placeholder={t('teachers.select_city')}
-                        searchPlaceholder={t('onboarding.location.search')}
-                        emptyMessage={t('onboarding.location.empty')}
-                        fullWidth={false}
-                    />
-                </div>
+            <div className="flex flex-row items-space-between w-full">
+                <div className="flex flex-row gap-2 w-full">
+                    <div className="min-w-[180px]">
+                        <CitySelector
+                            value={selectedCity}
+                            onChange={handleCityChange}
+                            lang={lang as 'es' | 'en'}
+                            placeholder={t('teachers.select_city')}
+                            searchPlaceholder={t('onboarding.location.search')}
+                            emptyMessage={t('onboarding.location.empty')}
+                            fullWidth={true}
+                        />
+                    </div>
 
-                {/* Class Type Filter */}
-                <div className="min-w-[200px]">
-                    <Dropdown
-                        prepend={<Icon icon="target-05" iconWidth={20} iconHeight={20} />}
-                        items={classTypeItems}
-                        value={selectedClassType}
-                        onChange={handleClassTypeChange}
-                        placeholder={t('teachers.all_class_types')}
-                        clearable={true}
-                        clearText={t('teachers.all_class_types')}
-                        fullWidth={false}
-                    />
-                </div>
+                    {/* Class Type Filter */}
+                    <div className="min-w-[180px]">
+                        <Dropdown
+                            prepend={<Icon icon="target-05" iconWidth={20} iconHeight={20} />}
+                            items={classTypeItems}
+                            value={selectedClassType}
+                            onChange={handleClassTypeChange}
+                            placeholder={t('teachers.all_class_types')}
+                            clearable={true}
+                            clearText={t('teachers.all_class_types')}
+                            fullWidth={true}
+                        />
+                    </div>
 
-                <div className="min-w-[200px]">
-                    <PriceRangeFilter
-                        minPrice={minPrice}
-                        maxPrice={maxPrice}
-                        onPriceChange={handlePriceChange}
-                    />
+                    <div className="min-w-[180px]">
+                        <PriceRangeFilter
+                            minPrice={minPrice}
+                            maxPrice={maxPrice}
+                            fullWidth
+                            onPriceChange={handlePriceChange}
+                        />
+                    </div>
                 </div>
+                
 
-                <div className="min-w-[200px]">
+                <div className="min-w-[180px]">
                     <MoreFilters
                         subjectCategoryId={subjectCategoryId}
                         subjectId={subjectId}
@@ -214,11 +216,12 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
                         studentLevelId={studentLevelId}
                         lang={lang as string}
                         onFiltersChange={handleMoreFiltersChange}
+                        fullWidth
                     />
                 </div>
             </div>
             {/* Search Bar */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
                 <div className="flex-1 relative">
                     <input
                         type="text"
@@ -226,7 +229,7 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
                         onChange={(e) => setSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder={t('teachers.search_placeholder')}
-                        className="w-full px-4 py-2 pl-10 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-4 py-2.5 pl-10 border border-[var(--color-neutral-200)] rounded-lg focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]"
                     />
                     <Icon 
                         icon="search" 
@@ -238,12 +241,14 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
                 {(search || selectedClassType || minPrice || maxPrice || subjectId || speakLanguage || studentLevelId) && (
                     <Button
                         colorType="secondary"
+                        size="lg" 
                         label={t('common.clear')}
                         onClick={handleClear}
                     />
                 )}
                 <Button
                     colorType="primary"
+                    size="lg" 
                     label={t('common.search')}
                     onClick={handleSearch}
                 />

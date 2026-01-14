@@ -68,11 +68,11 @@ export function Combobox({
                     aria-expanded={open}
                     disabled={disabled}
                     className={cn(
-                        'flex items-center justify-between px-4 py-3 text-left',
+                        'flex items-center justify-between px-4 py-2.5 text-left',
                         'border border-[var(--color-neutral-200)] rounded-lg',
                         'bg-white transition-all',
-                        'focus:border-2 focus:border-[var(--color-primary-700)]',
-                        open && 'border-2 border-[var(--color-primary-700)]',
+                        'focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]',
+                        open && 'outline outline-2 outline-[var(--color-primary-700)]',
                         disabled && 'opacity-50 cursor-not-allowed',
                         fullWidth ? 'w-full' : 'min-w-[200px]'
                     )}
@@ -84,7 +84,7 @@ export function Combobox({
                             </span>
                         )}
                         <span className={cn(
-                            'text-sm truncate',
+                            'truncate',
                             selectedItem ? 'text-[var(--color-neutral-900)]' : 'text-[var(--color-neutral-400)]'
                         )}>
                             {selectedItem?.label || placeholder}
@@ -152,15 +152,6 @@ export function Combobox({
                                                     isSelected && 'bg-[var(--color-primary-100)] text-[var(--color-primary-700)] font-medium'
                                                 )}
                                             >
-                                                <Icon 
-                                                    icon="check" 
-                                                    iconWidth={16} 
-                                                    iconHeight={16}
-                                                    className={cn(
-                                                        'mr-2 text-[var(--color-primary-700)]',
-                                                        isSelected ? 'opacity-100' : 'opacity-0'
-                                                    )}
-                                                />
                                                 {item.prepend && (
                                                     <span className="mr-2 shrink-0">
                                                         {item.prepend}
