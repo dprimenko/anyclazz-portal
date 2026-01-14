@@ -2,6 +2,7 @@
 import { TeachersSection } from '../features/teachers/teachers-section/components/TeachersSection';
 import Main from '../layout/Main.astro';
 import { getSession } from 'auth-astro/server';
+import { getLangFromUrl } from '@/i18n';
 
 export const prerender = false;
 
@@ -11,8 +12,10 @@ const accessToken = session?.accessToken as string;
 if (!accessToken) {
 	return Astro.redirect('/login');
 }
+
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <Main title="Teachers">
-	<TeachersSection client:only accessToken={accessToken} />
+	<TeachersSection client:only accessToken={accessToken} lang={lang} />
 </Main>

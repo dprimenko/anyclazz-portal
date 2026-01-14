@@ -11,6 +11,9 @@ const keycloakClientSecret = import.meta.env.KEYCLOAK_CLIENT_SECRET || "anyclazz
 export default defineConfig({
   secret: import.meta.env.AUTH_SECRET || "gy07h9vlgxrjb0gdtsIRDLf4GxaN9HFY",
   debug: false,
+  pages: {
+    error: '/auth-error',
+  },
   providers: [
     Keycloak({
       clientId: keycloakClientId,

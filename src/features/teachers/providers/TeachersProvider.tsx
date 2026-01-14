@@ -4,6 +4,7 @@ import type { Teacher } from "../domain/types";
 
 interface TeachersContextValue {
     accessToken: string;
+    lang: string;
     teachers: Teacher[];
     totalTeachers: number;
     fetchingTeachers: boolean;
@@ -22,13 +23,14 @@ const TeachersContext = createContext<TeachersContextValue | undefined>(undefine
 
 export interface TeachersProviderProps extends TeachersPageProps {
     children: ReactNode;
+    lang: string;
 }
 
-export function TeachersProvider({ children, teacherRepository, accessToken }: TeachersProviderProps) {
+export function TeachersProvider({ children, teacherRepository, accessToken, lang }: TeachersProviderProps) {
     const teachersState = useTeacherList({ teacherRepository, accessToken });
 
     return (
-        <TeachersContext.Provider value={teachersState}>
+        <TeachersContext.Provider value={{ ...teachersState, lang }}>
             {children}
         </TeachersContext.Provider>
     );

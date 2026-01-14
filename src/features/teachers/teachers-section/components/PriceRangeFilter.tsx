@@ -2,7 +2,9 @@ import { useState } from "react";
 import { PopMenu } from "@/ui-library/components/pop-menu/PopMenu";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
+import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { useTranslations } from "@/i18n";
+import { cn } from "@/lib/utils";
 
 export interface PriceRangeFilterProps {
     minPrice?: number;
@@ -47,17 +49,44 @@ export function PriceRangeFilter({ minPrice, maxPrice, onPriceChange }: PriceRan
         <PopMenu
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
+            contentClassName="w-[280px]"
             trigger={
                 <button
+                    type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg hover:border-neutral-400 transition-colors bg-white"
+                    className={cn(
+                        'flex items-center justify-between px-4 py-3 text-left min-w-[200px]',
+                        'border border-[var(--color-neutral-200)] rounded-lg',
+                        'bg-white transition-all',
+                        'hover:border-[var(--color-neutral-300)]',
+                        'focus:outline-none focus:border-2 focus:border-[var(--color-primary-700)]',
+                        isOpen && 'border-2 border-[var(--color-primary-700)]'
+                    )}
                 >
-                    <span className="text-sm">💰</span>
-                    <Text size="text-sm" colorType="primary">{getDisplayText()}</Text>
+                    <div className="flex items-center gap-2 flex-1">
+                        <Icon 
+                            icon="dollar" 
+                            iconWidth={16} 
+                            iconHeight={16}
+                            className="text-[var(--color-neutral-500)]"
+                        />
+                        <span className="text-sm text-[var(--color-neutral-900)]">
+                            {getDisplayText()}
+                        </span>
+                    </div>
+                    <Icon 
+                        icon="chevron-down" 
+                        iconWidth={16} 
+                        iconHeight={16}
+                        className={cn(
+                            'ml-2 shrink-0 transition-transform text-[var(--color-neutral-500)]',
+                            isOpen && 'rotate-180'
+                        )}
+                    />
                 </button>
             }
         >
-            <div className="flex flex-col gap-4 p-4 w-64">
+            <div className="flex flex-col gap-4 p-4">
                 <Text size="text-sm" weight="semibold" colorType="primary">
                     {t('teachers.price_range')}
                 </Text>

@@ -17,9 +17,10 @@ export interface PopMenuProps {
     direction?: "up" | "down";
     isOpen?: boolean;
     onClose?: () => void;
+    contentClassName?: string;
 }
 
-export function PopMenu({ trigger, items, children, align = "right", direction = "down", isOpen: controlledIsOpen, onClose }: PopMenuProps) {
+export function PopMenu({ trigger, items, children, align = "right", direction = "down", isOpen: controlledIsOpen, onClose, contentClassName }: PopMenuProps) {
     const [internalIsOpen, setInternalIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +55,10 @@ export function PopMenu({ trigger, items, children, align = "right", direction =
                 {trigger}
             </div>
             {isOpen && (
-                <div className={classNames(styles.dropdown, styles[align], styles[direction])}>
+                <div 
+                    className={classNames(styles.dropdown, styles[align], styles[direction], contentClassName)}
+                    onClick={(e) => e.stopPropagation()}
+                >
                     {children ? children : items?.map((item, index) => (
                         <button
                             key={index}

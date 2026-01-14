@@ -85,6 +85,10 @@ export interface ListTeachersParams extends CommonParams {
     classTypeId?: string;
     minPrice?: number;
     maxPrice?: number;
+    subjectCategoryId?: string;
+    subjectId?: string;
+    speakLanguage?: string;
+    studentLevelId?: string;
 }
 
 export interface ListTeachersResponse {

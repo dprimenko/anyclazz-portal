@@ -1,0 +1,95 @@
+---
+import Base from '@/layout/Base.astro';
+import { Button } from '@/ui-library/components/ssr/button/Button';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+
+const error = Astro.url.searchParams.get('error');
+const errorDescription = Astro.url.searchParams.get('error_description');
+
+let errorMessage = 'Ha ocurrido un error en la autenticación';
+let errorDetail = errorDescription || 'Por favor, intenta iniciar sesión nuevamente';
+
+if (error === 'Configuration') {
+    errorMessage = 'Error de configuración';
+    errorDetail = 'Hay un problema con la configuración del servidor de autenticación';
+} else if (error === 'AccessDenied') {
+    errorMessage = 'Acceso denegado';
+    errorDetail = 'No tienes permisos para acceder a esta aplicación';
+} else if (error === 'Verification') {
+    errorMessage = 'Error de verificación';
+    errorDetail = 'No se pudo verificar tu identidad';
+}
+---
+
+<Base title="Error de autenticación">
+    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100">
+                    <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="mt-6 text-center">
+                    <Text textLevel="h1" size="text-2xl" weight="semibold" colorType="primary">
+                        {errorMessage}
+                    </Text>
+                </div>
+                <div class="mt-2 text-center">
+                    <Text size="text-sm" colorType="tertiary" textalign="center">
+                        {errorDetail}
+                    </Text>
+                </div>
+                {error && (
+                    <div class="mt-2 text-center">
+                        <Text size="text-xs" colorType="tertiary" textalign="center">
+                            Código de error: {error}
+                        </Text>
+                    </div>
+                )}
+            </div>
+
+            <div class="mt-8 space-y-4">
+                <button 
+                    id="login-button"
+                    onclick="clearStorageAndRedirect()"
+                    class="block w-full"
+                >
+                    <Button
+                        colorType="primary"
+                        label="Volver a iniciar sesión"
+                        fullWidth
+                    />
+                </button>
+                <a href="/" class="block">
+                    <Button
+                        colorType="secondary"
+                        label="Ir a la página principal"
+                        fullWidth
+                    />
+                </a>
+            </div>
+
+            <div class="mt-6 text-center">
+                <Text size="text-xs" colorType="tertiary" textalign="center">
+                    Si el problema persiste, contacta con el administrador del sistema.
+                </Text>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function clearStorageAndRedirect() {
+            // Limpiar localStorage
+            localStorage.clear();
+            
+            // Limpiar sessionStorage
+            sessionStorage.clear();
+            
+            console.log('🧹 Storage cleared - redirecting to clear cookies and login');
+            
+            // Redirigir a clear-cookies que limpiará las cookies y redirigirá a login
+            window.location.href = '/api/auth/clear-cookies?next=/login';
+        }
+    </script>
+</Base>

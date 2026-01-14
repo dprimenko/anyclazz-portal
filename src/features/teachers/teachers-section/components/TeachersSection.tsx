@@ -7,16 +7,18 @@ import { Space } from "../../../../ui-library/components/ssr/space/Space";
 import { TeachersList } from "../../teachers-list/components/teachers-list/TeachersList";
 import { ApiTeacherRepository } from "../../infrastructure/ApiTeacherRepository";
 import { TeachersProvider, useTeachers } from "../../providers/TeachersProvider";
+import { cities } from "../../onboarding/data/cities";
 
 const teacherRepository = new ApiTeacherRepository();
 
 export interface TeachersSectionProps {
   accessToken: string;
+  lang: string;
 }
 
-export function TeachersSection({ accessToken }: TeachersSectionProps) {
+export function TeachersSection({ accessToken, lang }: TeachersSectionProps) {
   return (
-    <TeachersProvider teacherRepository={teacherRepository} accessToken={accessToken}>
+    <TeachersProvider teacherRepository={teacherRepository} accessToken={accessToken} lang={lang}>
       <TeachersSectionContent />
     </TeachersProvider>
   );
@@ -24,15 +26,18 @@ export function TeachersSection({ accessToken }: TeachersSectionProps) {
 
 function TeachersSectionContent() {
   const t = useTranslations();
-  const { totalTeachers } = useTeachers();
+  const { totalTeachers, filters, lang } = useTeachers();
 
   const countTeachers = useMemo(() => {
     return totalTeachers || 0;
   }, [totalTeachers]);
 
   const teachersLocation = useMemo(() => {
-    return "Madrid";
-  }, []);
+    if (!filters.cityISO2) return "Madrid";
+    
+    const city = cities.find(c => c.cityISO2 === filters.cityISO2);
+    return city ? city.name[lang as keyof typeof city.name] : "Madrid";
+  }, [filters.cityISO2, lang]);
 
   return (
     <div className={styles["teachers-section__container"]}>

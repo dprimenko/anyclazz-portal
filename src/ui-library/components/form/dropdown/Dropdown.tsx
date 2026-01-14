@@ -27,6 +27,9 @@ export interface DropdownProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
     items?: DropdownItem[];
     value?: string;
 	onChange?: (value: string) => void;
+	clearable?: boolean;
+	clearText?: string;
+	disablePortal?: boolean;
 }
 
 export const Dropdown = ({
@@ -38,6 +41,9 @@ export const Dropdown = ({
     items = [],
     value,
 	onChange,
+	clearable = false,
+	clearText = 'Clear selection',
+	disablePortal = false,
 	...props
 }: DropdownProps) => {
     const classes = classNames(
@@ -48,8 +54,16 @@ export const Dropdown = ({
 	const selectedItem = items.find(item => item.value === value);
 	const displayValue = selectedItem ? selectedItem.label : undefined;
 
+	const handleValueChange = (newValue: string) => {
+		if (newValue === '__clear__') {
+			onChange?.('');
+		} else {
+			onChange?.(newValue);
+		}
+	};
+
 	return (
-		<Select value={value} onValueChange={onChange}>
+		<Select value={value} onValueChange={handleValueChange}>
 			<SelectTrigger prefix={prepend} className={classes}>
 				<SelectValue placeholder={placeholder}>
 					<span className="text-[var(--color-neutral-900)]">
@@ -57,8 +71,15 @@ export const Dropdown = ({
 					</span>
 				</SelectValue>
 			</SelectTrigger>
-			<SelectContent className="max-h-[300px] overflow-y-auto">
+			<SelectContent className="max-h-[300px] overflow-y-auto" disablePortal={disablePortal}>
 				<SelectGroup>
+				{clearable && (
+					<SelectItem value="__clear__" textValue={clearText}>
+						<div className="flex items-center justify-between w-full">
+							<span className="text-[var(--color-neutral-500)]">{clearText}</span>
+						</div>
+					</SelectItem>
+				)}
 				{items.map((item) => {
                     const isSelected = value === item.value;
                     return (
