@@ -3,6 +3,7 @@ import { Text } from "../../../../../ui-library/components/ssr/text/Text";
 import { TextWithIcon } from "../../../../../ui-library/components/ssr/text-with-icon/TextWithIcon.tsx";
 import styles from "./TeachersItem.module.css";
 import { getLangFromUrl, useTranslations } from "../../../../../i18n";
+import { languages } from "../../../onboarding/data/languages";
 import { Chip } from "../../../../../ui-library/components/ssr/chip/Chip.tsx";
 import { Icon } from "../../../../../ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "../../../../../ui-library/components/ssr/space/Space.tsx";
@@ -104,9 +105,11 @@ export function TeacherItem({ teacher }: TeacherProps) {
                     <div className={styles["teacher-item__content-row"]}>
                         <Text colorType="tertiary" size="text-sm">
                             {t('teachers.speaks')}{' '}
-                            {teacher.speaksLanguages.map((language) => (
-                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`
-                            )).join(', ')}
+                            {teacher.speaksLanguages.map((language) => {
+                                const lang = languages.find(l => l.code === language.language);
+                                const langName = lang?.name[getLangFromUrl(new URL(window.location.href))] || language.language;
+                                return `${langName} (${t(`common.language.level.${language.proficiencyLevel}`)})`;
+                            }).join(', ')}
                         </Text>
                     </div>
                 </div>
