@@ -1,10 +1,11 @@
 ---
 import Main from "../layout/Main.astro";
+import { Feed } from "../features/stories/feed/components/feed/Feed.tsx";
 export const prerender = false;
+
+const pageTitle = "Feed";
 ---
 
-<Main>
-	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-		Feed page
-	</div>
+<Main title={pageTitle}>
+	<Feed client:only />
 </Main>
