@@ -45,3 +45,45 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+---
+
+## 🤖 GitHub Copilot - Contexto Persistente
+
+Este proyecto utiliza **instrucciones personalizadas de GitHub Copilot** para mantener contexto entre sesiones.
+
+### ✅ Cómo Funciona
+
+**El archivo `.github/copilot-instructions.md`** es leído automáticamente por GitHub Copilot al inicio de cada nueva sesión de chat. Esto significa:
+
+1. **Persistencia entre sesiones**: Cada vez que abras una nueva conversación con Copilot en este proyecto, leerá ese archivo y tendrá todo el contexto.
+
+2. **Contexto acumulativo**: Puedes ir añadiendo información nueva según vaya surgiendo:
+   - Patrones específicos que descubras
+   - Reglas de negocio importantes
+   - Convenciones de código que establezcas
+   - Configuraciones especiales
+
+3. **Alcance del workspace**: Estas instrucciones solo aplican a este proyecto específico (anyclazz-portal).
+
+### 📝 Cómo Actualizar el Contexto
+
+Cuando surjan cosas nuevas, simplemente pide a Copilot:
+- "Añade al contexto que..."
+- "Actualiza las instrucciones para incluir..."
+- "Documenta que ahora usamos X patrón para Y"
+
+Y Copilot actualizará el archivo `.github/copilot-instructions.md` para mantener el conocimiento persistente.
+
+### 💡 Ventajas
+
+- ✅ No necesitas repetir el contexto en cada sesión
+- ✅ Copilot generará código más alineado con tus convenciones
+- ✅ Mantienes documentadas las decisiones arquitectónicas del proyecto
+- ✅ Nuevos desarrolladores pueden leer el archivo para entender el proyecto
+
+### 📂 Archivos de Configuración
+
+- `.github/copilot-instructions.md` - Instrucciones principales y reglas del proyecto
+- `.vscode/settings.json` - Configuración del editor (cuando se cree)
+- `.vscode/snippets.code-snippets` - Snippets personalizados (cuando se cree)

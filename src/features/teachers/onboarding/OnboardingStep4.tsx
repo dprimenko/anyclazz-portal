@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useTranslations } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { ApiTeacherRepository } from '../infrastructure/ApiTeacherRepository';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@/ui-library/shared';
 
 interface OnboardingStep4Props {
     lang: string;

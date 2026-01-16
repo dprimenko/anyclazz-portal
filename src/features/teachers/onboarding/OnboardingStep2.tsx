@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@/ui-library/shared';
 import { ClassType, type TeacherClassType } from '@/features/teachers/domain/types';
 import { cn } from '@/lib/utils';
 import { TeacherModalitiesRepository } from '../infrastructure/TeacherModalitiesRepository';

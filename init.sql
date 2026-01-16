@@ -107,7 +107,7 @@ CREATE TABLE anyclazz.user_addresses (
 );
 
 INSERT INTO anyclazz.addresses (id, country_iso2, city_iso2, full_address) VALUES
-    ('550e8400-e29b-41d4-a716-446655440103','es','es-m','Calle de Alcalá, 42, Madrid, Spain');
+    ('550e8400-e29b-41d4-a716-446655440103','es','m','Calle de Alcalá, 42, Madrid, Spain');
 
 INSERT INTO anyclazz.user_addresses (user_id, address_id, is_primary) VALUES
     ('550e8400-e29b-41d4-a716-446655440003','550e8400-e29b-41d4-a716-446655440103', TRUE),
