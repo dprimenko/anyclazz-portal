@@ -1,4 +1,4 @@
-import { Calendar as CCalendar } from "@/components/ui/calendar";
+import { Calendar as CCalendar } from "@/ui-library/shared/calendar";
 import { DateTime } from "luxon";
 import styles from "./Calendar.module.css";
 import classNames from "classnames";

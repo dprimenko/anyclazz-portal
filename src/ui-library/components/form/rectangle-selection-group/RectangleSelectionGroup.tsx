@@ -1,4 +1,4 @@
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/ui-library/shared/radio-group";
 import cn from "classnames";
 import style from "./RectangleSelectionGroup.module.css";
 import { useMemo } from "react";

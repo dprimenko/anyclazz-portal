@@ -215,7 +215,7 @@ a {
 
 .dark *::-webkit-scrollbar-thumb:active {
     background-color: rgba(255, 255, 255, 0.4);
-} */
+}
 
 .dark * {
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;

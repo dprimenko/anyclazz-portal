@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/ui-library/shared/checkbox";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { ClassType, type TeacherClassType, type DurationPrice } from "@/features/teachers/domain/types";
 import { cn } from "@/lib/utils";

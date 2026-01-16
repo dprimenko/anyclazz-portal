@@ -1,7 +1,6 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
 import type { ColorType } from '@/ui-library/shared/constants';
 import classNames from 'classnames';
-import styles from './Dropdown.module.css';
 
 import {
   Select,
@@ -10,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/ui-library/shared/select"
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
 export interface DropdownItem {

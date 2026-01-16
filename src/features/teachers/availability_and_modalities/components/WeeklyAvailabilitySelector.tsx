@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "@/ui-library/shared/switch";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { useTranslations } from "@/i18n";
