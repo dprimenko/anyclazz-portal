@@ -813,3 +813,40 @@ INSERT INTO anyclazz.teacher_stats (teacher_id, rating, reviews_number, students
     ('550e8400-e29b-41d4-a716-446655440003', 4.3, 202, 89, 2130),
     ('550e8400-e29b-41d4-a716-446655440004', 5.0, 405, 130, 3850),
     ('550e8400-e29b-41d4-a716-446655440005', 4.9, 105, 38, 150);
+
+-- ============================================================
+-- Tabla de stories (videos cortos estilo TikTok/Reels)
+-- ============================================================
+CREATE TABLE anyclazz.stories (
+    id VARCHAR(36) PRIMARY KEY,
+    video_url VARCHAR(255) NOT NULL,
+    title VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- Tabla intermedia story_cities (stories <-> ciudades)
+-- ============================================================
+CREATE TABLE anyclazz.story_cities (
+    id SERIAL PRIMARY KEY,
+    story_id VARCHAR(36) NOT NULL REFERENCES anyclazz.stories(id) ON DELETE CASCADE,
+    country_iso2 CHAR(2) NOT NULL,
+    city_iso2 VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (story_id, country_iso2, city_iso2)
+);
+
+-- Insertar stories de ejemplo
+INSERT INTO anyclazz.stories (id, video_url, title, description) VALUES
+    ('01STORY0-0000-0000-0000-000000000001', 'https://www.pexels.com/download/video/5752044/', 'Aprendiendo español en Madrid', 'Descubre cómo es aprender español en el corazón de España'),
+    ('01STORY0-0000-0000-0000-000000000002', 'https://www.pexels.com/download/video/3252126/', 'Yoga matutino en Barcelona', 'Empieza tu día con energía positiva'),
+    ('01STORY0-0000-0000-0000-000000000003', 'https://www.pexels.com/download/video/5752044/', 'Clase de piano para principiantes', 'Aprende los fundamentos del piano desde cero');
+
+-- Relacionar stories con ciudades
+INSERT INTO anyclazz.story_cities (story_id, country_iso2, city_iso2) VALUES
+    ('01STORY0-0000-0000-0000-000000000001', 'es', 'm'),    -- Madrid
+    ('01STORY0-0000-0000-0000-000000000002', 'es', 'b'),    -- Barcelona
+    ('01STORY0-0000-0000-0000-000000000003', 'es', 'm');    -- Madrid

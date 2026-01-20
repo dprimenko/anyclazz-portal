@@ -104,7 +104,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                     onClick={handleSave}
                     colorType="primary"
                     disabled={isSaving}
-                    label={isSaving ? 'Guardando...' : 'Guardar'}
+                    label={isSaving ? t('common.saving') : t('common.save')}
                 />
             </div> 
             <Space size={16} />

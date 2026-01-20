@@ -35,6 +35,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
 
     const {
         availableSlots,
+        availableDates,
         selectedClass,
         selectClassType,
         selectedDuration,
@@ -43,7 +44,9 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         setSelectedDate,
         selectedTime,
         setSelectedTime,
-        createBooking
+        createBooking,
+        currentMonth,
+        setCurrentMonth,
     } = useBookingCreator({
         teacher,
         accessToken,
@@ -81,14 +84,27 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         ),
     })), [selectedClass, t]);
 
-    const availableTimes = useMemo(() => availableSlots.map(({from}) => ({
-        id: from,
-        children: () => (
-            <div className="flex flex-row gap-1.5 w-full items-center">
-                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{DateTime.fromISO(from).toFormat('HH:mm')}</Text>
-            </div>
-        ),
-    })), [availableSlots, t]);
+    const availableTimes = useMemo(() => availableSlots.map(({from, timeZone}) => {
+        const timeInTimezone = DateTime.fromISO(from, { zone: timeZone || 'Europe/Madrid' });
+        const formattedTime = timeInTimezone.toFormat('HH:mm');
+        const offsetMinutes = timeInTimezone.offset;
+        const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+        const offsetMins = Math.abs(offsetMinutes) % 60;
+        const offsetSign = offsetMinutes >= 0 ? '+' : '-';
+        const gmtOffset = offsetMins > 0 
+            ? `GMT${offsetSign}${offsetHours}:${offsetMins.toString().padStart(2, '0')}`
+            : `GMT${offsetSign}${offsetHours}`;
+        
+        return {
+            id: from,
+            children: () => (
+                <div className="flex flex-col gap-0.5 w-full items-center">
+                    <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{formattedTime}</Text>
+                    <Text textLevel="span" colorType="tertiary" size="text-xs">{gmtOffset}</Text>
+                </div>
+            ),
+        };
+    }), [availableSlots]);
 
     const priceAmount = useMemo(() => {
         if (selectedClass.durations === undefined) {
@@ -107,7 +123,12 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             alert(t('booking.select_time_required'));
             return;
         };
-        const startAt = DateTime.fromISO(selectedTime!, { zone: 'Europe/Madrid' });
+        
+        // Find the selected slot to get its timezone
+        const selectedSlot = availableSlots.find(slot => slot.from === selectedTime);
+        const slotTimeZone = selectedSlot?.timeZone || 'Europe/Madrid';
+        
+        const startAt = DateTime.fromISO(selectedTime!, { zone: slotTimeZone });
         const endAt = startAt.plus({ minutes: selectedDuration });
         
         const bookingData: CreateBookingParams = {
@@ -116,13 +137,13 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             classTypeId: selectedClass.type,
             startAt: startAt.toISO()!,
             endAt: endAt.toISO()!,
-            timeZone: 'Europe/Madrid',
+            timeZone: slotTimeZone,
         };
         
         const booking = await createBooking(bookingData);
 
         window.location.href = `/booking/checkout/${booking?.id}`;
-    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken]);
+    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken, availableSlots]);
 
     return (
         <form ref={formRef} onSubmit={formSubmitHandler} className={classes}>
@@ -190,7 +211,12 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                         </div>
                         <div className="flex flex-col gap-2 w-full">
                             <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
-                            <Calendar selectedDate={selectedDate} onSelected={setSelectedDate} />
+                            <Calendar 
+                                selectedDate={selectedDate} 
+                                onSelected={(date) => date && setSelectedDate(date)} 
+                                availableDates={availableDates}
+                                onMonthChange={setCurrentMonth}
+                            />
                         </div>
                         <div className="flex flex-col gap-2 w-full">
                             <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>

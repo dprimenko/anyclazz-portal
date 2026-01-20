@@ -1,16 +1,15 @@
 .feed {
     align-self: center;
     position: relative;
-    background: #000;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     
     @media (min-width: 768px) {
         aspect-ratio: 0.5625 / 1;
         width: auto;
+        padding: 0 20px;
     }
 }
 
@@ -27,6 +26,15 @@
 
     &::-webkit-scrollbar { 
         display: none;
+    }
+
+    @media (min-width: 768px) {
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 24px 0;
     }
 }
 

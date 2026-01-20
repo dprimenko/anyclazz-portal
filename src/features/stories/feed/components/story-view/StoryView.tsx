@@ -2,15 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { StoryPlayer } from "../story-player/StoryPlayer";
 import { publish, subscribe, unsubscribe } from "@/features/shared/services/domainEventsBus";
 import { FeedEvents } from "../../domain/events";
+import { IconButton } from "@/ui-library/shared";
+import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
+import type { Story } from "../../domain/types";
 
 
 export interface StoryViewProps {
-    story: {
-        id: string;
-        title: string;
-        description: string;
-        url: URL;
-    };
+    story: Story;
     index: number;
     playing: boolean;
     onVisibilityChange: (index: number, isVisible: boolean) => void;
@@ -23,6 +21,7 @@ export function StoryView({ story, index, playing, onVisibilityChange }: StoryVi
     const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
+	const isMobile = useIsMobile();
 
     const togglePlay = useCallback(() => {
 		setIsPlaying(!isPlaying);
@@ -102,42 +101,22 @@ export function StoryView({ story, index, playing, onVisibilityChange }: StoryVi
 	}, []);
 
     return (
-        <div className="relative snap-center w-full h-full" ref={containerRef}>
-			<StoryPlayer ref={videoRef} story={story} />
-			<div className="absolute inset-0 z-[1] grid grid-cols-[1fr_max-content]">
-				{/* <div className="video-view__info">
-					{geoPoint && !noDistance && <div><span className="video-view__distance">{calculateDistance}</span></div>}
-					<div className="video-view__title">{geoStory.title}</div>
-					{geoStory.startDate && <div className="video-view__title">finaliza {formatDate.long(geoStory.startDate.toISOString())}</div>}
-					<div className="video-view__username">{geoStory.influencer?.id ? `@${geoStory.influencer?.name}` : geoStory.business?.name}</div>
-					{geoStory.description && <div className="video-view__description">{geoStory.description}</div>}
-				</div> */}
-				{/* <div className="video-view__actions">
-					<img className="video-view__avatar" src={geoStory.avatar?.toString() || ''} alt={`${geoStory.influencer?.name || geoStory.business?.name || ''} avatar`} onClick={() => publish(AppEvents.OPEN_DOWNLOAD_APP_MODAL)}/>
-					<div className="video-view__action" onClick={whereGeoStory}>
-						<img src={LogoPlayWhiteIcon.src} width="48" />
-						<span>{t('common.where')}</span>
-					</div>
-					<div className="video-view__action" onClick={() => publish(AppEvents.OPEN_DOWNLOAD_APP_MODAL)}>
-						<HeartIcon color="#fff" size={32} />
-						<span>{geoStory.likes}</span>
-					</div>
-					<div className="video-view__action" onClick={shareGeoStory}>
-						<ShareFatIcon color="#fff" size={32} />
-						<span>{t('common.share')}</span>
-					</div>
-				</div> */}
+        <div className="relative snap-center w-full h-full sm:rounded-[20px]" ref={containerRef}>
+			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} />
+			<div className="absolute inset-0 z-[1] grid grid-cols-[1fr_max-content] md:grid-cols-1 bg-gradient-to-b from-transparent from-85% to-black/75 sm:rounded-[20px]">
+				{/* Info section - left column */}
+				<div className="flex flex-col justify-end gap-2 p-4 pb-6">
+					<div className="text-white text-sm font-medium">{story.title}</div>
+					<div className="text-white/90 text-xs">{story.description}</div>
+				</div>
+
+				{/* Actions - right column (solo mobile) */}
+				<div className="flex md:hidden flex-col items-center justify-end gap-6 p-4 pb-6">
+					<IconButton icon="thumbs-up" label="234k" variant="ghost" />
+					<IconButton icon="message-text-square-01" label="Chat" variant="ghost" />
+					<IconButton icon="share-03" label="Share" variant="ghost" />
+				</div>
 			</div>
-			{/* <div className="video-view__play" onClick={togglePlay}>
-				{!isPlaying && <img src={PlayIcon.src} width="240" />}
-			</div>
-			<div className="video-view__sound">
-				<PressableIcon 
-					backgroundColor="rgba(84, 84, 84, 0.5)" 
-					icon={isMuted ? <SpeakerSimpleSlashIcon size={24} color="#fff" weight='fill'/> : <SpeakerSimpleHighIcon size={24} color="#fff" weight='fill'/>}
-					onClick={toggleSound}
-				/>
-			</div> */}
 		</div>
     );
 }

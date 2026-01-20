@@ -6,6 +6,7 @@
 export { Button } from './button';
 export { Calendar } from './calendar';
 export { Checkbox } from './checkbox';
+export { IconButton } from './icon-button';
 export { Label } from './label';
 export { RadioGroup, RadioGroupItem } from './radio-group';
 export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from './select';

@@ -39,10 +39,23 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
     // };
 
     // Transform cities data to ComboboxItem format with current locale
-    const cityItems: ComboboxItem[] = cities.map(city => ({
-        value: city.cityISO2,
-        label: city.name[lang as keyof typeof city.name],
-    }));
+    // Prioritize cities from selected nationality
+    const cityItems: ComboboxItem[] = useMemo(() => {
+        const allCities = cities.map(city => ({
+            value: city.cityISO2,
+            label: city.name[lang as keyof typeof city.name],
+            countryISO2: city.countryISO2,
+        }));
+
+        // If a nationality is selected, prioritize cities from that country
+        if (selectedNationality) {
+            const countryCities = allCities.filter(city => city.countryISO2 === selectedNationality);
+            const otherCities = allCities.filter(city => city.countryISO2 !== selectedNationality);
+            return [...countryCities, ...otherCities];
+        }
+
+        return allCities;
+    }, [lang, selectedNationality]);
 
     // Transform countries data to ComboboxItem format with current locale
     const nationalityItems: ComboboxItem[] = countries.map(country => ({

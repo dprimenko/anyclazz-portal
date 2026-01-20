@@ -94,7 +94,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 								const startTime = DateTime.fromISO(lesson.startAt);
 								return (
 									<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50" onClick={() => openLessonDetails(lesson)}>
-										{lesson.student && (
+										{lesson.student ? (
 											<div className="flex items-center">
 												<div className="flex items-center gap-3">
 													<Avatar src={lesson.student.avatar} size={40} alt={`${lesson.student.name} ${lesson.student.surname}`} />
@@ -104,8 +104,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 													</div>
 												</div>
 											</div>
-										)}
-										{lesson.teacher && (
+										) : lesson.teacher ? (
 											<div className="flex items-center">
 												<div className="flex items-center gap-3">
 													<Avatar src={lesson.teacher.avatar} size={40} alt={`${lesson.teacher.name} ${lesson.teacher.surname}`} />
@@ -114,6 +113,10 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 														<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
 													</div>
 												</div>
+											</div>
+										) : (
+											<div className="flex items-center">
+												<Text size="text-sm" colorType="tertiary">{t('common.loading')}...</Text>
 											</div>
 										)}
 										<div className="flex items-center">
@@ -136,8 +139,12 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 															colorType="secondary"
 														/>
 													</a>
+												) : lesson.meetingUrl ? (
+													<a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
+														<Button label={t('common.join')} colorType="primary" />
+													</a>
 												) : (
-													<Button label={t('common.join')} colorType="primary" />
+													<Button label={t('common.join')} colorType="primary" disabled />
 												)}
 											</div>
 										</div>

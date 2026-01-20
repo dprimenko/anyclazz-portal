@@ -1,0 +1,21 @@
+---
+import Main from "../../layout/Main.astro";
+import { Feed } from "../../features/stories/feed/components/feed/Feed.tsx";
+import { getSession } from 'auth-astro/server';
+export const prerender = false;
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const pageTitle = "Feed";
+
+const { id } = Astro.params;
+---
+
+<Main title={pageTitle}>
+	<Feed client:only storyId={id} accessToken={accessToken} />
+</Main>

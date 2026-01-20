@@ -56,10 +56,38 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
 
     const handleAddTimeRange = (dayIndex: number) => {
         const updated = [...weekAvailability];
+        const existingRanges = updated[dayIndex].timeRanges;
+        
+        let from = "09:00";
+        let to = "11:00";
+        
+        // Si hay rangos existentes, calcular el nuevo rango basado en el último
+        if (existingRanges.length > 0) {
+            const lastRange = existingRanges[existingRanges.length - 1];
+            const [lastHour, lastMinute] = lastRange.to.split(':').map(Number);
+            
+            // Siguiente hora después del último rango
+            let nextHour = lastHour + 1;
+            
+            // Si supera las 23 horas, reiniciar a 00
+            if (nextHour > 23) {
+                nextHour = 0;
+            }
+            
+            // Calcular hora final (2 horas después)
+            let endHour = nextHour + 2;
+            if (endHour > 23) {
+                endHour = 23;
+            }
+            
+            from = `${String(nextHour).padStart(2, '0')}:${String(lastMinute).padStart(2, '0')}`;
+            to = `${String(endHour).padStart(2, '0')}:${String(lastMinute).padStart(2, '0')}`;
+        }
+        
         const newTimeRange: TimeRange = {
             id: `${Date.now()}-${Math.random()}`,
-            from: "09:00",
-            to: "12:00"
+            from,
+            to
         };
         updated[dayIndex].timeRanges.push(newTimeRange);
         setWeekAvailability(updated);

@@ -1,14 +1,7 @@
 import { useMemo } from 'react';
 import { Combobox, type ComboboxItem } from '@/ui-library/components/form/combobox/Combobox';
 import { cities } from '../data/cities';
-import esFlag from '@/assets/images/icons/flags/es.svg';
-import usFlag from '@/assets/images/icons/flags/us.svg';
-
-// Map of country flags
-const FLAG_MAP: Record<string, string> = {
-    'es': esFlag.src,
-    'us': usFlag.src,
-};
+import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
 export interface CitySelectorProps {
     value?: string;
@@ -35,19 +28,20 @@ export function CitySelector({
 }: CitySelectorProps) {
     const cityItems: ComboboxItem[] = useMemo(() => {
         return cities.map(city => {
-            const flagSrc = FLAG_MAP[city.countryISO2.toLowerCase()];
             const cityName = city.name[lang];
             
             return {
                 value: city.cityISO2,
                 label: cityName,
-                prepend: flagSrc ? (
-                    <img 
-                        src={flagSrc} 
-                        alt="" 
-                        className="w-5 h-5 rounded-full object-cover"
-                    />
-                ) : null,
+                prepend: (
+                    <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center">
+                        <Icon 
+                            icon={`flags/${city.countryISO2.toLowerCase()}`}
+                            iconWidth={20}
+                            iconHeight={20}
+                        />
+                    </div>
+                ),
             };
         });
     }, [lang]);

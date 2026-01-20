@@ -9,6 +9,9 @@ export interface Booking {
     classTypeId: string;
     startAt: string;
     endAt: string;
+    meetingUrl?: string;
+    status?: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    paymentStatus?: 'pending' | 'completed' | 'failed';
     createdAt?: string;
     updatedAt?: string;
 }
