@@ -12,9 +12,9 @@ const logo = '/images/logo.svg';
     <div class:list={['app']}>
         <div class="left-sidebar__container hidden md:flex">
             <nav class="left-sidebar__content">
-                <div class="left-sidebar__logo logo">
+                <a href="/dashboard" class="left-sidebar__logo logo">
                     <img src={logo} alt="Anyclazz Logo" />
-                </div>
+                </a>
                 <Menu />
                 <div class="left-sidebar__footer">
                     <LoggedUser />
@@ -25,9 +25,9 @@ const logo = '/images/logo.svg';
             </div>   
         </div>
         <header class="header__container mobile-only">
-            <div class="header__logo logo">
+            <a href="/dashboard" class="header__logo logo">
                 <img src={logo} alt="Anyclazz Logo" />
-            </div>
+            </a>
             <div class="header__actions">
                 <Avatar src="https://anyclazz.b-cdn.net/08a3b47613f2d0f6aced2c3c467602e3aa1638f1.jpg" size={40} />
                 <div class="header__menu">
