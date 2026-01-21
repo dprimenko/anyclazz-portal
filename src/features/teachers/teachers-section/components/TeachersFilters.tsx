@@ -169,8 +169,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
     return (
         <div className="flex flex-col gap-4">
             {/* Filters Row */}
-            <div className="flex flex-row items-space-between w-full">
-                <div className="flex flex-row gap-2 w-full">
+            <div className="flex flex-col md:flex-row items-space-between w-full gap-2">
+                <div className="flex flex-col md:flex-row gap-2 w-full">
                     <div className="min-w-[180px]">
                         <CitySelector
                             value={selectedCity}

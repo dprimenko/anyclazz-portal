@@ -161,8 +161,12 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             <div className={styles['booking-creator__mobile-content']}>
                 <div className={leftSideClasses}>
                     <Text weight="semibold" colorType="primary" className={styles['booking-creator__desktop-title']}>{t('teachers.book-lesson')}</Text>
-                    <Divider className={styles['booking-creator__desktop-title']} />
-                    <Space size={10} direction="vertical" className={styles['booking-creator__desktop-title']} />
+                    {!isMobile && (
+                        <>
+                            <Divider className={styles['booking-creator__desktop-title']} />
+                            <Space size={10} direction="vertical" className={styles['booking-creator__desktop-title']} />
+                        </>
+                    )}
                     <div className="flex flex-row items-left">
                         <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={isMobile ? 72 : 96} hasVerifiedBadge={teacher.isSuperTeacher} hasOutline />
                     </div>
@@ -218,10 +222,12 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                                 onMonthChange={setCurrentMonth}
                             />
                         </div>
-                        <div className="flex flex-col gap-2 w-full">
-                            <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>
-                            <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-3 gap-3"}} items={availableTimes} value={selectedTime} onValueChange={(value) => setSelectedTime(value)} />
-                        </div>
+                        {availableSlots.length > 0 && (
+                            <div className="flex flex-col gap-2 w-full">
+                                <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>
+                                <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-3 gap-3"}} items={availableTimes} value={selectedTime} onValueChange={(value) => setSelectedTime(value)} />
+                            </div>
+                        )}
                     </div>
                     <div className={classNames(actionsClasses, styles['booking-creator__desktop-actions'])}>
                         <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} />
@@ -233,14 +239,14 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             {/* Mobile Footer - solo visible en móvil */}
             <div className={styles['booking-creator__mobile-footer']}>
                 {selectedClass && (
-                    <div className="flex items-center justify-between">
-                        <div>
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex flex-col">
                             <Text size="text-xl" colorType="primary" weight="medium">{priceAmount}</Text>
                             <Text size="text-xs" colorType="secondary">{t(`classtype.${selectedClass.type}`)} · {t('common.minutes_short', { minutes: selectedDuration })}</Text>
                         </div>
                     </div>
                 )}
-                <Button colorType="primary" label={t('teachers.book-now')} type="submit" />
+                <Button colorType="primary" label={t('teachers.book-now')} type="submit" className="w-full" />
             </div>
         </form>
     );
