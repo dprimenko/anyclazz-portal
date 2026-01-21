@@ -186,8 +186,8 @@ function TimeRangeRow({ range, onDelete, onTimeChange }: TimeRangeRowProps) {
     const t = useTranslations();
 
     return (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[3.125rem] flex-1">
+        <div className="flex flex-col flex-row items-start sm:items-center gap-3 border-1 border-[#E9EAEB] p-3 rounded-md" suppressHydrationWarning>
+            <div className="flex flex-col flex-row items-start sm:items-center gap-3 md:gap-[3.125rem] flex-1">
                 <div className="flex flex-col gap-1 w-full sm:w-auto">
                     <Text textLevel="label" size="text-xs" colorType="tertiary">
                         {t('teacher-profile.from')}
@@ -211,7 +211,7 @@ function TimeRangeRow({ range, onDelete, onTimeChange }: TimeRangeRowProps) {
                     />
                 </div>
             </div>
-            <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center gap-2 self-end sm:self-auto pb-2 sm:pb-0">
                 <button
                     onClick={onDelete}
                     className="text-gray-600 text-sm font-medium hover:opacity-80 transition-opacity"
