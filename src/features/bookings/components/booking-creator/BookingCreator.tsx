@@ -215,12 +215,14 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                         </div>
                         <div className="flex flex-col gap-2 w-full">
                             <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
-                            <Calendar 
-                                selectedDate={selectedDate} 
-                                onSelected={(date) => date && setSelectedDate(date)} 
-                                availableDates={availableDates}
-                                onMonthChange={setCurrentMonth}
-                            />
+                            <div className="overflow-visible">
+                                <Calendar 
+                                    selectedDate={selectedDate} 
+                                    onSelected={(date) => date && setSelectedDate(date)} 
+                                    availableDates={availableDates}
+                                    onMonthChange={setCurrentMonth}
+                                />
+                            </div>
                         </div>
                         {availableSlots.length > 0 && (
                             <div className="flex flex-col gap-2 w-full">

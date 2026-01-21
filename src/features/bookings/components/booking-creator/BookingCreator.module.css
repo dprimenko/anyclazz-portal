@@ -10,10 +10,11 @@
     .booking-creator__container {
         display: flex;
         flex-direction: column;
-        height: auto;
-        min-height: 0;
+        width: 100%;
+        min-height: 100vh;
         overflow: visible;
         position: relative;
+        padding-bottom: 2rem;
     }
 }
 
@@ -114,9 +115,13 @@
 
 @media (max-width: 767px) {
     .booking-creator__right-side-content {
-        overflow: visible;
+        overflow: visible !important;
         padding: 1rem;
         padding-bottom: 1.5rem;
+    }
+    
+    .booking-creator__right-side-content > * {
+        overflow: visible !important;
     }
 }
 
