@@ -16,7 +16,7 @@ export default defineConfig({
 
   vite: {
     server: {
-      allowedHosts: ['localhost', 'anyclazz.a.pinggy.link']
+      allowedHosts: ['localhost', 'primenko.a.pinggy.link']
     },
 
     css: {
