@@ -194,7 +194,8 @@ export function SimpleCalendar({
                                         className={classNames(
                                             "relative w-full h-full p-0 text-center aspect-square select-none text-sm font-normal flex-1",
                                             styles['calendar__day'],
-                                            isPast && styles['calendar__day--disabled']
+                                            isPast && styles['calendar__day--disabled'],
+                                            isAvailable && styles['calendar__day--available']
                                         )}
                                         style={{ overflow: 'visible' }}
                                     >
@@ -205,7 +206,6 @@ export function SimpleCalendar({
                                             className={classNames(
                                                 "w-full h-full rounded-full flex items-center justify-center",
                                                 styles['calendar__day__button'],
-                                                isAvailable && styles['calendar__day--available'],
                                                 isSelected && "!bg-primary-700 !text-white !border-primary-700"
                                             )}
                                             data-selected-single={isSelected}

@@ -5,7 +5,7 @@ import styles from './Overlay.module.css';
 
 export function Overlay({ children, className, onClick }: OverlayProps) {
 	const classes = classNames(
-		'absolute top-0 left-0 w-[100dvw] h-[100dvh] overflow-hidden z-[10]', 
+		'absolute top-0 left-0 w-[100dvw] h-[100dvh] overflow-hidden z-[11]', 
 		styles.overlay,
 		className
 	);
