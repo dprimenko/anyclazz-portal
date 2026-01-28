@@ -117,25 +117,17 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 								</div>
 								{upcomingLessons.map((lesson) => {
 									const startTime = DateTime.fromISO(lesson.startAt);
+									const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
+									const displayRole = user?.role === 'teacher' ? t('common.student') : t('common.teacher');
 									return (
 										<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50 cursor-pointer" onClick={() => openLessonDetails(lesson)}>
-											{lesson.student ? (
+											{displayPerson ? (
 												<div className="flex items-center">
 													<div className="flex items-center gap-3">
-														<Avatar src={lesson.student.avatar} size={40} alt={`${lesson.student.name} ${lesson.student.surname}`} />
+														<Avatar src={displayPerson.avatar} size={40} alt={`${displayPerson.name} ${displayPerson.surname}`} />
 														<div>
-															<Text size="text-sm" weight="semibold" colorType="primary">{lesson.student.name}{' '}{lesson.student.surname}</Text>
-															<Text size="text-xs" colorType="tertiary">{t('common.student')}</Text>
-														</div>
-													</div>
-												</div>
-											) : lesson.teacher ? (
-												<div className="flex items-center">
-													<div className="flex items-center gap-3">
-														<Avatar src={lesson.teacher.avatar} size={40} alt={`${lesson.teacher.name} ${lesson.teacher.surname}`} />
-														<div>
-															<Text size="text-sm" weight="semibold" colorType="primary">{lesson.teacher.name}{' '}{lesson.teacher.surname}</Text>
-															<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
+															<Text size="text-sm" weight="semibold" colorType="primary">{displayPerson.name}{' '}{displayPerson.surname}</Text>
+															<Text size="text-xs" colorType="tertiary">{displayRole}</Text>
 														</div>
 													</div>
 												</div>
@@ -241,29 +233,24 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 								</div>
 								{lastLessons.map((lesson) => {
 									const startTime = DateTime.fromISO(lesson.startAt);
+									const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
+									const displayRole = user?.role === 'teacher' ? t('common.student') : t('common.teacher');
 									return (
 										<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
 											<div className="flex items-center">
-												{lesson.student && (
+												{displayPerson ? (
 													<div className="flex items-center">
 														<div className="flex items-center gap-3">
-															<Avatar src={lesson.student.avatar} size={40} />
+															<Avatar src={displayPerson.avatar} size={40} />
 															<div>
-																<Text size="text-sm" weight="semibold" colorType="primary">{lesson.student.name}{' '}{lesson.student.surname}</Text>
-																<Text size="text-xs" colorType="tertiary">{t('common.student')}</Text>
+																<Text size="text-sm" weight="semibold" colorType="primary">{displayPerson.name}{' '}{displayPerson.surname}</Text>
+																<Text size="text-xs" colorType="tertiary">{displayRole}</Text>
 															</div>
 														</div>
 													</div>
-												)}
-												{lesson.teacher && (
+												) : (
 													<div className="flex items-center">
-														<div className="flex items-center gap-3">
-															<Avatar src={lesson.teacher.avatar} size={40} />
-															<div>
-																<Text size="text-sm" weight="semibold" colorType="primary">{lesson.teacher.name}{' '}{lesson.teacher.surname}</Text>
-																<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
-															</div>
-														</div>
+														<Text size="text-sm" colorType="tertiary">{t('common.loading')}...</Text>
 													</div>
 												)}
 											</div>

@@ -25,6 +25,8 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         });
 
         const data = await apiResponse.json();
+
+        console.log(data);
         
         return data;
     }
