@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Overlay } from '../overlay/Overlay.tsx';
 import type { ModalProps } from './types.ts';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Sheet } from 'react-modal-sheet';
 import { useIsMobile } from '@/ui-library/hooks/useIsMobile';
@@ -10,10 +10,32 @@ import styles from './Modal.module.css';
 export function Modal({ children, onClose, persistent = false, width = 480, height } : ModalProps) {
 	const modalRoot = document.getElementById('portal-root');
 	const isMobile = useIsMobile();
+	const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
     
 	if (!modalRoot) {
 		return null;
 	}
+
+	// Actualizar altura del viewport en cambios (Safari iOS)
+	useEffect(() => {
+		if (isMobile) {
+			const updateHeight = () => {
+				setViewportHeight(window.innerHeight);
+			};
+			
+			updateHeight();
+			window.addEventListener('resize', updateHeight);
+			window.addEventListener('orientationchange', updateHeight);
+			
+			// Forzar actualización inicial
+			setTimeout(updateHeight, 100);
+			
+			return () => {
+				window.removeEventListener('resize', updateHeight);
+				window.removeEventListener('orientationchange', updateHeight);
+			};
+		}
+	}, [isMobile]);
 
 	const onOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 		if (e.target instanceof HTMLElement && e.target.classList.value !== e.currentTarget.classList.value) return;
@@ -28,19 +50,32 @@ export function Modal({ children, onClose, persistent = false, width = 480, heig
 	// Bottom sheet para móvil
 	if (isMobile) {
 		return ReactDOM.createPortal((
-			<Sheet
-				isOpen={true}
-				onClose={persistent ? undefined : onClose}
-				detent="content"
+			<div 
+				style={{
+					position: 'fixed',
+					inset: 0,
+					zIndex: 9999,
+					backgroundColor: 'rgba(0, 0, 0, 0.5)',
+					display: 'flex',
+					alignItems: 'flex-end'
+				}}
+				onClick={persistent ? undefined : onClose}
 			>
-				<Sheet.Container>
-					<Sheet.Header />
-					<Sheet.Content>
-						{children}
-					</Sheet.Content>
-				</Sheet.Container>
-				<Sheet.Backdrop onTap={persistent ? undefined : onClose} />
-			</Sheet>
+				<div 
+					style={{
+						width: '100%',
+						height: `${viewportHeight * 0.95}px`,
+						backgroundColor: 'white',
+						borderTopLeftRadius: '1rem',
+						borderTopRightRadius: '1rem',
+						overflow: 'auto',
+						WebkitOverflowScrolling: 'touch'
+					}}
+					onClick={(e) => e.stopPropagation()}
+				>
+					{children}
+				</div>
+			</div>
 		), modalRoot);
 	}
 

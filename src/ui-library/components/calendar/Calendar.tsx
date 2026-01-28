@@ -1,5 +1,4 @@
 import { Calendar as CCalendar } from "@/ui-library/shared/calendar";
-import { DateTime } from "luxon";
 import styles from "./Calendar.module.css";
 import classNames from "classnames";
 
@@ -47,33 +46,35 @@ export function Calendar({ selectedDate = new Date(), onSelected, availableDates
     };
 
     return (
-        <CCalendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={onSelected}
-            onMonthChange={onMonthChange}
-            className="rounded-md border w-full"
-            classNames={{ 
-                caption_label: labelClassnames, 
-                weekdays: weekDaysClassnames, 
-                weekday: weekDayClassnames, 
-                day: dayClassnames, 
-                day_button: dayButtonClassnames,
-                today: todayClassnames,
-                disabled: dayDisabledClassnames,
-                chevron: chevronClassnames,
-            }}
-            modifiers={{
-                available: (date) => isDateAvailable(date) && !isPastDate(date),
-            }}
-            modifiersClassNames={{
-                available: dayAvailableClassnames,
-            }}
-            disablePastMonths
-            disabled={(date) => {
-                // Deshabilitar días pasados O días sin disponibilidad
-                return isPastDate(date) || !isDateAvailable(date);
-            }}
-        />
+        <div style={{ overflow: 'visible', width: '100%' }}>
+            <CCalendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={onSelected}
+                onMonthChange={onMonthChange}
+                className="rounded-md border w-full"
+                classNames={{ 
+                    caption_label: labelClassnames, 
+                    weekdays: weekDaysClassnames, 
+                    weekday: weekDayClassnames, 
+                    day: dayClassnames, 
+                    day_button: dayButtonClassnames,
+                    today: todayClassnames,
+                    disabled: dayDisabledClassnames,
+                    chevron: chevronClassnames,
+                }}
+                modifiers={{
+                    available: (date) => isDateAvailable(date) && !isPastDate(date),
+                }}
+                modifiersClassNames={{
+                    available: dayAvailableClassnames,
+                }}
+                disablePastMonths
+                disabled={(date) => {
+                    // Deshabilitar días pasados O días sin disponibilidad
+                    return isPastDate(date) || !isDateAvailable(date);
+                }}
+            />
+        </div>
     );
 }

@@ -11,10 +11,9 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        min-height: 100vh;
+        height: auto;
         overflow: visible;
         position: relative;
-        padding-bottom: 2rem;
     }
 }
 
@@ -117,10 +116,16 @@
     .booking-creator__right-side-content {
         overflow: visible !important;
         padding: 1rem;
-        padding-bottom: 1.5rem;
     }
     
     .booking-creator__right-side-content > * {
+        overflow: visible !important;
+    }
+
+    /* Forzar overflow visible en todos los elementos del calendar */
+    .booking-creator__right-side-content [data-slot="calendar"],
+    .booking-creator__right-side-content [data-slot="calendar"] > *,
+    .booking-creator__right-side-content [data-slot="calendar"] * {
         overflow: visible !important;
     }
 }

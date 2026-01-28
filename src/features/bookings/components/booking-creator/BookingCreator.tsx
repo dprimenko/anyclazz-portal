@@ -13,7 +13,7 @@ import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
-import { Calendar } from "@/ui-library/components/calendar/Calendar";
+import { SimpleCalendar } from "@/ui-library/components/calendar/SimpleCalendar";
 import { DateTime } from "luxon";
 import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
@@ -213,14 +213,16 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                             <Text weight="medium" colorType="primary">{t('booking.lesson_duration')}</Text>
                             <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-2 gap-3"}} items={classDurations} value={selectedDuration.toString()} onValueChange={(value) => setSelectedDuration(parseInt(value))} />
                         </div>
-                        <div className="flex flex-col gap-2 w-full">
+                        <div className="flex flex-col gap-2 w-full" style={{ overflow: 'visible' }}>
                             <Text weight="medium" colorType="primary">{t('common.date_and_time')}</Text>
-                            <Calendar 
-                                selectedDate={selectedDate} 
-                                onSelected={(date) => date && setSelectedDate(date)} 
-                                availableDates={availableDates}
-                                onMonthChange={setCurrentMonth}
-                            />
+                            <div style={{ overflow: 'visible' }}>
+                                <SimpleCalendar 
+                                    selectedDate={selectedDate} 
+                                    onSelected={(date) => date && setSelectedDate(date)} 
+                                    availableDates={availableDates}
+                                    onMonthChange={setCurrentMonth}
+                                />
+                            </div>
                         </div>
                         {availableSlots.length > 0 && (
                             <div className="flex flex-col gap-2 w-full">
