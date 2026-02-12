@@ -221,12 +221,19 @@ export default defineConfig({
         (session as any).refreshToken = token.refreshToken; // Necesario para revocación
         (session as any).userRole = token.userRole;
         (session as any).platformId = token.platformId;
+        
+        // Añadir role al objeto user para facilitar acceso
+        if (session.user) {
+          (session.user as any).role = token.userRole;
+        }
+        
         // Solo pasar el primer role en lugar de todos los arrays
         const roles = (token.roles as string[]) || [];
         const realmRoles = (token.realmRoles as string[]) || [];
         (session as any).primaryRole = roles[0] || realmRoles[0] || null;
         
         console.log('📦 Session userRole final:', (session as any).userRole);
+        console.log('📦 Session user.role final:', session.user?.role);
       }
       
       // Asegurar que el nombre esté disponible en la sesión

@@ -211,4 +211,23 @@ export default {
     'onboarding.terms.agree': 'Acepto los',
     'onboarding.terms.link': 'términos y condiciones',
     'onboarding.finish': 'Finalizar',
+
+    // Video Upload
+    'video.upload.title': 'Video',
+    'video.upload.subtitle': 'Añade videos para inspirar a los estudiantes y darles una idea de tus clases.',
+    'video.upload.description_label': 'Descripción',
+    'video.upload.description_placeholder': 'Escribe una descripción...',
+    'video.upload.cover_label': 'Añadir imagen de portada',
+    'video.upload.upload_video': 'Click para subir',
+    'video.upload.drag_drop': 'o arrastra y suelta',
+    'video.upload.video_format': '.mp4 (Tamaño recomendado: 1080 x 1920px)',
+    'video.upload.image_format': 'JPG o PNG (Recomendado 1080 x 1920px)',
+    'video.upload.publish': 'Publicar video',
+    'video.upload.publishing': 'Publicando...',
+    'video.upload.remove_video': 'Eliminar video',
+    'video.upload.remove_image': 'Eliminar imagen',
+    'video.upload.uploading': 'Subiendo...',
+    'video.upload.error': 'Error al subir. Por favor, inténtalo de nuevo.',
+    'video.upload.max_size_error': 'El tamaño del archivo excede el máximo permitido',
+    'video.upload_new': 'Subir nuevo video',
 }

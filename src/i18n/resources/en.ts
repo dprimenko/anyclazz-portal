@@ -238,4 +238,23 @@ export default {
     'onboarding.terms.agree': 'I agree with the',
     'onboarding.terms.link': 'terms and conditions',
     'onboarding.finish': 'Finish',
+
+    // Video Upload
+    'video.upload.title': 'Video',
+    'video.upload.subtitle': 'Add videos to inspire students and give them a glimpse of your classes.',
+    'video.upload.description_label': 'Description',
+    'video.upload.description_placeholder': 'Enter a description...',
+    'video.upload.cover_label': 'Add a Cover Image',
+    'video.upload.upload_video': 'Click to upload',
+    'video.upload.drag_drop': 'or drag and drop',
+    'video.upload.video_format': '.mp4 (Recommended size: 1080 x 1920px)',
+    'video.upload.image_format': 'JPG or PNG (Recommended 1080 x 1920px)',
+    'video.upload.publish': 'Publish video',
+    'video.upload.publishing': 'Publishing...',
+    'video.upload.remove_video': 'Remove video',
+    'video.upload.remove_image': 'Remove image',
+    'video.upload.uploading': 'Uploading...',
+    'video.upload.error': 'Upload failed. Please try again.',
+    'video.upload.max_size_error': 'File size exceeds maximum allowed',
+    'video.upload_new': 'Upload new video',
 }

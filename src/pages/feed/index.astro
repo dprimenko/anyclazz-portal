@@ -2,6 +2,7 @@
 import Main from "../../layout/Main.astro";
 import { Feed } from "../../features/stories/feed/components/feed/Feed.tsx";
 import { getSession } from 'auth-astro/server';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 export const prerender = false;
 
 const session = await getSession(Astro.request);
@@ -11,9 +12,14 @@ if (!accessToken) {
 	return Astro.redirect('/login');
 }
 
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+const profileData = await authRepository.getUserProfile(accessToken);
+const teacherId = user?.role === 'teacher' ? profileData?.teacherProfile?.id : undefined;
+
 const pageTitle = "Feed";
 ---
 
 <Main title={pageTitle}>
-	<Feed client:only accessToken={accessToken} />
+	<Feed client:only accessToken={accessToken} userRole={user?.role} teacherId={teacherId} />
 </Main>

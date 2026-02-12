@@ -1,7 +1,7 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { StoryRepository } from '../domain/repository';
-import type { GetStoryParams, ListStoriesParams, ListStoriesResponse, Story } from '../domain/types';
+import type { CreateStoryParams, GetStoryParams, ListStoriesParams, ListStoriesResponse, Story } from '../domain/types';
 import type { ApiStory } from './types';
 
 export class ApiStoryRepository implements StoryRepository {
@@ -38,8 +38,13 @@ export class ApiStoryRepository implements StoryRepository {
 
 		const stories = await apiStoriesResponse.json();
 		return {
-			stories: stories.stories.map((s: ApiStory) => this.toStory(s)),
-			meta: stories.meta,
+			stories: stories.stories?.map((s: ApiStory) => this.toStory(s)) || [],
+			meta: stories.meta || {
+				currentPage: page,
+				lastPage: 1,
+				size,
+				total: 0,
+			},
 		};
 	}
 
@@ -47,6 +52,40 @@ export class ApiStoryRepository implements StoryRepository {
 		const apiStoryResponse = await this.httpClient.get({
 			url: `/stories/${storyId}`,
 			token,
+		});
+
+		const apiStory: ApiStory = await apiStoryResponse.json();
+		return this.toStory(apiStory);
+	}
+
+	async createStory(
+		{ token, teacherId, video, description, title, thumbnail, locations }: CreateStoryParams,
+		onProgress?: (progress: number) => void
+	): Promise<Story> {
+		const data: Record<string, any> = {
+			video,
+			description,
+		};
+		
+		if (title) {
+			data.title = title;
+		}
+		
+		if (thumbnail) {
+			data.thumbnail = thumbnail;
+		}
+		
+		if (locations && locations.length > 0) {
+			data.locations = JSON.stringify(locations);
+		}
+
+		const apiStoryResponse = await this.httpClient.postFormData({
+			url: '/stories',
+			token,
+			data,
+			headers: {
+				'X-Teacher-Id': teacherId,
+			},
 		});
 
 		const apiStory: ApiStory = await apiStoryResponse.json();

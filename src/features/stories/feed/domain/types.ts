@@ -34,3 +34,15 @@ export interface ListStoriesResponse {
 		total: number;
 	};
 }
+
+export interface CreateStoryParams extends CommonParams {
+	teacherId: string;
+	video: File;
+	description: string;
+	title?: string;
+	thumbnail?: File;
+	locations?: Array<{
+		countryIso2: string;
+		cityIso2?: string;
+	}>;
+}

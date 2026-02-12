@@ -1,6 +1,7 @@
 import { useCallback, useState, useRef } from "react";
 import { StoryView } from "../story-view/StoryView";
 import { IconButton } from "@/ui-library/shared";
+import { VideoUploadButton } from "../video-upload-button";
 import { useFeed } from "../../hooks/useFeed";
 import { ApiStoryRepository } from "../../infrastructure/ApiStoryRepository";
 import styles from "./Feed.module.css";
@@ -10,9 +11,11 @@ const repository = new ApiStoryRepository();
 interface FeedProps {
 	storyId?: string;
 	accessToken: string;
+	userRole?: string;
+	teacherId?: string;
 }
 
-export function Feed({ storyId, accessToken }: FeedProps) {
+export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 	const { stories, loading, error } = useFeed({
 		storyRepository: repository,
 		accessToken,
@@ -82,8 +85,18 @@ export function Feed({ storyId, accessToken }: FeedProps) {
 	if (stories.length === 0) {
 		return (
 			<div className={styles.feed}>
-				<div className="flex items-center justify-center h-screen">
-					<p>No hay stories disponibles</p>
+				<div className="flex flex-col items-center justify-center h-screen gap-6">
+					<p className="text-neutral-600">No hay stories disponibles</p>
+					{userRole === 'teacher' && teacherId && (
+						<VideoUploadButton
+							onVideoUploaded={(videoData) => {
+								console.log('Video uploaded from feed:', videoData);
+								// TODO: Refrescar el feed
+							}}
+							accessToken={accessToken}
+							teacherId={teacherId}
+						/>
+					)}
 				</div>
 			</div>
 		);
@@ -119,6 +132,20 @@ export function Feed({ storyId, accessToken }: FeedProps) {
 					disabled={currentIndex === stories.length}
 				/>
 			</div>
+
+			{/* Upload button for teachers - top right */}
+			{userRole === 'teacher' && teacherId && (
+				<div className="fixed top-20 right-6 z-20">
+					<VideoUploadButton
+						onVideoUploaded={(story) => {
+							console.log('Story uploaded from feed:', story);
+							// TODO: Refrescar el feed o añadir la nueva story al estado
+						}}
+						accessToken={accessToken}
+						teacherId={teacherId}
+					/>
+				</div>
+			)}
         </div>
     );
 }
