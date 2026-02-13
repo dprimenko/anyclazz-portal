@@ -1,16 +1,18 @@
 import { Tabs } from "@/ui-library/components/tabs";
-import { useState } from "react";
-import { Text } from "@/ui-library/components/ssr/text/Text";
+import { useState, useEffect } from "react";
 import type { Teacher } from "../domain/types";
 import { useTranslations } from "@/i18n";
 import { AvailabilityAndModalitiesManager } from "../availability_and_modalities/AvailabilityAndModalitiesManager";
+import { MyStoriesTab } from "../stories/MyStoriesTab";
 
 export interface TeacherProfileProps {
     teacher: Teacher;
     accessToken: string;
+    teacherId?: string;
+    initialTab?: string;
 }
 
-export function TeacherProfile({ teacher, accessToken }: TeacherProfileProps) {
+export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = 'availability_and_modalities' }: TeacherProfileProps) {
     const t = useTranslations();
 
     const tabs = [
@@ -21,13 +23,13 @@ export function TeacherProfile({ teacher, accessToken }: TeacherProfileProps) {
                 console.log("information");
             },
         },
-        // {
-        //     key: "videos",
-        //     label: "Videos",
-        //     onClick: () => {
-        //         console.log("videos");
-        //     },
-        // },
+        {
+            key: "videos",
+            label: t('teacher-profile.videos'),
+            onClick: () => {
+                console.log("videos");
+            },
+        },
         // {
         //     key: "reviews",
         //     label: "Reviews",
@@ -37,18 +39,37 @@ export function TeacherProfile({ teacher, accessToken }: TeacherProfileProps) {
         // },
     ];
 
-    const [selectedTab, setSelectedTab] = useState("availability_and_modalities");
+    const [selectedTab, setSelectedTab] = useState(initialTab);
 
     const onTabChange = (key: string) => {
         setSelectedTab(key);
+        
+        // Actualizar URL con el tab seleccionado
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', key);
+        window.history.pushState({}, '', url.toString());
     };
+
+    // Sincronizar con cambios en el initialTab si cambia externamente
+    useEffect(() => {
+        setSelectedTab(initialTab);
+    }, [initialTab]);
 
     return (
         <div>
-            <Tabs tabs={tabs} onChange={onTabChange} />
+            <Tabs tabs={tabs} defaultTab={initialTab} onChange={onTabChange} />
             
             {selectedTab === "availability_and_modalities" && (
                 <AvailabilityAndModalitiesManager teacher={teacher} accessToken={accessToken} />
+            )}
+            
+            {selectedTab === "videos" && teacherId && (
+                <MyStoriesTab 
+                    teacherId={teacherId} 
+                    accessToken={accessToken}
+                    countryIso2={teacher.teacherAddress?.countryISO2 || ''}
+                    cityIso2={teacher.teacherAddress?.cityISO2}
+                />
             )}
         </div>
     );

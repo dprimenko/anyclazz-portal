@@ -6,9 +6,17 @@ export interface ApiStoryCity {
 export interface ApiStory {
 	id: string;
 	videoUrl: string;
+	thumbnailUrl: string;
+	processingStatus: 'processing' | 'ready' | 'failed';
 	title?: string;
 	description?: string;
 	cities: ApiStoryCity[];
 	createdAt: string;
 	updatedAt: string;
+	teacher?: {
+		id: string;
+		name: string;
+		surname: string;
+		avatar?: string;
+	};
 }

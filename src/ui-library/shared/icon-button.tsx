@@ -5,7 +5,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 
 const iconButtonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+  "inline-flex items-center justify-center border transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
   {
     variants: {
       variant: {
@@ -13,9 +13,11 @@ const iconButtonVariants = cva(
         ghost: "border-transparent hover:bg-white/10 px-[5px] py-0 w-auto h-auto",
       },
       size: {
-        default: "w-12 h-12",
-        sm: "w-10 h-10",
-        lg: "w-14 h-14",
+        default: "rounded-lg w-12 h-12",
+        xxs: "rounded-md w-6 h-6",
+        xs: "rounded-md w-8 h-8",
+        sm: "rounded-lg w-10 h-10",
+        lg: "rounded-lg w-14 h-14",
       },
     },
     defaultVariants: {

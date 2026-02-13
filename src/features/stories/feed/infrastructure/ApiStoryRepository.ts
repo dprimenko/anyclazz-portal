@@ -1,7 +1,7 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { StoryRepository } from '../domain/repository';
-import type { CreateStoryParams, GetStoryParams, ListStoriesParams, ListStoriesResponse, Story } from '../domain/types';
+import type { CreateStoryParams, GetMyStoriesParams, GetStoryParams, ListStoriesParams, ListStoriesResponse, Story } from '../domain/types';
 import type { ApiStory } from './types';
 
 export class ApiStoryRepository implements StoryRepository {
@@ -15,10 +15,13 @@ export class ApiStoryRepository implements StoryRepository {
 		return {
 			id: apiStory.id,
 			videoUrl: apiStory.videoUrl,
+			thumbnailUrl: apiStory.thumbnailUrl,
+			processingStatus: apiStory.processingStatus,
 			title: apiStory.title,
 			description: apiStory.description,
 			cities: apiStory.cities,
 			createdAt: apiStory.createdAt,
+			teacher: apiStory.teacher,
 		};
 	}
 
@@ -58,6 +61,30 @@ export class ApiStoryRepository implements StoryRepository {
 		return this.toStory(apiStory);
 	}
 
+	async getMyStories({ token, teacherId, page = 1, size = 20 }: GetMyStoriesParams): Promise<ListStoriesResponse> {
+		const data: Record<string, string | number> = {
+			page,
+			size,
+		};
+
+		const apiStoriesResponse = await this.httpClient.get({
+			url: '/stories/me',
+			token,
+			data,
+		});
+
+		const stories = await apiStoriesResponse.json();
+		return {
+			stories: stories.stories?.map((s: ApiStory) => this.toStory(s)) || [],
+			meta: stories.meta || {
+				currentPage: page,
+				lastPage: 1,
+				size,
+				total: 0,
+			},
+		};
+	}
+
 	async createStory(
 		{ token, teacherId, video, description, title, thumbnail, locations }: CreateStoryParams,
 		onProgress?: (progress: number) => void
@@ -83,12 +110,37 @@ export class ApiStoryRepository implements StoryRepository {
 			url: '/stories',
 			token,
 			data,
-			headers: {
-				'X-Teacher-Id': teacherId,
-			},
 		});
 
 		const apiStory: ApiStory = await apiStoryResponse.json();
+		return this.toStory(apiStory);
+	}
+
+	async deleteStory({ token, storyId, teacherId }: import('../domain/types').DeleteStoryParams): Promise<void> {
+		await this.httpClient.delete({
+			url: `/stories/${storyId}`,
+			token,
+		});
+	}
+
+	async updateStory(
+		{ token, storyId, teacherId, video, description, title, thumbnail }: import('../domain/types').UpdateStoryParams,
+		onProgress?: (progress: number) => void
+	): Promise<Story> {
+		const data: Record<string, string | number | Blob | Record<string, string>> = {};
+		
+		if (video) data.video = video;
+		if (description) data.description = description;
+		if (title) data.title = title;
+		if (thumbnail) data.thumbnail = thumbnail;
+
+		const response = await this.httpClient.postFormData({
+			url: `/stories/${storyId}`,
+			token,
+			data,
+		});
+
+		const apiStory: ApiStory = await response.json();
 		return this.toStory(apiStory);
 	}
 }

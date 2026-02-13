@@ -51,6 +51,8 @@ export default {
     'common.min_price': 'Precio mínimo',
     'common.max_price': 'Precio máximo',
     'common.no_limit': 'Sin límite',
+    'common.learn_more': 'Ver más',
+    'common.show_less': 'Ver menos',
 
     'menu.dashboard': 'Inicio',
     'menu.dashboard.upcoming-lessons': 'Próximas clases',
@@ -143,6 +145,10 @@ export default {
     'booking.go_to_agenda': 'Ir a Mi Agenda',
 
     'teacher-profile.availability_and_modalities': 'Disponibilidad y Modalidades',
+    'teacher-profile.videos': 'Videos',
+    'teacher-profile.my_stories': 'Mi Feed de Videos',
+    'teacher-profile.no_stories_yet': 'Aún no hay stories',
+    'teacher-profile.upload_first_story': 'Comparte tu primer video para empezar a construir tu feed',
     'teacher-profile.set_availability_modalities': 'Configura tu Disponibilidad y Modalidades',
     'teacher-profile.set_availability_modalities_description': 'Gestiona tus formatos de enseñanza, disponibilidad y precios de lecciones, todo en un solo lugar. Selecciona cómo enseñas, cuándo estás disponible y la duración de tus lecciones. Los precios se ajustarán automáticamente según los formatos y duraciones que establezcas. Puedes actualizar esto en cualquier momento si tu horario o preferencias cambian.',
     'teacher-profile.class_modality': 'Modalidad de clase',
@@ -230,4 +236,14 @@ export default {
     'video.upload.error': 'Error al subir. Por favor, inténtalo de nuevo.',
     'video.upload.max_size_error': 'El tamaño del archivo excede el máximo permitido',
     'video.upload_new': 'Subir nuevo video',
+
+    'video.edit.title': 'Editar video',
+    'video.edit.subtitle': 'Actualiza tu video y su información',
+    'video.edit.replace_video': 'Reemplazar video (opcional)',
+    'video.edit.updating': 'Actualizando...',
+    'video.edit.update': 'Actualizar video',
+    
+    'video.delete.confirm': '¿Estás seguro de que quieres eliminar este video?',
+    'video.story': 'story',
+    'video.stories': 'stories',
 }

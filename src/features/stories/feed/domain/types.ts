@@ -8,10 +8,18 @@ export interface StoryCity {
 export interface Story {
 	id: string;
 	videoUrl: string;
+	thumbnailUrl: string;
+	processingStatus: 'processing' | 'ready' | 'failed';
 	title?: string;
 	description?: string;
 	cities: StoryCity[];
 	createdAt: string;
+	teacher?: {
+		id: string;
+		name: string;
+		surname: string;
+		avatar?: string;
+	};
 }
 
 export interface GetStoryParams extends CommonParams {
@@ -45,4 +53,24 @@ export interface CreateStoryParams extends CommonParams {
 		countryIso2: string;
 		cityIso2?: string;
 	}>;
+}
+
+export interface GetMyStoriesParams extends CommonParams {
+	teacherId: string;
+	page?: number;
+	size?: number;
+}
+
+export interface DeleteStoryParams extends CommonParams {
+	storyId: string;
+	teacherId: string;
+}
+
+export interface UpdateStoryParams extends CommonParams {
+	storyId: string;
+	teacherId: string;
+	video?: File;
+	description?: string;
+	title?: string;
+	thumbnail?: File;
 }

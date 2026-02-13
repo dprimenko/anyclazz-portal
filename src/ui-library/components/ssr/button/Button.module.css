@@ -27,6 +27,15 @@
   padding: 0 !important;
 }
 
+.btn--xs {
+  height: 28px;
+  padding: 0 var(--spacing-14);
+}
+
+.btn--xs.btn--icon-only {
+  min-width: 28px;
+}
+
 .btn--sm {
   height: 36px;
   padding: 0 var(--spacing-14);

@@ -9,7 +9,6 @@ import type { Story } from '../domain/types';
 export interface UploadStoryRequest {
   video: File;
   description: string;
-  title?: string;
   thumbnail?: File;
   locations?: Array<{
     countryIso2: string;
@@ -32,9 +31,11 @@ export interface UploadProgress {
 export interface UseBunnyUploadParams {
   accessToken: string;
   teacherId: string;
+  countryIso2: string;
+  cityIso2?: string;
 }
 
-export function useBunnyUpload({ accessToken, teacherId }: UseBunnyUploadParams) {
+export function useBunnyUpload({ accessToken, teacherId, countryIso2, cityIso2 }: UseBunnyUploadParams) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<UploadProgress>({ loaded: 0, total: 0, percentage: 0 });
   const [error, setError] = useState<string | null>(null);
@@ -59,9 +60,8 @@ export function useBunnyUpload({ accessToken, teacherId }: UseBunnyUploadParams)
           teacherId,
           video: request.video,
           description: request.description,
-          title: request.title,
           thumbnail: request.thumbnail,
-          locations: request.locations,
+          locations: request.locations || [{ countryIso2, cityIso2 }],
         },
         (percentage) => {
           setProgress({

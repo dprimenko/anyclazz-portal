@@ -3,6 +3,7 @@ import Main from "../../layout/Main.astro";
 import { Feed } from "../../features/stories/feed/components/feed/Feed.tsx";
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
 export const prerender = false;
 
 const session = await getSession(Astro.request);
@@ -17,9 +18,22 @@ const user = await authRepository.getCurrentUser(session);
 const profileData = await authRepository.getUserProfile(accessToken);
 const teacherId = user?.role === 'teacher' ? profileData?.teacherProfile?.id : undefined;
 
+// Get teacher's location data if user is a teacher
+let countryIso2: string | undefined;
+let cityIso2: string | undefined;
+if (user?.role === 'teacher' && user.id) {
+	const teacherRepository = new ApiTeacherRepository();
+	const teacher = await teacherRepository.getTeacher({ 
+		token: accessToken,
+		teacherId: user.id
+	});
+	countryIso2 = teacher.teacherAddress?.countryISO2;
+	cityIso2 = teacher.teacherAddress?.cityISO2;
+}
+
 const pageTitle = "Feed";
 ---
 
 <Main title={pageTitle}>
-	<Feed client:only accessToken={accessToken} userRole={user?.role} teacherId={teacherId} />
+	<Feed client:only accessToken={accessToken} userRole={user?.role} teacherId={teacherId} countryIso2={countryIso2} cityIso2={cityIso2} />
 </Main>

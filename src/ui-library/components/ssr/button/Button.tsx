@@ -6,7 +6,8 @@ import { Icon } from '../icon/Icon';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	icon?: string;
-	size?: 'sm' | 'md' | 'lg' | 'xl';
+	iconColor?: string;
+	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     fullWidth?: boolean;
     label?: string;
 	colorType?: ColorType;
@@ -15,6 +16,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = ({
 	icon,
+	iconColor,
     label,
 	size = 'md',
 	colorType = 'secondary',
@@ -25,7 +27,7 @@ export const Button = ({
 }: ButtonProps) => {
     const isIconOnly = Boolean((icon && !label));
     const classes = classNames(
-		'rounded-md',
+		'cursor-pointer rounded-md',
 		styles.btn,
 		styles[`btn--${size}`],
 		{ [styles['btn--icon-only']]: isIconOnly },
@@ -62,7 +64,7 @@ export const Button = ({
 			className={classes}
 			{...props}
 		>
-            {icon && <Icon icon={icon} iconWidth={iconSize} iconHeight={iconSize} />}
+            {icon && <Icon icon={icon} iconWidth={iconSize} iconHeight={iconSize} iconColor={iconColor} />}
 			{label && <span className={textClasess}>{label}</span>}
 		</button>
 	);

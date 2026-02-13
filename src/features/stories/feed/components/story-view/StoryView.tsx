@@ -5,6 +5,8 @@ import { FeedEvents } from "../../domain/events";
 import { IconButton } from "@/ui-library/shared";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
 import type { Story } from "../../domain/types";
+import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
+import { useTranslations } from "@/i18n";
 
 
 export interface StoryViewProps {
@@ -105,10 +107,7 @@ export function StoryView({ story, index, playing, onVisibilityChange }: StoryVi
 			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} />
 			<div className="absolute inset-0 z-[1] grid grid-cols-[1fr_max-content] md:grid-cols-1 bg-gradient-to-b from-transparent from-85% to-black/75 sm:rounded-[20px]">
 				{/* Info section - left column */}
-				<div className="flex flex-col justify-end gap-2 p-4 pb-6">
-					<div className="text-white text-sm font-medium">{story.title}</div>
-					<div className="text-white/90 text-xs">{story.description}</div>
-				</div>
+				<StoryInfo story={story} />
 
 				{/* Actions - right column (solo mobile) */}
 				<div className="flex md:hidden flex-col items-center justify-end gap-6 p-4 pb-6">
@@ -119,4 +118,60 @@ export function StoryView({ story, index, playing, onVisibilityChange }: StoryVi
 			</div>
 		</div>
     );
+}
+
+// StoryInfo component for displaying teacher info and expandable description
+interface StoryInfoProps {
+	story: Story;
+}
+
+function StoryInfo({ story }: StoryInfoProps) {
+	const t = useTranslations();
+	const [isExpanded, setIsExpanded] = useState(false);
+	const MAX_CHARS = 80;
+	
+	const teacherName = story.teacher 
+		? `${story.teacher.name} ${story.teacher.surname}`
+		: 'Teacher';
+	
+	const description = story.description || '';
+	const shouldTruncate = description.length > MAX_CHARS;
+	const displayDescription = isExpanded || !shouldTruncate 
+		? description 
+		: `${description.slice(0, MAX_CHARS)}...`;
+
+	return (
+		<div className="flex flex-col justify-end p-4 pb-6">
+			<div className="flex gap-3">
+				{/* Left column: Avatar */}
+				<Avatar 
+					src={story.teacher?.avatar} 
+					alt={teacherName}
+					size={40}
+				/>
+				
+				{/* Right column: Name and description */}
+				<div className="flex flex-col gap-1 flex-1">
+					<div className="text-white text-sm font-semibold">{teacherName}</div>
+					
+					{description && (
+						<div className="text-white/90 text-xs leading-relaxed">
+							{displayDescription}
+							{shouldTruncate && (
+								<>
+									{' '}
+									<button 
+										onClick={() => setIsExpanded(!isExpanded)}
+										className="text-orange-400 font-medium hover:text-orange-300 transition-colors"
+									>
+										{isExpanded ? t('common.show_less') : t('common.learn_more')}
+									</button>
+								</>
+							)}
+						</div>
+					)}
+				</div>
+			</div>
+		</div>
+	);
 }

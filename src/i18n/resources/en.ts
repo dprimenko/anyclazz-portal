@@ -47,6 +47,8 @@ export default {
     'common.min_price': 'Min price',
     'common.max_price': 'Max price',
     'common.no_limit': 'No limit',
+    'common.learn_more': 'Learn more',
+    'common.show_less': 'Show less',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',
@@ -143,6 +145,15 @@ export default {
     'booking.go_to_agenda': 'Go to My Agenda',
 
     'teacher-profile.availability_and_modalities': 'Availability & Modalities',
+    'teacher-profile.allvideos': 'View All Videos',
+    'teacher-profile.videos': 'Video For You Page',
+    'teacher-profile.my_stories': 'Your Video Feed',
+    'teacher-profile.my_stories_description': 'Share your teaching moments and let students get to know your style.',
+    'teacher-profile.add_video': 'Add a New video',
+    'teacher-profile.add_video_description': 'Share a clip about your teaching, tips, or experiences.',
+
+    'teacher-profile.no_stories_yet': 'No stories yet',
+    'teacher-profile.upload_first_story': 'Share your first video to start building your video feed',
     'teacher-profile.set_availability_modalities': 'Set Your Availability & Modalities',
     'teacher-profile.set_availability_modalities_description': 'Manage your teaching formats, availability, and lesson pricing — all in one place. Select how you teach, when you\'re available, and the duration of your lessons. Prices will automatically adjust based on the formats and durations you set. You can update this anytime if your schedule or preferences change.',
     'teacher-profile.class_modality': 'Class modality',
@@ -257,4 +268,14 @@ export default {
     'video.upload.error': 'Upload failed. Please try again.',
     'video.upload.max_size_error': 'File size exceeds maximum allowed',
     'video.upload_new': 'Upload new video',
+
+    'video.edit.title': 'Edit video',
+    'video.edit.subtitle': 'Update your video and its information',
+    'video.edit.replace_video': 'Replace video (optional)',
+    'video.edit.updating': 'Updating...',
+    'video.edit.update': 'Update video',
+    
+    'video.delete.confirm': 'Are you sure you want to delete this video?',
+    'video.story': 'story',
+    'video.stories': 'stories',
 }

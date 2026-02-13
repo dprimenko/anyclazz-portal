@@ -1,7 +1,8 @@
 import { type FC, useRef, useState, useCallback } from 'react';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { cn } from '@/lib/utils';
-import styles from './FileUpload.module.css';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { IconButton } from '@/ui-library/shared';
 
 export interface FileUploadProps {
   accept?: string;
@@ -86,10 +87,12 @@ export const FileUpload: FC<FileUploadProps> = ({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          styles.fileUpload,
-          isDragging && styles.fileUploadDragging,
-          disabled && styles.fileUploadDisabled,
-          error && styles.fileUploadError
+          "flex items-center justify-center min-h-[160px] p-6 border-1 rounded-xl cursor-pointer transition-all duration-200",
+          "border-[#D5D7DA] bg-[#FFFDFB]",
+          !disabled && "hover:border-primary-500 hover:bg-primary-50",
+          isDragging && "border-[#F4A43A] bg-primary-100",
+          disabled && "opacity-50 cursor-not-allowed",
+          error && "border-destructive bg-red-50/50"
         )}
       >
         <input
@@ -101,24 +104,22 @@ export const FileUpload: FC<FileUploadProps> = ({
           disabled={disabled}
         />
         
-        <div className={styles.fileUploadContent}>
-          <div className={styles.fileUploadIcon}>
-            <Icon icon={icon} iconWidth={24} iconHeight={24} />
-          </div>
+        <div className="flex flex-col items-center gap-3 text-center">
+          <IconButton icon="upload-cloud-02" />
           
-          <div className={styles.fileUploadText}>
-            <p className={styles.fileUploadLabel}>
-              <span className="text-[var(--color-primary-700)]">{label}</span> {description}
-            </p>
+          <div className="flex flex-col gap-1">
+            <div>
+              <Text textLevel="span" colorType='accent' weight='semibold' size='text-sm'>{label}</Text> <Text textLevel="span" colorType='tertiary' size='text-sm'>{description}</Text>
+            </div>
             {recommendedSize && (
-              <p className={styles.fileUploadHint}>{recommendedSize}</p>
+              <Text textLevel="span" colorType='tertiary' size='text-xs'>{recommendedSize}</Text>
             )}
           </div>
         </div>
       </div>
       
       {error && (
-        <p className={styles.fileUploadErrorMessage}>{error}</p>
+        <p className="mt-2 text-xs text-destructive font-medium">{error}</p>
       )}
     </div>
   );

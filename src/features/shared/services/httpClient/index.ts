@@ -131,6 +131,26 @@ export class FetchClient {
 		return response;
 	}
 
+	public async putFormData({ url, token, data = {}, headers = {}, signal } : PutParams): Promise<Response> {
+		const formData = new FormData();
+		this.appendFormData(formData, data);
+
+		const response = await fetch(`${this.baseUrl}${url}`, {
+			method: 'PUT',
+			headers: {
+				...headers,
+				...(token ? { 'Authorization': `Bearer ${token}` } : {})
+			},
+			body: formData,
+			signal
+		});
+
+		if (!response.ok) {
+			throw new Error('HTTP error ' + response.status);
+		}
+		return response;
+	}
+
 	public async delete({ url, token, headers = {}, contentType = 'application/json', signal } : DeleteParams): Promise<Response> {
 		const response = await fetch(`${this.baseUrl}${url}`, {
 			method: 'DELETE', 
