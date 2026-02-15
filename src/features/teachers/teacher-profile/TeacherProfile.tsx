@@ -1,9 +1,11 @@
 import { Tabs } from "@/ui-library/components/tabs";
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { Teacher } from "../domain/types";
 import { useTranslations } from "@/i18n";
 import { AvailabilityAndModalitiesManager } from "../availability_and_modalities/AvailabilityAndModalitiesManager";
 import { MyStoriesTab } from "../stories/MyStoriesTab";
+import { PublicInformation } from "./public-information/PublicInformation";
+import { ApiTeacherRepository } from "../infrastructure/ApiTeacherRepository";
 
 export interface TeacherProfileProps {
     teacher: Teacher;
@@ -14,8 +16,16 @@ export interface TeacherProfileProps {
 
 export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = 'availability_and_modalities' }: TeacherProfileProps) {
     const t = useTranslations();
+    const repository = useMemo(() => new ApiTeacherRepository(), []);
 
     const tabs = [
+        {
+            key: "public_information",
+            label: t('teacher-profile.public_information'),
+            onClick: () => {
+                console.log("information");
+            },
+        },
         {
             key: "availability_and_modalities",
             label: t('teacher-profile.availability_and_modalities'),
@@ -58,6 +68,10 @@ export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = '
     return (
         <div>
             <Tabs tabs={tabs} defaultTab={initialTab} onChange={onTabChange} />
+
+            {selectedTab === "public_information" && (
+                <PublicInformation teacher={teacher} accessToken={accessToken} repository={repository} />
+            )}
             
             {selectedTab === "availability_and_modalities" && (
                 <AvailabilityAndModalitiesManager teacher={teacher} accessToken={accessToken} />

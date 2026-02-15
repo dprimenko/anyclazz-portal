@@ -106,6 +106,8 @@ export interface DeleteTeacherParams {
 }
 
 export interface UpdateTeacherData {
+    name?: string;
+    surname?: string;
     studentLevelId?: string;
     subjectCategoryId?: string;
     subjectId?: string;
@@ -118,6 +120,8 @@ export interface UpdateTeacherData {
     speaksLanguages?: TeacherLanguage[];
     beganTeachingAt?: string;
     shortPresentation?: string;
+    avatar?: File;
+    portrait?: File;
 }
 
 export interface UpdateTeacherParams extends CommonParams {

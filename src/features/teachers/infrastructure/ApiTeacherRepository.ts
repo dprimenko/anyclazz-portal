@@ -67,19 +67,37 @@ export class ApiTeacherRepository implements TeacherRepository {
 	}
 
 	async updateTeacher({ token, teacherId, data }: UpdateTeacherParams): Promise<void> {
+		const baseData = {
+			...(data.name !== undefined ? { name: data.name } : {}),
+			...(data.surname !== undefined ? { surname: data.surname } : {}),
+			...(data.subjectId ? { subjectId: data.subjectId } : {}),
+			...(data.subjectCategoryId ? { subjectCategoryId: data.subjectCategoryId } : {}),
+			...(data.studentLevelId ? { studentLevelId: data.studentLevelId } : {}),
+			...(data.nationalityId ? { nationalityId: data.nationalityId } : {}),
+			...(data.address ? { address: data.address } : {}),
+			...(data.speaksLanguages ? { speaksLanguages: data.speaksLanguages } : {}),
+			...(data.beganTeachingAt ? { beganTeachingAt: data.beganTeachingAt } : {}),
+			...(data.shortPresentation !== undefined ? { shortPresentation: data.shortPresentation } : {}),
+		};
+
+		const hasFiles = Boolean(data.avatar || data.portrait);
+		if (hasFiles) {
+			await this.httpClient.putFormData({
+				url: `/teachers/${teacherId}`,
+				token: token,
+				data: {
+					...baseData,
+					...(data.avatar ? { avatar: data.avatar } : {}),
+					...(data.portrait ? { portrait: data.portrait } : {}),
+				},
+			});
+			return;
+		}
+
 		await this.httpClient.put({
 			url: `/teachers/${teacherId}`,
 			token: token,
-			data: {
-				...(data.subjectId ? { subjectId: data.subjectId } : {}),
-				...(data.subjectCategoryId ? { subjectCategoryId: data.subjectCategoryId } : {}),
-				...(data.studentLevelId ? { studentLevelId: data.studentLevelId } : {}),
-				...(data.nationalityId ? { nationalityId: data.nationalityId } : {}),
-				...(data.address ? { address: data.address } : {}),
-				...(data.speaksLanguages ? { speaksLanguages: data.speaksLanguages } : {}),
-				...(data.beganTeachingAt ? { beganTeachingAt: data.beganTeachingAt } : {}),
-				...(data.shortPresentation ? { shortPresentation: data.shortPresentation } : {}),
-			},
+			data: baseData,
 		});
 	}
 }
