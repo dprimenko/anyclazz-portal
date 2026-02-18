@@ -12,9 +12,10 @@ export interface TeacherProfileProps {
     accessToken: string;
     teacherId?: string;
     initialTab?: string;
+    lang: string;
 }
 
-export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = 'availability_and_modalities' }: TeacherProfileProps) {
+export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = 'availability_and_modalities', lang }: TeacherProfileProps) {
     const t = useTranslations();
     const repository = useMemo(() => new ApiTeacherRepository(), []);
 
@@ -70,7 +71,7 @@ export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = '
             <Tabs tabs={tabs} defaultTab={initialTab} onChange={onTabChange} />
 
             {selectedTab === "public_information" && (
-                <PublicInformation teacher={teacher} accessToken={accessToken} repository={repository} />
+                <PublicInformation teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
             )}
             
             {selectedTab === "availability_and_modalities" && (

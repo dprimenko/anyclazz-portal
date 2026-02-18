@@ -73,8 +73,9 @@
 }
 
 .btn--text {
-  outline: none;
-  box-shadow: none;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 .btn--primary {
@@ -82,6 +83,10 @@
   background-color: var(--color-primary-700);
   outline-width: 2px;
   border-image-source: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.btn--primary.btn--text {
+  color: var(--color-primary-700);
 }
 
 .btn--primary:hover {

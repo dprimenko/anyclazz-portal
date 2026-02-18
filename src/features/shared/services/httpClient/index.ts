@@ -86,8 +86,20 @@ export class FetchClient {
 		Object.entries(data).forEach(([key, value]) => {
 			if (value instanceof File) {
 				formData.append(key, value);
+			} else if (Array.isArray(value)) {
+				// Serializar arrays como JSON strings
+				formData.append(key, JSON.stringify(value));
 			} else if (value && typeof value === 'object' && !('size' in value)) {
-				this.appendNestedData(formData, key, value);
+				// Para objetos simples, intentar usar la notación de bracket
+				// Para objetos más complejos, serializar como JSON
+				const isSimpleObject = Object.values(value).every(v => 
+					typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean'
+				);
+				if (isSimpleObject) {
+					this.appendNestedData(formData, key, value);
+				} else {
+					formData.append(key, JSON.stringify(value));
+				}
 			} else {
 				formData.append(key, value as string | Blob);
 			}

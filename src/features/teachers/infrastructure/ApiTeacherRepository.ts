@@ -14,6 +14,7 @@ export class ApiTeacherRepository implements TeacherRepository {
 	private toTeacher(apiTeacher: ApiTeacher): Teacher {
 		return {
 			...apiTeacher,
+			portrait: apiTeacher.portraitImage,
 			classTypes: apiTeacher.classTypes.map((classType) => ({
 				type: classType.type as unknown as ClassType,
 				durations: classType.durations?.map((duration) => ({
@@ -82,13 +83,13 @@ export class ApiTeacherRepository implements TeacherRepository {
 
 		const hasFiles = Boolean(data.avatar || data.portrait);
 		if (hasFiles) {
-			await this.httpClient.putFormData({
+			await this.httpClient.postFormData({
 				url: `/teachers/${teacherId}`,
 				token: token,
 				data: {
 					...baseData,
 					...(data.avatar ? { avatar: data.avatar } : {}),
-					...(data.portrait ? { portrait: data.portrait } : {}),
+					...(data.portrait ? { portraitImage: data.portrait } : {}),
 				},
 			});
 			return;

@@ -88,7 +88,7 @@ export const FileUpload: FC<FileUploadProps> = ({
         onDrop={handleDrop}
         className={cn(
           "flex items-center justify-center min-h-[160px] p-6 border-1 rounded-xl cursor-pointer transition-all duration-200",
-          "border-[#D5D7DA] bg-[#FFFDFB]",
+          "border-[#D5D7DA]",
           !disabled && "hover:border-primary-500 hover:bg-primary-50",
           isDragging && "border-[#F4A43A] bg-primary-100",
           disabled && "opacity-50 cursor-not-allowed",

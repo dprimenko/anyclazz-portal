@@ -5,6 +5,7 @@ import { Button } from '@/ui-library/components/ssr/button/Button';
 import { languages } from '../data/languages';
 import { proficiencyLevels } from '../data/proficiencyLevels';
 import type { TeacherLanguage } from '@/features/teachers/domain/types';
+import { useTranslations } from '@/i18n';
 
 interface LanguageSelectorProps {
     lang: string;
@@ -15,6 +16,7 @@ interface LanguageSelectorProps {
 }
 
 export function LanguageSelector({ lang, value, onChange, label, required }: LanguageSelectorProps) {
+    const t = useTranslations();
     // Ensure there's always at least one empty row
     useEffect(() => {
         if (value.length === 0) {
@@ -84,23 +86,23 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
                 <div className="space-y-3">
                     {value.map((teacherLang, index) => (
                         <div key={index} className="flex gap-3 items-start">
-                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="flex-1 grid grid-cols-2 gap-3">
                                 <Combobox
                                     items={getLanguageItems(index)}
                                     value={teacherLang.language}
                                     onChange={(languageCode) => handleLanguageChange(index, languageCode)}
-                                    placeholder={lang === 'es' ? 'Seleccionar idioma' : 'Select language'}
-                                    searchPlaceholder={lang === 'es' ? 'Buscar idioma...' : 'Search language...'}
-                                    emptyMessage={lang === 'es' ? 'No se encontraron idiomas' : 'No languages found'}
+                                    placeholder={t('language_selector.select_language')}
+                                    searchPlaceholder={t('language_selector.search_language')}
+                                    emptyMessage={t('language_selector.no_languages_found')}
                                     fullWidth
                                 />
                                 <Combobox
                                     items={levelItems}
                                     value={teacherLang.proficiencyLevel}
                                     onChange={(levelCode) => handleLevelChange(index, levelCode)}
-                                    placeholder={lang === 'es' ? 'Nivel' : 'Level'}
-                                    searchPlaceholder={lang === 'es' ? 'Buscar nivel...' : 'Search level...'}
-                                    emptyMessage={lang === 'es' ? 'No se encontraron niveles' : 'No levels found'}
+                                    placeholder={t('language_selector.select_level')}
+                                    searchPlaceholder={t('language_selector.search_level')}
+                                    emptyMessage={t('language_selector.no_levels_found')}
                                     fullWidth
                                     disabled={!teacherLang.language}
                                 />
@@ -129,7 +131,7 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
                     onClick={handleAddLanguage}
                     colorType="secondary"
                     icon="add"
-                    label={lang === 'es' ? 'Añadir idioma' : 'Add language'}
+                    label={t('language_selector.add_language')}
                     fullWidth
                 />
             </div>

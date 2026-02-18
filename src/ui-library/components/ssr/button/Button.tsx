@@ -32,9 +32,9 @@ export const Button = ({
 		styles[`btn--${size}`],
 		{ [styles['btn--icon-only']]: isIconOnly },
 		{ 'w-full': fullWidth },
-		{ [styles['btn--text']]: onlyText },
 		{ [styles['btn--secondary']]: colorType === 'secondary' },
 		{ [styles['btn--primary']]: colorType === 'primary' },
+		{ [styles['btn--text']]: onlyText },
 		className
 	);
 

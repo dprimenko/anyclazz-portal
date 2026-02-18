@@ -1,6 +1,7 @@
 import { type Teacher } from '../domain/types';
 
-export interface ApiTeacher extends Omit<Teacher, 'classTypes'> {
+export interface ApiTeacher extends Omit<Teacher, 'classTypes' | 'portrait'> {
+    portraitImage: string;
     classTypes: {
         type: string;
         durations?: {

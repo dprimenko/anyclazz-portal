@@ -42,7 +42,7 @@ const teacher = await teacherRepository.getTeacher({
 });
 
 // Leer el tab desde la URL
-const initialTab = Astro.url.searchParams.get('tab') || 'availability_and_modalities';
+const initialTab = Astro.url.searchParams.get('tab') || 'public_information';
 
 ---
 
@@ -181,12 +181,14 @@ const initialTab = Astro.url.searchParams.get('tab') || 'availability_and_modali
                         <Text colorType="tertiary" size="text-sm">
                             {t("teachers.speaks")}{" "}
                             {
-                                teacher.speaksLanguages
-                                    .map(
-                                        (language) =>
-                                            `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
-                                    )
-                                    .join(", ")
+                                teacher.speaksLanguages && teacher.speaksLanguages.length > 0
+                                    ? teacher.speaksLanguages
+                                        .map(
+                                            (language) =>
+                                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
+                                        )
+                                        .join(", ")
+                                    : '-'
                             }
                         </Text>
                     </div>
@@ -196,7 +198,7 @@ const initialTab = Astro.url.searchParams.get('tab') || 'availability_and_modali
             <Space size={32} direction="vertical" />
 
             <div>
-                <TeacherProfile teacher={teacher as unknown as Teacher} accessToken={accessToken} teacherId={teacherId} initialTab={initialTab} client:load />
+                <TeacherProfile teacher={teacher as unknown as Teacher} accessToken={accessToken} teacherId={teacherId} initialTab={initialTab} lang={lang} client:load />
             </div>
 
             <div class="w-full bg-gray-100" />

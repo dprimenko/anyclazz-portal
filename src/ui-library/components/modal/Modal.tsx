@@ -3,11 +3,10 @@ import { Overlay } from '../overlay/Overlay.tsx';
 import type { ModalProps } from './types.ts';
 import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Sheet } from 'react-modal-sheet';
 import { useIsMobile } from '@/ui-library/hooks/useIsMobile';
 import styles from './Modal.module.css';
 
-export function Modal({ children, onClose, persistent = false, width = 480, height } : ModalProps) {
+export function Modal({ children, onClose, persistent = false, width = 480, height, fitContent = false } : ModalProps) {
 	const modalRoot = document.getElementById('portal-root');
 	const isMobile = useIsMobile();
 	const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
@@ -64,7 +63,7 @@ export function Modal({ children, onClose, persistent = false, width = 480, heig
 				<div 
 					style={{
 						width: '100%',
-						height: `${viewportHeight * 0.95}px`,
+						height: fitContent ? 'auto' : `${viewportHeight * 0.95}px`,
 						backgroundColor: 'white',
 						borderTopLeftRadius: '1rem',
 						borderTopRightRadius: '1rem',

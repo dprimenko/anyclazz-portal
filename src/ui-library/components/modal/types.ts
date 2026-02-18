@@ -5,4 +5,5 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
     persistent?: boolean;
     width?: number;
     height?: number;
+    fitContent?: boolean;
 }
