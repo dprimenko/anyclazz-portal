@@ -10,8 +10,8 @@ export interface TeachersPageProps {
 
 export interface TeacherFilters {
     search?: string;
-    countryISO2?: string;
-    cityISO2?: string;
+    country?: string;
+    city?: string;
     classTypeId?: string;
     minPrice?: number;
     maxPrice?: number;
@@ -31,8 +31,8 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
     const [errorFetchingTeachers, setErrorFetchingTeachers] = useState<string | undefined>(undefined);
 
     const [filters, setFilters] = useState<TeacherFilters>({
-        cityISO2: 'm', // Madrid por defecto
-        countryISO2: 'es', // España por defecto
+        city: 'm', // Madrid por defecto
+        country: 'es', // España por defecto
     });
     const [page, setPage] = useState(1);
     const previousPage = usePrevious(page);
@@ -52,8 +52,8 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 				page,
 				size: DEFAULT_PAGE_SIZE,
 				query: filters.search || undefined,
-				countryISO2: filters.countryISO2,
-				cityISO2: filters.cityISO2,
+				country: filters.country,
+				city: filters.city,
 				classTypeId: filters.classTypeId,
 				minPrice: filters.minPrice,
 				maxPrice: filters.maxPrice,
@@ -100,8 +100,8 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 
 	const clearFilters = useCallback(() => {
 		setFilters(prev => ({
-			cityISO2: prev.cityISO2, // Mantener ciudad actual
-			countryISO2: prev.countryISO2, // Mantener país actual
+			city: prev.city, // Mantener ciudad actual
+			country: prev.country, // Mantener país actual
 		}));
 		setPage(1);
 	}, []);

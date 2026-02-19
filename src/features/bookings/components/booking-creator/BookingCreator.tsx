@@ -19,6 +19,8 @@ import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
 import type { CreateBookingParams } from "../../domain/types";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
+import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
+import { getLangFromUrl } from "@/i18n";
 
 export interface BookingCreatorProps {
     teacher: Teacher;
@@ -189,9 +191,11 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                     <div className="flex flex-row items-center">
                         <Text colorType="tertiary" size="text-sm">
                             {t('teachers.speaks')}{' '}
-                            {teacher.speaksLanguages.map((language) => (
-                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`
-                            )).join(', ')}
+                            {teacher.speaksLanguages.map((language) => {
+                                const level = proficiencyLevels.find(l => l.code === language.proficiencyLevel);
+                                const levelName = level ? level.name[getLangFromUrl(new URL(window.location.href))] : language.proficiencyLevel;
+                                return `${t(`common.language.${language.language}`)} (${levelName})`;
+                            }).join(', ')}
                         </Text>
                     </div>
                     <div className="flex-1"></div>

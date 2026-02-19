@@ -74,8 +74,8 @@ async function checkTeacherOnboarding(session: any, pathname: string): Promise<{
       teacher.studentLevel?.id &&
       teacher.subjectCategory?.id &&
       teacher.subject?.id &&
-      teacher.teacherAddress?.countryISO2 &&
-      teacher.teacherAddress?.cityISO2 &&
+      teacher.teacherAddress?.country &&
+      teacher.teacherAddress?.city &&
       teacher.speaksLanguages && teacher.speaksLanguages.length > 0 &&
       teacher.beganTeachingAt &&
       teacher.shortPresentation;

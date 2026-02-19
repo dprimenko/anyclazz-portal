@@ -99,7 +99,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                 />
             )}
 
-            <div className="flex justify-end mt-8">
+            <div className="flex justify-end mt-8 mb-8">
                 <Button 
                     onClick={handleSave}
                     colorType="primary"
@@ -107,7 +107,6 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                     label={isSaving ? t('common.saving') : t('common.save')}
                 />
             </div> 
-            <Space size={16} />
         </div>
     );
 }

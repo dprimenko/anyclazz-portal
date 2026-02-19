@@ -4,6 +4,7 @@ import { TextWithIcon } from "../../../../../ui-library/components/ssr/text-with
 import styles from "./TeachersItem.module.css";
 import { getLangFromUrl, useTranslations } from "../../../../../i18n";
 import { languages } from "../../../onboarding/data/languages";
+import { proficiencyLevels } from "../../../onboarding/data/proficiencyLevels";
 import { Chip } from "../../../../../ui-library/components/ssr/chip/Chip.tsx";
 import { Icon } from "../../../../../ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "../../../../../ui-library/components/ssr/space/Space.tsx";
@@ -108,7 +109,9 @@ export function TeacherItem({ teacher }: TeacherProps) {
                             {teacher.speaksLanguages.map((language) => {
                                 const lang = languages.find(l => l.code === language.language);
                                 const langName = lang?.name[getLangFromUrl(new URL(window.location.href))] || language.language;
-                                return `${langName} (${t(`common.language.level.${language.proficiencyLevel}`)})`;
+                                const level = proficiencyLevels.find(l => l.code === language.proficiencyLevel);
+                                const levelName = level ? level.name[getLangFromUrl(new URL(window.location.href))] : language.proficiencyLevel;
+                                return `${langName} (${levelName})`;
                             }).join(', ')}
                         </Text>
                     </div>

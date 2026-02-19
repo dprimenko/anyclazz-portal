@@ -43,8 +43,8 @@ try {
 
 // Preparar datos iniciales del formulario
 const initialData = teacher ? {
-  nationalityId: teacher.teacherAddress?.countryISO2,
-  cityISO2: teacher.teacherAddress?.cityISO2,
+  nationalityId: teacher.teacherAddress?.country,
+  city: teacher.teacherAddress?.city,
   speaksLanguages: teacher.speaksLanguages,
 } : undefined;
 ---

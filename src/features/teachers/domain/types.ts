@@ -38,9 +38,11 @@ export interface TeacherClassType {
 }
 
 export interface TeacherAddress {
-    countryISO2: string;
-    cityISO2: string;
-    fullAddress?: string;
+    street?: string | null;
+    city: string;
+    state?: string | null;
+    country: string;
+    fullAddress: string;
 }
 
 export interface Teacher {
@@ -48,8 +50,9 @@ export interface Teacher {
     name: string;
     surname: string;
     email: string;
-    avatar?: string;
-    portrait?: string;
+    avatar?: string | null;
+    portrait?: string | null;
+    portraitImage?: string | null;
     studentLevel?: TeacherStudentLevel;
     subjectCategory: TeacherSubjectCategory;
     subject: TeacherSubject;
@@ -63,12 +66,14 @@ export interface Teacher {
     speaksLanguages?: TeacherLanguage[];
     shortPresentation?: string;
     videoPresentation?: string;
+    videoPresentationStatus?: 'processing' | 'ready' | 'failed' | null;
     about?: string;
     academicBackground?: string;
     certifications?: string;
     skills?: string;
     beganTeachingAt?: string;
     teacherAddress?: TeacherAddress;
+    timezone?: string;
     createdAt: string;
 }
 
@@ -80,8 +85,8 @@ export interface ListTeachersParams extends CommonParams {
     page: number;
     size: number;
     query?: string;
-    countryISO2?: string;
-    cityISO2?: string;
+    country?: string;
+    city?: string;
     classTypeId?: string;
     minPrice?: number;
     maxPrice?: number;
@@ -113,15 +118,23 @@ export interface UpdateTeacherData {
     subjectId?: string;
     nationalityId?: string;
     address?: {
-        countryISO2: string;
-        cityISO2: string;
+        street?: string;
+        city: string;
+        state?: string;
+        country: string;
         fullAddress?: string;
     };
+    timezone?: string;
     speaksLanguages?: TeacherLanguage[];
     beganTeachingAt?: string;
     shortPresentation?: string;
     avatar?: File;
     portrait?: File;
+    about?: string;
+    videoPresentation?: string | File;
+    academicBackground?: string;
+    certifications?: string;
+    skills?: string;
 }
 
 export interface UpdateTeacherParams extends CommonParams {

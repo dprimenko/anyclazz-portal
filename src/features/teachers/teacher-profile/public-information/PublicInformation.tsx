@@ -401,17 +401,15 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
                         )}
                     />
                 </HorizontalInputContainer>
+                <div className="flex justify-end mt-4 mb-4">
+                    <Button 
+                        type="submit"
+                        colorType="primary"
+                        disabled={isSaving}
+                        label={isSaving ? t('common.saving') : t('common.save')}
+                    />
+                </div> 
             </div>
-            
-            <div className="flex justify-end mt-8">
-                <Button 
-                    type="submit"
-                    colorType="primary"
-                    disabled={isSaving}
-                    label={isSaving ? t('common.saving') : t('common.save')}
-                />
-            </div> 
-            <Space size={16} />
         </form>
     );
 }

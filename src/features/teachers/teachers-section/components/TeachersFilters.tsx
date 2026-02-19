@@ -12,8 +12,8 @@ import { Dropdown, type DropdownItem } from "@/ui-library/components/form/dropdo
 export interface TeachersFiltersProps {
     onFiltersChange: (filters: {
         search?: string;
-        countryISO2?: string;
-        cityISO2?: string;
+        country?: string;
+        city?: string;
         classTypeId?: string;
         minPrice?: number;
         maxPrice?: number;
@@ -36,8 +36,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
     const t = useTranslations();
     const { filters, lang } = useTeachers();
     const [search, setSearch] = useState('');
-    const [selectedCountry, setSelectedCountry] = useState<string>(filters.countryISO2 || '');
-    const [selectedCity, setSelectedCity] = useState<string>(filters.cityISO2 || '');
+    const [selectedCountry, setSelectedCountry] = useState<string>(filters.country || '');
+    const [selectedCity, setSelectedCity] = useState<string>(filters.city || '');
     const [selectedClassType, setSelectedClassType] = useState<string>('');
     const [minPrice, setMinPrice] = useState<number | undefined>();
     const [maxPrice, setMaxPrice] = useState<number | undefined>();
@@ -63,8 +63,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
     const handleSearch = () => {
         onFiltersChange({
             search: search || undefined,
-            countryISO2: selectedCountry || undefined,
-            cityISO2: selectedCity || undefined,
+            country: selectedCountry || undefined,
+            city: selectedCity || undefined,
             classTypeId: selectedClassType || undefined,
             minPrice,
             maxPrice,
@@ -94,8 +94,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         
         onFiltersChange({
             search: search || undefined,
-            countryISO2: countryISO2 || undefined,
-            cityISO2: cityISO2 || undefined,
+            country: countryISO2 || undefined,
+            city: cityISO2 || undefined,
             classTypeId: selectedClassType || undefined,
             minPrice,
             maxPrice,
@@ -110,8 +110,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         setSelectedClassType(classType);
         onFiltersChange({
             search: search || undefined,
-            countryISO2: selectedCountry || undefined,
-            cityISO2: selectedCity || undefined,
+            country: selectedCountry || undefined,
+            city: selectedCity || undefined,
             classTypeId: classType || undefined,
             minPrice,
             maxPrice,
@@ -127,8 +127,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         setMaxPrice(max);
         onFiltersChange({
             search: search || undefined,
-            countryISO2: selectedCountry || undefined,
-            cityISO2: selectedCity || undefined,
+            country: selectedCountry || undefined,
+            city: selectedCity || undefined,
             classTypeId: selectedClassType || undefined,
             minPrice: min,
             maxPrice: max,
@@ -152,8 +152,8 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         setStudentLevelId(moreFilters.studentLevelId);
         const filtersToSend = {
             search: search || undefined,
-            countryISO2: selectedCountry || undefined,
-            cityISO2: selectedCity || undefined,
+            country: selectedCountry || undefined,
+            city: selectedCity || undefined,
             classTypeId: selectedClassType || undefined,
             minPrice,
             maxPrice,

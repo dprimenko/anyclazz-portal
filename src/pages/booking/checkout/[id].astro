@@ -12,6 +12,7 @@ import { DateTime } from '@/features/shared/utils/dateConfig';
 import { getSession } from 'auth-astro/server';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 import { PaymentForm } from '@/features/bookings/components/payment-form/PaymentForm';
+import { proficiencyLevels } from '@/features/teachers/onboarding/data/proficiencyLevels';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
@@ -127,6 +128,12 @@ const durationFormatted = (startAt: string, endAt: string) => {
 	return t('common.minutes_long', { minutes: diffInMinutes });
 };
 
+// Helper para obtener el nombre del nivel de proficiencia
+const getProficiencyLevelName = (code: string) => {
+    const level = proficiencyLevels.find(l => l.code === code);
+    return level ? level.name[lang] : code;
+};
+
 ---
 
 <Main>
@@ -172,7 +179,7 @@ const durationFormatted = (startAt: string, endAt: string) => {
                         <Text colorType="tertiary" size="text-sm">
                             {t('teachers.speaks')}{' '}
                             {booking.teacher.speaksLanguages.map((language) => (
-                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`
+                                `${t(`common.language.${language.language}`)} (${getProficiencyLevelName(language.proficiencyLevel)})`
                             )).join(', ')}
                         </Text>
                     </div>

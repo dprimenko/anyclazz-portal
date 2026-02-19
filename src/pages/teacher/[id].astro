@@ -14,6 +14,7 @@ import { TeacherDetail } from "@/features/teachers/teacher-detail/components/Tea
 import { TeacherBookingButton } from "@/features/teachers/teacher-detail/components/TeacherBookingButton.tsx";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
 import { getSession } from 'auth-astro/server';
+import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
 
 export const prerender = false;
 
@@ -38,6 +39,12 @@ const teacher = await teacherRepository.getTeacher({
     token: accessToken,
     teacherId: id 
 });
+
+// Helper para obtener el nombre del nivel de proficiencia
+const getProficiencyLevelName = (code: string) => {
+    const level = proficiencyLevels.find(l => l.code === code);
+    return level ? level.name[lang] : code;
+};
 
 ---
 
@@ -180,7 +187,7 @@ const teacher = await teacherRepository.getTeacher({
                                     teacher.speaksLanguages
                                         .map(
                                             (language) =>
-                                                `${t(`common.language.${language.language}`)} (${t(`common.language.level.${language.proficiencyLevel}`)})`,
+                                                `${t(`common.language.${language.language}`)} (${getProficiencyLevelName(language.proficiencyLevel)})`,
                                         )
                                         .join(", ")
                                 }

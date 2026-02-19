@@ -33,11 +33,11 @@ function TeachersSectionContent() {
   }, [totalTeachers]);
 
   const teachersLocation = useMemo(() => {
-    if (!filters.cityISO2) return "Madrid";
+    if (!filters.city) return "Madrid";
     
-    const city = cities.find(c => c.cityISO2 === filters.cityISO2);
+    const city = cities.find(c => c.cityISO2 === filters.city);
     return city ? city.name[lang as keyof typeof city.name] : "Madrid";
-  }, [filters.cityISO2, lang]);
+  }, [filters.city, lang]);
 
   return (
     <div className={styles["teachers-section__container"]}>

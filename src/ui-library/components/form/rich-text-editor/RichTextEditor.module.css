@@ -1,0 +1,106 @@
+.container {
+    width: 100%;
+    border: 1px solid var(--color-neutral-200);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.container:focus-within {
+    border: 2px solid var(--color-primary-700);
+    outline: none;
+}
+
+.toolbar {
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px;
+    background-color: var(--color-neutral-50);
+    border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.toolbarButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background-color: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-neutral-700);
+    transition: all 0.2s ease;
+}
+
+.toolbarButton:hover:not(:disabled) {
+    background-color: var(--color-neutral-200);
+    color: var(--color-neutral-900);
+}
+
+.toolbarButton.active {
+    background-color: var(--color-primary-700);
+    color: white;
+}
+
+.toolbarButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.editor {
+    padding: 12px 16px;
+    min-height: 150px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-neutral-900);
+}
+
+.editor:focus {
+    outline: none;
+}
+
+.editor :global(p) {
+    margin: 0 0 8px 0;
+}
+
+.editor :global(p:last-child) {
+    margin-bottom: 0;
+}
+
+.editor :global(strong) {
+    font-weight: 600;
+}
+
+.editor :global(em) {
+    font-style: italic;
+}
+
+.editor :global(ul) {
+    margin: 8px 0;
+    padding-left: 24px;
+    list-style-type: disc;
+}
+
+.editor :global(li) {
+    margin: 4px 0;
+    display: list-item;
+}
+
+.editor :global(.ProseMirror-focused) {
+    outline: none;
+}
+
+/* Placeholder */
+.editor :global(.ProseMirror p.is-editor-empty:first-child::before) {
+    content: attr(data-placeholder);
+    color: var(--color-neutral-500);
+    pointer-events: none;
+    float: left;
+    height: 0;
+}

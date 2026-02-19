@@ -3,7 +3,7 @@ import { Text } from "@/ui-library/components/ssr/text/Text";
 export function HorizontalInputContainer({ label, description, required, children }: { label: string; description?: string, required?: boolean, children: React.ReactNode }) {
     return (
         <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex flex-col gap-1 w-[312px]">
+            <div className="flex flex-col gap-1 w-full md:w-[312px] md:flex-shrink-0">
                 <Text textLevel="h3" weight="semibold" colorType="primary">
                     {label} {required && <span className="text-[var(--color-primary-700)]">*</span>}
                 </Text>

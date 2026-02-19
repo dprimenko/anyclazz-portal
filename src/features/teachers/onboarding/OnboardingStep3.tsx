@@ -16,7 +16,7 @@ interface OnboardingStep3Props {
     token: string;
     initialData?: {
         nationalityId?: string;
-        cityISO2?: string;
+        city?: string;
         speaksLanguages?: TeacherLanguage[];
     };
 }
@@ -24,7 +24,7 @@ interface OnboardingStep3Props {
 export default function OnboardingStep3({ lang, teacherId, token, initialData }: OnboardingStep3Props) {
     const t = useTranslations();
     const [selectedNationality, setSelectedNationality] = useState<string>(initialData?.nationalityId || '');
-    const [selectedCity, setSelectedCity] = useState<string>(initialData?.cityISO2 || '');
+    const [selectedCity, setSelectedCity] = useState<string>(initialData?.city || '');
     const [selectedLanguages, setSelectedLanguages] = useState<TeacherLanguage[]>(initialData?.speaksLanguages || []);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -77,6 +77,12 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
                 return;
             }
 
+            // Construir fullAddress
+            const cityName = selectedCityData.name[lang as keyof typeof selectedCityData.name];
+            const countryData = countries.find(c => c.countryISO2 === selectedCityData.countryISO2);
+            const countryName = countryData?.name[lang as keyof typeof countryData.name] || selectedCityData.countryISO2;
+            const fullAddress = `${cityName}, ${countryName}`;
+
             // Llamar al repositorio para actualizar los datos del profesor
             await repository.updateTeacher({
                 token,
@@ -84,8 +90,9 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
                 data: {
                     nationalityId: selectedNationality,
                     address: {
-                        countryISO2: selectedCityData.countryISO2,
-                        cityISO2: selectedCityData.cityISO2,
+                        country: selectedCityData.countryISO2,
+                        city: selectedCityData.cityISO2,
+                        fullAddress,
                     },
                     speaksLanguages: selectedLanguages,
                 },

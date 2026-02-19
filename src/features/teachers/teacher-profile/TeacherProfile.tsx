@@ -5,7 +5,10 @@ import { useTranslations } from "@/i18n";
 import { AvailabilityAndModalitiesManager } from "../availability_and_modalities/AvailabilityAndModalitiesManager";
 import { MyStoriesTab } from "../stories/MyStoriesTab";
 import { PublicInformation } from "./public-information/PublicInformation";
+import { Location } from "./location/Location";
+import { Information } from "./information/Information";
 import { ApiTeacherRepository } from "../infrastructure/ApiTeacherRepository";
+import { SuperTutorMembership } from "./super-tutor-membership/SuperTutorMembership";
 
 export interface TeacherProfileProps {
     teacher: Teacher;
@@ -15,39 +18,74 @@ export interface TeacherProfileProps {
     lang: string;
 }
 
-export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = 'availability_and_modalities', lang }: TeacherProfileProps) {
+export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId, initialTab = 'availability_and_modalities', lang }: TeacherProfileProps) {
     const t = useTranslations();
     const repository = useMemo(() => new ApiTeacherRepository(), []);
+    const [teacher, setTeacher] = useState<Teacher>(initialTeacher);
+
+    // Sincronizar con cambios del teacher inicial
+    useEffect(() => {
+        setTeacher(initialTeacher);
+    }, [initialTeacher]);
+
+    // Polling para actualizar cuando el video está procesándose
+    useEffect(() => {
+        if (teacher.videoPresentationStatus !== 'processing' || !teacherId) return;
+
+        const intervalId = window.setInterval(async () => {
+            try {
+                const updatedTeacher = await repository.getTeacher({
+                    token: accessToken,
+                    teacherId: teacherId,
+                });
+                setTeacher(updatedTeacher);
+            } catch (error) {
+                console.error('Error fetching teacher:', error);
+            }
+        }, 5000);
+
+        return () => {
+            window.clearInterval(intervalId);
+        };
+    }, [teacher.videoPresentationStatus, teacherId, accessToken, repository]);
 
     const tabs = [
         {
             key: "public_information",
             label: t('teacher-profile.public_information'),
             onClick: () => {
-                console.log("information");
+            },
+        },
+        {
+            key: "location",
+            label: t('teacher-profile.location'),
+            onClick: () => {
+            },
+        },
+        {
+            key: "information",
+            label: t('teacher-profile.information'),
+            onClick: () => {
             },
         },
         {
             key: "availability_and_modalities",
             label: t('teacher-profile.availability_and_modalities'),
             onClick: () => {
-                console.log("information");
             },
         },
         {
             key: "videos",
             label: t('teacher-profile.videos'),
             onClick: () => {
-                console.log("videos");
             },
         },
-        // {
-        //     key: "reviews",
-        //     label: "Reviews",
-        //     onClick: () => {
-        //         console.log("reviews");
-        //     },
-        // },
+        {
+            key: "super_tutor",
+            label: t('teacher-profile.super_tutor'),
+            onClick: () => {
+            },
+        },
     ];
 
     const [selectedTab, setSelectedTab] = useState(initialTab);
@@ -74,6 +112,18 @@ export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = '
                 <PublicInformation teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
             )}
             
+            {selectedTab === "location" && (
+                <Location teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
+            )}
+            
+            {selectedTab === "information" && (
+                <Information teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
+            )}
+
+            {selectedTab === "super_tutor" && (
+                <SuperTutorMembership teacher={teacher} accessToken={accessToken} repository={repository} />
+            )}
+            
             {selectedTab === "availability_and_modalities" && (
                 <AvailabilityAndModalitiesManager teacher={teacher} accessToken={accessToken} />
             )}
@@ -82,8 +132,8 @@ export function TeacherProfile({ teacher, accessToken, teacherId, initialTab = '
                 <MyStoriesTab 
                     teacherId={teacherId} 
                     accessToken={accessToken}
-                    countryIso2={teacher.teacherAddress?.countryISO2 || ''}
-                    cityIso2={teacher.teacherAddress?.cityISO2}
+                    countryIso2={teacher.teacherAddress?.country || ''}
+                    cityIso2={teacher.teacherAddress?.city}
                 />
             )}
         </div>

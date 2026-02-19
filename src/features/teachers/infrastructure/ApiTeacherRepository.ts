@@ -28,13 +28,13 @@ export class ApiTeacherRepository implements TeacherRepository {
 		};
 	}
 
-	async listTeachers({ token, page, size, query, countryISO2, cityISO2, classTypeId, minPrice, maxPrice, subjectCategoryId, subjectId, speakLanguage, studentLevelId }: ListTeachersParams): Promise<ListTeachersResponse> {		
+	async listTeachers({ token, page, size, query, country, city, classTypeId, minPrice, maxPrice, subjectCategoryId, subjectId, speakLanguage, studentLevelId }: ListTeachersParams): Promise<ListTeachersResponse> {		
 		const data: Record<string, string | number> = {
 			page: page,
 			size: size,
 			...(query ? { query } : {}),
-			...(countryISO2 ? { countryISO2 } : {}),
-			...(cityISO2 ? { cityISO2 } : {}),
+			...(country ? { country } : {}),
+			...(city ? { city } : {}),
 			...(classTypeId ? { classTypeId } : {}),
 			...(minPrice !== undefined ? { minPrice } : {}),
 			...(maxPrice !== undefined ? { maxPrice } : {}),
@@ -64,6 +64,9 @@ export class ApiTeacherRepository implements TeacherRepository {
 		});
 
 		const apiTeacher = await apiTeacherResponse.json();
+
+		console.log("API Teacher:"); 
+		console.log(apiTeacher);
 		return this.toTeacher(apiTeacher);
 	}
 
@@ -76,12 +79,18 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...(data.studentLevelId ? { studentLevelId: data.studentLevelId } : {}),
 			...(data.nationalityId ? { nationalityId: data.nationalityId } : {}),
 			...(data.address ? { address: data.address } : {}),
+			...(data.timezone !== undefined ? { timezone: data.timezone } : {}),
 			...(data.speaksLanguages ? { speaksLanguages: data.speaksLanguages } : {}),
 			...(data.beganTeachingAt ? { beganTeachingAt: data.beganTeachingAt } : {}),
 			...(data.shortPresentation !== undefined ? { shortPresentation: data.shortPresentation } : {}),
+			...(data.about !== undefined ? { about: data.about } : {}),
+			...(data.videoPresentation !== undefined ? { videoPresentation: data.videoPresentation } : {}),
+			...(data.academicBackground !== undefined ? { academicBackground: data.academicBackground } : {}),
+			...(data.certifications !== undefined ? { certifications: data.certifications } : {}),
+			...(data.skills !== undefined ? { skills: data.skills } : {}),
 		};
 
-		const hasFiles = Boolean(data.avatar || data.portrait);
+		const hasFiles = Boolean(data.avatar || data.portrait || (data.videoPresentation instanceof File));
 		if (hasFiles) {
 			await this.httpClient.postFormData({
 				url: `/teachers/${teacherId}`,
@@ -90,12 +99,13 @@ export class ApiTeacherRepository implements TeacherRepository {
 					...baseData,
 					...(data.avatar ? { avatar: data.avatar } : {}),
 					...(data.portrait ? { portraitImage: data.portrait } : {}),
+					...(data.videoPresentation instanceof File ? { videoPresentation: data.videoPresentation } : {}),
 				},
 			});
 			return;
 		}
 
-		await this.httpClient.put({
+		await this.httpClient.post({
 			url: `/teachers/${teacherId}`,
 			token: token,
 			data: baseData,
