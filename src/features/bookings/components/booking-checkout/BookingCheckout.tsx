@@ -1,38 +1,39 @@
 import { useEffect, useState } from 'react';
 import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { useCreateSubscription } from '@/features/subscription';
+import { createSetupIntent, createPaymentIntent } from '@/services/stripe';
 import { getStripeErrorMessage } from '@/utils/stripeErrors';
-import type { StripePlan } from '@/services/stripe';
-import { createSetupIntent } from '@/services/stripe';
 import { Text } from '@/ui-library/components/ssr/text/Text';
-import { formatPrice } from '../../utils/formatPrice';
+import { formatPrice } from '@/features/shared/utils/formatPrice';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
 
-interface SubscriptionCheckoutProps {
-  plan: StripePlan;
+interface BookingCheckoutProps {
+  bookingId: string;
+  amount: number;
+  currency: string;
   token: string;
-  onSuccess: (subscriptionId: string) => void;
+  onSuccess: () => void;
   onError: (error: string) => void;
   lang?: 'en' | 'es';
 }
 
 // Componente interno que usa el PaymentElement y maneja la confirmación del SetupIntent
 function CheckoutForm({ 
-  plan, 
+  bookingId,
+  amount,
+  currency,
   token, 
   onSuccess, 
   onError, 
   setupIntentId, 
   lang = 'en' 
-}: SubscriptionCheckoutProps & { setupIntentId: string }) {
+}: BookingCheckoutProps & { setupIntentId: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
-  const { createSubscription } = useCreateSubscription(token);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,7 +51,7 @@ function CheckoutForm({
       const { error: setupError, setupIntent } = await stripe.confirmSetup({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/super-tutor/checkout/${plan.interval}?subscription=pending`, // PayPal redirige aquí
+          return_url: `${window.location.origin}/me/my-agenda?payment=pending&booking_id=${bookingId}`,
         },
         redirect: 'if_required', // Solo redirige si es necesario (ej: PayPal)
       });
@@ -59,35 +60,36 @@ function CheckoutForm({
         throw new Error(getStripeErrorMessage(setupError));
       }
 
-      // Paso 2: Si el SetupIntent fue exitoso SIN redirección, crear la suscripción
+      // Paso 2: Si el SetupIntent fue exitoso SIN redirección, crear el Payment Intent
       if (setupIntent && setupIntent.status === 'succeeded') {
-        const subscription = await createSubscription({
-          interval: plan.interval,
-          setup_intent_id: setupIntentId,
-        });
+        const paymentIntent = await createPaymentIntent(token, bookingId, setupIntentId);
 
-        if (!subscription) {
-          throw new Error(t('subscription.failed_to_create_subscription'));
+        if (!paymentIntent) {
+          throw new Error('Failed to create payment intent');
         }
 
-        // Manejar los diferentes estados de la suscripción
-        if (subscription.status === 'active') {
-          // ✅ Suscripción activada exitosamente
-          onSuccess(subscription.subscription_id);
-        } else if (subscription.status === 'incomplete' && subscription.client_secret) {
-          // Algunos casos requieren confirmación adicional (SCA/3D Secure)
-          const { error: paymentError } = await stripe.confirmCardPayment(subscription.client_secret);
-          
-          if (paymentError) {
-            throw new Error(getStripeErrorMessage(paymentError));
+        // Manejar los diferentes estados del Payment Intent
+        if (paymentIntent.status === 'succeeded') {
+          // ✅ Pago completado exitosamente
+          onSuccess();
+        } else if (paymentIntent.status === 'requires_action' || paymentIntent.status === 'requires_confirmation') {
+          // Requiere confirmación adicional (SCA/3D Secure)
+          if (paymentIntent.client_secret) {
+            const { error: paymentError } = await stripe.confirmCardPayment(paymentIntent.client_secret);
+            
+            if (paymentError) {
+              throw new Error(getStripeErrorMessage(paymentError));
+            }
+            
+            onSuccess();
+          } else {
+            throw new Error('Payment requires confirmation but no client_secret provided');
           }
-          
-          onSuccess(subscription.subscription_id);
-        } else if (subscription.requires_payment_method) {
-          throw new Error(t('subscription.requires_payment_method'));
+        } else if (paymentIntent.status === 'requires_payment_method') {
+          throw new Error('Payment method is required');
         } else {
           // Estado inesperado
-          throw new Error(`Unexpected subscription status: ${subscription.status}`);
+          throw new Error(`Unexpected payment intent status: ${paymentIntent.status}`);
         }
       } else {
         throw new Error(`Unexpected SetupIntent status: ${setupIntent?.status}`);
@@ -126,22 +128,25 @@ function CheckoutForm({
         colorType="primary"
         size="lg"
         disabled={!stripe || loading}
-        label={loading ? t('subscription.processing') : `${t('subscription.confirm_payment')} • ${formatPrice(plan.amount, plan.currency, lang)}`}
+        label={loading ? t('subscription.processing') : `${t('subscription.confirm_payment')} • ${formatPrice(amount, currency, lang)}`}
         fullWidth
       />
+      
+      <Text size="text-xs" colorType="tertiary" className="text-center leading-relaxed">
+        {t('subscription.refund_policy')}
+      </Text>
     </form>
   );
 }
 
 // Componente principal que crea el SetupIntent para capturar el payment method
-export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = 'en' }: SubscriptionCheckoutProps) {
+export function BookingCheckout({ bookingId, amount, currency, token, onSuccess, onError, lang = 'en' }: BookingCheckoutProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
   const [initError, setInitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingPayPal, setProcessingPayPal] = useState(false);
   const t = useTranslations({ lang });
-  const { createSubscription } = useCreateSubscription(token);
 
   const stripePromise = loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -153,40 +158,41 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
       const urlParams = new URLSearchParams(window.location.search);
       const setupIntentIdFromUrl = urlParams.get('setup_intent');
       const redirectStatus = urlParams.get('redirect_status');
+      const paymentPending = urlParams.get('payment');
+      const bookingIdFromUrl = urlParams.get('booking_id');
 
       // Si viene de PayPal con un SetupIntent exitoso
-      if (setupIntentIdFromUrl && redirectStatus === 'succeeded') {
+      if (setupIntentIdFromUrl && redirectStatus === 'succeeded' && paymentPending === 'pending' && bookingIdFromUrl === bookingId) {
         setProcessingPayPal(true);
         setLoading(true);
 
         try {
           console.log('Processing PayPal return with SetupIntent:', setupIntentIdFromUrl);
 
-          // Crear la suscripción con el setup_intent_id
-          const subscription = await createSubscription({
-            interval: plan.interval,
-            setup_intent_id: setupIntentIdFromUrl,
-          });
+          // Crear el Payment Intent con el setup_intent_id
+          const paymentIntent = await createPaymentIntent(token, bookingId, setupIntentIdFromUrl);
 
-          if (!subscription) {
-            throw new Error(t('subscription.failed_to_create_subscription'));
+          if (!paymentIntent) {
+            throw new Error(t('booking.failed_to_create_payment'));
           }
 
-          // Verificar el estado de la suscripción
-          if (subscription.status === 'active' || subscription.status === 'incomplete') {
-            console.log('Subscription created successfully:', subscription);
+          // Verificar el estado del Payment Intent
+          if (paymentIntent.status === 'succeeded') {
+            console.log('Payment completed successfully:', paymentIntent);
 
             // Limpiar los parámetros de la URL
             const newUrl = new URL(window.location.href);
             newUrl.searchParams.delete('setup_intent');
             newUrl.searchParams.delete('setup_intent_client_secret');
             newUrl.searchParams.delete('redirect_status');
+            newUrl.searchParams.delete('payment');
+            newUrl.searchParams.delete('booking_id');
             window.history.replaceState({}, '', newUrl.toString());
 
             // Llamar al callback de éxito
-            onSuccess(subscription.subscription_id);
+            onSuccess();
           } else {
-            throw new Error(`Unexpected subscription status: ${subscription.status}`);
+            throw new Error(`Unexpected payment intent status: ${paymentIntent.status}`);
           }
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : 'Failed to process PayPal payment';
@@ -199,6 +205,8 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
           newUrl.searchParams.delete('setup_intent');
           newUrl.searchParams.delete('setup_intent_client_secret');
           newUrl.searchParams.delete('redirect_status');
+          newUrl.searchParams.delete('payment');
+          newUrl.searchParams.delete('booking_id');
           window.history.replaceState({}, '', newUrl.toString());
         } finally {
           setProcessingPayPal(false);
@@ -238,13 +246,13 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
         setLoading(false);
       }
     }
-  }, [token, plan.interval]);
+  }, [token, bookingId]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
         <Text colorType="tertiary">
-          {processingPayPal ? t('subscription.processing_paypal_payment') : t('subscription.initializing_payment')}
+          {processingPayPal ? t('booking.processing_paypal_payment') : t('subscription.initializing_payment')}
         </Text>
       </div>
     );
@@ -280,7 +288,9 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
     <Elements stripe={stripePromise} options={options}>
       <CheckoutForm 
         lang={lang}
-        plan={plan} 
+        bookingId={bookingId}
+        amount={amount}
+        currency={currency}
         token={token} 
         onSuccess={onSuccess} 
         onError={onError}

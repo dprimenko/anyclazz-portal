@@ -38,6 +38,15 @@ export interface SetupIntentResponse {
   publishable_key: string;
 }
 
+export interface PaymentIntentResponse {
+  payment_intent_id: string;
+  client_secret: string | null;
+  amount: number;
+  currency: string;
+  status: string;
+  type: 'booking' | 'subscription';
+}
+
 export async function getSuperTutorPlans(token: string): Promise<GetPlansResponse> {
   const response = await fetch(`${API_URL}/super-tutor/plans`, {
     headers: {
@@ -114,6 +123,31 @@ export async function cancelSubscription(
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Failed to cancel subscription');
+  }
+
+  return response.json();
+}
+
+export async function createPaymentIntent(
+  token: string,
+  bookingId: string,
+  setupIntentId: string
+): Promise<PaymentIntentResponse> {
+  const response = await fetch(`${API_URL}/payment-intents`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      booking_id: bookingId,
+      setup_intent_id: setupIntentId 
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create payment intent');
   }
 
   return response.json();

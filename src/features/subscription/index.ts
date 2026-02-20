@@ -13,3 +13,7 @@ export { ApiSubscriptionRepository } from './infrastructure/ApiSubscriptionRepos
 // Re-export hooks
 export { useCreateSubscription } from './hooks/useCreateSubscription';
 export { useSubscriptionStatus } from './hooks/useSubscriptionStatus';
+export { usePayPalReturnHandler } from './hooks/usePayPalReturnHandler';
+
+// Re-export components
+export { PayPalReturnHandler } from './components/PayPalReturnHandler';

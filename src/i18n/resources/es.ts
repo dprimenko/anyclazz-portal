@@ -144,6 +144,7 @@ export default {
     'booking.payment_successful': 'Pago Exitoso',
     'booking.payment_successful_message': 'Tu pago ha sido procesado exitosamente. Tu clase está confirmada — recibirás un recordatorio antes de que comience.',
     'booking.go_to_agenda': 'Ir a Mi Agenda',
+    'booking.processing_paypal_payment': 'Procesando pago de PayPal...',
 
     'subscription.checkout': 'Finalizar compra',
     'subscription.upgrade_to_super_tutor': 'Actualizar a Super Tutor',
@@ -196,6 +197,7 @@ export default {
     'subscription.cancel_at_period_end': 'Cancelar al final del período',
     'subscription.canceling': 'Cancelando...',
     'subscription.subscription_canceled': 'Suscripción cancelada exitosamente',
+    'subscription.processing_paypal_payment': 'Procesando pago de PayPal...',
 
     'teacher-profile.public_information': 'Perfil público',
     'teacher-profile.public_information_description': 'Actualiza tu foto y tus datos personales aquí.',

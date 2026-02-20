@@ -144,6 +144,7 @@ export default {
     'booking.payment_successful': 'Payment Successful',
     'booking.payment_successful_message': 'Your payment has been processed successfully. Your lesson is now confirmed — you\'ll receive a reminder before it starts.',
     'booking.go_to_agenda': 'Go to My Agenda',
+    'booking.processing_paypal_payment': 'Processing PayPal payment...',
 
     'subscription.checkout': 'Checkout',
     'subscription.upgrade_to_super_tutor': 'Upgrade to Super Tutor',
@@ -197,6 +198,7 @@ export default {
     'subscription.cancel_at_period_end': 'Cancel at period end',
     'subscription.canceling': 'Canceling...',
     'subscription.subscription_canceled': 'Subscription canceled successfully',
+    'subscription.processing_paypal_payment': 'Processing PayPal payment...',
 
     'teacher-profile.public_information': 'Public profile',
     'teacher-profile.public_information_description': 'Update your photo and personal details here.',

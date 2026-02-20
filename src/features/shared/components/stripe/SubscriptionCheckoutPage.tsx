@@ -51,8 +51,9 @@ export function SubscriptionCheckoutPage({ interval, accessToken, lang }: Subscr
   }, [interval, accessToken]);
 
   function handleSuccess(subscriptionId: string) {
-    // Redirigir a página de éxito o de perfil
-    window.location.href = '/profile?subscription=success';
+    console.log('Subscription created successfully:', subscriptionId);
+    // Redirigir a página de perfil con mensaje de éxito
+    window.location.href = '/profile?tab=super_tutor&subscription=success';
   }
 
   function handleError(errorMessage: string) {
