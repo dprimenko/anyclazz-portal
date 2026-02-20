@@ -61,7 +61,7 @@ export interface Teacher {
     reviewsNumber?: number;
     studentsNumber?: number;
     lessonsNumber?: number;
-    isSuperTeacher: boolean;
+    superTutorTo?: string | null;
     isOnline?: boolean;
     speaksLanguages?: TeacherLanguage[];
     shortPresentation?: string;

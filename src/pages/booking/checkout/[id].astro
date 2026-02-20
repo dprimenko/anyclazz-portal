@@ -13,6 +13,7 @@ import { getSession } from 'auth-astro/server';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 import { PaymentForm } from '@/features/bookings/components/payment-form/PaymentForm';
 import { proficiencyLevels } from '@/features/teachers/onboarding/data/proficiencyLevels';
+import { isSuperTutor } from '@/features/teachers/utils/superTutorHelpers';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
@@ -145,12 +146,12 @@ const getProficiencyLevelName = (code: string) => {
 			<div class="flex flex-col w-full gap-5">
 				<div class="flex flex-col w-full card rounded-xl p-5">
 					<div class="flex flex-row items-left">
-						<Avatar src={booking.teacher.avatar} alt={`${booking.teacher.name} ${booking.teacher.surname}`} size={72} hasVerifiedBadge={booking.teacher.isSuperTeacher} hasOutline />
+						<Avatar src={booking.teacher.avatar} alt={`${booking.teacher.name} ${booking.teacher.surname}`} size={72} hasVerifiedBadge={isSuperTutor(booking.teacher?.superTutorTo)} hasOutline />
 					</div>
 					<Space size={16} direction="vertical"/>
 					<div class="flex flex-row gap-4">
                         <Text textLevel="h2" size="display-xs" weight="semibold" colorType="primary">{booking.teacher.name}{' '}{booking.teacher.surname}</Text>
-                        {booking.teacher.isSuperTeacher && (
+                        {isSuperTutor(booking.teacher?.superTutorTo) && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />
                                 <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>

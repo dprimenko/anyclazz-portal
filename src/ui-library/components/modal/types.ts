@@ -6,4 +6,5 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
     width?: number;
     height?: number;
     fitContent?: boolean;
+    withCloseIcon?: boolean;
 }

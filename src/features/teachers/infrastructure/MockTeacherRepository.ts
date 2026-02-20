@@ -35,7 +35,7 @@ const teachers = <Teacher[]>[
 		reviewsNumber: 202,
 		studentsNumber: 89,
 		lessonsNumber: 2130,
-		isSuperTeacher: false,
+		superTutorTo: null,
 		speaksLanguages: <TeacherLanguage[]>[
 			{
 				language: 'es',
@@ -113,7 +113,7 @@ const teachers = <Teacher[]>[
 		reviewsNumber: 405,
 		studentsNumber: 130,
 		lessonsNumber: 3850,
-		isSuperTeacher: true,
+		superTutorTo: '2026-03-21T23:59:59.999Z',
 		speaksLanguages: <TeacherLanguage[]>[
 			{
 				language: 'en',
@@ -179,7 +179,7 @@ const teachers = <Teacher[]>[
 		reviewsNumber: 105,
 		studentsNumber: 38,
 		lessonsNumber: 150,
-		isSuperTeacher: true,
+		superTutorTo: '2026-12-31T23:59:59.999Z',
 		speaksLanguages: <TeacherLanguage[]>[
 			{
 				language: 'fr',

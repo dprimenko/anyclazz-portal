@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import classNames from "classnames";
 import styles from "./LessonCard.module.css";
 import { Button } from "@/ui-library/components/ssr/button/Button";
+import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export interface LessonCardProps {
     booking: BookingWithTeacher;
@@ -36,10 +37,10 @@ export function LessonCard({ booking, showActions = false, onChat, onDetails, on
     return (
         <div className={containerClasses}>
             <Avatar 
-                src={booking.teacher.avatar} 
-                alt={`${booking.teacher.name} ${booking.teacher.surname}`}
+                src={booking.teacher?.avatar} 
+                alt={`${booking.teacher?.name} ${booking.teacher?.surname}`}
                 size={48}
-                hasVerifiedBadge={booking.teacher.isSuperTeacher}
+                hasVerifiedBadge={isSuperTutor(booking.teacher?.superTutorTo)}
             />
             
             <div className="flex-1 flex flex-col gap-1">

@@ -14,6 +14,7 @@ import { TeacherProfile } from "@/features/teachers/teacher-profile/TeacherProfi
 import { AnyclazzAuthRepository } from "@/features/auth/ssr/infrastructure/AnyclazzAuthRepository";
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
 import { Button } from "@/ui-library/components/ssr/button/Button";
+import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export const prerender = false;
 
@@ -85,7 +86,7 @@ const getProficiencyLevelName = (code: string) => {
                                 size={88}
                                 src={teacher.avatar}
                                 alt={`${teacher.name} ${teacher.surname}`}
-                                hasVerifiedBadge={teacher.isSuperTeacher}
+                                hasVerifiedBadge={isSuperTutor(teacher.superTutorTo)}
                                 hasOutline
                             />
                         </div>
@@ -94,7 +95,7 @@ const getProficiencyLevelName = (code: string) => {
                                 size={148}
                                 src={teacher.avatar}
                                 alt={`${teacher.name} ${teacher.surname}`}
-                                hasVerifiedBadge={teacher.isSuperTeacher}
+                                hasVerifiedBadge={isSuperTutor(teacher.superTutorTo)}
                                 hasOutline
                             />
                         </div>
@@ -117,7 +118,7 @@ const getProficiencyLevelName = (code: string) => {
                             >{teacher.name}{" "}{teacher.surname}</Text
                         >
                         {
-                            teacher.isSuperTeacher && (
+                            isSuperTutor(teacher.superTutorTo) && (
                                 <Chip colorType="primary" rounded>
                                     <Icon
                                         icon="verified"

@@ -21,6 +21,7 @@ import type { CreateBookingParams } from "../../domain/types";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
 import { getLangFromUrl } from "@/i18n";
+import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export interface BookingCreatorProps {
     teacher: Teacher;
@@ -170,12 +171,12 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                         </>
                     )}
                     <div className="flex flex-row items-left">
-                        <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={isMobile ? 72 : 96} hasVerifiedBadge={teacher.isSuperTeacher} hasOutline />
+                        <Avatar src={teacher.avatar} alt={`${teacher.name} ${teacher.surname}`} size={isMobile ? 72 : 96} hasVerifiedBadge={isSuperTutor(teacher.superTutorTo)} hasOutline />
                     </div>
                     <Space size={10} direction="vertical" />
                     <div className="flex flex-row gap-2 items-center">
                         <Text textLevel="h4" size="text-md" weight="medium" colorType="primary">{teacher.name} {teacher.surname}</Text>
-                        {teacher.isSuperTeacher && (
+                        {isSuperTutor(teacher.superTutorTo) && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />
                                 <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>

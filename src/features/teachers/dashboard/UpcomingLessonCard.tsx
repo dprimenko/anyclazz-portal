@@ -7,6 +7,7 @@ import { DateTime } from '@/features/shared/utils/dateConfig';
 import type { BookingWithTeacher } from '@/features/bookings/domain/types';
 import { useTranslations } from '@/i18n';
 import type { AuthUser } from '@/features/auth/domain/types';
+import { isSuperTutor } from '@/features/teachers/utils/superTutorHelpers';
 
 interface UpcomingLessonCardProps {
     lesson: BookingWithTeacher;
@@ -37,7 +38,7 @@ export function UpcomingLessonCard({ lesson, user, onCardClick }: UpcomingLesson
                         src={person.avatar} 
                         size={48} 
                         alt={`${person.name} ${person.surname}`}
-                        hasVerifiedBadge={user?.role === 'student' && 'isSuperTeacher' in person ? person.isSuperTeacher : false}
+                        hasVerifiedBadge={user?.role === 'student' && 'superTutorTo' in person ? isSuperTutor(person.superTutorTo) : false}
                     />
                     <div className="flex flex-col">
                         <Text size="text-sm" weight="semibold" colorType="primary">

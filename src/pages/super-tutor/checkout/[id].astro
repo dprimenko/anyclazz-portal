@@ -1,0 +1,62 @@
+---
+import Main from '@/layout/Main.astro';
+export const prerender = false;
+import { getLangFromUrl, useTranslations } from '@/i18n';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { getSession } from 'auth-astro/server';
+import { SubscriptionCheckoutPage } from '@/features/shared/components/stripe/SubscriptionCheckoutPage';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations({ lang });
+
+const { id } = Astro.params;
+
+// Validar que el id sea un intervalo válido
+if (!id || !['week', 'month', 'year'].includes(id)) {
+    return Astro.redirect('/teachers');
+}
+
+const interval = id as 'week' | 'month' | 'year';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+    return Astro.redirect('/login');
+}
+
+---
+
+<Main>
+	<div class="flex flex-col p-6 overflow-y-auto h-full">
+		<Text size="display-xs" colorType="primary" weight="semibold">{t('subscription.checkout')}</Text>
+		<Divider margin={16} />
+		
+		<div id="checkout-container" data-interval={interval} data-access-token={accessToken} data-lang={lang}></div>
+		
+		<script>
+			import { SubscriptionCheckoutPage } from '@/features/shared/components/stripe/SubscriptionCheckoutPage';
+			import { createRoot } from 'react-dom/client';
+			import { createElement } from 'react';
+
+			const container = document.getElementById('checkout-container');
+			if (container) {
+				const interval = container.dataset.interval as 'week' | 'month' | 'year';
+				const accessToken = container.dataset.accessToken || '';
+				const lang = container.dataset.lang as 'en' | 'es';
+
+				console.log('Initializing checkout with:', { interval, accessToken: accessToken.substring(0, 20), lang });
+
+				const root = createRoot(container);
+				root.render(
+					createElement(SubscriptionCheckoutPage, {
+						interval,
+						accessToken,
+						lang
+					})
+				);
+			}
+		</script>
+	</div>
+</Main>

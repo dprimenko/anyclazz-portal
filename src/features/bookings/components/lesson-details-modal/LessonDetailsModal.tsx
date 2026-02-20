@@ -28,13 +28,8 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
     }, []);
 
     return (
-        <Modal onClose={onClose} width={480}>
+        <Modal onClose={onClose} width={480} withCloseIcon>
             <div className={styles.modal}>
-                {/* Close Button */}
-                <button onClick={onClose} className={styles.closeButton}>
-                    <Icon icon="close" iconWidth={24} iconHeight={24} iconColor="#A4A7AE" />
-                </button>
-
                 {/* Date Header */}
                 <div className={styles.dateHeader}>
                     <Text size="text-xs" colorType="tertiary" weight="semibold" uppercase>

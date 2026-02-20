@@ -205,8 +205,9 @@ export function PaymentForm({ bookingId, amount, currency, accessToken, onSucces
             <Button
                 type="submit"
                 colorType="primary"
+                size='lg'
                 label={`Confirm payment • ${formattedAmount}`}
-                className="w-full mt-2"
+                fullWidth
                 disabled={isProcessing}
             />
 

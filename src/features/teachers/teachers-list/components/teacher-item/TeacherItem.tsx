@@ -16,6 +16,7 @@ import { useIsMobile } from "@/ui-library/hooks/useIsMobile.ts";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar.tsx";
 import { ClassTypes } from "../../../components/class-types/ClassTypes.tsx";
 import { useState } from "react";
+import { isSuperTutor } from "../../../utils/superTutorHelpers";
 
 export interface TeacherProps {
     teacher: Teacher;
@@ -57,7 +58,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                             {getInitials(teacher.name, teacher.surname)}
                         </div>
                     )}
-                    {teacher.isSuperTeacher && (
+                    {isSuperTutor(teacher.superTutorTo) && (
                         <div className={styles["teacher-item__super-tutor-badge"]}>
                             <Icon icon="verified" iconWidth={32} iconHeight={32} />
                         </div>
@@ -68,7 +69,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                 <Avatar
                     src={teacher.avatar}
                     alt={`${teacher.name} ${teacher.surname}`}
-                    hasVerifiedBadge={teacher.isSuperTeacher}
+                    hasVerifiedBadge={isSuperTutor(teacher.superTutorTo)}
                     size={64}
                 />
             )}
@@ -78,7 +79,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                         <a href={`/teacher/${teacher.id}`} className="no-underline">
                             <Text textLevel="h3" size="text-lg" weight="semibold" colorType="primary" underline>{teacher.name} {teacher.surname}</Text>
                         </a>
-                        {teacher.isSuperTeacher && (
+                        {isSuperTutor(teacher.superTutorTo) && (
                             <Chip colorType="primary" rounded>
                                 <Icon icon="verified" iconWidth={16} iconHeight={16} />
                                 <Text size="inherit" textLevel="span" weight="medium" colorType="accent">{t('teachers.super-tutor')}</Text>
