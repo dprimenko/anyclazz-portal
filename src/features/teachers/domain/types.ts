@@ -35,6 +35,7 @@ export interface DurationPrice {
 export interface TeacherClassType {
     type: ClassType;
     durations?: DurationPrice[];
+    price?: Price; // ✨ Precio directo del classType (usado en bookings)
 }
 
 export interface TeacherAddress {

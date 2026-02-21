@@ -129,6 +129,10 @@ function CheckoutForm({
         label={loading ? t('subscription.processing') : `${t('subscription.confirm_payment')} • ${formatPrice(plan.amount, plan.currency, lang)}`}
         fullWidth
       />
+      
+      <Text size="text-xs" colorType="tertiary" className="text-center leading-relaxed">
+        {t('subscription.refund_policy')}
+      </Text>
     </form>
   );
 }
@@ -153,9 +157,10 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
       const urlParams = new URLSearchParams(window.location.search);
       const setupIntentIdFromUrl = urlParams.get('setup_intent');
       const redirectStatus = urlParams.get('redirect_status');
+      const subscriptionPending = urlParams.get('subscription');
 
       // Si viene de PayPal con un SetupIntent exitoso
-      if (setupIntentIdFromUrl && redirectStatus === 'succeeded') {
+      if (setupIntentIdFromUrl && redirectStatus === 'succeeded' && subscriptionPending === 'pending') {
         setProcessingPayPal(true);
         setLoading(true);
 
@@ -180,6 +185,7 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
             const newUrl = new URL(window.location.href);
             newUrl.searchParams.delete('setup_intent');
             newUrl.searchParams.delete('setup_intent_client_secret');
+            newUrl.searchParams.delete('subscription');
             newUrl.searchParams.delete('redirect_status');
             window.history.replaceState({}, '', newUrl.toString());
 
@@ -198,6 +204,7 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('setup_intent');
           newUrl.searchParams.delete('setup_intent_client_secret');
+          newUrl.searchParams.delete('subscription');
           newUrl.searchParams.delete('redirect_status');
           window.history.replaceState({}, '', newUrl.toString());
         } finally {

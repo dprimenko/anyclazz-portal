@@ -37,6 +37,12 @@ const booking = await teacherRepository.getBookingById({
     bookingId: id 
 });
 
+// Verificar que el booking tiene el payment data necesario
+if (!booking.payment?.clientSecret) {
+    console.error('Booking does not have payment data:', booking);
+    return Astro.redirect('/teachers');
+}
+
 const dateFormatted = (datetime: string) => {
 	return DateTime.fromISO(datetime).toLocaleString(DateTime.DATE_FULL);
 };
@@ -134,12 +140,12 @@ const getProficiencyLevelName = (code: string) => {
 					<div class="flex flex-col gap-1.5 w-full">
 						<div class="flex flex-row justify-between">
 							<Text>{t(`classtype.${booking.classTypeId}`)}</Text>
-							<Text colorType="primary">{t(`common.${booking.classType.price?.currency.toLowerCase()}_price`, { amount: booking.classType.price?.amount.toFixed(2) })}</Text>
+							<Text colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: booking.payment.amount.toFixed(2) })}</Text>
 						</div>
 						<Divider />
 						<div class="flex flex-row justify-between">
 								<Text>{t('common.total')}</Text>
-								<Text weight="medium" size="text-lg" colorType="primary">{t(`common.${booking.classType.price?.currency.toLowerCase()}_price`, { amount: booking.classType.price?.amount.toFixed(2) })}</Text>
+								<Text weight="medium" size="text-lg" colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: booking.payment.amount.toFixed(2) })}</Text>
 						</div>
 					</div>
 				</div>
@@ -148,10 +154,9 @@ const getProficiencyLevelName = (code: string) => {
 				<div class="flex flex-col w-full card rounded-xl p-5">
 					<Text weight="medium" colorType="primary" className="mb-4">{t('common.payment_method')}</Text>
 					<BookingCheckoutWrapper 
-						bookingId={id}
-						amount={booking.classType.price?.amount || 0}
-						currency={booking.classType.price?.currency || 'EUR'}
-						token={accessToken}
+						clientSecret={booking.payment.clientSecret}
+						amount={booking.payment.amount}
+						currency={booking.payment.currency}
 						lang={lang}
 						client:load
 					/>

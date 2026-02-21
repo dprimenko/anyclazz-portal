@@ -21,6 +21,13 @@ export interface BookingWithTeacher extends Booking {
     student?: Student;
     classType: TeacherClassType;
     status: 'online' | 'on-site';
+    payment?: {
+        clientSecret: string;
+        amount: number;
+        currency: string;
+        paymentIntentId: string;
+        status?: string;
+    };
 }
 
 export interface CreateBookingParams extends CommonParams {

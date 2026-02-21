@@ -7,14 +7,13 @@ import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
 
 interface BookingCheckoutWrapperProps {
-  bookingId: string;
+  clientSecret: string; // ✨ Viene del backend al crear el booking
   amount: number;
   currency: string;
-  token: string;
   lang?: 'en' | 'es';
 }
 
-export function BookingCheckoutWrapper({ bookingId, amount, currency, token, lang = 'en' }: BookingCheckoutWrapperProps) {
+export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en' }: BookingCheckoutWrapperProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
@@ -35,10 +34,9 @@ export function BookingCheckoutWrapper({ bookingId, amount, currency, token, lan
   return (
     <>
       <BookingCheckout
-        bookingId={bookingId}
+        clientSecret={clientSecret}
         amount={amount}
         currency={currency}
-        token={token}
         onSuccess={handleSuccess}
         onError={handleError}
         lang={lang}
