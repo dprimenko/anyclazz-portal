@@ -67,7 +67,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                     teacher.id,
                     selectedAvailability,
                     accessToken,
-                    'Europe/Madrid'
+                    'America/New_York'
                 );
             }
             

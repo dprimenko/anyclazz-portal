@@ -1,10 +1,47 @@
 ---
 export const prerender = false;
+import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import Main from '../../layout/Main.astro';
+import { useTranslations, getLangFromUrl } from '@/i18n';
+import { getSession } from 'auth-astro/server';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { WeeklyAgenda } from '@/features/bookings/components/WeeklyAgenda';
+import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { DateTime } from 'luxon';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+
+const repository = new AnyclazzMyBookingsRepository();
+const bookings = await repository.getBookings({token: accessToken, sort: 'desc', from: DateTime.now().startOf('week').toISO(), to: DateTime.now().endOf('week').toISO(), timeZone: 'America/New_York', page: 1, size: 100});
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations({ lang });
 ---
 
-<Main>
-	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-		My agenda
+<Main title="My Agenda">
+	<div class="px-4 py-2 sm:p-8">
+		<Breadcrumb
+			items={[
+				{ label: t('menu.dashboard'), href: '/dashboard' },
+				{ label: t('menu.dashboard.my-agenda'), href: '/me/my-agenda' },
+			]}
+		/>
+		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.dashboard.my-agenda')}</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
+		
+		<WeeklyAgenda bookings={bookings} user={user} token={accessToken} client:load />
 	</div>
 </Main>

@@ -88,7 +88,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
     })), [selectedClass, t]);
 
     const availableTimes = useMemo(() => availableSlots.map(({from, timeZone}) => {
-        const timeInTimezone = DateTime.fromISO(from, { zone: timeZone || 'Europe/Madrid' });
+        const timeInTimezone = DateTime.fromISO(from, { zone: timeZone || 'America/New_York' });
         const formattedTime = timeInTimezone.toFormat('HH:mm');
         const offsetMinutes = timeInTimezone.offset;
         const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);

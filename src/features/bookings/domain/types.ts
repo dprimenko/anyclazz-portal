@@ -7,11 +7,11 @@ export interface Booking {
     teacherId: string;
     studentId: string;
     classTypeId: string;
-    startAt: string;
-    endAt: string;
+    startAt: string;      // ISO 8601 UTC
+    endAt: string;        // ISO 8601 UTC
+    timeZone: string;     // Timezone del profesor (desde backend)
     meetingUrl?: string;
-    status?: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-    paymentStatus?: 'pending' | 'completed' | 'failed';
+    status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
     createdAt?: string;
     updatedAt?: string;
 }
@@ -20,7 +20,6 @@ export interface BookingWithTeacher extends Booking {
     teacher?: Teacher;
     student?: Student;
     classType: TeacherClassType;
-    status: 'online' | 'on-site';
     payment?: {
         clientSecret: string;
         amount: number;
@@ -45,8 +44,24 @@ export interface GetTeacherAvailabilityParams extends CommonParams {
     duration: number;
 }
 
-export interface GetUpcomingBookingsParams extends CommonParams {
-    
+export interface GetBookingsParams extends CommonParams {
+    filter?: 'last' | 'upcoming';
+    sort: 'desc' | 'asc';
+    page?: number;
+    size?: number;
+    from?: string;
+    to?: string;
+    timeZone?: string;
+}
+
+export interface GetBookingsResponse {
+    bookings: BookingWithTeacher[];
+    meta: {
+        currentPage: number;
+        lastPage: number;
+        size: number;
+        total: number;
+    };
 }
 
 export interface GetBookingByIdParams extends CommonParams {
@@ -62,9 +77,20 @@ export interface PayBookingParams extends CommonParams {
     saveCard: boolean;
 }
 
+export interface CancelBookingParams extends CommonParams {
+    bookingId: string;
+}
+
+export interface CancelBookingResponse {
+    success: boolean;
+    refunded: boolean;
+    refundAmount?: number;
+    message: string;
+}
+
 export interface BookingsRepository {
-    getUpcomingBookings(params: GetUpcomingBookingsParams): Promise<BookingWithTeacher[]>;
+    getBookings(params: GetBookingsParams): Promise<GetBookingsResponse>;
     getTeacherAvailability(params: GetTeacherAvailabilityParams): Promise<any>;
     getBookingById(params: GetBookingByIdParams): Promise<BookingWithTeacher>;
-    payBooking(params: PayBookingParams): Promise<any>;
+    cancelBooking(params: CancelBookingParams): Promise<CancelBookingResponse>;
 }

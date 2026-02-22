@@ -94,7 +94,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                     duration,
                     price: {
                         amount: priceAmount,
-                        currency: 'EUR'
+                        currency: 'USD'
                     }
                 };
                 

@@ -71,18 +71,3 @@ import { BookingCheckoutWrapper } from '@/features/bookings/components/booking-c
 ✅ Totalmente i18n  
 ✅ Manejo de errores robusto  
 ✅ Modal de éxito integrado  
-
-## Diferencias con el flujo anterior
-
-**Antes (PaymentForm - INSEGURO):**
-- Capturaba datos de tarjeta directamente en el frontend
-- Enviaba información sensible al backend
-- No soportaba PayPal
-- PCI compliance comprometida
-
-**Ahora (BookingCheckout - SEGURO):**
-- Usa Stripe SetupIntent + PaymentElement
-- No maneja datos sensibles en el código
-- Soporta múltiples métodos de pago
-- Cumple con PCI DSS
-- Misma UX que suscripciones

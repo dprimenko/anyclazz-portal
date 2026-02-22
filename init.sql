@@ -404,7 +404,7 @@ CREATE TABLE anyclazz.teacher_class_type_prices (
     teacher_class_type_id INT NOT NULL REFERENCES anyclazz.teacher_class_types(id) ON DELETE CASCADE,
     duration_minutes INT NOT NULL, -- 30, 60, etc.
     price NUMERIC(10,2) NULL,
-    currency_code VARCHAR(3) NULL DEFAULT 'EUR',
+    currency_code VARCHAR(3) NULL DEFAULT 'USD',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (teacher_class_type_id, duration_minutes)
@@ -421,20 +421,20 @@ INSERT INTO anyclazz.teacher_class_types (teacher_id, class_type_id) VALUES
 -- Precios por duración
 INSERT INTO anyclazz.teacher_class_type_prices (teacher_class_type_id, duration_minutes, price, currency_code) VALUES
     -- teacher 3, online_single
-    (1, 30, 15.00, 'EUR'),
-    (1, 60, 25.00, 'EUR'),
+    (1, 30, 15.00, 'USD'),
+    (1, 60, 25.00, 'USD'),
     -- teacher 4, online_single
-    (2, 30, 12.00, 'EUR'),
-    (2, 60, 20.00, 'EUR'),
+    (2, 30, 12.00, 'USD'),
+    (2, 60, 20.00, 'USD'),
     -- teacher 4, online_group
-    (3, 30, 10.00, 'EUR'),
-    (3, 60, 15.00, 'EUR'),
+    (3, 30, 10.00, 'USD'),
+    (3, 60, 15.00, 'USD'),
     -- teacher 4, onsite_single
-    (4, 30, 20.00, 'EUR'),
-    (4, 60, 35.00, 'EUR'),
+    (4, 30, 20.00, 'USD'),
+    (4, 60, 35.00, 'USD'),
     -- teacher 4, onsite_group
-    (5, 30, 20.00, 'EUR'),
-    (5, 60, 25.00, 'EUR');
+    (5, 30, 20.00, 'USD'),
+    (5, 60, 25.00, 'USD');
 -- ============================================================
 -- FIN reemplazo teacher_pricing
 -- ============================================================
@@ -782,7 +782,7 @@ SELECT
     tct.id,
     duration,
     price,
-    'EUR',
+    'USD',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
 FROM (

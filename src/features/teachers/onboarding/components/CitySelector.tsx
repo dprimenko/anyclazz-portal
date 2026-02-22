@@ -27,7 +27,13 @@ export function CitySelector({
     showCountryInLabel = false,
 }: CitySelectorProps) {
     const cityItems: ComboboxItem[] = useMemo(() => {
-        return cities.map(city => {
+        // Priorizar ciudades de Estados Unidos (US) al inicio de la lista
+        // La primera versión de la app está diseñada para EEUU
+        const usCities = cities.filter(city => city.countryISO2.toLowerCase() === 'us');
+        const otherCities = cities.filter(city => city.countryISO2.toLowerCase() !== 'us');
+        const sortedCities = [...usCities, ...otherCities];
+        
+        return sortedCities.map(city => {
             const cityName = city.name[lang];
             
             return {

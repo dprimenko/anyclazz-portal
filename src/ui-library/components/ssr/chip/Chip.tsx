@@ -26,7 +26,7 @@ export const Chip = ({
 	);
 
 	return (
-		<div className={classes} style={{color: textColor, backgroundColor: bgColor, outline: `1px solid ${borderColor} !important`}} {...props}>
+		<div className={classes} style={{color: textColor, backgroundColor: bgColor, border: `1px solid ${borderColor} !important`}} {...props}>
 			{children}
 		</div>
 	);

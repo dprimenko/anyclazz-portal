@@ -67,6 +67,21 @@ export function TeacherDetail({ teacher }: TeacherDetailProps) {
                         </div>
                     )}
 
+                    {/* Video Presentation Section */}
+                    {teacher.videoPresentation && teacher.videoPresentationStatus === 'ready' && (
+                        <div className="mb-8">
+                            <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+                                <video 
+                                    controls 
+                                    className="w-full h-full"
+                                    src={teacher.videoPresentation}
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Academic Background Section */}
                     {teacher.academicBackground && (
                         <div className="mb-8">

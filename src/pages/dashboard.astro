@@ -1,4 +1,5 @@
 ---
+
 import Main from '../layout/Main.astro';
 import { useTranslations, getLangFromUrl } from '@/i18n';
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
@@ -7,6 +8,10 @@ import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { getSession } from 'auth-astro/server';
 import { Dashboard as TeacherDashboard } from '@/features/teachers/dashboard/Dashboard';
+import { TeacherReviewNotification } from '@/features/teachers/components/teacher-review-notification/TeacherReviewNotification';
+import { DateTime } from 'luxon';
+import { toTimezone } from '@/features/shared/utils/dateConfig';
+
 
 const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
@@ -19,13 +24,13 @@ const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
 
 const repository = new AnyclazzMyBookingsRepository();
-const upcomingBookings = await repository.getUpcomingBookings({token: accessToken});
-const lastBookings = await repository.getLastLessons({token: accessToken});
-
-export const prerender = false;
+const upcomingBookings = await repository.getBookings({token: accessToken, filter: 'upcoming', sort: 'desc', page: 1, size: 3});
+const lastBookings = await repository.getBookings({token: accessToken, filter: 'last', sort: 'desc', page: 1, size: 3});
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });
+
+const showReviewNotification = user?.role === 'teacher' && (user.teacherStatus === 'pending' || toTimezone(user.teacherStatusUpdate, user.timezone) <= toTimezone(DateTime.now().toISO(), user.timezone).plus({ days: 3 }));
 
 // Mock clazzmate data
 const clazzmate = {
@@ -34,13 +39,14 @@ const clazzmate = {
     creditsEarned: 20.00
 };
 
-const upcomingLessons = upcomingBookings.slice(0, 3);
-const lastLessons = lastBookings.slice(0, 3);
-
 ---
 
 <Main title="Dashboard">
 	<div class="px-4 py-2 sm:p-8">
+		{showReviewNotification && (
+			<TeacherReviewNotification reviewStatus={user.teacherStatus} client:load/>
+			<Space size={32} direction="vertical" />
+		)}
 		<Breadcrumb
 			items={[
 				{ label: t('menu.dashboard'), href: '/dashboard' },
@@ -48,25 +54,13 @@ const lastLessons = lastBookings.slice(0, 3);
 		/>
 		<Space size={16} direction="vertical" />
 
-		<TeacherDashboard lang={lang} upcomingLessons={upcomingLessons} lastLessons={lastLessons} user={user} client:load />
-
-		<!-- {selectedLesson && (
-			<LessonDetailsModal
-				lesson={selectedLesson}
-				onClose={closeLessonDetails}
-				onCancel={() => {
-					console.log('Cancel lesson');
-					closeLessonDetails();
-				}}
-				onSendMessage={() => {
-					console.log('Send message');
-					closeLessonDetails();
-				}}
-				onJoin={() => {
-					console.log('Join lesson');
-					closeLessonDetails();
-				}}
-			/>
-		)} -->
+		<TeacherDashboard 
+			lang={lang} 
+			upcomingLessons={upcomingBookings.bookings} 
+			lastLessons={lastBookings.bookings} 
+			user={user}
+			token={accessToken}
+			client:load 
+		/>
 	</div>
 </Main>

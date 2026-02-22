@@ -77,7 +77,7 @@ export function Modal({ children, onClose, persistent = false, width, height, fi
 					{withCloseIcon && onClose && (
 						<button 
 							onClick={onClose} 
-							className="absolute top-4 right-4 p-2 bg-transparent border-none cursor-pointer rounded-md transition-all duration-200 flex items-center justify-center hover:bg-gray-100"
+							className="absolute top-4 right-4 p-2 bg-transparent border-none cursor-pointer rounded-md transition-all duration-200 flex items-center justify-center hover:bg-gray-100 z-1"
 						>
 							<Icon icon="close" iconWidth={24} iconHeight={24} iconColor="#A4A7AE" />
 						</button>

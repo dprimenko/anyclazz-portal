@@ -211,7 +211,7 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
                         )}
                     />
                 </HorizontalInputContainer>
-                <Divider margin={20} />
+                {/* <Divider margin={20} />
                 <HorizontalInputContainer 
                     label={t('teacher-profile.timezone')} 
                     required
@@ -233,7 +233,7 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
                             />
                         )}
                     />
-                </HorizontalInputContainer>
+                </HorizontalInputContainer> */}
                 <div className="flex justify-end mt-4 mb-4">
                     <Button 
                         type="submit"

@@ -2,42 +2,35 @@ import { useTranslations } from '@/i18n';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Card } from '@/ui-library/components/ssr/card/Card';
-import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
-import { DateTime } from '@/features/shared/utils/dateConfig';
-import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import type { BookingWithTeacher } from '@/features/bookings/domain/types';
 import { EmptyState } from '@/ui-library/components/ssr/empty-state/EmptyState';
 import type { AuthUser } from '@/features/auth/domain/types';
-import { LessonDetailsModal } from '@/features/bookings/components/lesson-details-modal/LessonDetailsModal';
-import { useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { UpcomingLessonCard } from './UpcomingLessonCard';
-import { LastLessonCard } from './LastLessonCard';
+import { LessonsTable } from '@/features/bookings/components/lessons-table/LessonsTable';
+import { useState, useMemo } from 'react';
+import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 
 interface DashboardProps {
     lang: string;
     upcomingLessons: BookingWithTeacher[];
     lastLessons: BookingWithTeacher[];
     user: AuthUser | null;
+    token?: string;
 }
 
-export function Dashboard({ lang, upcomingLessons, lastLessons, user }: DashboardProps) {
+export function Dashboard({ upcomingLessons, lastLessons, user, token }: DashboardProps) {
     const t = useTranslations();
+    const [refreshKey, setRefreshKey] = useState(0);
+    
+    // Crear repositorio en el cliente
+    const repository = useMemo(() => new AnyclazzMyBookingsRepository(), []);
 
-    const isOnline = (lessonTypeId: string) => {
-        return lessonTypeId.includes('online');
-    }
-
-	const [selectedLesson, setSelectedLesson] = useState<BookingWithTeacher | null>(null);
-	
-	const openLessonDetails = (lesson: BookingWithTeacher) => {
-		setSelectedLesson(lesson);
-	};
-
-	const closeLessonDetails = () => {
-		setSelectedLesson(null);
-	};
+    const handleLessonCancelled = () => {
+        // Trigger a refresh by changing the key
+        setRefreshKey(prev => prev + 1);
+        // In a real app, you'd want to refresh the data from the server
+        window.location.reload();
+    };
 
     return (
         <>
@@ -53,20 +46,27 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
                 </div>
 				{user?.role === 'student' && (
 					<div className="flex gap-[0.75rem] w-full md:w-auto md:flex-shrink-0">
-						<Button 
-							icon="calendar-plus" 
-							label={t('dashboard.schedule_lesson')} 
-							colorType="secondary"
-							className="flex-1 md:flex-none"
-							onClick={() => window.location.href = '/teachers'}
-						/>
-						<Button 
-							icon="search" 
-							label={t('dashboard.find_teacher')} 
-							colorType="primary"
-							className="flex-1 md:flex-none"
-							onClick={() => window.location.href = '/teachers'}
-						/>
+						<a href="/teachers">
+							<Button 
+								icon="calendar-plus" 
+								label={t('dashboard.schedule_lesson')} 
+								colorType="secondary"
+								className="flex-1 md:flex-none"
+								onClick={() => window.location.href = '/teachers'}
+							/>
+						</a>
+
+						<a href="/teachers">
+							<Button 
+								icon="search" 
+								iconColor='#FDD7A5'
+								
+								label={t('dashboard.find_teacher')} 
+								colorType="primary"
+								className="flex-1 md:flex-none"
+								onClick={() => window.location.href = '/teachers'}
+							/>
+						</a>
 					</div>
 				)}
             </div>
@@ -86,108 +86,27 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 						</a>
 					</div>
 					
-					{upcomingLessons.length > 0 && (
-						<>
-							{/* Mobile Swiper - solo visible en móvil */}
-							<div className="md:hidden -mx-6 px-6">
-								<Swiper
-									slidesPerView="auto"
-									spaceBetween={12}
-									className="!overflow-visible"
-								>
-									{upcomingLessons.map((lesson) => (
-										<SwiperSlide key={lesson.id} className="!w-auto">
-											<UpcomingLessonCard 
-												lesson={lesson} 
-												user={user} 
-												onCardClick={() => openLessonDetails(lesson)}
-											/>
-										</SwiperSlide>
-									))}
-								</Swiper>
-							</div>
-
-							{/* Desktop Table - solo visible en desktop */}
-							<div className="hidden md:block w-full">
-								<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-3 border-b border-neutral-200">
-									<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
-									<Text size="text-xs" colorType="tertiary">{t('common.date')}</Text>
-									<Text size="text-xs" colorType="tertiary">{t('common.lesson_type')}</Text>
-									<div></div>
-								</div>
-								{upcomingLessons.map((lesson) => {
-									const startTime = DateTime.fromISO(lesson.startAt);
-									const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
-									const displayRole = user?.role === 'teacher' ? t('common.student') : t('common.teacher');
-									return (
-										<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50 cursor-pointer" onClick={() => openLessonDetails(lesson)}>
-											{displayPerson ? (
-												<div className="flex items-center">
-													<div className="flex items-center gap-3">
-														<Avatar src={displayPerson.avatar} size={40} alt={`${displayPerson.name} ${displayPerson.surname}`} />
-														<div>
-															<Text size="text-sm" weight="semibold" colorType="primary">{displayPerson.name}{' '}{displayPerson.surname}</Text>
-															<Text size="text-xs" colorType="tertiary">{displayRole}</Text>
-														</div>
-													</div>
-												</div>
-											) : (
-												<div className="flex items-center">
-													<Text size="text-sm" colorType="tertiary">{t('common.loading')}...</Text>
-												</div>
-											)}
-											<div className="flex items-center">
-												<Text size="text-sm" colorType="secondary">{startTime.toFormat('ccc HH:mm')}</Text>
-											</div>
-											<div className="flex items-center">
-												<Chip textColor={isOnline(lesson.classTypeId) ? '#F4A43A' : '#175CD3'} bgColor={isOnline(lesson.classTypeId) ? '#FFF9F2' : '#EFF8FF'} borderColor={isOnline(lesson.classTypeId) ? '#FFEACF' : '#B2DDFF'}>
-													<span className="text-xs font-medium">
-														{isOnline(lesson.classTypeId) ? t('common.online') : t('common.onsite')}
-													</span>
-												</Chip>
-											</div>
-											<div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
-												<div className="flex gap-2 justify-end">
-													
-													{user?.role === 'student' && lesson.paymentStatus !== 'completed' ? (
-														<a href={`/booking/checkout/${lesson.id}`}>
-															<Button 
-																label={t('common.pay')} 
-																colorType="secondary"
-															/>
-														</a>
-													) : lesson.meetingUrl ? (
-														<a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
-															<Button label={t('common.join')} colorType="primary" />
-														</a>
-													) : (
-														<Button label={t('common.join')} colorType="primary" disabled />
-													)}
-												</div>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						</>
-					)}
-
-					{upcomingLessons.length === 0 && user?.role === 'student' && (
-						<EmptyState
-							title={t('dashboard.no_upcoming_lessons')}
-							description={t('dashboard.no_upcoming_lessons_description')}
-							buttonLabel={t('dashboard.find_teacher')}
-							buttonIcon="search"
-							onClickAction={() => window.location.href = '/teachers'}
-							buttonColorType="primary"
-						/>
-					)}
-					{upcomingLessons.length === 0 && user?.role === 'teacher' && (
-						<EmptyState
-							title={t('dashboard.no_upcoming_lessons.teacher')}
-							description={t('dashboard.no_upcoming_lessons_description.teacher')}
-						/>
-					)}
+					<LessonsTable 
+						lessons={upcomingLessons} 
+						user={user}
+						token={token}
+						onLessonCancelled={handleLessonCancelled}
+						emptyState={user?.role === 'student' ? (
+							<EmptyState
+								title={t('dashboard.no_upcoming_lessons')}
+								description={t('dashboard.no_upcoming_lessons_description')}
+								buttonLabel={t('dashboard.find_teacher')}
+								buttonIcon="search"
+								onClickAction={() => window.location.href = '/teachers'}
+								buttonColorType="primary"
+							/>
+						) : (
+							<EmptyState
+								title={t('dashboard.no_upcoming_lessons.teacher')}
+								description={t('dashboard.no_upcoming_lessons_description.teacher')}
+							/>
+						)}
+					/>
 				</Card>
 
 				{/* Last Lessons */}
@@ -203,93 +122,26 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 						</a>
 					</div>
 					
-					{lastLessons.length > 0 && (
-						<>
-							{/* Mobile Swiper - solo visible en móvil */}
-							<div className="md:hidden -mx-6 px-6">
-								<Swiper
-									slidesPerView="auto"
-									spaceBetween={12}
-									className="!overflow-visible"
-								>
-									{lastLessons.map((lesson) => (
-										<SwiperSlide key={lesson.id} className="!w-auto">
-											<LastLessonCard 
-												lesson={lesson} 
-												user={user}
-											/>
-										</SwiperSlide>
-									))}
-								</Swiper>
-							</div>
-
-							{/* Desktop Table - solo visible en desktop */}
-							<div className="hidden md:block">
-								<div className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-3 border-b border-neutral-200">
-									<Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
-									<Text size="text-xs" colorType="tertiary">{t('common.date')}</Text>
-									<Text size="text-xs" colorType="tertiary">{t('common.lesson_type')}</Text>
-									<div></div>
-								</div>
-								{lastLessons.map((lesson) => {
-									const startTime = DateTime.fromISO(lesson.startAt);
-									const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
-									const displayRole = user?.role === 'teacher' ? t('common.student') : t('common.teacher');
-									return (
-										<div key={lesson.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 py-4 border-b border-neutral-100 last:border-b-0 items-center hover:bg-neutral-50">
-											<div className="flex items-center">
-												{displayPerson ? (
-													<div className="flex items-center">
-														<div className="flex items-center gap-3">
-															<Avatar src={displayPerson.avatar} size={40} />
-															<div>
-																<Text size="text-sm" weight="semibold" colorType="primary">{displayPerson.name}{' '}{displayPerson.surname}</Text>
-																<Text size="text-xs" colorType="tertiary">{displayRole}</Text>
-															</div>
-														</div>
-													</div>
-												) : (
-													<div className="flex items-center">
-														<Text size="text-sm" colorType="tertiary">{t('common.loading')}...</Text>
-													</div>
-												)}
-											</div>
-											<div className="flex items-center">
-												<Text size="text-sm" colorType="secondary">{startTime.toFormat('ccc HH:mm')}</Text>
-											</div>
-											<div className="flex items-center">
-												<Chip textColor={isOnline(lesson.classTypeId) ? '#F4A43A' : '#175CD3'} bgColor={isOnline(lesson.classTypeId) ? '#FFF9F2' : '#EFF8FF'} borderColor={isOnline(lesson.classTypeId) ? '#FFEACF' : '#B2DDFF'}>
-													<span className="text-xs font-medium">
-														{isOnline(lesson.classTypeId) ? t('common.online') : t('common.onsite')}
-													</span>
-												</Chip>
-											</div>
-											<div className="flex items-center">
-												<div className="flex gap-2 justify-end">
-													{/* <Button label={t('common.join')} colorType="primary" /> */}
-												</div>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						</>
-					)}
-					{lastLessons.length === 0 && user?.role === 'student' && (
-						<EmptyState
-							title={t('dashboard.no_past_lessons')}
-							description={t('dashboard.no_past_lessons_description')}
-							buttonLabel={t('dashboard.book_first_lesson')}
-							onClickAction={() => window.location.href = '/teachers'}
-							buttonColorType="primary"
-						/>
-					)}
-					{lastLessons.length === 0 && user?.role === 'teacher' && (
-						<EmptyState
-							title={t('dashboard.no_past_lessons.teacher')}
-							description={t('dashboard.no_past_lessons_description.teacher')}
-						/>
-					)}
+					<LessonsTable 
+						lessons={lastLessons} 
+						user={user}
+						token={token}
+						onLessonCancelled={handleLessonCancelled}
+						emptyState={user?.role === 'student' ? (
+							<EmptyState
+								title={t('dashboard.no_past_lessons')}
+								description={t('dashboard.no_past_lessons_description')}
+								buttonLabel={t('dashboard.book_first_lesson')}
+								onClickAction={() => window.location.href = '/teachers'}
+								buttonColorType="primary"
+							/>
+						) : (
+							<EmptyState
+								title={t('dashboard.no_past_lessons.teacher')}
+								description={t('dashboard.no_past_lessons_description.teacher')}
+							/>
+						)}
+					/>
 				</Card>
 			</div>
 
@@ -365,24 +217,6 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user }: Dashboar
 				</section>
 			</div> */}
 		</div>
-			{selectedLesson && (
-				<LessonDetailsModal
-					lesson={selectedLesson}
-					onClose={closeLessonDetails}
-					onCancel={() => {
-						console.log('Cancel lesson');
-						closeLessonDetails();
-					}}
-					onSendMessage={() => {
-						console.log('Send message');
-						closeLessonDetails();
-					}}
-					onJoin={() => {
-						console.log('Join lesson');
-						closeLessonDetails();
-					}}
-				/>
-			)}
         </>
     );
 }

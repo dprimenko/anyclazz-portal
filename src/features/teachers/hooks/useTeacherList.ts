@@ -31,8 +31,8 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
     const [errorFetchingTeachers, setErrorFetchingTeachers] = useState<string | undefined>(undefined);
 
     const [filters, setFilters] = useState<TeacherFilters>({
-        city: 'm', // Madrid por defecto
-        country: 'es', // España por defecto
+        city: 'ny', // New York por defecto
+        country: 'us', // Estados Unidos por defecto
     });
     const [page, setPage] = useState(1);
     const previousPage = usePrevious(page);

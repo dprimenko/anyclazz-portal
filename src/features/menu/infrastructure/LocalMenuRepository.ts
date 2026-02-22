@@ -81,11 +81,11 @@ export class LocalMenuRepository implements MenuRepository {
                         label: 'menu.dashboard.my-agenda',  
                         href: '/me/my-agenda',
                     },
-                    {
-                        id: 'dashboard.clazzmate',
-                        label: 'menu.dashboard.clazzmate',  
-                        href: '/me/clazzmate',
-                    },
+                    // {
+                    //     id: 'dashboard.clazzmate',
+                    //     label: 'menu.dashboard.clazzmate',  
+                    //     href: '/me/clazzmate',
+                    // },
                 ]
             },
             {

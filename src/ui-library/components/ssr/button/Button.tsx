@@ -49,11 +49,11 @@ export const Button = ({
 			case 'sm':
 				return 14;
 			case 'md':
-				return 14;
+				return 16;
 			case 'lg':
-				return 16;
+				return 20;
 			case 'xl':
-				return 16;
+				return 24;
 			default:
 				return 14;
 		}

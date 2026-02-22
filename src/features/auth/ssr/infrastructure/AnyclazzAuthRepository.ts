@@ -3,6 +3,7 @@ import type { AuthRepository, AuthUser, ProfileApiResponse } from "../../domain/
 import { FetchClient } from '@/features/shared/services/httpClient';
 import { getApiUrl } from '@/features/shared/services/environment';
 import { UserCache } from '../../infrastructure/userCache';
+import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export class AnyclazzAuthRepository implements AuthRepository {
     private readonly httpClient: FetchClient;
@@ -107,11 +108,16 @@ export class AnyclazzAuthRepository implements AuthRepository {
             name: `${profileData.user.firstName} ${profileData.user.lastName}`,
             firstName: profileData.user.firstName,
             lastName: profileData.user.lastName,
+            timezone: profileData.user.timezone || 'America/New_York',
             role,
             avatarUrl: profile?.avatar,
-            status: profileData.user.status,
+            teacherStatus: profile?.status,
+            teacherStatusUpdate: profile?.statusUpdatedAt,
+            isSuperTutor: isSuperTutor(profile.superTutorTo),
             createdAt: profileData.user.createdAt,
         };
+
+        console.log('Fetched user profile from API:', profileData);
 
         // Guardar en caché
         this.cache.save(user);

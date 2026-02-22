@@ -2,10 +2,10 @@ import { FetchClient } from '@/features/shared/services/httpClient';
 import type { DayAvailability, TimeRange } from '../availability_and_modalities/components/WeeklyAvailabilitySelector';
 import { getApiUrl } from '@/features/shared/services/environment';
 
-interface AvailabilitySlot {
-    startAt: string;
-    endAt: string;
-    timeZone: string;
+export interface AvailabilitySlot {
+    from: string;         // ISO 8601 UTC (nombre correcto del campo del backend)
+    to: string;           // ISO 8601 UTC (nombre correcto del campo del backend)
+    timeZone: string;     // Timezone del profesor
 }
 
 export class TeacherAvailabilityRepository {
@@ -21,7 +21,7 @@ export class TeacherAvailabilityRepository {
      */
     private transformWeeklyToDateSlots(
         weeklyAvailability: DayAvailability[],
-        timeZone: string = 'Europe/Madrid'
+        timeZone: string = 'America/New_York'
     ): AvailabilitySlot[] {
         const slots: AvailabilitySlot[] = [];
         const today = new Date();
@@ -63,8 +63,8 @@ export class TeacherAvailabilityRepository {
                         endDate.setHours(endHour, endMinute, 0, 0);
 
                         slots.push({
-                            startAt: startDate.toISOString(),
-                            endAt: endDate.toISOString(),
+                            from: startDate.toISOString(),
+                            to: endDate.toISOString(),
                             timeZone,
                         });
                     }
@@ -92,12 +92,12 @@ export class TeacherAvailabilityRepository {
 
         // Group slots by day of week and time range
         slots.forEach(slot => {
-            const date = new Date(slot.startAt);
+            const date = new Date(slot.from);
             // Adjust getDay() to make Monday = 0 instead of Sunday = 0
             const dayIndex = (date.getDay() + 6) % 7;
             const dayOfWeek = dayNames[dayIndex];
             const from = date.toTimeString().slice(0, 5); // HH:mm
-            const endDate = new Date(slot.endAt);
+            const endDate = new Date(slot.to);
             const to = endDate.toTimeString().slice(0, 5); // HH:mm
             
             const timeRangeKey = `${from}-${to}`;
@@ -158,7 +158,7 @@ export class TeacherAvailabilityRepository {
         teacherId: string,
         weeklyAvailability: DayAvailability[],
         token: string,
-        timeZone: string = 'Europe/Madrid'
+        timeZone: string = 'America/New_York'
     ): Promise<void> {
         const slots = this.transformWeeklyToDateSlots(weeklyAvailability, timeZone);
 

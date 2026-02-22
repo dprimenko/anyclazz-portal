@@ -47,6 +47,13 @@ const getProficiencyLevelName = (code: string) => {
     return level ? level.name[lang] : code;
 };
 
+// Verificar si el profesor tiene al menos una clase con precio configurado
+const hasConfiguredPrices = teacher.classTypes.some(classType => 
+    classType.durations && 
+    classType.durations.length > 0 && 
+    classType.durations.some(duration => duration.price.amount)
+);
+
 ---
 
 <Main>
@@ -203,7 +210,7 @@ const getProficiencyLevelName = (code: string) => {
             <!-- Right side en mobile: aparece aquí debajo -->
             <div class="block md:hidden">
                 <div class="flex flex-col md:flex-col-reverse gap-4">
-                    <ClassTypes classTypes={teacher.classTypes} client:load />
+                    {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} client:load />}
                     <div class="flex flex-row gap-3 w-full">
                         <Button colorType="secondary" size="lg" icon="heart-outline" />
                         <Button colorType="secondary" size="lg" icon="chat" />
@@ -230,7 +237,7 @@ const getProficiencyLevelName = (code: string) => {
                         <Button colorType="secondary" size="lg" icon="chat" />
                         <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
                     </div>
-                    <ClassTypes classTypes={teacher.classTypes} client:load />
+                    {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} client:load />}
                 </div>
             </div>
         </div>

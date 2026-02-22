@@ -2,7 +2,7 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import type { BookingWithTeacher } from "../../domain/types";
-import { DateTime } from "luxon";
+import { toTimezone } from "@/features/shared/utils/dateConfig";
 import classNames from "classnames";
 import styles from "./LessonCard.module.css";
 import { Button } from "@/ui-library/components/ssr/button/Button";
@@ -17,7 +17,8 @@ export interface LessonCardProps {
 }
 
 export function LessonCard({ booking, showActions = false, onChat, onDetails, onCancel }: LessonCardProps) {
-    const startDateTime = DateTime.fromISO(booking.startAt);
+    const timezone = booking.timeZone || 'America/New_York';
+    const startDateTime = toTimezone(booking.startAt, timezone);
     const dayOfWeek = startDateTime.toFormat('ccc');
     const time = startDateTime.toFormat('HH:mm');
     

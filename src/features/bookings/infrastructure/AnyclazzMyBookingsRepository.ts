@@ -1,5 +1,5 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
-import type { BookingsRepository, BookingWithTeacher, CreateBookingParams, GetBookingByIdParams, GetTeacherAvailabilityParams, PayBookingParams } from '../domain/types';
+import type { BookingsRepository, BookingWithTeacher, CancelBookingParams, CancelBookingResponse, CreateBookingParams, GetBookingByIdParams, GetBookingsParams, GetBookingsResponse, GetTeacherAvailabilityParams, PayBookingParams } from '../domain/types';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { ClassType } from '@/features/teachers/domain/types';
 
@@ -10,13 +10,34 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         this.httpClient = new FetchClient(getApiUrl());
     }
     
-    async getUpcomingBookings({token}: { token: string }): Promise<BookingWithTeacher[]> {
-        const params = {
-            filter: 'upcoming',
-            sort: 'asc'
+    async getBookings({token, filter, sort, page, size, from, to, timeZone}: GetBookingsParams): Promise<GetBookingsResponse> {
+        const params: Record<string, any> = {
+            sort
         };
 
-        console.log(token);
+        if (filter !== undefined) {
+            params.filter = filter;
+        }
+
+        if (from !== undefined) {
+            params.from = from;
+        }
+
+        if (to !== undefined) {
+            params.to = to;
+        }
+
+        if (page !== undefined) {
+            params.page = page;
+        }
+
+        if (size !== undefined) {
+            params.size = size;
+        }
+
+        if (timeZone !== undefined) {
+            params.timezone = timeZone;
+        }
 
         const apiResponse = await this.httpClient.get({
             url: '/me/bookings',
@@ -25,26 +46,11 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         });
 
         const data = await apiResponse.json();
-
-        console.log(data);
         
-        return data;
-    }
-
-    async getLastLessons({token}: { token: string }): Promise<BookingWithTeacher[]> {
-        const params = {
-            filter: 'last',
-            sort: 'desc'
+        return {
+            bookings: data.bookings,
+            meta: data.meta
         };
-
-        const apiResponse = await this.httpClient.get({
-            url: '/me/bookings',
-            token: token,
-            data: params,
-        });
-
-        const data = await apiResponse.json();
-        return data;
     }
     
     async getTeacherAvailability({teacherId, from, to, duration, token}: GetTeacherAvailabilityParams): Promise<any> {
@@ -90,7 +96,6 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
 
 
         const data = await apiResponse.json();
-        console.log('Fetched booking data:', data.teacher.subject);
 
         data['classType'] = {
             type: data['classType'].type as unknown as ClassType,
@@ -103,22 +108,13 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         return data;
     }
 
-    async payBooking({bookingId, cardName, cardNumber, expiry, cvv, saveCard, token}: PayBookingParams): Promise<any> {
-        const params = {
-            cardName,
-            cardNumber,
-            expiry,
-            cvv,
-            saveCard,
-        };
-
-        const apiResponse = await this.httpClient.post({
-            url: `/bookings/${bookingId}/pay`,
-            token: token,
-            data: params,
+    async cancelBooking({bookingId, token}: CancelBookingParams): Promise<CancelBookingResponse> {
+        const apiResponse = await this.httpClient.delete({
+            url: `/bookings/${bookingId}/cancel`,
+            token: token
         });
 
-        const response = await apiResponse.json();
-        return response;
+        const data = await apiResponse.json();
+        return data;
     }
 }

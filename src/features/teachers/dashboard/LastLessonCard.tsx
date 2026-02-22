@@ -2,7 +2,7 @@ import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
 import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
-import { DateTime } from '@/features/shared/utils/dateConfig';
+import { toTimezone } from '@/features/shared/utils/dateConfig';
 import type { BookingWithTeacher } from '@/features/bookings/domain/types';
 import { useTranslations } from '@/i18n';
 import type { AuthUser } from '@/features/auth/domain/types';
@@ -15,8 +15,9 @@ interface LastLessonCardProps {
 
 export function LastLessonCard({ lesson, user, onCardClick }: LastLessonCardProps) {
     const t = useTranslations();
-    const startTime = DateTime.fromISO(lesson.startAt);
-    const endTime = DateTime.fromISO(lesson.endAt);
+    const timezone = lesson.timeZone || 'America/New_York';
+    const startTime = toTimezone(lesson.startAt, timezone);
+    const endTime = toTimezone(lesson.endAt, timezone);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     
     const isOnline = lesson.classTypeId.includes('online');
@@ -68,7 +69,7 @@ export function LastLessonCard({ lesson, user, onCardClick }: LastLessonCardProp
 
                 <div className="flex items-center gap-2">
                     <Text size="text-sm" style={{ color: 'var(--color-neutral-500)' }}>Date:</Text>
-                    <Text size="text-sm" colorType="secondary">{startTime.toFormat('ccc h:mm a')}</Text>
+                    <Text size="text-sm" colorType="secondary">{startTime.toFormat('ccc dd h:mm a')}</Text>
                 </div>
 
                 <div className="flex items-center gap-2">

@@ -1,10 +1,52 @@
 ---
 export const prerender = false;
+import { getCurrentLang, useTranslations } from '@/i18n';
 import Main from '../../layout/Main.astro';
+import { Breadcrumb } from '@/ui-library/components/breadcrumb/Breadcrumb';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { PaginatedLessons } from '@/features/bookings/components/paginated-lessons/PaginatedLessons';
+import { getSession } from 'auth-astro/server';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+
+const lang = getCurrentLang();
+const t = useTranslations({ lang });
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+
+const repository = new AnyclazzMyBookingsRepository();
+const lastBookings = await repository.getBookings({token: accessToken, page: 1, size: 10, filter: 'last', sort: 'desc'});
 ---
 
-<Main>
-	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-		Last lessons
+<Main title="Last Lessons">
+	<div class="px-4 py-2 sm:p-8">
+		<Breadcrumb
+			items={[
+				{ label: t('menu.dashboard'), href: '/dashboard' },
+				{ label: t('menu.dashboard.last-lessons'), href: '/me/last-lessons' },
+			]}
+		/>
+		<Space size={16} direction="vertical" />
+		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.dashboard.last-lessons')}</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
+
+		<PaginatedLessons 
+			initialLessons={lastBookings} 
+			user={user} 
+			token={accessToken}
+			client:load 
+		/>
 	</div>
 </Main>

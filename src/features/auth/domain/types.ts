@@ -4,11 +4,13 @@ export interface AuthUser {
     id: string;
     email: string;
     name: string;
+    timezone: string;
     role: 'student' | 'teacher';
     avatarUrl?: string;
     firstName?: string;
     lastName?: string;
-    status?: string;
+    teacherStatus?: string;
+    teacherStatusUpdate?: string;
     createdAt?: string;
 }
 
@@ -18,7 +20,6 @@ export interface ProfileApiResponse {
         email: string;
         firstName: string;
         lastName: string;
-        status: string;
         createdAt: string;
         roles: string[];
     };
@@ -37,6 +38,8 @@ export interface ProfileApiResponse {
         name: string;
         surname: string;
         avatar: string;
+        status: string;
+        statusUpdate: string;
         createdAt: string;
     };
 }
