@@ -29,7 +29,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
     const t = useTranslations();
     
     // Usar el timezone del booking (que viene del backend)
-    const timezone = lesson.timeZone || 'America/New_York';
+    const timezone = lesson.timezone || 'America/New_York';
     const startTime = toTimezone(lesson.startAt, timezone);
     const endTime = toTimezone(lesson.endAt, timezone);
     const duration = endTime.diff(startTime, 'minutes').minutes;

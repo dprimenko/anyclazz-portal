@@ -66,8 +66,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                 await availabilityRepo.saveAvailability(
                     teacher.id,
                     selectedAvailability,
-                    accessToken,
-                    'America/New_York'
+                    accessToken
                 );
             }
             

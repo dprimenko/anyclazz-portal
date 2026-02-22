@@ -17,7 +17,7 @@ export interface LessonCardProps {
 }
 
 export function LessonCard({ booking, showActions = false, onChat, onDetails, onCancel }: LessonCardProps) {
-    const timezone = booking.timeZone || 'America/New_York';
+    const timezone = booking.timezone || 'America/New_York';
     const startDateTime = toTimezone(booking.startAt, timezone);
     const dayOfWeek = startDateTime.toFormat('ccc');
     const time = startDateTime.toFormat('HH:mm');

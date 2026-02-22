@@ -87,8 +87,8 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         ),
     })), [selectedClass, t]);
 
-    const availableTimes = useMemo(() => availableSlots.map(({from, timeZone}) => {
-        const timeInTimezone = DateTime.fromISO(from, { zone: timeZone || 'America/New_York' });
+    const availableTimes = useMemo(() => availableSlots.map(({from}) => {
+        const timeInTimezone = DateTime.fromISO(from);
         const formattedTime = timeInTimezone.toFormat('HH:mm');
         const offsetMinutes = timeInTimezone.offset;
         const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
@@ -127,11 +127,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             return;
         };
         
-        // Find the selected slot to get its timezone
-        const selectedSlot = availableSlots.find(slot => slot.from === selectedTime);
-        const slotTimeZone = selectedSlot?.timeZone || 'Europe/Madrid';
-        
-        const startAt = DateTime.fromISO(selectedTime!, { zone: slotTimeZone });
+        const startAt = DateTime.fromISO(selectedTime!);
         const endAt = startAt.plus({ minutes: selectedDuration });
         
         const bookingData: CreateBookingParams = {
@@ -139,8 +135,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             token: accessToken!,
             classTypeId: selectedClass.type,
             startAt: startAt.toISO()!,
-            endAt: endAt.toISO()!,
-            timeZone: slotTimeZone,
+            endAt: endAt.toISO()!
         };
         
         const booking = await createBooking(bookingData);
@@ -198,6 +193,22 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                                 return `${t(`common.language.${language.language}`)} (${levelName})`;
                             }).join(', ')}
                         </Text>
+                    </div>
+                    <Space size={16} direction="vertical"/>
+                    <div className="hidden md:flex md:w-full">
+                        {teacher.videoPresentation && teacher.videoPresentationStatus === 'ready' && (
+                            <div className="mb-8">
+                                <div className="w-full aspect-video rounded-lg overflow-hidden bg-black">
+                                    <video 
+                                        controls 
+                                        className="w-full h-full"
+                                        src={teacher.videoPresentation}
+                                    >
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div className="flex-1"></div>
                     {selectedClass && (

@@ -106,9 +106,26 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
     // Auto-select first available date when available dates change
     useEffect(() => {
         if (availableDates.length > 0) {
-            // Sort dates to get the earliest one
-            const sortedDates = [...availableDates].sort((a, b) => a.getTime() - b.getTime());
-            setSelectedDate(sortedDates[0]);
+            const today = DateTime.now().startOf('day');
+            
+            // Filter dates that are >= today and sort to get the earliest one
+            const futureDates = availableDates
+                .filter(date => DateTime.fromJSDate(date).startOf('day') >= today)
+                .sort((a, b) => a.getTime() - b.getTime());
+            
+            if (futureDates.length > 0) {
+                // Check if current selected date is still available
+                const currentSelectedStillAvailable = futureDates.some(date => {
+                    const dateStart = DateTime.fromJSDate(date).startOf('day');
+                    const selectedStart = DateTime.fromJSDate(selectedDate).startOf('day');
+                    return dateStart.equals(selectedStart);
+                });
+                
+                // Only change selected date if it's not available anymore
+                if (!currentSelectedStillAvailable) {
+                    setSelectedDate(futureDates[0]);
+                }
+            }
         }
     }, [availableDates]);
 

@@ -126,7 +126,7 @@ export function formatInTimezoneIntl(
 ): string {
   const date = new Date(isoDate);
   return date.toLocaleString(locale, {
-    timeZone: timezone,
+    timezone: timezone,
     ...options
   });
 }
@@ -136,19 +136,19 @@ export function formatInTimezoneIntl(
  * @returns Timezone del usuario (ej: "Europe/Madrid")
  */
 export function getUserTimezone(): string {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return Intl.DateTimeFormat().resolvedOptions().timezone;
 }
 
 /**
  * Helper para obtener el timezone de un booking, con fallbacks
- * @param booking - Objeto booking que puede tener timeZone
+ * @param booking - Objeto booking que puede tener timezone
  * @param teacherTimezone - Timezone del profesor como fallback
  * @returns Timezone a usar, o 'America/New_York' como último fallback
  */
 export function getBookingTimezone(
-  booking: { timeZone?: string },
+  booking: { timezone?: string },
   teacherTimezone?: string
 ): string {
-  return booking.timeZone || teacherTimezone || 'America/New_York';
+  return booking.timezone || teacherTimezone || 'America/New_York';
 }
 

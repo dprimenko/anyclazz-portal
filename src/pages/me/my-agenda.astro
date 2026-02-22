@@ -23,7 +23,7 @@ const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
 
 const repository = new AnyclazzMyBookingsRepository();
-const bookings = await repository.getBookings({token: accessToken, sort: 'desc', from: DateTime.now().startOf('week').toISO(), to: DateTime.now().endOf('week').toISO(), timeZone: 'America/New_York', page: 1, size: 100});
+const bookings = await repository.getBookings({token: accessToken, sort: 'desc', from: DateTime.now().startOf('week').toISO(), to: DateTime.now().endOf('week').toISO(), timezone: 'America/New_York', page: 1, size: 100});
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations({ lang });

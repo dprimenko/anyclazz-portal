@@ -25,7 +25,7 @@ export interface LessonItemCardProps {
 export function LessonItemCard({ lesson, user, repository, token, onLessonCancelled }: LessonItemCardProps) {
     const t = useTranslations();
     
-    const timezone = lesson.timeZone || 'America/New_York';
+    const timezone = lesson.timezone || 'America/New_York';
     const startTime = toTimezone(lesson.startAt, timezone);
     const endTime = toTimezone(lesson.endAt, timezone);
     const duration = endTime.diff(startTime, 'minutes').minutes;

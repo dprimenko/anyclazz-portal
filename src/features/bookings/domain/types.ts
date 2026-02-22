@@ -9,7 +9,7 @@ export interface Booking {
     classTypeId: string;
     startAt: string;      // ISO 8601 UTC
     endAt: string;        // ISO 8601 UTC
-    timeZone: string;     // Timezone del profesor (desde backend)
+    timezone: string;     // Timezone del profesor (desde backend)
     meetingUrl?: string;
     status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
     createdAt?: string;
@@ -34,7 +34,6 @@ export interface CreateBookingParams extends CommonParams {
     classTypeId: string;
     startAt: string;
     endAt: string;
-    timeZone: string;
 }
 
 export interface GetTeacherAvailabilityParams extends CommonParams {
@@ -51,7 +50,6 @@ export interface GetBookingsParams extends CommonParams {
     size?: number;
     from?: string;
     to?: string;
-    timeZone?: string;
 }
 
 export interface GetBookingsResponse {

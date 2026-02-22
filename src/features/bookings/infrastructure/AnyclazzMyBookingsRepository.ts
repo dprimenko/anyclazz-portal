@@ -10,7 +10,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         this.httpClient = new FetchClient(getApiUrl());
     }
     
-    async getBookings({token, filter, sort, page, size, from, to, timeZone}: GetBookingsParams): Promise<GetBookingsResponse> {
+    async getBookings({token, filter, sort, page, size, from, to, timezone}: GetBookingsParams): Promise<GetBookingsResponse> {
         const params: Record<string, any> = {
             sort
         };
@@ -35,8 +35,8 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
             params.size = size;
         }
 
-        if (timeZone !== undefined) {
-            params.timezone = timeZone;
+        if (timezone !== undefined) {
+            params.timezone = timezone;
         }
 
         const apiResponse = await this.httpClient.get({
@@ -70,12 +70,12 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         return response;
     }
 
-    async createBooking({teacherId, classTypeId, startAt, endAt, timeZone, token}: CreateBookingParams): Promise<any> {
+    async createBooking({teacherId, classTypeId, startAt, endAt, timezone, token}: CreateBookingParams): Promise<any> {
         const params = {
             classTypeId,
             startAt,
             endAt,
-            timeZone,
+            timezone,
         };
 
         const apiResponse = await this.httpClient.post({

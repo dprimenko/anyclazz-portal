@@ -18,7 +18,7 @@ import { DateTime } from 'luxon';
  * @example
  * const formatted = useFormattedDate(
  *   booking.startAt, 
- *   booking.timeZone, 
+ *   booking.timezone, 
  *   'cccc dd HH:mm'
  * );
  */
@@ -42,8 +42,8 @@ export function useFormattedDate(
  * @returns DateTime de Luxon
  * 
  * @example
- * const startTime = useDateTime(booking.startAt, booking.timeZone);
- * const endTime = useDateTime(booking.endAt, booking.timeZone);
+ * const startTime = useDateTime(booking.startAt, booking.timezone);
+ * const endTime = useDateTime(booking.endAt, booking.timezone);
  * const duration = endTime.diff(startTime, 'minutes').minutes;
  */
 export function useDateTime(
@@ -88,7 +88,7 @@ export function useFormattedDateLocal(
  * @example
  * const { teacherTime, localTime } = useDualTimezone(
  *   booking.startAt,
- *   booking.timeZone,
+ *   booking.timezone,
  *   'h:mm a'
  * );
  */

@@ -5,7 +5,6 @@ import { getApiUrl } from '@/features/shared/services/environment';
 export interface AvailabilitySlot {
     from: string;         // ISO 8601 UTC (nombre correcto del campo del backend)
     to: string;           // ISO 8601 UTC (nombre correcto del campo del backend)
-    timeZone: string;     // Timezone del profesor
 }
 
 export class TeacherAvailabilityRepository {
@@ -20,8 +19,7 @@ export class TeacherAvailabilityRepository {
      * for the next 3 months from today
      */
     private transformWeeklyToDateSlots(
-        weeklyAvailability: DayAvailability[],
-        timeZone: string = 'America/New_York'
+        weeklyAvailability: DayAvailability[]
     ): AvailabilitySlot[] {
         const slots: AvailabilitySlot[] = [];
         const today = new Date();
@@ -64,8 +62,7 @@ export class TeacherAvailabilityRepository {
 
                         slots.push({
                             from: startDate.toISOString(),
-                            to: endDate.toISOString(),
-                            timeZone,
+                            to: endDate.toISOString()
                         });
                     }
                 }
@@ -158,9 +155,8 @@ export class TeacherAvailabilityRepository {
         teacherId: string,
         weeklyAvailability: DayAvailability[],
         token: string,
-        timeZone: string = 'America/New_York'
     ): Promise<void> {
-        const slots = this.transformWeeklyToDateSlots(weeklyAvailability, timeZone);
+        const slots = this.transformWeeklyToDateSlots(weeklyAvailability);
 
         try {
             const response = await this.client.post({
