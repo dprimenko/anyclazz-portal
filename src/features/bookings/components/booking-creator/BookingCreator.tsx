@@ -14,7 +14,7 @@ import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { SimpleCalendar } from "@/ui-library/components/calendar/SimpleCalendar";
-import { DateTime } from "luxon";
+import { DateTime, fromISOKeepZone } from "@/features/shared/utils/dateConfig";
 import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
 import type { CreateBookingParams } from "../../domain/types";
@@ -87,23 +87,18 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         ),
     })), [selectedClass, t]);
 
-    const availableTimes = useMemo(() => availableSlots.map(({from}) => {
-        const timeInTimezone = DateTime.fromISO(from);
-        const formattedTime = timeInTimezone.toFormat('HH:mm');
-        const offsetMinutes = timeInTimezone.offset;
-        const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
-        const offsetMins = Math.abs(offsetMinutes) % 60;
-        const offsetSign = offsetMinutes >= 0 ? '+' : '-';
-        const gmtOffset = offsetMins > 0 
-            ? `GMT${offsetSign}${offsetHours}:${offsetMins.toString().padStart(2, '0')}`
-            : `GMT${offsetSign}${offsetHours}`;
+    const availableTimes = useMemo(() => availableSlots.map(({startAt, timezone}) => {
+        // Parsear el ISO manteniendo la zona horaria original del backend
+        const dateTime = fromISOKeepZone(startAt, timezone);
+        const formattedTime = dateTime.toFormat('HH:mm');
+        const timezoneFormat = dateTime.toFormat('ZZZZ');
         
         return {
-            id: from,
+            id: startAt,
             children: () => (
                 <div className="flex flex-col gap-0.5 w-full items-center">
                     <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{formattedTime}</Text>
-                    <Text textLevel="span" colorType="tertiary" size="text-xs">{gmtOffset}</Text>
+                    <Text textLevel="span" colorType="tertiary" size="text-xs">{timezoneFormat}</Text>
                 </div>
             ),
         };
@@ -125,9 +120,10 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
         if (!selectedTime) {
             alert(t('booking.select_time_required'));
             return;
-        };
+        }
         
-        const startAt = DateTime.fromISO(selectedTime!);
+        // La fecha selectedTime ya viene con timezone incluido en formato ISO8601
+        const startAt = DateTime.fromISO(selectedTime);
         const endAt = startAt.plus({ minutes: selectedDuration });
         
         const bookingData: CreateBookingParams = {
@@ -135,7 +131,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
             token: accessToken!,
             classTypeId: selectedClass.type,
             startAt: startAt.toISO()!,
-            endAt: endAt.toISO()!
+            endAt: endAt.toISO()!,
         };
         
         const booking = await createBooking(bookingData);

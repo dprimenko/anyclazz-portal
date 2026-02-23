@@ -143,8 +143,41 @@ export interface UpdateTeacherParams extends CommonParams {
     data: UpdateTeacherData;
 }
 
+export interface GetTeacherReviewsParams extends CommonParams {
+    teacherId: string;
+    page?: number;
+    size?: number;
+}
+
+export interface Review {
+    id: string;
+    teacherId: string;
+    studentId: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+    student: {
+        id: string;
+        name: string;
+        surname: string;
+        avatar?: string;
+    };
+}
+
+export interface GetTeacherReviewsResponse {
+    reviews: Review[];
+    meta: {
+        currentPage: number;
+        lastPage: number;
+        size: number;
+        total: number;
+    };
+}
+
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
     updateTeacher(params: UpdateTeacherParams): Promise<void>;
+    getTeacherReviews(params: GetTeacherReviewsParams): Promise<GetTeacherReviewsResponse>;
 }

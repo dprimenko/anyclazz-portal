@@ -41,7 +41,6 @@ export interface ProgressIndicatorProps {
 }
 
 export const ProgressIndicator: FC<ProgressIndicatorProps> = ({
-  size = 'lg',
   message = 'Loading...',
   showMessage = true,
   variant = 'default',
@@ -56,12 +55,12 @@ export const ProgressIndicator: FC<ProgressIndicatorProps> = ({
         className
       )}
     >
-      <Spinner size={size} variant={variant} />
+      <Spinner variant={variant} />
       {showMessage && (
         <Text 
-          size="text-sm" 
+          size="text-lg" 
           colorType={variant === 'white' ? 'primary' : 'secondary'}
-          className={variant === 'white' ? 'text-white' : ''}
+          weight='semibold'
         >
           {message}
         </Text>

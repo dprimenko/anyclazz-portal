@@ -7,6 +7,10 @@ import { ApiStoryRepository } from "../../infrastructure/ApiStoryRepository";
 import styles from "./Feed.module.css";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { useTranslations } from "@/i18n";
+import { ProgressIndicator } from "@/ui-library/components/progress-indicator/ProgressIndicator";
+import { EmptyState } from "@/ui-library/components/ssr/empty-state/EmptyState";
+import { publish } from "@/features/shared/services/domainEventsBus";
+import { VideoUploadEvents } from "../video-upload-modal/domain/events";
 
 const repository = new ApiStoryRepository();
 
@@ -15,11 +19,9 @@ interface FeedProps {
 	accessToken: string;
 	userRole?: string;
 	teacherId?: string;
-	countryIso2?: string;
-	cityIso2?: string;
 }
 
-export function Feed({ storyId, accessToken, userRole, teacherId, countryIso2, cityIso2 }: FeedProps) {
+export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 	const t = useTranslations();
 
 	const { stories, loading, error } = useFeed({
@@ -72,7 +74,7 @@ export function Feed({ storyId, accessToken, userRole, teacherId, countryIso2, c
 		return (
 			<div className={styles.feed}>
 				<div className="flex items-center justify-center h-screen">
-					<p>Cargando stories...</p>
+					<ProgressIndicator message={t('feed.loading')} />
 				</div>
 			</div>
 		);
@@ -82,7 +84,12 @@ export function Feed({ storyId, accessToken, userRole, teacherId, countryIso2, c
 		return (
 			<div className={styles.feed}>
 				<div className="flex items-center justify-center h-screen">
-					<p>Error: {error.message}</p>
+					<EmptyState
+						title={t('feed.error_title')}
+						description={error.message}
+						buttonLabel={t('feed.error_retry')}
+						onClickAction={() => window.location.reload()}
+					/>
 				</div>
 			</div>
 		);
@@ -92,29 +99,35 @@ export function Feed({ storyId, accessToken, userRole, teacherId, countryIso2, c
 		return (
 			<div className={styles.feed}>
 				<div className="flex flex-col items-center justify-center h-screen gap-6">
-					<p className="text-neutral-600">No hay stories disponibles</p>
-					{userRole === 'teacher' && teacherId && countryIso2 && (
-						<VideoUploadButton
-							onVideoUploaded={() => {
-								window.location.href = '/profile?tab=videos';
-							}}
-							accessToken={accessToken}
-							teacherId={teacherId}
-							countryIso2={countryIso2}
-							cityIso2={cityIso2}
-						/>
-					)}
+					<EmptyState
+						title={t('feed.empty_title')}
+						description={userRole === 'teacher' ? t('feed.empty_description_teacher') : t('feed.empty_description_student')}
+					>
+						{userRole === 'teacher' && teacherId && (
+							<VideoUploadButton
+								onVideoUploaded={() => {
+									window.location.href = '/profile?tab=videos';
+								}}
+								accessToken={accessToken}
+								teacherId={teacherId}
+							/>
+						)}
+					</EmptyState>
 				</div>
 			</div>
 		);
 	}
+
+	const openUploadModal = () => {
+		publish(VideoUploadEvents.OPEN_VIDEO_UPLOAD_MODAL);
+	};
     
     return (
         <div className={styles.feed}>
             <div className={styles.feed__list} ref={listRef}>
                 <>
                     {stories.map((story, index) => (
-                        <StoryView key={story.id} story={story} index={index} playing={(currentIndex - 1) === index}  onVisibilityChange={handleVideoVisibilityChange} />
+                        <StoryView key={story.id} story={story} index={index} playing={(currentIndex - 1) === index}  onVisibilityChange={handleVideoVisibilityChange} onVideoUpload={openUploadModal} />
                     ))}
                 </>
             </div>
@@ -141,8 +154,8 @@ export function Feed({ storyId, accessToken, userRole, teacherId, countryIso2, c
 			</div>
 
 			{/* Upload button for teachers - top right */}
-			{userRole === 'teacher' && teacherId && countryIso2 && (
-				<div className="fixed top-8 right-10 z-20 flex flex-col gap-2">
+			{userRole === 'teacher' && teacherId && (
+				<div className="hidden md:flex fixed top-8 right-10 z-20 flex-col gap-2">
 					<VideoUploadButton
 						onVideoUploaded={(story) => {
 							console.log('Story uploaded from feed:', story);
@@ -150,8 +163,6 @@ export function Feed({ storyId, accessToken, userRole, teacherId, countryIso2, c
 						}}
 						accessToken={accessToken}
 						teacherId={teacherId}
-						countryIso2={countryIso2}
-						cityIso2={cityIso2}
 					/>
 					<Button colorType="secondary" size='lg' label={t('teacher-profile.allvideos')} onClick={() => window.location.href = '/profile?tab=videos'} />
 				</div>

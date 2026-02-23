@@ -14,8 +14,6 @@ export interface VideoUploadModalProps {
   onSuccess?: (story: Story) => void;
   accessToken: string;
   teacherId: string;
-  countryIso2: string;
-  cityIso2?: string;
 }
 
 const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB
@@ -26,8 +24,6 @@ export const VideoUploadModal: FC<VideoUploadModalProps> = ({
   onSuccess,
   accessToken,
   teacherId,
-  countryIso2,
-  cityIso2,
 }) => {
   const t = useTranslations();
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -36,7 +32,7 @@ export const VideoUploadModal: FC<VideoUploadModalProps> = ({
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
-  const { uploadStory, isUploading, error } = useBunnyUpload({ accessToken, teacherId, countryIso2, cityIso2 });
+  const { uploadStory, isUploading, error } = useBunnyUpload({ accessToken, teacherId});
 
   const handleVideoSelect = (file: File) => {
     setVideoFile(file);
@@ -91,7 +87,7 @@ export const VideoUploadModal: FC<VideoUploadModalProps> = ({
   const isValid = videoFile !== null && description.trim().length > 0;
 
   return (
-    <Modal onClose={onClose} width={480}>
+    <Modal onClose={onClose} width={480} fitContent>
       <div className="flex flex-col bg-white w-full md:max-h-[90vh] h-full md:h-auto overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between p-6 flex-shrink-0 md:border-b-0">

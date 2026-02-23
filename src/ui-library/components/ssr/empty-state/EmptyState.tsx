@@ -9,6 +9,7 @@ export interface EmptyStateProps {
     buttonIcon?: string;
     onClickAction?: () => void;
     buttonColorType?: ColorType;
+    children?: React.ReactNode;
 }
 
 export const EmptyState = ({
@@ -17,7 +18,8 @@ export const EmptyState = ({
     buttonLabel,
     buttonIcon,
     onClickAction,
-    buttonColorType = 'primary'
+    buttonColorType = 'primary',
+    children
 }: EmptyStateProps) => {
     return (
         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -38,7 +40,7 @@ export const EmptyState = ({
             >
                 {description}
             </Text>
-            {buttonLabel && onClickAction && (
+            {buttonLabel && !children && onClickAction && (
                 <Button 
                     label={buttonLabel}
                     icon={buttonIcon}
@@ -46,6 +48,7 @@ export const EmptyState = ({
                     onClick={onClickAction}
                 />
             )}
+            {children}
         </div>
     );
 };

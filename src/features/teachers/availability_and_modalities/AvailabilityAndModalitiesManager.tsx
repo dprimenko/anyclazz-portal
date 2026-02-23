@@ -7,7 +7,6 @@ import { WeeklyAvailabilitySelector, type DayAvailability } from "./components/W
 import { TeacherAvailabilityRepository } from "../infrastructure/TeacherAvailabilityRepository";
 import { TeacherModalitiesRepository } from "../infrastructure/TeacherModalitiesRepository";
 import { Button } from "@/ui-library/components/ssr/button/Button";
-import { Space } from '@/ui-library/components/ssr/space/Space';
 import { useTranslations } from '@/i18n';
 
 export interface AvailabilityAndModalitiesManagerProps {
@@ -61,12 +60,13 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
 
             console.log('Selected availability to save:', selectedAvailability);
             
-            // Guardar disponibilidad
+            // Guardar disponibilidad usando la zona horaria del profesor
             if (selectedAvailability.length > 0) {
                 await availabilityRepo.saveAvailability(
                     teacher.id,
                     selectedAvailability,
-                    accessToken
+                    accessToken,
+                    teacher.timezone || 'America/New_York'
                 );
             }
             

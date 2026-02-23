@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
-import { DateTime, toTimezone } from '@/features/shared/utils/dateConfig';
+import { DateTime, fromISOKeepZone } from '@/features/shared/utils/dateConfig';
 import type { BookingWithTeacher, GetBookingsResponse } from '@/features/bookings/domain/types';
 import type { AuthUser } from '@/features/auth/domain/types';
 import { useTranslations } from '@/i18n';
@@ -51,8 +51,8 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token }: WeeklyA
             const data = await repository.getBookings({
                 token,
                 sort: 'desc',
-                from: weekStart.toISO(),
-                to: weekEnd.toISO(),
+                startAt: weekStart.toISO(),
+                endAt: weekEnd.toISO(),
                 timezone: user?.timezone || 'America/New_York',
                 page: 1,
                 size: 100
@@ -81,8 +81,8 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token }: WeeklyA
         const groups: Record<string, BookingWithTeacher[]> = {};
         
         bookings.bookings.forEach(booking => {
-            const timezone = booking.timezone || 'America/New_York';
-            const dayKey = toTimezone(booking.startAt, timezone).toFormat('yyyy-MM-dd');
+            // Parsear manteniendo la zona horaria original del backend
+            const dayKey = fromISOKeepZone(booking.startAt).toFormat('yyyy-MM-dd');
             if (!groups[dayKey]) {
                 groups[dayKey] = [];
             }
@@ -92,9 +92,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token }: WeeklyA
         // Ordenar bookings dentro de cada día por hora
         Object.keys(groups).forEach(day => {
             groups[day].sort((a, b) => {
-                const timezoneA = a.timezone || 'America/New_York';
-                const timezoneB = b.timezone || 'America/New_York';
-                return toTimezone(a.startAt, timezoneA).toMillis() - toTimezone(b.startAt, timezoneB).toMillis();
+                return fromISOKeepZone(a.startAt).toMillis() - fromISOKeepZone(b.startAt).toMillis();
             });
         });
 

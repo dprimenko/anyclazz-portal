@@ -4,7 +4,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import type { BookingWithTeacher } from "../../domain/types";
-import { toTimezone } from "@/features/shared/utils/dateConfig";
+import { fromISOKeepZone } from "@/features/shared/utils/dateConfig";
 import { useTranslations } from "@/i18n";
 import styles from "./LessonDetailsModal.module.css";
 import { useEffect } from "react";
@@ -20,10 +20,9 @@ export interface LessonDetailsModalProps {
 export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, onJoin }: LessonDetailsModalProps) {
     const t = useTranslations();
     
-    // Usar el timezone del booking (que viene del backend)
-    const timezone = lesson.timezone || 'America/New_York';
-    const startTime = toTimezone(lesson.startAt, timezone);
-    const endTime = toTimezone(lesson.endAt, timezone);
+    // Parsear manteniendo la zona horaria original del backend
+    const startTime = fromISOKeepZone(lesson.startAt);
+    const endTime = fromISOKeepZone(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     
     return (

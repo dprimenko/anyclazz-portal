@@ -1,6 +1,6 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { ApiTeacher } from './types';
-import type { ClassType, GetTeacherParams, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository, UpdateTeacherParams } from '../domain/types';
+import type { ClassType, GetTeacherParams, GetTeacherReviewsParams, GetTeacherReviewsResponse, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository, UpdateTeacherParams } from '../domain/types';
 import { getApiUrl } from '@/features/shared/services/environment';
 
 export class ApiTeacherRepository implements TeacherRepository {
@@ -110,5 +110,24 @@ export class ApiTeacherRepository implements TeacherRepository {
 			token: token,
 			data: baseData,
 		});
+	}
+
+	async getTeacherReviews({ token, teacherId, page = 1, size = 10 }: GetTeacherReviewsParams): Promise<GetTeacherReviewsResponse> {
+		const data: Record<string, string | number> = {
+			page,
+			size,
+		};
+
+		const response = await this.httpClient.get({
+			url: `/teachers/${teacherId}/reviews`,
+			token: token,
+			data,
+		});
+
+		const reviewsData = await response.json();
+		return {
+			reviews: reviewsData.reviews,
+			meta: reviewsData.meta,
+		};
 	}
 }

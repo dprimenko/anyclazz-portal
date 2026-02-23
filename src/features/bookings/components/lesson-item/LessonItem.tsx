@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { PopMenu } from "@/ui-library/components/pop-menu/PopMenu";
 import { LessonCancelModal } from "../lesson-cancel-modal/LessonCancelModal";
-import { toTimezone, DateTime } from "@/features/shared/utils/dateConfig";
+import { DateTime, fromISOKeepZone } from "@/features/shared/utils/dateConfig";
 import { formatPrice } from "@/features/shared/utils/formatPrice";
 
 export interface LessonItemProps {
@@ -28,10 +28,9 @@ export interface LessonItemProps {
 export function LessonItem({ lesson, user, repository, token, isHighlited, bordered, innerTableHeader, onLessonCancelled }: LessonItemProps) {
     const t = useTranslations();
     
-    // Usar el timezone del booking (que viene del backend)
-    const timezone = lesson.timezone || 'America/New_York';
-    const startTime = toTimezone(lesson.startAt, timezone);
-    const endTime = toTimezone(lesson.endAt, timezone);
+    // Parsear manteniendo la zona horaria original del backend
+    const startTime = fromISOKeepZone(lesson.startAt);
+    const endTime = fromISOKeepZone(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
 

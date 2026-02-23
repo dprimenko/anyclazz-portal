@@ -63,6 +63,8 @@ export default {
     'common.info': 'Información',
     'common.back': 'Volver',
     'common.cancelling': 'Cancelando...',
+    'common.loading': 'Cargando',
+    'common.processing': 'Procesando',
 
     'menu.dashboard': 'Inicio',
     'menu.dashboard.upcoming-lessons': 'Próximas clases',
@@ -77,6 +79,13 @@ export default {
     'menu.profile': 'Perfil',
     'menu.settings': 'Configuración',
     'menu.support': 'Soporte',
+    
+    'feed.loading': 'Cargando stories...',
+    'feed.error_title': 'Error al cargar stories',
+    'feed.error_retry': 'Reintentar',
+    'feed.empty_title': 'No hay stories disponibles',
+    'feed.empty_description_teacher': 'Sé el primero en compartir tu historia. Sube un video para conectar con estudiantes.',
+    'feed.empty_description_student': 'Aún no hay stories para mostrar. Vuelve pronto para ver contenido nuevo.',
     
     'dashboard.welcome_back': 'Bienvenido de nuevo, {{name}}!',
     'dashboard.ready_to_continue': '¿Listo para continuar tu viaje de aprendizaje?',
@@ -108,6 +117,8 @@ export default {
     'location.search_not_found': 'No se encontraron resultados',
 
     'reviews.students_say': 'Lo que dicen los estudiantes',
+    'reviews.no_reviews_title': 'Sin reseñas aún',
+    'reviews.no_reviews_description': 'Este profesor aún no ha recibido reseñas de estudiantes.',
 
     'teachers.list.title': '{{count}} profesores en {{location}}',
     'teachers.list.subtitle': 'Reserva tu próxima clase.',
@@ -242,6 +253,8 @@ export default {
     'teacher-profile.my_stories': 'Mi Feed de Videos',
     'teacher-profile.no_stories_yet': 'Aún no hay stories',
     'teacher-profile.upload_first_story': 'Comparte tu primer video para empezar a construir tu feed',
+    'teacher-profile.no_videos_yet': 'Aún no hay videos',
+    'teacher-profile.no_videos_description': 'Este profesor aún no ha compartido ningún video',
     'teacher-profile.set_availability_modalities': 'Configura tu Disponibilidad y Modalidades',
     'teacher-profile.set_availability_modalities_description': 'Gestiona tus formatos de enseñanza, disponibilidad y precios de lecciones, todo en un solo lugar. Selecciona cómo enseñas, cuándo estás disponible y la duración de tus lecciones. Los precios se ajustarán automáticamente según los formatos y duraciones que establezcas. Puedes actualizar esto en cualquier momento si tu horario o preferencias cambian.',
     'teacher-profile.class_modality': 'Modalidad de clase',

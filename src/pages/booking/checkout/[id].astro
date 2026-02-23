@@ -46,7 +46,6 @@ if (!booking.payment?.clientSecret) {
 const dateFormatted = (datetime: string) => {
 	return DateTime.fromISO(datetime).toLocaleString(DateTime.DATE_FULL);
 };
-console.log('Booking timezone:', booking.timezone); // Debug timezone
 
 const timeFormatted = (datetime: string) => {
 	return DateTime.fromISO(datetime).toFormat('HH:mm ZZZZ')

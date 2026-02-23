@@ -27,13 +27,11 @@ if (user?.role === 'teacher' && user.id) {
 		token: accessToken,
 		teacherId: user.id
 	});
-	countryIso2 = teacher.teacherAddress?.countryISO2;
-	cityIso2 = teacher.teacherAddress?.cityISO2;
 }
 
 const pageTitle = "Feed";
 ---
 
 <Main title={pageTitle}>
-	<Feed client:only accessToken={accessToken} userRole={user?.role} teacherId={teacherId} countryIso2={countryIso2} cityIso2={cityIso2} />
+	<Feed client:only accessToken={accessToken} userRole={user?.role} teacherId={teacherId} />
 </Main>

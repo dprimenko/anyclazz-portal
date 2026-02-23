@@ -14,9 +14,10 @@ export interface StoryViewProps {
     index: number;
     playing: boolean;
     onVisibilityChange: (index: number, isVisible: boolean) => void;
+	onVideoUpload: () => void;
 }
 
-export function StoryView({ story, index, playing, onVisibilityChange }: StoryViewProps) {
+export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload }: StoryViewProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -104,7 +105,7 @@ export function StoryView({ story, index, playing, onVisibilityChange }: StoryVi
 
     return (
         <div className="relative snap-center w-full h-full sm:rounded-[20px]" ref={containerRef}>
-			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} />
+			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} onVideoUpload={onVideoUpload} />
 			<div className="absolute inset-0 z-[1] grid grid-cols-[1fr_max-content] md:grid-cols-1 bg-gradient-to-b from-transparent from-85% to-black/75 sm:rounded-[20px]">
 				{/* Info section - left column */}
 				<StoryInfo story={story} />

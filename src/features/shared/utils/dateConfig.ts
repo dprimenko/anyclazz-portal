@@ -126,7 +126,7 @@ export function formatInTimezoneIntl(
 ): string {
   const date = new Date(isoDate);
   return date.toLocaleString(locale, {
-    timezone: timezone,
+    timeZone: timezone,
     ...options
   });
 }
@@ -136,11 +136,40 @@ export function formatInTimezoneIntl(
  * @returns Timezone del usuario (ej: "Europe/Madrid")
  */
 export function getUserTimezone(): string {
-  return Intl.DateTimeFormat().resolvedOptions().timezone;
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+/**
+ * Parsea un string ISO 8601 manteniendo la zona horaria del offset original
+ * sin convertir a la zona local del navegador
+ * 
+ * @param isoString - Fecha en formato ISO 8601 con offset incluido (ej: "2026-02-18T14:00:00-05:00")
+ * @param timezone - Timezone IANA opcional para mostrar (ej: "America/New_York").
+ *                   Si se proporciona, convierte al timezone especificado manteniendo el momento absoluto.
+ * @returns DateTime de Luxon en la zona horaria del offset original o la especificada
+ * 
+ * @example
+ * // Mantiene la zona del offset original
+ * fromISOKeepZone("2026-02-18T14:00:00-05:00")
+ * // => DateTime en UTC-5, muestra 14:00
+ * 
+ * @example
+ * // Convierte a timezone específico
+ * fromISOKeepZone("2026-02-18T14:00:00-05:00", "America/New_York")
+ * // => DateTime en America/New_York, muestra 14:00 EST
+ */
+export function fromISOKeepZone(isoString: string, timezone?: string): DateTime {
+  if (timezone) {
+    // Si tenemos el timezone IANA, usarlo explícitamente
+    return DateTime.fromISO(isoString).setZone(timezone, { keepLocalTime: false });
+  }
+  // Si no, mantener la zona del offset original sin convertir a zona local
+  return DateTime.fromISO(isoString, { setZone: true });
 }
 
 /**
  * Helper para obtener el timezone de un booking, con fallbacks
+ * @deprecated El campo timezone ya no existe en bookings (v2.0). Las fechas ahora vienen con timezone incluido en formato ISO8601.
  * @param booking - Objeto booking que puede tener timezone
  * @param teacherTimezone - Timezone del profesor como fallback
  * @returns Timezone a usar, o 'America/New_York' como último fallback

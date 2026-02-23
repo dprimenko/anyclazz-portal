@@ -1,10 +1,12 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { DayAvailability, TimeRange } from '../availability_and_modalities/components/WeeklyAvailabilitySelector';
 import { getApiUrl } from '@/features/shared/services/environment';
+import { DateTime, fromISOKeepZone } from '@/features/shared/utils/dateConfig';
 
 export interface AvailabilitySlot {
-    from: string;         // ISO 8601 UTC (nombre correcto del campo del backend)
-    to: string;           // ISO 8601 UTC (nombre correcto del campo del backend)
+    startAt: string;      // ISO 8601 con timezone incluido
+    endAt: string;        // ISO 8601 con timezone incluido
+    timeZone?: string;    // Timezone de referencia (todavía presente en availability)
 }
 
 export class TeacherAvailabilityRepository {
@@ -19,57 +21,56 @@ export class TeacherAvailabilityRepository {
      * for the next 3 months from today
      */
     private transformWeeklyToDateSlots(
-        weeklyAvailability: DayAvailability[]
+        weeklyAvailability: DayAvailability[],
+        timezone: string = 'America/New_York'
     ): AvailabilitySlot[] {
         const slots: AvailabilitySlot[] = [];
-        const today = new Date();
-        const threeMonthsFromNow = new Date();
-        threeMonthsFromNow.setMonth(today.getMonth() + 3);
+        
+        // Usar la zona horaria del profesor para generar los slots
+        const today = DateTime.now().setZone(timezone).startOf('day');
+        const threeMonthsFromNow = today.plus({ months: 3 });
 
-        // Map day names to JavaScript Date.getDay() numbers (0 = Sunday, 1 = Monday, etc.)
-        const dayNameToNumber: Record<string, number> = {
+        // Map day names to weekday numbers (USA format: 0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+        const dayNameToWeekday: Record<string, number> = {
+            sunday: 0,
             monday: 1,
             tuesday: 2,
             wednesday: 3,
             thursday: 4,
             friday: 5,
             saturday: 6,
-            sunday: 0,
         };
 
         // Iterate through each day from today to 3 months from now
-        const currentDate = new Date(today);
-        currentDate.setHours(0, 0, 0, 0);
+        let currentDate = today;
 
         while (currentDate <= threeMonthsFromNow) {
-            const dayOfWeek = currentDate.getDay();
+            // Convert Luxon weekday (1=Monday, 7=Sunday) to USA format (0=Sunday, 1=Monday, ...)
+            const dayOfWeek = currentDate.weekday === 7 ? 0 : currentDate.weekday;
 
             // Find matching weekly availability for this day of week
             for (const dayAvail of weeklyAvailability) {
-                if (dayNameToNumber[dayAvail.day] === dayOfWeek && dayAvail.isAvailable && dayAvail.timeRanges && dayAvail.timeRanges.length > 0) {
+                if (dayNameToWeekday[dayAvail.day] === dayOfWeek && dayAvail.isAvailable && dayAvail.timeRanges && dayAvail.timeRanges.length > 0) {
                     // Create slots for each time range in this day
                     for (const timeRange of dayAvail.timeRanges) {
-                        const startDate = new Date(currentDate);
-                        const endDate = new Date(currentDate);
-
                         // Parse start time (format: "HH:mm")
                         const [startHour, startMinute] = timeRange.from.split(':').map(Number);
-                        startDate.setHours(startHour, startMinute, 0, 0);
+                        const startDateTime = currentDate.set({ hour: startHour, minute: startMinute, second: 0, millisecond: 0 });
 
                         // Parse end time (format: "HH:mm")
                         const [endHour, endMinute] = timeRange.to.split(':').map(Number);
-                        endDate.setHours(endHour, endMinute, 0, 0);
+                        const endDateTime = currentDate.set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
 
                         slots.push({
-                            from: startDate.toISOString(),
-                            to: endDate.toISOString()
+                            startAt: startDateTime.toISO()!,
+                            endAt: endDateTime.toISO()!
                         });
                     }
                 }
             }
 
             // Move to next day
-            currentDate.setDate(currentDate.getDate() + 1);
+            currentDate = currentDate.plus({ days: 1 });
         }
 
         return slots;
@@ -79,7 +80,8 @@ export class TeacherAvailabilityRepository {
      * Transform date/time slots into weekly availability pattern
      */
     private transformSlotsToWeekly(slots: AvailabilitySlot[]): DayAvailability[] {
-        const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        // USA format: Sunday is the first day of the week
+        const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         const weeklyMap = new Map<string, Map<string, TimeRange>>();
 
         // Initialize all days
@@ -89,13 +91,16 @@ export class TeacherAvailabilityRepository {
 
         // Group slots by day of week and time range
         slots.forEach(slot => {
-            const date = new Date(slot.from);
-            // Adjust getDay() to make Monday = 0 instead of Sunday = 0
-            const dayIndex = (date.getDay() + 6) % 7;
+            // Parsear manteniendo la zona horaria original del backend
+            const startDateTime = fromISOKeepZone(slot.startAt);
+            const endDateTime = fromISOKeepZone(slot.endAt);
+            
+            // Convert Luxon weekday (1=Monday, 7=Sunday) to USA format (0=Sunday, 1=Monday, ...)
+            const dayIndex = startDateTime.weekday === 7 ? 0 : startDateTime.weekday;
             const dayOfWeek = dayNames[dayIndex];
-            const from = date.toTimeString().slice(0, 5); // HH:mm
-            const endDate = new Date(slot.to);
-            const to = endDate.toTimeString().slice(0, 5); // HH:mm
+            
+            const from = startDateTime.toFormat('HH:mm');
+            const to = endDateTime.toFormat('HH:mm');
             
             const timeRangeKey = `${from}-${to}`;
             const dayMap = weeklyMap.get(dayOfWeek)!;
@@ -104,8 +109,7 @@ export class TeacherAvailabilityRepository {
                 dayMap.set(timeRangeKey, {
                     id: `${Date.now()}-${Math.random()}`,
                     from,
-                    to,
-                    isEditing: false
+                    to
                 });
             }
         });
@@ -155,13 +159,14 @@ export class TeacherAvailabilityRepository {
         teacherId: string,
         weeklyAvailability: DayAvailability[],
         token: string,
+        timezone: string = 'America/New_York'
     ): Promise<void> {
-        const slots = this.transformWeeklyToDateSlots(weeklyAvailability);
+        const slots = this.transformWeeklyToDateSlots(weeklyAvailability, timezone);
 
         try {
             const response = await this.client.post({
                 url: `/teacher-availability/${teacherId}`,
-                data: slots,
+                data: slots as any, // Array de slots, JSON.stringify lo manejará
                 token,
                 headers: {
                     'X-User-Roles': 'teacher'

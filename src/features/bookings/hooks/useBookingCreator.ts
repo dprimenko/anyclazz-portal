@@ -35,8 +35,8 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
                 teacherId: teacher.id,
-                from: monthStart.toISO()!,
-                to: monthEnd.toISO()!,
+                startAt: monthStart.toISO()!,
+                endAt: monthEnd.toISO()!,
                 duration: selectedDuration,
             });
 
@@ -44,7 +44,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
             const datesWithAvailability = Array.from(
                 new Set(
                     slots.map((slot: any) => 
-                        DateTime.fromISO(slot.from).startOf('day').toISO()
+                        DateTime.fromISO(slot.startAt).startOf('day').toISO()
                     )
                 )
             ).map((isoDate) => DateTime.fromISO(isoDate as string).toJSDate());
@@ -66,8 +66,8 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
                 teacherId: teacher.id,
-                from: DateTime.fromJSDate(selectedDate).startOf('day').toISO()!,
-                to: DateTime.fromJSDate(selectedDate).endOf('day').toISO()!,
+                startAt: DateTime.fromJSDate(selectedDate).startOf('day').toISO()!,
+                endAt: DateTime.fromJSDate(selectedDate).endOf('day').toISO()!,
                 duration: selectedDuration,
             });
             setAvailableSlots(slots);

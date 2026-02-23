@@ -31,11 +31,9 @@ export interface UploadProgress {
 export interface UseBunnyUploadParams {
   accessToken: string;
   teacherId: string;
-  countryIso2: string;
-  cityIso2?: string;
 }
 
-export function useBunnyUpload({ accessToken, teacherId, countryIso2, cityIso2 }: UseBunnyUploadParams) {
+export function useBunnyUpload({ accessToken, teacherId }: UseBunnyUploadParams) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<UploadProgress>({ loaded: 0, total: 0, percentage: 0 });
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +59,7 @@ export function useBunnyUpload({ accessToken, teacherId, countryIso2, cityIso2 }
           video: request.video,
           description: request.description,
           thumbnail: request.thumbnail,
-          locations: request.locations || [{ countryIso2, cityIso2 }],
+          locations: request.locations,
         },
         (percentage) => {
           setProgress({

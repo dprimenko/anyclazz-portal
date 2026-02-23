@@ -7,9 +7,8 @@ export interface Booking {
     teacherId: string;
     studentId: string;
     classTypeId: string;
-    startAt: string;      // ISO 8601 UTC
-    endAt: string;        // ISO 8601 UTC
-    timezone: string;     // Timezone del profesor (desde backend)
+    startAt: string;      // ISO 8601 con timezone incluido
+    endAt: string;        // ISO 8601 con timezone incluido
     meetingUrl?: string;
     status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
     createdAt?: string;
@@ -32,14 +31,15 @@ export interface BookingWithTeacher extends Booking {
 export interface CreateBookingParams extends CommonParams {
     teacherId: string;
     classTypeId: string;
-    startAt: string;
-    endAt: string;
+    startAt: string;      // ISO 8601 con timezone incluido
+    endAt: string;        // ISO 8601 con timezone incluido
+    timeZone?: string;    // Opcional: solo para parsear fechas si se envían sin timezone
 }
 
 export interface GetTeacherAvailabilityParams extends CommonParams {
     teacherId: string;
-    from: string;
-    to: string;
+    startAt: string;      // ISO 8601 - inicio del rango de búsqueda
+    endAt: string;        // ISO 8601 - fin del rango de búsqueda
     duration: number;
 }
 
@@ -48,8 +48,9 @@ export interface GetBookingsParams extends CommonParams {
     sort: 'desc' | 'asc';
     page?: number;
     size?: number;
-    from?: string;
-    to?: string;
+    startAt?: string;     // ISO 8601 - inicio del rango de búsqueda
+    endAt?: string;       // ISO 8601 - fin del rango de búsqueda
+    timezone?: string;    // Opcional: para filtrar por timezone específico
 }
 
 export interface GetBookingsResponse {

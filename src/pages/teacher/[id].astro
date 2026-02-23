@@ -222,7 +222,7 @@ const hasConfiguredPrices = teacher.classTypes.some(classType =>
             <Space size={32} direction="vertical" />
 
             <div class="mb-4">
-                <TeacherDetail teacher={teacher as unknown as Teacher} client:load />
+                <TeacherDetail teacher={teacher as unknown as Teacher} accessToken={accessToken} client:load />
             </div>
 
             <div class="w-full bg-gray-100" />

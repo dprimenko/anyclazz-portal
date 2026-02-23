@@ -12,7 +12,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { PopMenu } from "@/ui-library/components/pop-menu/PopMenu";
 import cn from "classnames";
 import { LessonCancelModal } from "../lesson-cancel-modal/LessonCancelModal";
-import { toTimezone, DateTime } from "@/features/shared/utils/dateConfig";
+import { DateTime, fromISOKeepZone } from "@/features/shared/utils/dateConfig";
 
 export interface LessonItemCardProps {
     lesson: BookingWithTeacher;
@@ -25,9 +25,9 @@ export interface LessonItemCardProps {
 export function LessonItemCard({ lesson, user, repository, token, onLessonCancelled }: LessonItemCardProps) {
     const t = useTranslations();
     
-    const timezone = lesson.timezone || 'America/New_York';
-    const startTime = toTimezone(lesson.startAt, timezone);
-    const endTime = toTimezone(lesson.endAt, timezone);
+    // Parsear manteniendo la zona horaria original del backend
+    const startTime = fromISOKeepZone(lesson.startAt);
+    const endTime = fromISOKeepZone(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
 

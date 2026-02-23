@@ -10,7 +10,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         this.httpClient = new FetchClient(getApiUrl());
     }
     
-    async getBookings({token, filter, sort, page, size, from, to, timezone}: GetBookingsParams): Promise<GetBookingsResponse> {
+    async getBookings({token, filter, sort, page, size, startAt, endAt, timezone}: GetBookingsParams): Promise<GetBookingsResponse> {
         const params: Record<string, any> = {
             sort
         };
@@ -19,12 +19,12 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
             params.filter = filter;
         }
 
-        if (from !== undefined) {
-            params.from = from;
+        if (startAt !== undefined) {
+            params.startAt = startAt;
         }
 
-        if (to !== undefined) {
-            params.to = to;
+        if (endAt !== undefined) {
+            params.endAt = endAt;
         }
 
         if (page !== undefined) {
@@ -53,10 +53,10 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         };
     }
     
-    async getTeacherAvailability({teacherId, from, to, duration, token}: GetTeacherAvailabilityParams): Promise<any> {
+    async getTeacherAvailability({teacherId, startAt, endAt, duration, token}: GetTeacherAvailabilityParams): Promise<any> {
         const params = {
-            from,
-            to,
+            startAt,
+            endAt,
             duration,
         };
 
@@ -70,13 +70,17 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         return response;
     }
 
-    async createBooking({teacherId, classTypeId, startAt, endAt, timezone, token}: CreateBookingParams): Promise<any> {
-        const params = {
+    async createBooking({teacherId, classTypeId, startAt, endAt, timeZone, token}: CreateBookingParams): Promise<any> {
+        const params: Record<string, any> = {
             classTypeId,
             startAt,
             endAt,
-            timezone,
         };
+
+        // Solo agregar timeZone si está definido
+        if (timeZone !== undefined) {
+            params.timeZone = timeZone;
+        }
 
         const apiResponse = await this.httpClient.post({
             url: `/booking/${teacherId}/lesson`,

@@ -29,6 +29,7 @@ export interface GetStoryParams extends CommonParams {
 export interface ListStoriesParams extends CommonParams {
 	page: number;
 	size: number;
+	teacherId?: string;
 	countryISO2?: string;
 	cityISO2?: string;
 }

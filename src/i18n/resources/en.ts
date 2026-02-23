@@ -59,6 +59,8 @@ export default {
     'common.info': 'Information',
     'common.back': 'Back',
     'common.cancelling': 'Cancelling...',
+    'common.loading': 'Loading',
+    'common.processing': 'Processing',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',
@@ -73,6 +75,13 @@ export default {
     'menu.profile': 'Profile',
     'menu.settings': 'Settings',
     'menu.support': 'Support',
+    
+    'feed.loading': 'Loading stories...',
+    'feed.error_title': 'Error loading stories',
+    'feed.error_retry': 'Retry',
+    'feed.empty_title': 'No stories available',
+    'feed.empty_description_teacher': 'Be the first to share your story. Upload a video to connect with students.',
+    'feed.empty_description_student': 'No stories to show yet. Come back soon for new content.',
     
     'dashboard.welcome_back': 'Welcome back, {{name}}!',
     'dashboard.ready_to_continue': 'Ready to continue your learning journey?',
@@ -108,6 +117,8 @@ export default {
     'location.search_not_found': 'No results found',
 
     'reviews.students_say': 'What students say',
+    'reviews.no_reviews_title': 'No reviews yet',
+    'reviews.no_reviews_description': 'This teacher hasn\'t received any student reviews yet.',
 
     'teachers.list.title': '{{count}} teachers in {{location}}',
     'teachers.list.subtitle': 'Book your next lesson.',
@@ -249,6 +260,8 @@ export default {
 
     'teacher-profile.no_stories_yet': 'No stories yet',
     'teacher-profile.upload_first_story': 'Share your first video to start building your video feed',
+    'teacher-profile.no_videos_yet': 'No videos yet',
+    'teacher-profile.no_videos_description': 'This teacher hasn\'t shared any videos yet',
     'teacher-profile.set_availability_modalities': 'Set Your Availability & Modalities',
     'teacher-profile.set_availability_modalities_description': 'Manage your teaching formats, availability, and lesson pricing — all in one place. Select how you teach, when you\'re available, and the duration of your lessons. Prices will automatically adjust based on the formats and durations you set. You can update this anytime if your schedule or preferences change.',
     'teacher-profile.class_modality': 'Class modality',

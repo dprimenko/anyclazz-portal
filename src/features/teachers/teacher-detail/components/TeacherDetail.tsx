@@ -2,14 +2,19 @@ import { Tabs } from "@/ui-library/components/tabs";
 import { useState } from "react";
 import type { Teacher } from "../../domain/types";
 import { Text } from "@/ui-library/components/ssr/text/Text";
+import { TeacherVideosDisplay } from "./TeacherVideosDisplay";
 import styles from "./TeacherDetail.module.css";
+import { PaginatedTeacherReviews } from "./PaginatedTeacherReviews";
+import { ApiTeacherRepository } from "../../infrastructure/ApiTeacherRepository";
 
 export interface TeacherDetailProps {
     teacher: Teacher;
+    accessToken?: string;
 }
 
-export function TeacherDetail({ teacher }: TeacherDetailProps) {
-
+export function TeacherDetail({ teacher, accessToken }: TeacherDetailProps) {
+    const repository = new ApiTeacherRepository();
+    
     const tabs = [
         {
             key: "information",
@@ -148,14 +153,17 @@ export function TeacherDetail({ teacher }: TeacherDetailProps) {
             )}
 
             {selectedTab === "videos" && (
-                <div className="mt-6 p-10 text-center">
-                    <Text colorType="tertiary">Videos section coming soon...</Text>
+                <div className="mt-6">
+                    <TeacherVideosDisplay 
+                        teacherId={teacher.id} 
+                        accessToken={accessToken}
+                    />
                 </div>
             )}
 
             {selectedTab === "reviews" && (
-                <div className="mt-6 p-10 text-center">
-                    <Text colorType="tertiary">Reviews section coming soon...</Text>
+                <div className="mt-6">
+                    <PaginatedTeacherReviews teacherId={teacher.id} repository={repository} token={accessToken} />
                 </div>
             )}
         </div>

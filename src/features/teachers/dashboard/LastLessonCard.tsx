@@ -2,7 +2,7 @@ import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
 import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
-import { toTimezone } from '@/features/shared/utils/dateConfig';
+import { DateTime } from '@/features/shared/utils/dateConfig';
 import type { BookingWithTeacher } from '@/features/bookings/domain/types';
 import { useTranslations } from '@/i18n';
 import type { AuthUser } from '@/features/auth/domain/types';
@@ -15,9 +15,9 @@ interface LastLessonCardProps {
 
 export function LastLessonCard({ lesson, user, onCardClick }: LastLessonCardProps) {
     const t = useTranslations();
-    const timezone = lesson.timezone || 'America/New_York';
-    const startTime = toTimezone(lesson.startAt, timezone);
-    const endTime = toTimezone(lesson.endAt, timezone);
+    // La fecha ya viene con timezone incluido en formato ISO8601
+    const startTime = DateTime.fromISO(lesson.startAt);
+    const endTime = DateTime.fromISO(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     
     const isOnline = lesson.classTypeId.includes('online');
