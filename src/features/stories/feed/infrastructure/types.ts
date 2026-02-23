@@ -19,4 +19,6 @@ export interface ApiStory {
 		surname: string;
 		avatar?: string;
 	};
+	likeCount: number;
+	isLikedByCurrentUser: boolean;
 }

@@ -20,6 +20,8 @@ export interface Story {
 		surname: string;
 		avatar?: string;
 	};
+	likeCount: number;
+	isLikedByCurrentUser: boolean;
 }
 
 export interface GetStoryParams extends CommonParams {
@@ -74,4 +76,19 @@ export interface UpdateStoryParams extends CommonParams {
 	description?: string;
 	title?: string;
 	thumbnail?: File;
+}
+
+export interface LikeStoryParams extends CommonParams {
+	storyId: string;
+}
+
+export interface UnlikeStoryParams extends CommonParams {
+	storyId: string;
+}
+
+export interface LikeStoryResponse {
+	message: string;
+	storyId: string;
+	liked: boolean;
+	likeCount: number;
 }

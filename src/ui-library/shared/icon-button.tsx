@@ -9,7 +9,7 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[rgba(255,253,251,1)] border-[rgba(213,215,218,1)] shadow-[0_1px_2px_0_rgba(10,13,18,0.05)] [box-shadow:inset_0_-2px_0_0_rgba(10,13,18,0.05)] hover:bg-gray-50",
+        default: 'bg-[rgba(255,253,251,1)] border-[rgba(213,215,218,1)] shadow-[0_1px_2px_0_rgba(10,13,18,0.05)] [box-shadow:inset_0_-2px_0_0_rgba(10,13,18,0.05)] hover:bg-gray-50',
         ghost: "border-transparent hover:bg-white/10 px-[5px] py-0 w-auto h-auto",
       },
       size: {
@@ -37,21 +37,33 @@ export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof iconButtonVariants> {
   icon: string;
+  highlighted?: boolean;
   iconSize?: number;
   label?: string;
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ className, variant, size, icon, iconSize = 24, label, ...props }, ref) => {
+  ({ className, variant = 'default', size, icon, iconSize = 24, label, highlighted, ...props }, ref) => {
+
+    const cns = cn(
+      iconButtonVariants({ variant, size, className }), 
+      { "border-[var(--color-primary-700)] bg-[var(--color-primary-200)]" : highlighted && variant === 'default' },
+    );
     if (label) {
       return (
         <div className="flex flex-col items-center gap-[0.25rem]">
           <button
-            className={cn(iconButtonVariants({ variant, size, className }))}
+            className={cns} // Remove padding for icon-only button
             ref={ref}
             {...props}
           >
-            <Icon icon={icon} iconWidth={iconSize} iconHeight={iconSize} {...(variant === "ghost" ? { iconColor: "#FFFFFF" } : {})} />
+            <Icon 
+              icon={icon} iconWidth={iconSize} 
+              iconHeight={iconSize} 
+              {...(variant === "default" && highlighted ? { iconColor: "#F4A43A" } : {})} 
+              {...(variant === "ghost" && highlighted ? { iconColor: "#F4A43A" } : {})} 
+              {...(variant === "ghost" && !highlighted ? { iconColor: "#FFFFFF" } : {})} 
+            />
           </button>
           <Text size="text-xs" weight="medium" color={variant === "ghost" ? "#FFFFFF" : "var(--color-neutral-600)"} textalign="center">
             {label}
@@ -62,7 +74,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 
     return (
       <button
-        className={cn(iconButtonVariants({ variant, size, className }))}
+        className={cns}
         ref={ref}
         {...props}
       >

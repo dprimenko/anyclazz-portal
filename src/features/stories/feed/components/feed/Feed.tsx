@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useMemo } from "react";
 import { StoryView } from "../story-view/StoryView";
 import { IconButton } from "@/ui-library/shared";
 import { VideoUploadButton } from "../video-upload-button";
@@ -11,6 +11,7 @@ import { ProgressIndicator } from "@/ui-library/components/progress-indicator/Pr
 import { EmptyState } from "@/ui-library/components/ssr/empty-state/EmptyState";
 import { publish } from "@/features/shared/services/domainEventsBus";
 import { VideoUploadEvents } from "../video-upload-modal/domain/events";
+import { useStoryLike } from "../../hooks/useStoryLike";
 
 const repository = new ApiStoryRepository();
 
@@ -70,6 +71,18 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 		}
 	}, [currentIndex]);
 
+	// Get the currently visible story for desktop like button (must be before conditional returns)
+	const currentStory = stories[visibleVideoIndex];
+
+	// Use the like hook for the current story (desktop) - always call hooks before conditional returns
+	const { likeCount, isLiked, isLoading: isLikeLoading, toggleLike } = useStoryLike({
+		storyId: currentStory?.id || '',
+		initialCount: currentStory?.likeCount || 0,
+		initialIsLiked: currentStory?.isLikedByCurrentUser || false,
+		storyRepository: repository,
+		accessToken,
+	});
+
 	if (loading) {
 		return (
 			<div className={styles.feed}>
@@ -127,14 +140,28 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
             <div className={styles.feed__list} ref={listRef}>
                 <>
                     {stories.map((story, index) => (
-                        <StoryView key={story.id} story={story} index={index} playing={(currentIndex - 1) === index}  onVisibilityChange={handleVideoVisibilityChange} onVideoUpload={openUploadModal} />
+                        <StoryView 
+							key={story.id} 
+							story={story} 
+							index={index} 
+							playing={(currentIndex - 1) === index}  
+							onVisibilityChange={handleVideoVisibilityChange} 
+							onVideoUpload={openUploadModal}
+							storyRepository={repository}
+							accessToken={accessToken}
+						/>
                     ))}
                 </>
             </div>
 
 			{/* Desktop action buttons - centered */}
-			<div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-[280px] flex-col gap-6 z-10">
-				<IconButton icon="thumbs-up" label="234 likes" />
+			<div className="hidden md:flex absolute top-1/2 right-[-84px] -translate-y-1/2 flex-col gap-6 z-10">
+				<IconButton 
+					icon="thumbs-up"
+					label={t('common.likes', { count: likeCount })}
+					highlighted={isLiked}
+					onClick={toggleLike}
+				/>
 				<IconButton icon="message-text-square-01" label="Send message" />
 				<IconButton icon="share-03" label="Share" />
 			</div>

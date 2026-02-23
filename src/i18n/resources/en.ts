@@ -1,6 +1,6 @@
 export default {
     'common.share': 'Share',
-    'common.likes': 'Likes',
+    'common.likes': '{{count}} Likes',
     'common.reviews': 'reviews',
     'common.students': 'students',
     'common.lessons': 'lessons',

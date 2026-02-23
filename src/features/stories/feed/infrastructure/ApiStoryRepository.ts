@@ -1,7 +1,7 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { StoryRepository } from '../domain/repository';
-import type { CreateStoryParams, GetMyStoriesParams, GetStoryParams, ListStoriesParams, ListStoriesResponse, Story } from '../domain/types';
+import type { CreateStoryParams, GetMyStoriesParams, GetStoryParams, LikeStoryParams, LikeStoryResponse, ListStoriesParams, ListStoriesResponse, Story, UnlikeStoryParams } from '../domain/types';
 import type { ApiStory } from './types';
 
 export class ApiStoryRepository implements StoryRepository {
@@ -22,6 +22,8 @@ export class ApiStoryRepository implements StoryRepository {
 			cities: apiStory.cities,
 			createdAt: apiStory.createdAt,
 			teacher: apiStory.teacher,
+			likeCount: apiStory.likeCount,
+			isLikedByCurrentUser: apiStory.isLikedByCurrentUser,
 		};
 	}
 
@@ -143,5 +145,23 @@ export class ApiStoryRepository implements StoryRepository {
 
 		const apiStory: ApiStory = await response.json();
 		return this.toStory(apiStory);
+	}
+
+	async likeStory({ token, storyId }: LikeStoryParams): Promise<LikeStoryResponse> {
+		const response = await this.httpClient.post({
+			url: `/stories/${storyId}/like`,
+			token,
+		});
+
+		return await response.json();
+	}
+
+	async unlikeStory({ token, storyId }: UnlikeStoryParams): Promise<LikeStoryResponse> {
+		const response = await this.httpClient.delete({
+			url: `/stories/${storyId}/unlike`,
+			token,
+		});
+
+		return await response.json();
 	}
 }

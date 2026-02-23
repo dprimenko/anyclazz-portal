@@ -5,8 +5,10 @@ import { FeedEvents } from "../../domain/events";
 import { IconButton } from "@/ui-library/shared";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
 import type { Story } from "../../domain/types";
+import type { StoryRepository } from "../../domain/repository";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { useTranslations } from "@/i18n";
+import { useStoryLike } from "../../hooks/useStoryLike";
 
 
 export interface StoryViewProps {
@@ -15,9 +17,12 @@ export interface StoryViewProps {
     playing: boolean;
     onVisibilityChange: (index: number, isVisible: boolean) => void;
 	onVideoUpload: () => void;
+	storyRepository: StoryRepository;
+	accessToken: string;
 }
 
-export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload }: StoryViewProps) {
+export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload, storyRepository, accessToken }: StoryViewProps) {
+	const t = useTranslations();
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -25,6 +30,14 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 	const [isMuted, setIsMuted] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
 	const isMobile = useIsMobile();
+
+	const { likeCount, isLiked, isLoading: isLikeLoading, toggleLike } = useStoryLike({
+		storyId: story.id,
+		initialCount: story.likeCount,
+		initialIsLiked: story.isLikedByCurrentUser,
+		storyRepository,
+		accessToken,
+	});
 
     const togglePlay = useCallback(() => {
 		setIsPlaying(!isPlaying);
@@ -112,7 +125,13 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 
 				{/* Actions - right column (solo mobile) */}
 				<div className="flex md:hidden flex-col items-center justify-end gap-6 p-4 pb-6">
-					<IconButton icon="thumbs-up" label="234k" variant="ghost" />
+					<IconButton 
+						icon="thumbs-up"
+						label={t('common.likes', { count: likeCount })}
+						variant="ghost"
+						highlighted={isLiked}
+						onClick={toggleLike}
+					/>
 					<IconButton icon="message-text-square-01" label="Chat" variant="ghost" />
 					<IconButton icon="share-03" label="Share" variant="ghost" />
 				</div>
