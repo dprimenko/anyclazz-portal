@@ -54,11 +54,11 @@ export function LessonsTable({lessons, user, token, emptyState, loading = false,
                     {/* Desktop Table - solo visible en desktop */}
                     <div className="hidden md:block w-full">
                         <div className="grid grid-cols-[2fr_2fr_1.5fr_1.5fr_1fr_1.5fr] gap-4 py-3 border-b border-[var(--color-neutral-200)]">
-                            <Text size="text-xs" colorType="tertiary">{t('common.teacher')}</Text>
-                            <Text size="text-xs" colorType="tertiary">{t('common.date')}</Text>
-                            <Text size="text-xs" colorType="tertiary">{t('common.duration')}</Text>
-                            <Text size="text-xs" colorType="tertiary">{t('common.price')}</Text>
-                            <Text size="text-xs" colorType="tertiary">{t('common.lesson_type')}</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.teacher')}</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.date')}</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.duration')}</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.price')}</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.lesson_type')}</Text>
                             <div></div>
                         </div>
                         {lessons.map((lesson) => (

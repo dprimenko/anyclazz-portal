@@ -124,7 +124,14 @@ export function TeacherStoriesList({ teacherId, accessToken }: MyStoriesTabProps
 
     return (
         <>
-            {selectedStory && (<ModalStory story={selectedStory} onClose={() => setSelectedStory(null)} />)}
+            {selectedStory && (
+                <ModalStory 
+                    story={selectedStory} 
+                    storyRepository={repository}
+                    accessToken={accessToken}
+                    onClose={() => setSelectedStory(null)} 
+                />
+            )}
             {editingStory && (
                 <VideoEditModal 
                     story={editingStory} 

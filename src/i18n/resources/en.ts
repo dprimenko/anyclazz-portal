@@ -126,6 +126,7 @@ export default {
     'teachers.super-tutor': 'Super Tutor',
     'teachers.speaks': 'Speaks:',
     'teachers.book-lesson': 'Book a lesson',
+    'teachers.book': 'Book',
     'teachers.book-now': 'Book now',
     'teachers.back-to-teachers': 'back to teachers',
     'teachers.class-types-pricing': 'Class type & prices:',

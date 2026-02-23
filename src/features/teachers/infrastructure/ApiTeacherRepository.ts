@@ -57,6 +57,26 @@ export class ApiTeacherRepository implements TeacherRepository {
 		};
 	}
 
+	async listSavedTeachers({ token, page, size, query }: ListTeachersParams): Promise<ListTeachersResponse> {		
+		const data: Record<string, string | number> = {
+			page: page,
+			size: size,
+			...(query ? { query } : {}),
+		};
+
+		const apiTeachersResponse = await this.httpClient.get({
+			url: '/teachers',
+			token: token,
+			data,
+		});
+
+		const teachers = await apiTeachersResponse.json();
+		return {
+			teachers: teachers.teachers.map(this.toTeacher),
+			meta: teachers.meta,
+		};
+	}
+
 	async getTeacher({ token, teacherId}: GetTeacherParams): Promise<Teacher> {		
 		const apiTeacherResponse = await this.httpClient.get({
 			url: `/teachers/${teacherId}`,

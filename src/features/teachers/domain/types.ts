@@ -178,6 +178,7 @@ export interface GetTeacherReviewsResponse {
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
+    listSavedTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
     updateTeacher(params: UpdateTeacherParams): Promise<void>;
     getTeacherReviews(params: GetTeacherReviewsParams): Promise<GetTeacherReviewsResponse>;
 }

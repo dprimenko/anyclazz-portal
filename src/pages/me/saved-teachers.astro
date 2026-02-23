@@ -1,10 +1,46 @@
 ---
 export const prerender = false;
+import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import Main from '../../layout/Main.astro';
+import { getSession } from 'auth-astro/server';
+import { getLangFromUrl, useTranslations } from '@/i18n';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { PaginatedTeachers } from '@/features/teachers/paginated-teachers/PaginatedTeachers';
+import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations({ lang });
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const repository = new ApiTeacherRepository();
+const teachers = await repository.listSavedTeachers({token: accessToken, page: 1, size: 10});
 ---
 
-<Main>
-	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-		Saved teachers
+<Main title="Saved Teachers">
+	<div class="px-4 py-2 sm:p-8">
+		<Breadcrumb
+			items={[
+				{ label: t('menu.dashboard'), href: '/dashboard' },
+				{ label: t('menu.dashboard.saved-teachers'), href: '/me/saved-teachers' },
+			]}
+		/>
+		<Space size={16} direction="vertical" />
+		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.dashboard.saved-teachers')}</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
+		<PaginatedTeachers 
+			initialTeachers={teachers} 
+			token={accessToken}
+			client:load 
+		/>
 	</div>
 </Main>

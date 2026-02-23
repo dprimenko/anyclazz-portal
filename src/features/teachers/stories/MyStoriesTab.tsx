@@ -51,8 +51,6 @@ export function MyStoriesTab({ teacherId, accessToken, countryIso2, cityIso2 }: 
                 <VideoUploadButton
                     accessToken={accessToken}
                     teacherId={teacherId}
-                    countryIso2={countryIso2}
-                    cityIso2={cityIso2}
                     onVideoUploaded={handleVideoUploaded}
                 />
             </div>

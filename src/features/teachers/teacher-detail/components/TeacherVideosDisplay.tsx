@@ -79,7 +79,12 @@ export function TeacherVideosDisplay({ teacherId, accessToken }: TeacherVideosDi
     return (
         <>
             {selectedStory && (
-                <ModalStory story={selectedStory} onClose={() => setSelectedStory(null)} />
+                <ModalStory 
+                    story={selectedStory} 
+                    storyRepository={repository}
+                    accessToken={accessToken}
+                    onClose={() => setSelectedStory(null)} 
+                />
             )}
             
             <div className="mt-6">

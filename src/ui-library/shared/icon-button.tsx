@@ -17,6 +17,7 @@ const iconButtonVariants = cva(
         xxs: "rounded-md w-6 h-6",
         xs: "rounded-md w-8 h-8",
         sm: "rounded-lg w-10 h-10",
+        md: "rounded-lg w-12 h-12",
         lg: "rounded-lg w-14 h-14",
       },
     },

@@ -105,6 +105,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
     }), [availableSlots]);
 
     const priceAmount = useMemo(() => {
+        console.log(selectedClass);
         if (selectedClass.durations === undefined) {
             return '';
         }
