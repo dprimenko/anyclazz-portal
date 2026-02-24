@@ -65,6 +65,7 @@ export default {
     'common.cancelling': 'Cancelando...',
     'common.loading': 'Cargando',
     'common.processing': 'Procesando',
+    'common.language_selector': 'Idioma',
 
     'menu.dashboard': 'Inicio',
     'menu.dashboard.upcoming-lessons': 'Próximas clases',
@@ -79,6 +80,7 @@ export default {
     'menu.profile': 'Perfil',
     'menu.settings': 'Configuración',
     'menu.support': 'Soporte',
+    'menu.sign_out': 'Cerrar sesión',
     
     'feed.loading': 'Cargando stories...',
     'feed.error_title': 'Error al cargar stories',

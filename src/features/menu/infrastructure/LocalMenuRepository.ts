@@ -112,12 +112,6 @@ export class LocalMenuRepository implements MenuRepository {
     getCommonMenuItems(): MenuItem[] {
         return [
             {
-                id: 'settings',
-                label: 'menu.settings',
-                icon: 'settings',
-                href: '/me/settings',
-            },
-            {
                 id: 'support',
                 label: 'menu.support',
                 icon: 'support',
