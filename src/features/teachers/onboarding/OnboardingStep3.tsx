@@ -22,7 +22,7 @@ interface OnboardingStep3Props {
 }
 
 export default function OnboardingStep3({ lang, teacherId, token, initialData }: OnboardingStep3Props) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const [selectedNationality, setSelectedNationality] = useState<string>(initialData?.nationalityId || '');
     const [selectedCity, setSelectedCity] = useState<string>(initialData?.city || '');
     const [selectedLanguages, setSelectedLanguages] = useState<TeacherLanguage[]>(initialData?.speaksLanguages || []);

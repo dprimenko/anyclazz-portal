@@ -8,7 +8,7 @@ import { UserCache } from '@/features/auth/infrastructure/userCache';
 import { Combobox } from '@/ui-library/components/form/combobox/Combobox';
 import { Dropdown, type DropdownItem } from '@/ui-library/components/form/dropdown';
 import { useMemo, useState } from 'react';
-import { getCurrentLang, useTranslations } from '@/i18n';
+import { getCurrentLang, useTranslations, setLangCookie } from '@/i18n';
 
 interface LoggedUserClientProps {
     user: AuthUser;
@@ -54,14 +54,27 @@ export function LoggedUserClient({ user }: LoggedUserClientProps) {
 
     const [language, setLanguage] = useState(getCurrentLang());
 
+    const handleLanguageChange = (newLang: string) => {
+        if (newLang === language) {
+            return;
+        }
+        
+        // Guardar el idioma en las cookies
+        setLangCookie(newLang as 'en' | 'es');
+        
+        // Recargar la página para aplicar el cambio
+        window.location.reload();
+    };
+
     const languagesItems: DropdownItem[] = useMemo(() => {
+        const currentLang = getCurrentLang();
         const languages = [
             { id: 'en', name: { en: 'English', es: 'Inglés' } },
             { id: 'es', name: { en: 'Spanish', es: 'Español' } },
         ];
         return languages.map(lang => ({
             value: lang.id,
-            label: lang.name[getCurrentLang() as keyof typeof lang.name],
+            label: lang.name[currentLang as keyof typeof lang.name],
             renderItem: (item, isSelected) => (
                 <div className="flex items-center justify-between w-full">
                     <span>{item.label}</span>
@@ -118,8 +131,9 @@ export function LoggedUserClient({ user }: LoggedUserClientProps) {
                     <Dropdown
                         items={languagesItems}
                         value={language}
-                        onChange={setLanguage}
+                        onChange={handleLanguageChange}
                         fullWidth
+                        disablePortal={true}
                     />
                 </div>
             </>

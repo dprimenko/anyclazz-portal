@@ -1,7 +1,7 @@
 ---
 
 import Main from '../layout/Main.astro';
-import { useTranslations, getLangFromUrl } from '@/i18n';
+import { useTranslations, getLangFromRequest } from '@/i18n';
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
@@ -27,7 +27,7 @@ const repository = new AnyclazzMyBookingsRepository();
 const upcomingBookings = await repository.getBookings({token: accessToken, filter: 'upcoming', sort: 'desc', page: 1, size: 3});
 const lastBookings = await repository.getBookings({token: accessToken, filter: 'last', sort: 'desc', page: 1, size: 3});
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromRequest(Astro.request, Astro.url);
 const t = useTranslations({ lang });
 
 const showReviewNotification = user?.role === 'teacher' && (user.teacherStatus === 'pending' || toTimezone(user.teacherStatusUpdate, user.timezone) <= toTimezone(DateTime.now().toISO(), user.timezone).plus({ days: 3 }));

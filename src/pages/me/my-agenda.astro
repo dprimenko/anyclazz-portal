@@ -2,7 +2,7 @@
 export const prerender = false;
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import Main from '../../layout/Main.astro';
-import { useTranslations, getLangFromUrl } from '@/i18n';
+import { useTranslations, getLangFromRequest } from '@/i18n';
 import { getSession } from 'auth-astro/server';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { Text } from '@/ui-library/components/ssr/text/Text';
@@ -25,7 +25,7 @@ const user = await authRepository.getCurrentUser(session);
 const repository = new AnyclazzMyBookingsRepository();
 const bookings = await repository.getBookings({token: accessToken, sort: 'desc', from: DateTime.now().startOf('week').toISO(), to: DateTime.now().endOf('week').toISO(), timezone: 'America/New_York', page: 1, size: 100});
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromRequest(Astro.request, Astro.url);
 const t = useTranslations({ lang });
 ---
 

@@ -18,8 +18,8 @@ interface DashboardProps {
     token?: string;
 }
 
-export function Dashboard({ upcomingLessons, lastLessons, user, token }: DashboardProps) {
-    const t = useTranslations();
+export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: DashboardProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const [refreshKey, setRefreshKey] = useState(0);
     
     // Crear repositorio en el cliente
@@ -90,8 +90,7 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token }: Dashboa
 						lessons={upcomingLessons} 
 						user={user}
 						token={token}
-						onLessonCancelled={handleLessonCancelled}
-						emptyState={user?.role === 'student' ? (
+						onLessonCancelled={handleLessonCancelled}					lang={lang}						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_upcoming_lessons')}
 								description={t('dashboard.no_upcoming_lessons_description')}
@@ -126,8 +125,7 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token }: Dashboa
 						lessons={lastLessons} 
 						user={user}
 						token={token}
-						onLessonCancelled={handleLessonCancelled}
-						emptyState={user?.role === 'student' ? (
+						onLessonCancelled={handleLessonCancelled}					lang={lang}						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_past_lessons')}
 								description={t('dashboard.no_past_lessons_description')}

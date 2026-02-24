@@ -15,7 +15,7 @@ interface OnboardingStep4Props {
 }
 
 export default function OnboardingStep4({ lang, teacherId, token, initialData }: OnboardingStep4Props) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const [experienceDate, setExperienceDate] = useState<string>('');
     const [shortBio, setShortBio] = useState<string>(initialData?.shortPresentation || '');
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);

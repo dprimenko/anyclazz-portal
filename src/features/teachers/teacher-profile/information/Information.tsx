@@ -17,7 +17,7 @@ interface InformationFormValues {
 }
 
 export function Information({ teacher, accessToken, repository, lang }: { teacher: Teacher; accessToken: string; repository: TeacherRepository; lang: string }) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const [isSaving, setIsSaving] = useState(false);
     const [videoFile, setVideoFile] = useState<File | null>(null);
     const [shouldRemoveVideo, setShouldRemoveVideo] = useState(false);

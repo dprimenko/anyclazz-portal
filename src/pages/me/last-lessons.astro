@@ -1,6 +1,6 @@
 ---
 export const prerender = false;
-import { getCurrentLang, useTranslations } from '@/i18n';
+import { getLangFromRequest, useTranslations } from '@/i18n';
 import Main from '../../layout/Main.astro';
 import { Breadcrumb } from '@/ui-library/components/breadcrumb/Breadcrumb';
 import { Space } from '@/ui-library/components/ssr/space/Space';
@@ -11,10 +11,10 @@ import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/Anycl
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 
-const lang = getCurrentLang();
-const t = useTranslations({ lang });
-
 const session = await getSession(Astro.request);
+
+const lang = getLangFromRequest(Astro.request, Astro.url);
+const t = useTranslations({ lang });
 const accessToken = session?.accessToken as string;
 
 if (!accessToken) {
@@ -46,6 +46,7 @@ const lastBookings = await repository.getBookings({token: accessToken, page: 1, 
 			initialLessons={lastBookings} 
 			user={user} 
 			token={accessToken}
+			lang={lang}
 			client:load 
 		/>
 	</div>

@@ -19,7 +19,7 @@ interface OnboardingStep1Props {
 }
 
 export default function OnboardingStep1({ lang, initialData, teacherId, token }: OnboardingStep1Props) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const repository = useMemo(() => new ApiTeacherRepository(), []);
     
     // Por defecto selecciona la primera categoría

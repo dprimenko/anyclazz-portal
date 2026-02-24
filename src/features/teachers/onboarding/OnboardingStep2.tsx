@@ -22,7 +22,7 @@ interface ModalityOption {
 }
 
 export default function OnboardingStep2({ lang, initialData, teacherId, token }: OnboardingStep2Props) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const repository = useMemo(() => new TeacherModalitiesRepository(), []);
     
     // Extraer los tipos de las modalidades iniciales

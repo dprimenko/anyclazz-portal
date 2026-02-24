@@ -3,7 +3,7 @@ export const prerender = false;
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import Main from '../../layout/Main.astro';
 import { getSession } from 'auth-astro/server';
-import { getLangFromUrl, useTranslations } from '@/i18n';
+import { getLangFromRequest, useTranslations } from '@/i18n';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { Text } from '@/ui-library/components/ssr/text/Text';
@@ -13,7 +13,7 @@ import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeac
 const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromRequest(Astro.request, Astro.url);
 const t = useTranslations({ lang });
 
 if (!accessToken) {

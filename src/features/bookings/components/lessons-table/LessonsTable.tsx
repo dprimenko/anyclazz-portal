@@ -18,10 +18,11 @@ export interface LessonsTableProps {
     emptyState?: React.ReactNode;
     loading?: boolean;
     onLessonCancelled?: () => void;
+    lang?: string;
 }
 
-export function LessonsTable({lessons, user, token, emptyState, loading = false, onLessonCancelled} : LessonsTableProps) {
-    const t = useTranslations();
+export function LessonsTable({lessons, user, token, emptyState, loading = false, onLessonCancelled, lang} : LessonsTableProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Crear repositorio en el cliente
     const repository = useMemo(() => new AnyclazzMyBookingsRepository(), []);
@@ -45,6 +46,7 @@ export function LessonsTable({lessons, user, token, emptyState, loading = false,
                                         repository={repository}
                                         token={token}
                                         onLessonCancelled={onLessonCancelled}
+                                        lang={lang}
                                     />
                                 </SwiperSlide>
                             ))}
@@ -70,6 +72,7 @@ export function LessonsTable({lessons, user, token, emptyState, loading = false,
                                     repository={repository}
                                     token={token}
                                     onLessonCancelled={onLessonCancelled}
+                                    lang={lang}
                                 />
                             </div>
                         ))}

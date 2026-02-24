@@ -15,10 +15,11 @@ export interface PaginatedLessonsProps {
     initialLessons: GetBookingsResponse;
     user: AuthUser | null;
     token: string;
+    lang?: string;
 }   
 
-export function PaginatedLessons({initialLessons, user, token}: PaginatedLessonsProps) {
-    const t = useTranslations();
+export function PaginatedLessons({initialLessons, user, token, lang}: PaginatedLessonsProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Crear repositorio en el cliente
     const repository = useMemo(() => new AnyclazzMyBookingsRepository(), []);
@@ -59,6 +60,7 @@ export function PaginatedLessons({initialLessons, user, token}: PaginatedLessons
                 user={user}
                 token={token}
                 onLessonCancelled={fetchLessons}
+                lang={lang}
                 emptyState={user?.role === 'student' ? (
                     <EmptyState
                         title={t('dashboard.no_upcoming_lessons')}

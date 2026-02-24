@@ -1,5 +1,5 @@
 import type { BookingWithTeacher, BookingsRepository } from "../../domain/types";
-import { getCurrentLang, useTranslations } from "@/i18n";
+import { useTranslations } from "@/i18n";
 import type { AuthUser } from "@/features/auth/domain/types";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Text } from "@/ui-library/components/ssr/text/Text";
@@ -23,10 +23,11 @@ export interface LessonItemProps {
     bordered?: boolean;
     innerTableHeader?: boolean;
     onLessonCancelled?: () => void;
+    lang?: string;
 }
 
-export function LessonItem({ lesson, user, repository, token, isHighlited, bordered, innerTableHeader, onLessonCancelled }: LessonItemProps) {
-    const t = useTranslations();
+export function LessonItem({ lesson, user, repository, token, isHighlited, bordered, innerTableHeader, onLessonCancelled, lang }: LessonItemProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Parsear manteniendo la zona horaria original del backend
     const startTime = fromISOKeepZone(lesson.startAt);
@@ -58,8 +59,8 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
     }
     
     const price = useMemo(() => {
-        return formatPrice(lesson.classType.price?.price ?? 0, lesson.classType.price?.currency ?? 'USD', getCurrentLang());
-    }, [lesson]);
+        return formatPrice(lesson.classType.price?.price ?? 0, lesson.classType.price?.currency ?? 'USD', lang || 'en');
+    }, [lesson, lang]);
 
     const isPast = useMemo(() => {
         const now = DateTime.now();
@@ -112,7 +113,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                                     <a href={user?.role === 'student' && lesson.teacher ? `/teacher/${lesson.teacher.id}` : '#'}>
                                         <Text size="text-sm" weight="medium" colorType="primary" underline>{displayPerson.name}{' '}{displayPerson.surname}</Text>
                                     </a>
-                                    {user?.role === 'student' && <Text size="text-sm" colorType="tertiary">{t('common.teacher_of', { subject: displayPerson.subject.name[getCurrentLang()] })}</Text>}
+                                    {user?.role === 'student' && <Text size="text-sm" colorType="tertiary">{t('common.teacher_of', { subject: displayPerson.subject.name[lang || 'en'] })}</Text>}
                                     {user?.role === 'teacher' && <Text size="text-sm" colorType="tertiary">{t('common.student')}</Text>}
                                 </div>
                             </div>

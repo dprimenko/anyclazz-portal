@@ -16,7 +16,7 @@ interface LanguageSelectorProps {
 }
 
 export function LanguageSelector({ lang, value, onChange, label, required }: LanguageSelectorProps) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     // Ensure there's always at least one empty row
     useEffect(() => {
         if (value.length === 0) {

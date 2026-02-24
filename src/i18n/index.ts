@@ -1,12 +1,79 @@
 import {ui, defaultLang, routes, showDefaultLang} from './ui';
 
-export function getLangFromUrl(url: URL) {
-    const [, lang] = url.pathname.split('/');
-    if (lang in ui) return lang as keyof typeof ui;
+const LANG_COOKIE_NAME = 'app_lang';
+
+// Función para obtener cookies en el cliente
+function getCookieClient(name: string): string | undefined {
+    if (typeof document === 'undefined') return undefined;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
+    return undefined;
+}
+
+// Función para obtener cookies desde un string de cookies (SSR)
+function getCookieFromString(cookieString: string | undefined, name: string): string | undefined {
+    if (!cookieString) return undefined;
+    const value = `; ${cookieString}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
+    return undefined;
+}
+
+// Función para establecer cookies en el cliente
+function setCookieClient(name: string, value: string, days: number = 365) {
+    if (typeof document === 'undefined') return;
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
+}
+
+// Función para obtener el idioma de la cookie (funciona en cliente y servidor)
+export function getLangFromCookie(cookieString?: string): keyof typeof ui | undefined {
+    let lang: string | undefined;
+    
+    if (cookieString) {
+        // SSR: leer de cookieString
+        lang = getCookieFromString(cookieString, LANG_COOKIE_NAME);
+    } else if (typeof window !== 'undefined') {
+        // Client: leer de document.cookie
+        lang = getCookieClient(LANG_COOKIE_NAME);
+    }
+    
+    if (lang && lang in ui) {
+        return lang as keyof typeof ui;
+    }
+    return undefined;
+}
+
+// Función para guardar el idioma en la cookie
+export function setLangCookie(lang: keyof typeof ui) {
+    setCookieClient(LANG_COOKIE_NAME, lang);
+}
+
+export function getLangFromUrl(url: URL, cookieString?: string): keyof typeof ui {
+    // Si no está en la URL, intentar leer de cookie
+    const cookieLang = getLangFromCookie('app_lang');
+    console.log('🌐 Detected language from URL:', cookieLang);
+    if (cookieLang) return cookieLang;
+    
+    // Fallback a defaultLang
     return defaultLang;
 }
 
-export function getCurrentLang() {
+// Helper para usar en páginas Astro SSR - obtiene el idioma desde la URL y cookies del request
+export function getLangFromRequest(request: Request, url: URL): keyof typeof ui {
+    const cookieHeader = request.headers.get('cookie');
+    return getLangFromUrl(url, cookieHeader || undefined);
+}
+
+export function getCurrentLang(cookieString?: string): keyof typeof ui {
+    // Intentar leer de cookie (funciona en SSR si se pasa cookieString, y en cliente)
+    const cookieLang = getLangFromCookie(cookieString);
+    if (cookieLang) {
+        return cookieLang;
+    }
     return defaultLang;
 }
 
@@ -24,8 +91,10 @@ export function useTranslatedPath(lang: keyof typeof ui) {
 
 export function useTranslations({ lang }: { lang?: keyof typeof ui } = {}) {
     return function t(key: string, params?: Record<string, string | number>) {
+        // Usar el idioma proporcionado o el idioma actual (cookie o default)
+        const currentLang = lang || getCurrentLang();
         // @ts-ignore
-        let translation = lang ? ui[lang][key] : ui[defaultLang][key];
+        let translation = ui[currentLang][key] || ui[defaultLang][key];
         
         if (params) {
             Object.entries(params).forEach(([paramKey, paramValue]) => {

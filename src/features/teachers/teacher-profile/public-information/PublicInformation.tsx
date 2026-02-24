@@ -32,7 +32,7 @@ interface PublicInformationFormValues {
 }
 
 export function PublicInformation({ teacher, accessToken, repository, lang }: { teacher: Teacher; accessToken: string; repository: TeacherRepository; lang: string }) {
-    const t = useTranslations();
+    const t = useTranslations({ lang: lang as 'en' | 'es' });
     const [isSaving, setIsSaving] = useState(false);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [portraitFile, setPortraitFile] = useState<File | null>(null);

@@ -20,10 +20,11 @@ export interface LessonItemCardProps {
     repository: BookingsRepository;
     token?: string;
     onLessonCancelled?: () => void;
+    lang?: string;
 }
 
-export function LessonItemCard({ lesson, user, repository, token, onLessonCancelled }: LessonItemCardProps) {
-    const t = useTranslations();
+export function LessonItemCard({ lesson, user, repository, token, onLessonCancelled, lang }: LessonItemCardProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Parsear manteniendo la zona horaria original del backend
     const startTime = fromISOKeepZone(lesson.startAt);

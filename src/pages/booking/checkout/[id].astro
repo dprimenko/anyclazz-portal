@@ -1,7 +1,7 @@
 ---
 import Main from '@/layout/Main.astro';
 export const prerender = false;
-import { getLangFromUrl, useTranslations } from '@/i18n';
+import { getLangFromRequest, useTranslations } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
@@ -15,7 +15,7 @@ import { BookingCheckoutWrapper } from '@/features/bookings/components/booking-c
 import { proficiencyLevels } from '@/features/teachers/onboarding/data/proficiencyLevels';
 import { isSuperTutor } from '@/features/teachers/utils/superTutorHelpers';
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromRequest(Astro.request, Astro.url);
 const t = useTranslations({ lang });
 
 const { id } = Astro.params;

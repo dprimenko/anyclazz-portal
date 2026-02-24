@@ -5,7 +5,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "@/ui-library/components/ssr/space/Space.tsx";
 import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
 import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon.tsx";
-import { getLangFromUrl, useTranslations } from "@/i18n/index.ts";
+import { getLangFromRequest, useTranslations } from "@/i18n/index.ts";
 import Main from "@/layout/Main.astro";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
@@ -18,7 +18,7 @@ import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export const prerender = false;
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromRequest(Astro.request, Astro.url);
 const t = useTranslations({ lang });
 
 const session = await getSession(Astro.request);

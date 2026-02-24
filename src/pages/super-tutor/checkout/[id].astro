@@ -1,13 +1,13 @@
 ---
 import Main from '@/layout/Main.astro';
 export const prerender = false;
-import { getLangFromUrl, useTranslations } from '@/i18n';
+import { getLangFromRequest, useTranslations } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { getSession } from 'auth-astro/server';
 import { SubscriptionCheckoutPage } from '@/features/shared/components/stripe/SubscriptionCheckoutPage';
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromRequest(Astro.request, Astro.url);
 const t = useTranslations({ lang });
 
 const { id } = Astro.params;
