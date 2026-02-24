@@ -1,8 +1,8 @@
 import type { CommonParams } from '@/features/shared/domain/types';
 
 export interface StoryCity {
-	countryISO2: string;
-	cityISO2: string;
+	country: string;
+	city: string;
 }
 
 export interface Story {
@@ -32,8 +32,8 @@ export interface ListStoriesParams extends CommonParams {
 	page: number;
 	size: number;
 	teacherId?: string;
-	countryISO2?: string;
-	cityISO2?: string;
+	country?: string;
+	city?: string;
 }
 
 export interface ListStoriesResponse {
@@ -53,8 +53,8 @@ export interface CreateStoryParams extends CommonParams {
 	title?: string;
 	thumbnail?: File;
 	locations?: Array<{
-		countryIso2: string;
-		cityIso2?: string;
+		country: string;
+		city?: string;
 	}>;
 }
 

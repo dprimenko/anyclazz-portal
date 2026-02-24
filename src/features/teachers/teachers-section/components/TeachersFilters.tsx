@@ -88,14 +88,14 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         onClear();
     };
 
-    const handleCityChange = (cityISO2: string, countryISO2: string) => {
-        setSelectedCity(cityISO2);
-        setSelectedCountry(countryISO2);
+    const handleCityChange = (city: string, country: string) => {
+        setSelectedCity(city);
+        setSelectedCountry(country);
         
         onFiltersChange({
             search: search || undefined,
-            country: countryISO2 || undefined,
-            city: cityISO2 || undefined,
+            country: country || undefined,
+            city: city || undefined,
             classTypeId: selectedClassType || undefined,
             minPrice,
             maxPrice,

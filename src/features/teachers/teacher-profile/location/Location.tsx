@@ -3,7 +3,7 @@ import type { Teacher } from "../../domain/types";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Space } from "@/ui-library/components/ssr/space/Space";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "@/i18n";
 import { HorizontalInputContainer } from "@/ui-library/components/horizontal-input-container/HorizontalInputContainer";
 import { TextField } from "@/ui-library/components/form/text-field/TextField";
@@ -49,7 +49,7 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
     // Transform countries data to ComboboxItem format
     const countryItems: ComboboxItem[] = useMemo(() => 
         countries.map(country => ({
-            value: country.countryISO2,
+            value: country.country,
             label: country.name[lang as keyof typeof country.name],
         })),
         [lang]
@@ -57,9 +57,9 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
 
     // Filter states by selected country
     const stateItems: ComboboxItem[] = useMemo(() => {
-        const filteredStates = states.filter(state => state.countryISO2 === watchedCountry);
+        const filteredStates = states.filter(state => state.country === watchedCountry);
         return filteredStates.map(state => ({
-            value: state.stateISO2,
+            value: state.state,
             label: state.name[lang as keyof typeof state.name],
         }));
     }, [lang, watchedCountry]);
@@ -67,14 +67,14 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
     // Filter cities by selected country
     const cityItems: ComboboxItem[] = useMemo(() => {
         if (watchedCountry) {
-            const countryCities = cities.filter(city => city.countryISO2 === watchedCountry);
+            const countryCities = cities.filter(city => city.country === watchedCountry);
             return countryCities.map(city => ({
-                value: city.cityISO2,
+                value: city.city,
                 label: city.name[lang as keyof typeof city.name],
             }));
         }
         return cities.map(city => ({
-            value: city.cityISO2,
+            value: city.city,
             label: city.name[lang as keyof typeof city.name],
         }));
     }, [lang, watchedCountry]);
@@ -127,6 +127,10 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
             setIsSaving(false);
         }
     }, [accessToken, repository, teacher.id]);
+
+    useEffect(() => {   
+        console.log(teacher.teacherAddress);
+    }, [teacher]);
 
     return (
         <form className="mt-6 flex flex-col gap-8" onSubmit={handleSubmit(handleSave)}>

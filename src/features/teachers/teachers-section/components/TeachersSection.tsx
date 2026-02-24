@@ -35,7 +35,7 @@ function TeachersSectionContent() {
   const teachersLocation = useMemo(() => {
     if (!filters.city) return "Madrid";
     
-    const city = cities.find(c => c.cityISO2 === filters.city);
+    const city = cities.find(c => c.city === filters.city);
     return city ? city.name[lang as keyof typeof city.name] : "Madrid";
   }, [filters.city, lang]);
 

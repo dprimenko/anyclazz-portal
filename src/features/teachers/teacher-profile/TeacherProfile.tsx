@@ -132,8 +132,8 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
                 <MyStoriesTab 
                     teacherId={teacherId} 
                     accessToken={accessToken}
-                    countryIso2={teacher.teacherAddress?.country || ''}
-                    cityIso2={teacher.teacherAddress?.city}
+                    country={teacher.teacherAddress?.country || ''}
+                    city={teacher.teacherAddress?.city}
                 />
             )}
         </div>

@@ -42,15 +42,15 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
     // Prioritize cities from selected nationality
     const cityItems: ComboboxItem[] = useMemo(() => {
         const allCities = cities.map(city => ({
-            value: city.cityISO2,
+            value: city.city,
             label: city.name[lang as keyof typeof city.name],
-            countryISO2: city.countryISO2,
+            country: city.country,
         }));
 
         // If a nationality is selected, prioritize cities from that country
         if (selectedNationality) {
-            const countryCities = allCities.filter(city => city.countryISO2 === selectedNationality);
-            const otherCities = allCities.filter(city => city.countryISO2 !== selectedNationality);
+            const countryCities = allCities.filter(city => city.country === selectedNationality);
+            const otherCities = allCities.filter(city => city.country !== selectedNationality);
             return [...countryCities, ...otherCities];
         }
 
@@ -59,7 +59,7 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
 
     // Transform countries data to ComboboxItem format with current locale
     const nationalityItems: ComboboxItem[] = countries.map(country => ({
-        value: country.countryISO2,
+        value: country.country,
         label: country.name[lang as keyof typeof country.name],
     }));
 
@@ -70,7 +70,7 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
         setIsSaving(true);
         try {
             // Obtener la información completa de la ciudad seleccionada
-            const selectedCityData = cities.find(c => c.cityISO2 === selectedCity);
+            const selectedCityData = cities.find(c => c.city === selectedCity);
             
             if (!selectedCityData) {
                 console.error('City data not found');
@@ -79,8 +79,8 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
 
             // Construir fullAddress
             const cityName = selectedCityData.name[lang as keyof typeof selectedCityData.name];
-            const countryData = countries.find(c => c.countryISO2 === selectedCityData.countryISO2);
-            const countryName = countryData?.name[lang as keyof typeof countryData.name] || selectedCityData.countryISO2;
+            const countryData = countries.find(c => c.country === selectedCityData.country);
+            const countryName = countryData?.name[lang as keyof typeof countryData.name] || selectedCityData.country;
             const fullAddress = `${cityName}, ${countryName}`;
 
             // Llamar al repositorio para actualizar los datos del profesor
@@ -90,8 +90,8 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
                 data: {
                     nationalityId: selectedNationality,
                     address: {
-                        country: selectedCityData.countryISO2,
-                        city: selectedCityData.cityISO2,
+                        country: selectedCityData.country,
+                        city: selectedCityData.city,
                         fullAddress,
                     },
                     speaksLanguages: selectedLanguages,
@@ -106,8 +106,8 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
         }
     };
 
-    const selectedCityData = cities.find(c => c.cityISO2 === selectedCity);
-    // const selectedCityFlag = selectedCityData ? getFlagForCountry(selectedCityData.countryISO2) : '';
+    const selectedCityData = cities.find(c => c.city === selectedCity);
+    // const selectedCityFlag = selectedCityData ? getFlagForCountry(selectedCityData.country) : '';
 
     const isFormValid = selectedNationality !== '' && selectedCity !== '' && selectedLanguages.length > 0;
 

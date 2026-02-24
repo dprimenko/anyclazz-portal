@@ -105,7 +105,18 @@ function CheckoutForm({
 
 // Componente principal que recibe el clientSecret del backend
 export function BookingCheckout({ clientSecret, amount, currency, onSuccess, onError, lang = 'en' }: BookingCheckoutProps) {
-  const stripePromise = loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const publishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  
+  if (!publishableKey) {
+    console.error('Stripe publishable key is not configured');
+    return (
+      <div className="p-3 bg-red-50 border border-red-200 rounded-lg mt-4">
+        <Text colorType="primary" size="text-sm">Payment configuration error. Please contact support.</Text>
+      </div>
+    );
+  }
+
+  const stripePromise = loadStripe(publishableKey);
 
   if (!clientSecret) {
     return (

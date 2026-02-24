@@ -7,8 +7,8 @@ interface UseFeedParams {
 	accessToken: string;
 	page?: number;
 	size?: number;
-	countryISO2?: string;
-	cityISO2?: string;
+	country?: string;
+	city?: string;
 	initialStoryId?: string;
 }
 
@@ -27,8 +27,8 @@ export const useFeed = ({
 	accessToken,
 	page = 1,
 	size = 20,
-	countryISO2,
-	cityISO2,
+	country,
+	city,
 	initialStoryId,
 }: UseFeedParams): UseFeedResult => {
 	const [stories, setStories] = useState<Story[]>([]);
@@ -37,7 +37,7 @@ export const useFeed = ({
 	const [currentPage, setCurrentPage] = useState(page);
 	const [lastPage, setLastPage] = useState(1);
 	const [total, setTotal] = useState(0);
-	const [filters, setFilters] = useState({ countryISO2, cityISO2 });
+	const [filters, setFilters] = useState({ country, city });
 
 	const fetchStories = async () => {
 		try {
@@ -45,10 +45,10 @@ export const useFeed = ({
 			setError(null);
 
 			// Si hay un initialStoryId, primero obtener ese story para extraer su ciudad
-			let finalCountryISO2 = filters.countryISO2;
-			let finalCityISO2 = filters.cityISO2;
+			let finalCountry = filters.country;
+			let finalCity = filters.city;
 
-			if (initialStoryId && !finalCityISO2) {
+			if (initialStoryId && !finalCity) {
 				const initialStory = await storyRepository.getStory({
 					storyId: initialStoryId,
 					token: accessToken,
@@ -56,11 +56,11 @@ export const useFeed = ({
 
 				// Usar la primera ciudad del story inicial como filtro
 				if (initialStory.cities.length > 0) {
-					finalCountryISO2 = initialStory.cities[0].countryISO2;
-					finalCityISO2 = initialStory.cities[0].cityISO2;
+					finalCountry = initialStory.cities[0].country;
+					finalCity = initialStory.cities[0].city;
 					setFilters({
-						countryISO2: finalCountryISO2,
-						cityISO2: finalCityISO2,
+						country: finalCountry,
+						city: finalCity,
 					});
 				}
 			}
@@ -69,8 +69,8 @@ export const useFeed = ({
 				token: accessToken,
 				page: currentPage,
 				size,
-				countryISO2: finalCountryISO2,
-				cityISO2: finalCityISO2,
+				country: finalCountry,
+				city: finalCity,
 			});
 
 			setStories(response.stories);
@@ -86,7 +86,7 @@ export const useFeed = ({
 
 	useEffect(() => {
 		fetchStories();
-	}, [currentPage, filters.countryISO2, filters.cityISO2, initialStoryId]);
+	}, [currentPage, filters.country, filters.city, initialStoryId]);
 
 	return {
 		stories,

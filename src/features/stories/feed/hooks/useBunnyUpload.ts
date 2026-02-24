@@ -11,8 +11,8 @@ export interface UploadStoryRequest {
   description: string;
   thumbnail?: File;
   locations?: Array<{
-    countryIso2: string;
-    cityIso2?: string;
+    country: string;
+    city?: string;
   }>;
 }
 

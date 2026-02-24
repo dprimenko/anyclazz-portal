@@ -147,7 +147,18 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   const t = useTranslations({ lang });
   const { createSubscription } = useCreateSubscription(token);
 
-  const stripePromise = loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const publishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  
+  if (!publishableKey) {
+    console.error('Stripe publishable key is not configured');
+    return (
+      <div className="p-3 bg-red-50 border border-red-200 rounded-lg mt-4">
+        <Text colorType="primary" size="text-sm">Payment configuration error. Please contact support.</Text>
+      </div>
+    );
+  }
+
+  const stripePromise = loadStripe(publishableKey);
 
   useEffect(() => {
     // Detectar si viene de PayPal (Stripe agrega estos parámetros al return_url)

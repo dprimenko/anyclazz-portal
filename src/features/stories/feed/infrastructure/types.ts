@@ -1,6 +1,6 @@
 export interface ApiStoryCity {
-	countryISO2: string;
-	cityISO2: string;
+	country: string;
+	city: string;
 }
 
 export interface ApiStory {

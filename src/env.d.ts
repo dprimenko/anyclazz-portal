@@ -1,5 +1,6 @@
 interface ImportMetaEnv {
   readonly API_URL: string
+  readonly PUBLIC_STRIPE_PUBLISHABLE_KEY: string
 }
 
 interface ImportMeta {

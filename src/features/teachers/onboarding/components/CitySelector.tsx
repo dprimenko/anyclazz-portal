@@ -5,7 +5,7 @@ import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
 export interface CitySelectorProps {
     value?: string;
-    onChange?: (cityISO2: string, countryISO2: string) => void;
+    onChange?: (city: string, country: string) => void;
     lang: 'es' | 'en';
     placeholder?: string;
     searchPlaceholder?: string;
@@ -29,20 +29,20 @@ export function CitySelector({
     const cityItems: ComboboxItem[] = useMemo(() => {
         // Priorizar ciudades de Estados Unidos (US) al inicio de la lista
         // La primera versión de la app está diseñada para EEUU
-        const usCities = cities.filter(city => city.countryISO2.toLowerCase() === 'us');
-        const otherCities = cities.filter(city => city.countryISO2.toLowerCase() !== 'us');
+        const usCities = cities.filter(city => city.country.toLowerCase() === 'us');
+        const otherCities = cities.filter(city => city.country.toLowerCase() !== 'us');
         const sortedCities = [...usCities, ...otherCities];
         
         return sortedCities.map(city => {
             const cityName = city.name[lang];
             
             return {
-                value: city.cityISO2,
+                value: city.city,
                 label: cityName,
                 prepend: (
                     <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center">
                         <Icon 
-                            icon={`flags/${city.countryISO2.toLowerCase()}`}
+                            icon={`flags/${city.country.toLowerCase()}`}
                             iconWidth={20}
                             iconHeight={20}
                         />
@@ -52,10 +52,10 @@ export function CitySelector({
         });
     }, [lang]);
 
-    const handleChange = (cityISO2: string) => {
-        const selectedCity = cities.find(city => city.cityISO2 === cityISO2);
+    const handleChange = (city: string) => {
+        const selectedCity = cities.find(c => c.city === city);
         if (selectedCity && onChange) {
-            onChange(cityISO2, selectedCity.countryISO2);
+            onChange(city, selectedCity.country);
         }
     };
 

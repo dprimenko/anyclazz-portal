@@ -19,8 +19,8 @@ const profileData = await authRepository.getUserProfile(accessToken);
 const teacherId = user?.role === 'teacher' ? profileData?.teacherProfile?.id : undefined;
 
 // Get teacher's location data if user is a teacher
-let countryIso2: string | undefined;
-let cityIso2: string | undefined;
+let country: string | undefined;
+let city: string | undefined;
 if (user?.role === 'teacher' && user.id) {
 	const teacherRepository = new ApiTeacherRepository();
 	const teacher = await teacherRepository.getTeacher({ 

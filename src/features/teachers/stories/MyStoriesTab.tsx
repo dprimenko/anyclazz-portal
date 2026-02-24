@@ -12,11 +12,11 @@ import { VideoUploadEvents } from '@/features/stories/feed/components/video-uplo
 export interface MyStoriesTabProps {
   teacherId: string;
   accessToken: string;
-  countryIso2: string;
-  cityIso2?: string;
+  country: string;
+  city?: string;
 }
 
-export function MyStoriesTab({ teacherId, accessToken, countryIso2, cityIso2 }: MyStoriesTabProps) {
+export function MyStoriesTab({ teacherId, accessToken, country, city }: MyStoriesTabProps) {
   const t = useTranslations();
   
   const handleVideoUploaded = (story: Story) => {
