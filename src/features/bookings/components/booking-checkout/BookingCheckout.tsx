@@ -105,7 +105,7 @@ function CheckoutForm({
 
 // Componente principal que recibe el clientSecret del backend
 export function BookingCheckout({ clientSecret, amount, currency, onSuccess, onError, lang = 'en' }: BookingCheckoutProps) {
-  const publishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const publishableKey = "pk_test_51SdvZdRpuaFax7XpwLl84SqWauVhApPg4eCmdm9BzdbTzK2vQBzACLJ5jTcqFuD0Wsrl3vXW8QXaYy0VHio1mAlq00zmj0s5ot";
   
   if (!publishableKey) {
     console.error('Stripe publishable key is not configured');
