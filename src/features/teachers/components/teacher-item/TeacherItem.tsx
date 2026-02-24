@@ -38,8 +38,8 @@ export function TeacherItem({ teacher, onBook }: TeacherItemProps) {
                     </div>
                     <div className="flex flex-col">
                         <div className="flex flex-row gap-1">
-                            <Text size="text-sm" colorType="primary" weight="medium">4.9/5</Text>
-                            <Text size="text-sm" colorType="tertiary">202 reviews</Text>
+                            <Text size="text-sm" colorType="primary" weight="medium">{teacher.averageRating}/5</Text>
+                            <Text size="text-sm" colorType="tertiary">{teacher.reviewsNumber} reviews</Text>
                         </div>
                     </div>
                     <div className="flex flex-col">

@@ -177,7 +177,7 @@ export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
                     </div>
                     <Space size={10} direction="vertical"/>
                     <div className="flex flex-row gap-2 items-center">
-                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary" size="text-sm">{teacher.rating?.toFixed(1)}</TextWithIcon>
+                        <TextWithIcon icon="star" textLevel="span" weight="medium" colorType="primary" size="text-sm">{teacher.averageRating?.toFixed(1)}</TextWithIcon>
                         <Text colorType="tertiary" textLevel="span" size="text-sm">{teacher.reviewsNumber} {t('common.reviews')}</Text>
                     </div>
                     <Space size={16} direction="vertical"/>

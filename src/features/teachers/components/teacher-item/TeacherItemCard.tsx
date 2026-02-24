@@ -42,8 +42,8 @@ export function TeacherItemCard({ teacher, onBook }: TeacherItemCardProps) {
                     <div className="flex items-center gap-2">
                         <Text size="text-sm" className='text-[var(--color-neutral-500)]'>Rate:</Text>
                         <div className="flex flex-row gap-1">
-                            <Text size="text-sm" colorType="primary" weight="medium">4.9/5</Text>
-                            <Text size="text-sm" colorType="tertiary">202 reviews</Text>
+                            <Text size="text-sm" colorType="primary" weight="medium">{teacher.averageRating}/5</Text>
+                            <Text size="text-sm" colorType="tertiary">{teacher.reviewsNumber} reviews</Text>
                         </div>
                     </div>
     
