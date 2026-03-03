@@ -1,0 +1,67 @@
+---
+import { getLangFromRequest, useTranslations } from "@/i18n/index.ts";
+import Main from "@/layout/Main.astro";
+import { getSession } from 'auth-astro/server';
+import { AnyclazzAuthRepository } from "@/features/auth/ssr/infrastructure/AnyclazzAuthRepository";
+import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
+import { StripeConnectSection } from "@/features/stripe-connect";
+import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
+import { Divider } from "@/ui-library/components/ssr/divider/Divider.tsx";
+
+export const prerender = false;
+
+const lang = getLangFromRequest(Astro.request, Astro.url);
+const t = useTranslations({ lang });
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+    return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(await getSession(Astro.request));
+
+if (!user?.id) {
+    return Astro.redirect('/login');
+}
+
+// Solo teachers pueden acceder a esta página
+if (user.role !== 'teacher') {
+    return Astro.redirect('/dashboard');
+}
+
+const teacherRepository = new ApiTeacherRepository();
+const teacher = await teacherRepository.getTeacher({ 
+    token: accessToken,
+    teacherId: user.id
+});
+
+---
+
+<Main>
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <Text textLevel="h1" size="display-xs" weight="semibold" colorType="primary">
+                {t('stripe.title')}
+            </Text>
+            <div class="mt-2">
+                <Text size="text-lg" colorType="secondary">
+                    {t('teacher-profile.payments_description')}
+                </Text>
+            </div>
+        </div>
+
+        <Divider margin={32} />
+
+        <!-- Stripe Connect Section -->
+        <StripeConnectSection 
+            accessToken={accessToken}
+            country={teacher.teacherAddress?.country || 'US'}
+            lang={lang}
+            client:load
+        />
+    </div>
+</Main>

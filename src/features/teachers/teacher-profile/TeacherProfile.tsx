@@ -9,6 +9,7 @@ import { Location } from "./location/Location";
 import { Information } from "./information/Information";
 import { ApiTeacherRepository } from "../infrastructure/ApiTeacherRepository";
 import { SuperTutorMembership } from "./super-tutor-membership/SuperTutorMembership";
+import { Payments } from "./payments/Payments";
 
 export interface TeacherProfileProps {
     teacher: Teacher;
@@ -81,6 +82,12 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
             },
         },
         {
+            key: "payments",
+            label: t('teacher-profile.payments'),
+            onClick: () => {
+            },
+        },
+        {
             key: "super_tutor",
             label: t('teacher-profile.super_tutor'),
             onClick: () => {
@@ -126,6 +133,10 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
             
             {selectedTab === "availability_and_modalities" && (
                 <AvailabilityAndModalitiesManager teacher={teacher} accessToken={accessToken} />
+            )}
+            
+            {selectedTab === "payments" && (
+                <Payments teacher={teacher} accessToken={accessToken} lang={lang as 'es' | 'en'} />
             )}
             
             {selectedTab === "videos" && teacherId && (

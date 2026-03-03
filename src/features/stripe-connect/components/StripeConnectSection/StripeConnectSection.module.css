@@ -1,0 +1,94 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.notConnected,
+.pendingInfo,
+.underReview,
+.connected {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoBox,
+.warningBox,
+.successBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.infoBox {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+.warningBox {
+  background-color: #fffbeb;
+  border-color: #fde68a;
+}
+
+.successBox {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.requirementsList {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.requirementsList li {
+  list-style-type: disc;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.errorAlert {
+  padding: 12px 16px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions > * {
+    flex: 1;
+  }
+}

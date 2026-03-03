@@ -311,8 +311,6 @@ export default {
     'teacher-profile.skills_specialties_placeholder': 'Ej: Competencia avanzada en inglés...',
     'teacher-profile.view_profile': 'Ver perfil',
     'teacher-profile.super_tutor': 'Membresía Super Tutor',
-    'teacher-profile.payments': 'Pagos',
-    'teacher-profile.payments_description': 'Gestiona tus métodos de pago y configuración de Stripe para recibir pagos.',
     
     'common.days.monday': 'Lunes',
     'common.days.tuesday': 'Martes',
@@ -408,38 +406,4 @@ export default {
     'language_selector.search_level': 'Buscar nivel...',
     'language_selector.no_levels_found': 'No se encontraron niveles',
     'language_selector.add_language': 'Añadir idioma',
-
-    // Stripe Connect
-    'stripe.title': 'Pagos con Stripe',
-    'stripe.description': 'Conecta tu cuenta de Stripe para recibir pagos directamente por tus clases',
-    'stripe.connect_button': 'Conectar con Stripe',
-    'stripe.connecting': 'Conectando...',
-    'stripe.open_dashboard': 'Ver Dashboard de Stripe',
-    
-    // Status
-    'stripe.status.not_connected': 'No conectado',
-    'stripe.status.enabled': 'Activo',
-    'stripe.status.pending_info': 'Información pendiente',
-    'stripe.status.under_review': 'En revisión',
-    'stripe.status.restricted': 'Restringido',
-    'stripe.status.unknown': 'Estado desconocido',
-    
-    // Not connected
-    'stripe.not_connected_title': 'Conecta tu cuenta de Stripe',
-    'stripe.not_connected_description': 'Para recibir pagos por tus clases, necesitas conectar tu cuenta de Stripe. El proceso es rápido y seguro.',
-    'stripe.requirement_personal_info': 'Información personal',
-    'stripe.requirement_tax_info': 'Datos fiscales',
-    'stripe.requirement_bank_account': 'Cuenta bancaria',
-    
-    // Pending info
-    'stripe.pending_info_title': 'Completa tu información',
-    'stripe.pending_info_description': 'Faltan {{count}} datos por completar en tu cuenta de Stripe. Completa la información para empezar a recibir pagos.',
-    
-    // Under review
-    'stripe.under_review_title': 'Tu cuenta está en revisión',
-    'stripe.under_review_description': 'Stripe está revisando tu cuenta. Esto puede tardar unos días. Te notificaremos cuando esté lista.',
-    
-    // Connected
-    'stripe.connected_title': '¡Cuenta activa!',
-    'stripe.connected_description': 'Tu cuenta de Stripe está conectada y activa. Ya puedes recibir pagos por tus clases.',
 }

@@ -319,6 +319,8 @@ export default {
     'teacher-profile.skills_specialties_placeholder': 'E.g: Advanced English proficiency...',
     'teacher-profile.view_profile': 'View profile',
     'teacher-profile.super_tutor': 'Super Tutor Membership',
+    'teacher-profile.payments': 'Payments',
+    'teacher-profile.payments_description': 'Manage your payment methods and Stripe configuration to receive payments.',
     
     'teacher-profile.availability_settings.title': 'Set Your Availability & Modalities',
     'teacher-profile.availability_settings.description': 'Manage your teaching formats, availability, and lesson pricing — all in one place. Select how you teach, when you\'re available, and the duration of your lessons. Prices will automatically adjust based on the formats and durations you set. You can update this anytime if your schedule or preferences change.',
@@ -441,4 +443,38 @@ export default {
     'language_selector.search_level': 'Search level...',
     'language_selector.no_levels_found': 'No levels found',
     'language_selector.add_language': 'Add language',
+
+    //Stripe Connect
+    'stripe.title': 'Stripe Payments',
+    'stripe.description': 'Connect your Stripe account to receive payments directly for your classes',
+    'stripe.connect_button': 'Connect with Stripe',
+    'stripe.connecting': 'Connecting...',
+    'stripe.open_dashboard': 'Open Stripe Dashboard',
+    
+    // Status
+    'stripe.status.not_connected': 'Not connected',
+    'stripe.status.enabled': 'Active',
+    'stripe.status.pending_info': 'Pending information',
+    'stripe.status.under_review': 'Under review',
+    'stripe.status.restricted': 'Restricted',
+    'stripe.status.unknown': 'Unknown status',
+    
+    // Not connected
+    'stripe.not_connected_title': 'Connect your Stripe account',
+    'stripe.not_connected_description': 'To receive payments for your classes, you need to connect your Stripe account. The process is quick and secure.',
+    'stripe.requirement_personal_info': 'Personal information',
+    'stripe.requirement_tax_info': 'Tax information',
+    'stripe.requirement_bank_account': 'Bank account',
+    
+    // Pending info
+    'stripe.pending_info_title': 'Complete your information',
+    'stripe.pending_info_description': '{{count}} data points are missing from your Stripe account. Complete the information to start receiving payments.',
+    
+    // Under review
+    'stripe.under_review_title': 'Your account is under review',
+    'stripe.under_review_description': 'Stripe is reviewing your account. This may take a few days. We will notify you when it is ready.',
+    
+    // Connected
+    'stripe.connected_title': 'Account active!',
+    'stripe.connected_description': 'Your Stripe account is connected and active. You can now receive payments for your classes.',
 }

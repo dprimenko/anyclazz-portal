@@ -1,0 +1,39 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.statusGreen {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.statusYellow {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.statusBlue {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.statusRed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.statusGray {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
