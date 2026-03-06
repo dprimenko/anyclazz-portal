@@ -7,44 +7,8 @@ import { SectionExplore } from '@/features/landing/section-explore/SectionExplor
 import { SectionTestimonials } from '@/features/landing/section-testimonials/SectionTestimonials';
 import { SectionReady } from '@/features/landing/section-ready/SectionReady';
 import { Footer } from '@/features/landing/footer/Footer';
-import { getImage } from 'astro:assets';
-
-// Import images for optimization
-import heroImageWebP from '@/assets/images/landing/hero.webp';
-import worksImage1WebP from '@/assets/images/landing/anyclazz-works-1.webp';
-import worksImage2WebP from '@/assets/images/landing/anyclazz-works-2.webp';
-import worksImage3WebP from '@/assets/images/landing/anyclazz-works-3.webp';
 
 const session = await getSession(Astro.request);
-
-// Optimize images using Astro's built-in image optimization
-const heroImage = await getImage({ 
-  src: heroImageWebP, 
-  format: 'webp', 
-  quality: 85,
-  width: 1920
-});
-
-const worksImage1 = await getImage({ 
-  src: worksImage1WebP, 
-  format: 'webp', 
-  quality: 85,
-  width: 1440
-});
-
-const worksImage2 = await getImage({ 
-  src: worksImage2WebP, 
-  format: 'webp', 
-  quality: 85,
-  width: 1440
-});
-
-const worksImage3 = await getImage({ 
-  src: worksImage3WebP, 
-  format: 'webp', 
-  quality: 85,
-  width: 1440
-});
 ---
 
 <Landing>
@@ -60,15 +24,10 @@ const worksImage3 = await getImage({
       }}
     />
     <div class="relative">
-      <Hero heroImageUrl={heroImage.src} />
+      <Hero client:load />
     </div>
   </div>
-  <SectionWorks 
-    client:visible 
-    worksImage1Url={worksImage1.src}
-    worksImage2Url={worksImage2.src}
-    worksImage3Url={worksImage3.src}
-  />
+  <SectionWorks client:visible />
   <div class="bg-[var(--color-primary-100)]">
       <SectionExplore />
   </div>

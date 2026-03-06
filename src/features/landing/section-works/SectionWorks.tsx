@@ -6,41 +6,29 @@ import { getImageUrl } from "@/utils/getImageUrl";
 import worksImage1WebP from "@/assets/images/landing/anyclazz-works-1.webp";
 import worksImage2WebP from "@/assets/images/landing/anyclazz-works-2.webp";
 import worksImage3WebP from "@/assets/images/landing/anyclazz-works-3.webp";
-import worksImage1Jpg from "@/assets/images/landing/anyclazz-works-1-optimized.jpg";
-import worksImage2Jpg from "@/assets/images/landing/anyclazz-works-2-optimized.jpg";
-import worksImage3Jpg from "@/assets/images/landing/anyclazz-works-3-optimized.jpg";
 
-interface SectionWorksProps {
-    worksImage1Url?: string;
-    worksImage2Url?: string;
-    worksImage3Url?: string;
-}
-
-export function SectionWorks({ worksImage1Url, worksImage2Url, worksImage3Url }: SectionWorksProps = {}) {
+export function SectionWorks() {
     const steps = [
         {
             id: 1,
             label: "Step 1",
             title: "Choose Your Subject",
             description: "Browse our extensive catalog of subjects and find the perfect match for your learning goals.",
-            image: worksImage1Url || getImageUrl(worksImage1WebP),
-            fallback: getImageUrl(worksImage1Jpg)
+            image: getImageUrl(worksImage1WebP)
         },
         {
             id: 2,
             label: "Step 2",
             title: "Connect with a Teacher",
             description: "Review teacher profiles, ratings, and experience to select the perfect educator for your needs.",
-            image: worksImage2Url || getImageUrl(worksImage2WebP),
-            fallback: getImageUrl(worksImage2Jpg)
+            image: getImageUrl(worksImage2WebP)
         },
         {
             id: 3,
             label: "Step 3",
             title: "Start Learning",
             description: "Begin your personalized learning journey with flexible scheduling and interactive lessons.",
-            image: worksImage3Url || getImageUrl(worksImage3WebP),
-            fallback: getImageUrl(worksImage3Jpg)
+            image: getImageUrl(worksImage3WebP)
         }
     ];
     

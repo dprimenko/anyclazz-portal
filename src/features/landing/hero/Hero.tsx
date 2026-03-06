@@ -4,14 +4,9 @@ import { Button } from "@/ui-library/components/ssr/button/Button";
 import { OptimizedLandingImage } from "@/ui-library/components/ssr/optimized-landing-image/OptimizedLandingImage";
 import { getImageUrl } from "@/utils/getImageUrl";
 import heroImageWebP from "@/assets/images/landing/hero.webp";
-import heroImageJpg from "@/assets/images/landing/hero-optimized.jpg";
 
-interface HeroProps {
-    heroImageUrl?: string;
-}
-
-export function Hero({ heroImageUrl }: HeroProps = {}) {
-    const imageUrl = heroImageUrl || getImageUrl(heroImageWebP);
+export function Hero() {
+    const imageUrl = getImageUrl(heroImageWebP);
     
     return (
         <div className="container m-auto flex flex-col w-full px-4" data-testid="landing-hero">
