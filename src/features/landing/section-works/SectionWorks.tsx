@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Space } from "@/ui-library/components/ssr/space/Space";
 import { Text } from "@/ui-library/components/ssr/text/Text";
+import { getImageUrl } from "@/utils/getImageUrl";
 
 import worksImage1WebP from "@/assets/images/landing/anyclazz-works-1.webp";
 import worksImage2WebP from "@/assets/images/landing/anyclazz-works-2.webp";
@@ -22,24 +23,24 @@ export function SectionWorks({ worksImage1Url, worksImage2Url, worksImage3Url }:
             label: "Step 1",
             title: "Choose Your Subject",
             description: "Browse our extensive catalog of subjects and find the perfect match for your learning goals.",
-            image: worksImage1Url || worksImage1WebP.src,
-            fallback: worksImage1Jpg.src
+            image: worksImage1Url || getImageUrl(worksImage1WebP),
+            fallback: getImageUrl(worksImage1Jpg)
         },
         {
             id: 2,
             label: "Step 2",
             title: "Connect with a Teacher",
             description: "Review teacher profiles, ratings, and experience to select the perfect educator for your needs.",
-            image: worksImage2Url || worksImage2WebP.src,
-            fallback: worksImage2Jpg.src
+            image: worksImage2Url || getImageUrl(worksImage2WebP),
+            fallback: getImageUrl(worksImage2Jpg)
         },
         {
             id: 3,
             label: "Step 3",
             title: "Start Learning",
             description: "Begin your personalized learning journey with flexible scheduling and interactive lessons.",
-            image: worksImage3Url || worksImage3WebP.src,
-            fallback: worksImage3Jpg.src
+            image: worksImage3Url || getImageUrl(worksImage3WebP),
+            fallback: getImageUrl(worksImage3Jpg)
         }
     ];
     

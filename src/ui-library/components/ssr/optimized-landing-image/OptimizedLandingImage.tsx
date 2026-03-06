@@ -1,3 +1,4 @@
+import { getImageUrl } from '@/utils/getImageUrl';
 import bookingPreview1 from '@/assets/images/landing/booking-preview-1.png';
 import bookingPreview2 from '@/assets/images/landing/booking-preview-2.svg'; // Temporal: mantener SVG hasta tener PNG
 import growingPreview from '@/assets/images/landing/growing-preview.png';
@@ -25,10 +26,11 @@ export const OptimizedLandingImage = (
     }: OptimizedImageProps) => {
     
     const imageSrc = imageMap[image];
+    const imageUrl = getImageUrl(imageSrc);
 
     return (
         <img 
-            src={imageSrc.src}
+            src={imageUrl}
             width={imageWidth}
             height={imageHeight}
             alt={`${image} image`}

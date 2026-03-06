@@ -2,6 +2,7 @@ import { Space } from "@/ui-library/components/ssr/space/Space";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { OptimizedLandingImage } from "@/ui-library/components/ssr/optimized-landing-image/OptimizedLandingImage";
+import { getImageUrl } from "@/utils/getImageUrl";
 import heroImageWebP from "@/assets/images/landing/hero.webp";
 import heroImageJpg from "@/assets/images/landing/hero-optimized.jpg";
 
@@ -10,7 +11,8 @@ interface HeroProps {
 }
 
 export function Hero({ heroImageUrl }: HeroProps = {}) {
-    const imageUrl = heroImageUrl || heroImageWebP.src;
+    const imageUrl = heroImageUrl || getImageUrl(heroImageWebP);
+    
     return (
         <div className="container m-auto flex flex-col w-full px-4" data-testid="landing-hero">
             <div className="flex flex-col items-center justify-center gap-6">
