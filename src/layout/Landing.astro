@@ -1,0 +1,134 @@
+---
+import '../design-system/index.css';
+import '../layout/styles.css';
+import '../features/shared/utils/dateConfig';
+import { Button } from '@/ui-library/components/ssr/button/Button';
+import { MobileMenu } from '@/features/landing/mobile-menu/MobileMenu';
+import { getSession } from 'auth-astro/server';
+
+const logo = '/images/logo.svg';
+
+import { getLangFromUrl } from '../i18n';
+const lang = getLangFromUrl(Astro.url);
+
+const {title, description, keywords = [], isDark} = Astro.props;
+
+// Obtener sesión para saber si el usuario está logueado
+const session = await getSession(Astro.request);
+const isLoggedIn = !!session?.user;
+
+const pageKeywords = [
+    ...keywords,
+];
+
+const formattedTitle = `${title? `${title} - ` : ''}Anyclazz`
+const rrssLogo = '/images/logo.svg';
+const defaultDescription = '';
+
+---
+
+<!doctype html>
+<html lang={lang}>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="sitemap" href="/sitemap-index.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+        <meta name="generator" content={Astro.generator}/>
+        <title>{formattedTitle}</title>
+        <meta name="description" content={description??defaultDescription}>
+        <meta name="keywords" content={pageKeywords.join(', ')}>
+        <meta property="og:title" content={formattedTitle}/>
+        <meta property="og:description"
+              content={description??defaultDescription}/>
+        <meta property="og:url" content={Astro.url}/>
+        <meta property="og:site_name" content={formattedTitle}/>
+        <meta property="og:image" content={rrssLogo}/>
+        <meta property="og:image:width" content="265"/>
+        <meta property="og:image:height" content="80"/>
+        <meta property="og:type" content="website"/>
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:title" content={formattedTitle}/>
+        <meta name="twitter:description"
+              content={description}/>
+        <meta name="twitter:image" content={rrssLogo}/>
+        <meta name="twitter:image:width" content="265"/>
+        <meta name="twitter:image:height" content="80"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+    <body class="relative">
+        <div class="fixed top-0 left-0 w-full z-9 transition-colors duration-100" id="header-wrapper">
+            <header class="container m-auto flex flex-row justify-between align-center py-4.5 px-4">
+                <div>
+                    <a href="/">
+                        <img src={logo} class="w-[139px] h-[44px]" alt="Anyclazz Logo" />
+                    </a>
+                </div>
+                <div class="hidden md:flex md:flex-row md:gap-3">
+                    <>
+                        <Button label='Find Teachers' colorType='secondary' onlyText size='lg'/>
+                        {!isLoggedIn ? (
+                            <>
+                                <Button label='Become a Teacher' colorType='secondary' onlyText size='lg'/>
+                                <Button label='Log In' colorType='secondary' size='lg' onClick={() => window.location.href = '/login'}/>
+                                <Button label='Get Started' colorType='primary' size='lg' onClick={() => window.location.href = '/login'}/>
+                            </>
+                        ) : (
+                            <>
+                                <Button label='Go to Dashboard' colorType='primary' size='lg' onClick={() => window.location.href = '/dashboard'}/>
+                                <Button label='Sign Out' colorType='secondary' size='lg' id="header-signout-btn"/>
+                            </>
+                        )}
+                    </>
+                </div>
+                {/* Menú mobile - solo visible en mobile */}
+                <MobileMenu client:load isLoggedIn={isLoggedIn} />
+            </header>
+        </div>
+        <script>
+            // Logout handler para el header
+            const signOutBtn = document.getElementById('header-signout-btn');
+            
+            if (signOutBtn) {
+                signOutBtn.addEventListener('click', () => {
+                    console.log('🚪 Logout button clicked');
+                    
+                    // Limpiar caché del usuario
+                    try {
+                        localStorage.removeItem('anyclazz_user_profile');
+                        localStorage.removeItem('anyclazz_user_profile_expiry');
+                        console.log('🗑️  User cache cleared');
+                    } catch (error) {
+                        console.error('Error clearing user cache:', error);
+                    }
+                    
+                    console.log('📍 Current location:', window.location.href);
+                    console.log('🍪 Current cookies:', document.cookie);
+                    console.log('➡️  Redirecting to: /api/auth/keycloak-logout');
+                    
+                    // Redirigir GET al endpoint
+                    window.location.href = '/api/auth/keycloak-logout';
+                    
+                    console.log('✅ Redirect initiated');
+                });
+            }
+        </script>
+        <script>
+            const header = document.getElementById('header-wrapper');
+            
+            const handleScroll = () => {
+                if (window.scrollY > 10) {
+                    header?.classList.add('bg-white', 'border-b', 'border-[var(--color-neutral-200)]');
+                } else {
+                    header?.classList.remove('bg-white', 'border-b', 'border-[var(--color-neutral-200)]');
+                }
+            };
+            
+            window.addEventListener('scroll', handleScroll);
+            handleScroll();
+        </script>
+        <main>
+            <slot/>
+        </main>
+        </main>
+    </body>
+</html>

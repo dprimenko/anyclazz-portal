@@ -23,7 +23,6 @@ const defaultDescription = '';
 <html lang={lang}>
     <head>
         <meta charset="utf-8"/>
-        <link rel="icon" type="image/png" href="/favicon.png"/>
         <link rel="sitemap" href="/sitemap-index.xml" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
         <meta name="generator" content={Astro.generator}/>
@@ -48,7 +47,7 @@ const defaultDescription = '';
         <meta name="twitter:image:height" content="80"/>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <body class="overflow-hidden">
         <div id="portal-root"></div>
         <slot/>
     </body>

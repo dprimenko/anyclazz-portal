@@ -53,7 +53,7 @@ export const Button = ({
 			case 'lg':
 				return 20;
 			case 'xl':
-				return 24;
+				return 20;
 			default:
 				return 14;
 		}

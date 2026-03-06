@@ -164,14 +164,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
   
+  // Permitir acceso a la landing page tanto para usuarios logueados como no logueados
   if (isHomePage(pathname)) {
-    if (session?.user) {
-      console.log(`🏠 Home page with session -> redirecting to ${getRedirectRoute('home')}`);
-      return context.redirect(getRedirectRoute('home'));
-    } else {
-      console.log(`🏠 Home page without session -> continuing to public home`);
-      return next();
-    }
+    console.log(`🏠 Home page -> continuing (session: ${!!session?.user})`);
+    return next();
   }
   
   if (validationLevel === 'none') {

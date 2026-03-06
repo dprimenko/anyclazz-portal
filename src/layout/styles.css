@@ -18,6 +18,17 @@
     }
 }
 
+.landing {
+    display: grid;
+    position: relative;
+    height: 100dvh;
+    width: 100%;
+    grid-template-areas:
+              "head"
+              "main";
+    overflow: hidden;
+}
+
 .header__container {
     position: fixed;
     top: 0;
