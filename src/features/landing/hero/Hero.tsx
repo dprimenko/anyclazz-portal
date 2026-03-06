@@ -1,10 +1,16 @@
 import { Space } from "@/ui-library/components/ssr/space/Space";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
-import { SvgImage } from "@/ui-library/components/ssr/svgimage/SvgImage";
-import heroImage from "@/assets/images/landing/hero.jpg";
+import { OptimizedLandingImage } from "@/ui-library/components/ssr/optimized-landing-image/OptimizedLandingImage";
+import heroImageWebP from "@/assets/images/landing/hero.webp";
+import heroImageJpg from "@/assets/images/landing/hero-optimized.jpg";
 
-export function Hero() {
+interface HeroProps {
+    heroImageUrl?: string;
+}
+
+export function Hero({ heroImageUrl }: HeroProps = {}) {
+    const imageUrl = heroImageUrl || heroImageWebP.src;
     return (
         <div className="container m-auto flex flex-col w-full px-4" data-testid="landing-hero">
             <div className="flex flex-col items-center justify-center gap-6">
@@ -28,7 +34,7 @@ export function Hero() {
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
-                        backgroundImage: `url('${heroImage.src}')`,
+                        backgroundImage: `url('${imageUrl}')`,
                         transform: "scaleX(-1)"
                     }}
                 />
@@ -39,18 +45,18 @@ export function Hero() {
                     }}
                 />
                 <div className="absolute bottom-0 left-[20px] md:left-[53px] z-2 w-[120px] md:w-[261.52px] h-auto">
-                    <SvgImage image="landing/booking-preview-1" />
+                    <OptimizedLandingImage image="booking-preview-1" />
                 </div>
                 
                 <div className="absolute bottom-0 left-[90px] md:left-[185px] z-3 w-[120px] md:w-[261.52px] h-auto">
-                    <SvgImage image="landing/booking-preview-2" />
+                    <OptimizedLandingImage image="booking-preview-2" />
                 </div>
             </div>
             <Space size={96} direction="vertical" />
             <div className="flex flex-col-reverse md:flex-row w-full gap-12 md:gap-24 md:mt-[104px]">
                 <div className="relative w-full aspect-[592/560] bg-[var(--color-primary-700)] rounded-2xl overflow-visible">
                     <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[90%]">
-                        <SvgImage image="landing/growing-preview" />
+                        <OptimizedLandingImage image="growing-preview" />
                     </div>
                 </div>
                 <div className="grow-1 flex flex-col w-full">

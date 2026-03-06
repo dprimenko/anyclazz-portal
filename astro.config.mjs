@@ -14,6 +14,16 @@ export default defineConfig({
     mode: 'standalone'
   }),
 
+  image: {
+    service: {
+      config: {
+        limitInputPixels: false,
+      }
+    },
+    domains: [],
+    remotePatterns: []
+  },
+
   vite: {
     server: {
       allowedHosts: ['localhost', 'primenko.a.pinggy.link']

@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import heroImageWebP from '@/assets/images/landing/hero.webp';
+import worksImage1WebP from '@/assets/images/landing/anyclazz-works-1.webp';
+import worksImage2WebP from '@/assets/images/landing/anyclazz-works-2.webp';
+import worksImage3WebP from '@/assets/images/landing/anyclazz-works-3.webp';
+
+interface Props {
+  imageName: 'hero' | 'works-1' | 'works-2' | 'works-3';
+  alt: string;
+  class?: string;
+  width?: number;
+  height?: number;
+  loading?: 'lazy' | 'eager';
+  style?: any;
+}
+
+const { imageName, alt, class: className, width, height, loading = 'lazy', style } = Astro.props;
+
+const imageMap = {
+  'hero': heroImageWebP,
+  'works-1': worksImage1WebP,
+  'works-2': worksImage2WebP,
+  'works-3': worksImage3WebP,
+};
+
+const selectedImage = imageMap[imageName];
+---
+
+<Image 
+  src={selectedImage} 
+  alt={alt} 
+  class={className}
+  width={width}
+  height={height}
+  loading={loading}
+  style={style}
+  format="webp"
+  quality={85}
+/>
