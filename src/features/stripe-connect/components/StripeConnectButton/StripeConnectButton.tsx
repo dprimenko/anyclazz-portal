@@ -24,7 +24,8 @@ export const StripeConnectButton: FC<StripeConnectButtonProps> = ({
       colorType="primary"
       disabled={loading || disabled}
       label={loading ? t('stripe.connecting') : t('stripe.connect_button')}
-      icon={<Icon icon="wallet" iconWidth={20} iconHeight={20} />}
+      icon="stripe"
+      iconColor='#FFFFFF'
     />
   );
 };

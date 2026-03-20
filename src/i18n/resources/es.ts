@@ -442,4 +442,13 @@ export default {
     // Connected
     'stripe.connected_title': '¡Cuenta activa!',
     'stripe.connected_description': 'Tu cuenta de Stripe está conectada y activa. Ya puedes recibir pagos por tus clases.',
+    'stripe.connected_success': '¡Cuenta de Stripe conectada exitosamente!',
+    
+    // OAuth and errors
+    'stripe.oauth_error': 'Error al conectar con Stripe. Por favor, intenta nuevamente.',
+    'stripe.needs_reconnection': 'Tu cuenta de Stripe necesita atención. Por favor, reconecta tu cuenta para continuar recibiendo pagos.',
+    'stripe.past_due_requirements': 'Tu cuenta tiene {{count}} requisito(s) vencido(s). Debes actualizar tu información urgentemente para continuar recibiendo pagos.',
+    'stripe.go_to_dashboard_message': 'Tu cuenta de Stripe necesita actualización. Te redirigiremos al dashboard de Stripe donde puedes completar la información requerida.',
+    'stripe.account_restricted_message': 'Tu cuenta de Stripe está restringida. Haz clic en el botón para actualizar tu información y resolver los problemas.',
+    'stripe.test_mode_badge': 'MODO TEST - Las cuentas conectadas son de prueba',
 }

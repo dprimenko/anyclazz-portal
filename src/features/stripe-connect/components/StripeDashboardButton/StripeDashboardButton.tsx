@@ -26,7 +26,7 @@ export const StripeDashboardButton: FC<StripeDashboardButtonProps> = ({
       colorType={variant}
       disabled={loading || disabled}
       label={loading ? t('common.loading') : t('stripe.open_dashboard')}
-      icon={<Icon icon="dashboard" iconWidth={20} iconHeight={20} />}
+      icon="stripe"
     />
   );
 };

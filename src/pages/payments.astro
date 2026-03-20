@@ -4,9 +4,11 @@ import Main from "@/layout/Main.astro";
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from "@/features/auth/ssr/infrastructure/AnyclazzAuthRepository";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
-import { StripeConnectSection } from "@/features/stripe-connect";
+import { StripeConnectSection, StripeDashboardButtonContainer, StripeStatusBadge, StripeTestModeBadge } from "@/features/stripe-connect";
 import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider.tsx";
+import { Breadcrumb } from "@/ui-library/components/breadcrumb";
+import { Space } from "@/ui-library/components/ssr/space/Space";
 
 export const prerender = false;
 
@@ -38,30 +40,91 @@ const teacher = await teacherRepository.getTeacher({
     teacherId: user.id
 });
 
+// Cargar el estado de Stripe Connect en el servidor
+let stripeConnectStatus = null;
+try {
+    stripeConnectStatus = await teacherRepository.getStripeConnectStatus({ 
+        token: accessToken 
+    });
+} catch (error) {
+    console.error('Error loading Stripe Connect status:', error);
+}
+
+const requirementsDue = stripeConnectStatus?.requirements?.currently_due?.length || 0;
+
+// Extraer parámetros OAuth de la URL
+const oauthCode = Astro.url.searchParams.get('code');
+const oauthState = Astro.url.searchParams.get('state');
+const oauthError = Astro.url.searchParams.get('error');
+const oauthErrorDescription = Astro.url.searchParams.get('error_description');
 ---
 
-<Main>
-    <div class="max-w-5xl mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <Text textLevel="h1" size="display-xs" weight="semibold" colorType="primary">
-                {t('stripe.title')}
-            </Text>
-            <div class="mt-2">
-                <Text size="text-lg" colorType="secondary">
-                    {t('teacher-profile.payments_description')}
+<Main title="Payments">
+	<div class="px-4 py-2 sm:p-8">
+		<Breadcrumb
+			items={[
+				{ label: t('menu.payments'), href: '/payments' },
+			]}
+		/>
+		<Space size={16} direction="vertical" />
+        
+		<!-- Indicador de Modo Test -->
+		<StripeTestModeBadge lang={lang} client:load />
+		
+        <div class="flex flex-row items-center justify-between">
+            <div class="flex flex-col">
+                <div class="flex flex-row items-center gap-3">
+                    <Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.dashboard.payments')}</Text>
+                    {stripeConnectStatus && (
+                        <StripeStatusBadge 
+                            status={stripeConnectStatus.status}
+                            canReceivePayments={stripeConnectStatus.can_receive_payments}
+                            requirementsDue={requirementsDue}
+                            lang={lang}
+                            client:load
+                        />
+                    )}
+                </div>
+                <Text size="text-md" colorType="tertiary">
+                {stripeConnectStatus?.status === 'enabled' ? t('menu.dashboard.payments_description') : t('stripe.description')}
                 </Text>
             </div>
+            {stripeConnectStatus?.connected && stripeConnectStatus?.can_receive_payments && (
+                <div class="flex flex-col">
+                    <StripeDashboardButtonContainer 
+                        accessToken={accessToken}
+                        lang={lang}
+                        client:load
+                    />
+                </div>
+            )}
         </div>
+        
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
 
-        <Divider margin={32} />
-
-        <!-- Stripe Connect Section -->
+		<!-- Stripe Connect Section -->
         <StripeConnectSection 
             accessToken={accessToken}
             country={teacher.teacherAddress?.country || 'US'}
             lang={lang}
+            initialStatus={stripeConnectStatus}
+            oauthCode={oauthCode}
+            oauthState={oauthState}
+            oauthError={oauthErrorDescription || oauthError}
             client:load
         />
-    </div>
+	</div>
+
+	<!-- Script para limpiar URL después de procesar OAuth -->
+	<script>
+		// Limpiar parámetros OAuth de la URL sin recargar la página
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.has('code') || urlParams.has('error')) {
+			const cleanUrl = window.location.pathname;
+			window.history.replaceState({}, '', cleanUrl);
+		}
+	</script>
 </Main>
+

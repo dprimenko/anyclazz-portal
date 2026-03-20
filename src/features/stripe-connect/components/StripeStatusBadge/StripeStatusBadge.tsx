@@ -3,6 +3,9 @@ import type { StripeAccountStatus } from '../../domain/types';
 import styles from './StripeStatusBadge.module.css';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { useTranslations } from '@/i18n';
+import { Chip } from '@/ui-library/components/ssr/chip/Chip';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import type { ColorType } from '@/ui-library/shared/constants';
 
 export interface StripeStatusBadgeProps {
   status: StripeAccountStatus;
@@ -23,7 +26,7 @@ export const StripeStatusBadge: FC<StripeStatusBadgeProps> = ({
     if (status === 'not_connected') {
       return {
         label: t('stripe.status.not_connected'),
-        colorClass: styles.statusGray,
+        colorType: "secondary" as ColorType,
         icon: 'alert-circle' as const,
       };
     }
@@ -31,15 +34,16 @@ export const StripeStatusBadge: FC<StripeStatusBadgeProps> = ({
     if (canReceivePayments && status === 'enabled') {
       return {
         label: t('stripe.status.enabled'),
-        colorClass: styles.statusGreen,
+        colorType: "primary" as ColorType,
         icon: 'check-rounded' as const,
+        iconColor: '#F4A43A',
       };
     }
 
     if (requirementsDue > 0) {
       return {
         label: t('stripe.status.pending_info'),
-        colorClass: styles.statusYellow,
+        colorType: "secondary" as ColorType,
         icon: 'alert-circle' as const,
       };
     }
@@ -47,7 +51,7 @@ export const StripeStatusBadge: FC<StripeStatusBadgeProps> = ({
     if (status === 'pending') {
       return {
         label: t('stripe.status.under_review'),
-        colorClass: styles.statusBlue,
+        colorType: "secondary" as ColorType,
         icon: 'alert-circle' as const,
       };
     }
@@ -55,14 +59,14 @@ export const StripeStatusBadge: FC<StripeStatusBadgeProps> = ({
     if (status === 'restricted' || status === 'disabled') {
       return {
         label: t('stripe.status.restricted'),
-        colorClass: styles.statusRed,
+        colorType: "secondary" as ColorType,
         icon: 'alert-circle' as const,
       };
     }
 
     return {
       label: t('stripe.status.unknown'),
-      colorClass: styles.statusGray,
+      colorType: "secondary" as ColorType,
       icon: 'alert-circle' as const,
     };
   };
@@ -70,9 +74,13 @@ export const StripeStatusBadge: FC<StripeStatusBadgeProps> = ({
   const config = getStatusConfig();
 
   return (
-    <div className={`${styles.badge} ${config.colorClass}`}>
-      <Icon icon={config.icon} iconWidth={16} iconHeight={16} />
-      <span className={styles.label}>{config.label}</span>
-    </div>
+    <Chip colorType={config.colorType} size="sm">
+        <div className="flex items-center justify-center gap-2">
+          <Icon icon={config.icon} iconColor={config.iconColor} iconWidth={16} iconHeight={16} />
+          <Text size="text-sm" colorType="secondary" weight='medium'>
+            {config.label}
+          </Text>
+        </div>
+    </Chip>
   );
 };

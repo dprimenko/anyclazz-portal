@@ -2,6 +2,7 @@ import { FetchClient } from '@/features/shared/services/httpClient';
 import type { ApiTeacher } from './types';
 import type { ClassType, GetTeacherParams, GetTeacherReviewsParams, GetTeacherReviewsResponse, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository, UpdateTeacherParams } from '../domain/types';
 import { getApiUrl } from '@/features/shared/services/environment';
+import type { StripeConnectStatusResponse } from '@/features/stripe-connect';
 
 export class ApiTeacherRepository implements TeacherRepository {
 
@@ -149,5 +150,14 @@ export class ApiTeacherRepository implements TeacherRepository {
 			reviews: reviewsData.reviews,
 			meta: reviewsData.meta,
 		};
+	}
+
+	async getStripeConnectStatus({ token }: { token: string }): Promise<StripeConnectStatusResponse> {
+		const response = await this.httpClient.get({
+			url: '/teachers/me/stripe-connect/status',
+			token,
+		});
+
+		return response.json();
 	}
 }

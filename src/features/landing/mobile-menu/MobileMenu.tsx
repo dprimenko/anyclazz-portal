@@ -18,7 +18,7 @@ const menuSections = [
     {
         title: "For Teachers",
         links: [
-            { label: "Become a Teacher", href: "/become-teacher" },
+            { label: "Become a Teacher", href: "/api/auth/keycloak-register?role=teacher" },
             { label: "Teacher Resources", href: "/resources" },
             { label: "Teacher Support", href: "/support" }
         ]
@@ -147,7 +147,7 @@ export const MobileMenu: FC<MobileMenuProps> = ({ isLoggedIn = false }) => {
                   size="lg" 
                   className="w-full"
                   onClick={() => {
-                    window.location.href = '/login';
+                    window.location.href = '/api/auth/keycloak-register?role=student';
                   }}
                 />
                 <Button 

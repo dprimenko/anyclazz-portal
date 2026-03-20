@@ -14,6 +14,7 @@ export interface StripeRequirements {
   currently_due: string[];
   eventually_due: string[];
   past_due: string[];
+  pending_verification?: string[];
 }
 
 export interface StripeConnectStatusResponse {
@@ -25,18 +26,37 @@ export interface StripeConnectStatusResponse {
   payouts_enabled: boolean;
   onboarding_completed: boolean;
   can_receive_payments: boolean;
+  needs_reconnection?: boolean;
   requirements?: StripeRequirements;
 }
 
 export interface StripeOnboardingResponse {
-  onboarding_url: string;
+  message?: string;
+  onboarding_url?: string;
+  stripe_account_id?: string;
+  status?: StripeAccountStatus;
+  expires_at?: number;
+  state?: string;
+}
+
+export interface StripeOAuthCompleteRequest {
+  code: string;
+  state: string;
+}
+
+export interface StripeOAuthCompleteResponse {
+  success: boolean;
   stripe_account_id: string;
-  expires_at: number;
+  status: StripeAccountStatus;
+  can_receive_payments: boolean;
+  charges_enabled: boolean;
+  payouts_enabled: boolean;
+  error?: string;
 }
 
 export interface StripeDashboardResponse {
-  dashboard_url: string;
-  created: number;
+  url: string;
+  expires_at: number;
 }
 
 export interface StripeOnboardingRequest {

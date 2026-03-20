@@ -69,6 +69,8 @@ export default {
     'menu.dashboard.saved-teachers': 'Saved Teachers',
     'menu.dashboard.my-agenda': 'My Agenda',
     'menu.dashboard.clazzmate': 'Clazzmate',
+    'menu.dashboard.payments': 'Payments',
+    'menu.dashboard.payments_description': 'Check your Stripe connection status and manage your payment settings.',
     'menu.teachers': 'Teachers',
     'menu.messages': 'Messages',
     'menu.feed': 'For You Page',
@@ -477,4 +479,13 @@ export default {
     // Connected
     'stripe.connected_title': 'Account active!',
     'stripe.connected_description': 'Your Stripe account is connected and active. You can now receive payments for your classes.',
+    'stripe.connected_success': 'Stripe account connected successfully!',
+    
+    // OAuth and errors
+    'stripe.oauth_error': 'Error connecting to Stripe. Please try again.',
+    'stripe.needs_reconnection': 'Your Stripe account needs attention. Please reconnect your account to continue receiving payments.',
+    'stripe.past_due_requirements': 'Your account has {{count}} overdue requirement(s). You must update your information urgently to continue receiving payments.',
+    'stripe.go_to_dashboard_message': 'Your Stripe account needs updating. We will redirect you to the Stripe dashboard where you can complete the required information.',
+    'stripe.account_restricted_message': 'Your Stripe account is restricted. Click the button to update your information and resolve the issues.',
+    'stripe.test_mode_badge': 'TEST MODE - Connected accounts are for testing only',
 }

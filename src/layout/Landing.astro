@@ -68,14 +68,23 @@ const defaultDescription = '';
                         <Button label='Find Teachers' colorType='secondary' onlyText size='lg'/>
                         {!isLoggedIn ? (
                             <>
-                                <Button label='Become a Teacher' colorType='secondary' onlyText size='lg'/>
-                                <Button label='Log In' colorType='secondary' size='lg' onClick={() => window.location.href = '/login'}/>
-                                <Button label='Get Started' colorType='primary' size='lg' onClick={() => window.location.href = '/login'}/>
+                                <a href="/api/auth/keycloak-register?role=teacher">
+                                    <Button label='Become a Teacher' colorType='secondary' onlyText size='lg'/>
+                                </a>
+                                <a href="/dashboard">
+                                    <Button label='Log In' colorType='secondary' size='lg' />
+                                </a>
+                                <a href="/api/auth/keycloak-register?role=student">
+                                    <Button label='Get Started' colorType='primary' size='lg' />
+                                </a>
                             </>
                         ) : (
                             <>
-                                <Button label='Go to Dashboard' colorType='primary' size='lg' onClick={() => window.location.href = '/dashboard'}/>
-                                <Button label='Sign Out' colorType='secondary' size='lg' id="header-signout-btn"/>
+                                <a href="/dashboard">
+                                    <Button label='Go to Dashboard' colorType='primary' size='lg' />
+                                </a>
+                                
+                                <Button label='Sign Out' colorType='secondary' size='lg' id="header-signout-btn" />
                             </>
                         )}
                     </>
