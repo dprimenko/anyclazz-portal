@@ -1,0 +1,26 @@
+---
+import { getSession } from 'auth-astro/server';
+import { MessagesPage } from '@/features/chat';
+import Base from '../../layout/Base.astro';
+
+export const prerender = false;
+
+// Check authentication
+const session = await getSession(Astro.request);
+
+if (!session?.user) {
+	return Astro.redirect('/login');
+}
+
+const keycloakToken = session.accessToken || '';
+const currentUserId = session.user.id || '';
+---
+
+<Base title="Messages - AnyClazz">
+	<MessagesPage
+		client:only="react"
+		keycloakToken={keycloakToken}
+		currentUserId={currentUserId}
+		initialUserId={undefined}
+	/>
+</Base>

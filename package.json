@@ -52,6 +52,8 @@
     "react-modal-sheet": "^5.2.1",
     "react-number-format": "^5.4.4",
     "sass": "^1.89.2",
+    "stream-chat": "^9.38.0",
+    "stream-chat-react": "^13.14.2",
     "swiper": "^12.0.3",
     "tailwind-merge": "^3.3.1"
   },

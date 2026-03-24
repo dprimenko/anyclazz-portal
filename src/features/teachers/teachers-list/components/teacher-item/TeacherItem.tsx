@@ -121,7 +121,12 @@ export function TeacherItem({ teacher }: TeacherProps) {
                     <div className="flex flex-col-reverse gap-4 md:flex-col">
                         <div className="flex flex-row gap-3 w-full">
                             <Button colorType="secondary" size="lg" icon="heart-outline" />
-                            <Button colorType="secondary" size="lg" icon="chat" />
+                            <Button 
+                                colorType="secondary" 
+                                size="lg" 
+                                icon="chat" 
+                                onClick={() => window.location.href = `/messages/${teacher.id}`}
+                            />
                             <Button colorType="primary" size="lg" label={t('teachers.book-lesson')} fullWidth onClick={() => setIsBookingModalOpen(true)} />
                         </div>
                         <ClassTypes classTypes={teacher.classTypes} />

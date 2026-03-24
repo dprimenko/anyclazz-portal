@@ -1,0 +1,31 @@
+/* Chat with teacher button */
+.chatButton {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--spacing-2);
+	padding: var(--spacing-2) var(--spacing-4);
+	background-color: var(--color-primary);
+	color: white;
+	border: none;
+	border-radius: var(--border-radius-md);
+	font-size: var(--font-size-base);
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.chatButton:hover:not(:disabled) {
+	background-color: var(--color-primary-dark);
+}
+
+.chatButton:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.chatButton__error {
+	display: block;
+	margin-top: var(--spacing-1);
+	font-size: var(--font-size-sm);
+	color: var(--color-error);
+}
