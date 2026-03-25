@@ -175,10 +175,27 @@ export interface GetTeacherReviewsResponse {
     };
 }
 
+export interface CreateReviewParams extends CommonParams {
+    teacherId: string;
+    rating: number;
+    comment: string;
+}
+
+export interface CreateReviewResponse {
+    id: string;
+    teacherId: string;
+    studentId: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
     listSavedTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
     updateTeacher(params: UpdateTeacherParams): Promise<void>;
     getTeacherReviews(params: GetTeacherReviewsParams): Promise<GetTeacherReviewsResponse>;
+    createReview(params: CreateReviewParams): Promise<CreateReviewResponse>;
 }

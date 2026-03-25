@@ -16,9 +16,10 @@ export interface PaginatedLessonsProps {
     user: AuthUser | null;
     token: string;
     lang?: string;
+    filter?: 'last' | 'upcoming';
 }   
 
-export function PaginatedLessons({initialLessons, user, token, lang}: PaginatedLessonsProps) {
+export function PaginatedLessons({initialLessons, user, token, lang, filter = 'upcoming'}: PaginatedLessonsProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Crear repositorio en el cliente
@@ -34,7 +35,7 @@ export function PaginatedLessons({initialLessons, user, token, lang}: PaginatedL
         setLoading(true);
         try {
             const data = await repository.getBookings({
-                filter: 'upcoming',
+                filter,
                 sort: 'desc',
                 token,
                 page,

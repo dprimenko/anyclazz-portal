@@ -1,6 +1,6 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { ApiTeacher } from './types';
-import type { ClassType, GetTeacherParams, GetTeacherReviewsParams, GetTeacherReviewsResponse, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository, UpdateTeacherParams } from '../domain/types';
+import type { ClassType, CreateReviewParams, CreateReviewResponse, GetTeacherParams, GetTeacherReviewsParams, GetTeacherReviewsResponse, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository, UpdateTeacherParams } from '../domain/types';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { StripeConnectStatusResponse } from '@/features/stripe-connect';
 
@@ -150,6 +150,19 @@ export class ApiTeacherRepository implements TeacherRepository {
 			reviews: reviewsData.reviews,
 			meta: reviewsData.meta,
 		};
+	}
+
+	async createReview({ token, teacherId, rating, comment }: CreateReviewParams): Promise<CreateReviewResponse> {
+		const response = await this.httpClient.post({
+			url: `/teachers/${teacherId}/reviews`,
+			token: token,
+			data: {
+				rating,
+				comment,
+			},
+		});
+
+		return response.json();
 	}
 
 	async getStripeConnectStatus({ token }: { token: string }): Promise<StripeConnectStatusResponse> {

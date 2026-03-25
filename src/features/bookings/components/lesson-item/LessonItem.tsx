@@ -13,6 +13,8 @@ import { PopMenu } from "@/ui-library/components/pop-menu/PopMenu";
 import { LessonCancelModal } from "../lesson-cancel-modal/LessonCancelModal";
 import { DateTime, fromISOKeepZone } from "@/features/shared/utils/dateConfig";
 import { formatPrice } from "@/features/shared/utils/formatPrice";
+import { RateTutorModal } from "../rate-tutor-modal/RateTutorModal";
+import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
 
 export interface LessonItemProps {
     lesson: BookingWithTeacher;
@@ -37,6 +39,8 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
 
     const [selectedLesson, setSelectedLesson] = useState<BookingWithTeacher | null>(null);
     const [isCancelLessonModalOpen, setIsCancelLessonModalOpen] = useState(false);
+    const [isRateTutorModalOpen, setIsRateTutorModalOpen] = useState(false);
+    const teacherRepository = useMemo(() => new ApiTeacherRepository(), []);
 	
 	const openLessonDetails = (lesson: BookingWithTeacher) => {
 		setSelectedLesson(lesson);
@@ -52,6 +56,14 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
 
     const closeLessonCancel = () => {
 		setIsCancelLessonModalOpen(false);
+	};
+
+    const openRateTutor = () => {
+		setIsRateTutorModalOpen(true);
+	};
+
+    const closeRateTutor = () => {
+		setIsRateTutorModalOpen(false);
 	};
 
     const isOnline = (lessonTypeId: string) => {
@@ -87,9 +99,16 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                     icon: <Icon icon="trash-can" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />,
                     onClick: () => openLessonCancel(),
                 },
+            ] : []),
+            ...(isPast && user?.role === 'student' ? [
+                {
+                    label: t('reviews.rate_tutor'),
+                    icon: <Icon icon="star-outline" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />,
+                    onClick: () => openRateTutor(),
+                },
             ] : [])
         ];
-    }, [lesson]);
+    }, [lesson, isPast, user?.role, t]);
 
     const containerClasses = cn(
         "py-4",
@@ -203,6 +222,20 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                         closeLessonCancel();
                         onLessonCancelled?.();
                     }}
+                />
+            )}
+            {isRateTutorModalOpen && token && lesson.teacher && (
+                <RateTutorModal
+                    teacherId={lesson.teacher.id}
+                    teacherName={`${lesson.teacher.name} ${lesson.teacher.surname}`}
+                    repository={teacherRepository}
+                    token={token}
+                    onClose={closeRateTutor}
+                    onSuccess={() => {
+                        closeRateTutor();
+                        onLessonCancelled?.();
+                    }}
+                    lang={lang}
                 />
             )}
         </>
