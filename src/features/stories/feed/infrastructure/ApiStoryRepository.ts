@@ -27,13 +27,14 @@ export class ApiStoryRepository implements StoryRepository {
 		};
 	}
 
-	async listStories({ token, page, size, teacherId, country, city }: ListStoriesParams): Promise<ListStoriesResponse> {
+	async listStories({ token, page, size, teacherId, country, city, sharedStoryId }: ListStoriesParams): Promise<ListStoriesResponse> {
 		const data: Record<string, string | number> = {
 			page,
 			size,
 			...(teacherId ? { teacherId } : {}),
 			...(country ? { country } : {}),
 			...(city ? { city } : {}),
+			...(sharedStoryId ? { sharedStoryId } : {}),
 		};
 
 		const apiStoriesResponse = await this.httpClient.get({

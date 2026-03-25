@@ -4,8 +4,12 @@ import Menu from '../features/menu/ssr/Menu.astro';
 import LoggedUser from '../features/auth/ssr/components/logged-user/LoggedUser.astro';
 import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
+import { AnyclazzAuthRepository } from '../features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { getSession } from 'auth-astro/server';
 
 const logo = '/images/logo.svg';
+const loggedUser = new AnyclazzAuthRepository();
+const user = await loggedUser.getCurrentUser(await getSession(Astro.request));
 ---
 
 <Base {...Astro.props}>
@@ -29,7 +33,7 @@ const logo = '/images/logo.svg';
                 <img src={logo} alt="Anyclazz Logo" />
             </a>
             <div class="header__actions">
-                <Avatar src="https://anyclazz.b-cdn.net/08a3b47613f2d0f6aced2c3c467602e3aa1638f1.jpg" size={40} />
+                {user?.avatarUrl && <Avatar src={user.avatarUrl} size={40} />}
                 <div class="header__menu">
                     <Icon icon="menu" iconWidth={24} iconHeight={24} />
                 </div>

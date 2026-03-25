@@ -44,33 +44,13 @@ export const useFeed = ({
 			setLoading(true);
 			setError(null);
 
-			// Si hay un initialStoryId, primero obtener ese story para extraer su ciudad
-			let finalCountry = filters.country;
-			let finalCity = filters.city;
-
-			if (initialStoryId && !finalCity) {
-				const initialStory = await storyRepository.getStory({
-					storyId: initialStoryId,
-					token: accessToken,
-				});
-
-				// Usar la primera ciudad del story inicial como filtro
-				if (initialStory.cities.length > 0) {
-					finalCountry = initialStory.cities[0].country;
-					finalCity = initialStory.cities[0].city;
-					setFilters({
-						country: finalCountry,
-						city: finalCity,
-					});
-				}
-			}
-
 			const response = await storyRepository.listStories({
 				token: accessToken,
 				page: currentPage,
 				size,
-				country: finalCountry,
-				city: finalCity,
+				country: country,
+				city: city,
+				sharedStoryId: initialStoryId,
 			});
 
 			setStories(response.stories);

@@ -34,6 +34,7 @@ export interface ListStoriesParams extends CommonParams {
 	teacherId?: string;
 	country?: string;
 	city?: string;
+	sharedStoryId?: string;
 }
 
 export interface ListStoriesResponse {

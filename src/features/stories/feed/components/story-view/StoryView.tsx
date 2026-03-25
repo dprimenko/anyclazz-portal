@@ -15,13 +15,14 @@ export interface StoryViewProps {
     story: Story;
     index: number;
     playing: boolean;
+	userRole?: string;
     onVisibilityChange: (index: number, isVisible: boolean) => void;
 	onVideoUpload: () => void;
 	storyRepository: StoryRepository;
 	accessToken: string;
 }
 
-export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload, storyRepository, accessToken }: StoryViewProps) {
+export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload, storyRepository, accessToken, userRole }: StoryViewProps) {
 	const t = useTranslations();
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,13 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 		setIsMuted(!isMuted);
 		publish(isMuted ? FeedEvents.MUTED_VIDEO : FeedEvents.UNMUTED_VIDEO);
 	}, [isMuted]);
+
+	const shareVideo = useCallback(() => {
+		navigator.share({
+			title: story.description || '',
+			url: `${window.location.origin}/feed/${story.id}`,
+		});
+	}, [story]);
 
     // IntersectionObserver for iOS compatibility - auto play/pause videos based on visibility
 	useEffect(() => {
@@ -118,7 +126,7 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 
     return (
         <div className="relative snap-center w-full h-full sm:rounded-[20px]" ref={containerRef}>
-			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} onVideoUpload={onVideoUpload} />
+			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} onVideoUpload={onVideoUpload} userRole={userRole} />
 			<div className="absolute inset-0 z-[1] grid grid-cols-[1fr_max-content] md:grid-cols-1 bg-gradient-to-b from-transparent from-85% to-black/75 sm:rounded-[20px]">
 				{/* Info section - left column */}
 				<StoryInfo story={story} />
@@ -133,7 +141,7 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 						onClick={toggleLike}
 					/>
 					<IconButton icon="message-text-square-01" label="Chat" variant="ghost" />
-					<IconButton icon="share-03" label="Share" variant="ghost" />
+					<IconButton icon="share-03" label="Share" variant="ghost" onClick={shareVideo} />
 				</div>
 			</div>
 		</div>

@@ -70,6 +70,7 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 			}
 		}
 	}, [currentIndex]);
+	
 
 	// Get the currently visible story for desktop like button (must be before conditional returns)
 	const currentStory = stories[visibleVideoIndex];
@@ -82,6 +83,13 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 		storyRepository: repository,
 		accessToken,
 	});
+
+	const shareVideo = useCallback(() => {
+		navigator.share({
+			title: currentStory.description || '',
+			url: `${window.location.origin}/feed/${currentStory.id}`,
+		});
+	}, [currentStory]);
 
 	if (loading) {
 		return (
@@ -134,6 +142,7 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 	const openUploadModal = () => {
 		publish(VideoUploadEvents.OPEN_VIDEO_UPLOAD_MODAL);
 	};
+
     
     return (
         <div className={styles.feed}>
@@ -144,7 +153,8 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 							key={story.id} 
 							story={story} 
 							index={index} 
-							playing={(currentIndex - 1) === index}  
+							playing={(currentIndex - 1) === index} 
+							userRole={userRole} 
 							onVisibilityChange={handleVideoVisibilityChange} 
 							onVideoUpload={openUploadModal}
 							storyRepository={repository}
@@ -163,7 +173,7 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 					onClick={toggleLike}
 				/>
 				<IconButton icon="message-text-square-01" label="Send message" />
-				<IconButton icon="share-03" label="Share" />
+				<IconButton icon="share-03" label="Share" onClick={shareVideo}/>
 			</div>
 
 			{/* Desktop navigation buttons - far right, fixed to viewport */}

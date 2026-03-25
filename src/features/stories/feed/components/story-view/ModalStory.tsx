@@ -28,6 +28,13 @@ export function ModalStory({ story, storyRepository, accessToken, onClose }: Mod
         accessToken,
     });
 
+    const shareVideo = useCallback(() => {
+		navigator.share({
+			title: story.description || '',
+			url: `${window.location.origin}/feed/${story.id}`,
+		});
+	}, [story]);
+
     if (!modalRoot) {
 		return null;
 	}
@@ -58,7 +65,7 @@ export function ModalStory({ story, storyRepository, accessToken, onClose }: Mod
                         onClick={toggleLike}
                     />
                     <IconButton icon="message-text-square-01" label="Send message" />
-                    <IconButton icon="share-03" label="Share" />
+                    <IconButton icon="share-03" label="Share" onClick={shareVideo}/>
                 </div>
              </div>
         </Overlay>,

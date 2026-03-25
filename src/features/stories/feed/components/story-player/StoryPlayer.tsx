@@ -5,13 +5,14 @@ export interface StoryPlayerProps {
     ref: React.RefObject<HTMLVideoElement|null>;
     story: Story;
     isMuted: boolean;
+    userRole?: string;
     onToggleSound: () => void;
     isPlaying: boolean;
     onTogglePlay: () => void;
     onVideoUpload: () => void;
 }
 
-export function StoryPlayer({ ref, story, isMuted, onToggleSound, isPlaying, onTogglePlay, onVideoUpload }: StoryPlayerProps) {
+export function StoryPlayer({ ref, story, isMuted, onToggleSound, isPlaying, onTogglePlay, onVideoUpload, userRole }: StoryPlayerProps) {
     return (
         <div className="relative h-full sm:rounded-[20px]">
 			<video ref={ref} className="w-full h-full object-cover sm:rounded-[20px]" preload="auto" playsInline loop muted>
@@ -23,9 +24,11 @@ export function StoryPlayer({ ref, story, isMuted, onToggleSound, isPlaying, onT
                         <Control icon={isPlaying ? "menu-05" : "play"} onClick={onTogglePlay} />
                         <Control icon={isMuted ? "volume-muted" : "volume-max"} onClick={onToggleSound} />
                     </div>
-                    <div className="md:hidden">
-                        <Control icon="plus" bgColor="#F4A43A" iconColor="#FFFFFF" onClick={onVideoUpload} />
-                    </div>
+                    {userRole === 'teacher' && (
+                        <div className="md:hidden">
+                            <Control icon="plus" bgColor="#F4A43A" iconColor="#FFFFFF" onClick={onVideoUpload} />
+                        </div>
+                    )}
                 </div>
             </div>
 		</div>
