@@ -22,6 +22,8 @@ if (user?.role === 'teacher') {
     menuItems = menuRepository.getTeacherMenuItems();
 } else if (user?.role === 'student') {
     menuItems = menuRepository.getStudentMenuItems();
+} else if (user?.role === 'admin') {
+    menuItems = menuRepository.getAdminMenuItems();
 }
 
 const commonMenuItems: MenuItem[] = menuRepository.getCommonMenuItems();

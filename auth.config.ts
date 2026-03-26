@@ -79,26 +79,37 @@ export default defineConfig({
             // Extraer solo la información esencial
             token.name = payload.name || `${payload.given_name || ''} ${payload.family_name || ''}`.trim() || payload.preferred_username || payload.email;
             
-            // Manejar userRole que puede venir como string o array
-            let selectedRole = payload.selectedRoleForSession;
-            if (!selectedRole) {
-              // Si no hay selectedRoleForSession, usar userRole (puede ser array o string)
-              if (Array.isArray(payload.userRole)) {
-                selectedRole = payload.userRole[0]; // Tomar el primero del array
-              } else {
-                selectedRole = payload.userRole;
-              }
-            }
+            // PRIORIDAD 1: Verificar si el usuario tiene rol de admin
+            // Los usuarios con rol admin siempre se conectan como admin, sin selector de roles
+            const roles = payload.roles || [];
+            const realmRoles = payload.realm_roles || [];
+            const hasAdminRole = roles.includes('admin') || roles.includes('ROLE_ADMIN') || 
+                                realmRoles.includes('admin') || realmRoles.includes('ROLE_ADMIN');
             
-            // Normalizar el rol a 'student' o 'teacher'
-            if (selectedRole === 'teacher' || selectedRole === 'ROLE_TEACHER') {
-              token.userRole = 'teacher';
-            } else if (selectedRole === 'student' || selectedRole === 'ROLE_STUDENT') {
-              token.userRole = 'student';
+            if (hasAdminRole) {
+              token.userRole = 'admin';
+              console.log('✅ Usuario admin detectado');
             } else {
-              // Si no es ninguno de los anteriores, buscar en roles
-              const roles = payload.roles || [];
-              token.userRole = roles.includes('teacher') || roles.includes('ROLE_TEACHER') ? 'teacher' : 'student';
+              // PRIORIDAD 2: Manejar userRole que puede venir como string o array
+              let selectedRole = payload.selectedRoleForSession;
+              if (!selectedRole) {
+                // Si no hay selectedRoleForSession, usar userRole (puede ser array o string)
+                if (Array.isArray(payload.userRole)) {
+                  selectedRole = payload.userRole[0]; // Tomar el primero del array
+                } else {
+                  selectedRole = payload.userRole;
+                }
+              }
+              
+              // Normalizar el rol a 'student' o 'teacher'
+              if (selectedRole === 'teacher' || selectedRole === 'ROLE_TEACHER') {
+                token.userRole = 'teacher';
+              } else if (selectedRole === 'student' || selectedRole === 'ROLE_STUDENT') {
+                token.userRole = 'student';
+              } else {
+                // Si no es ninguno de los anteriores, buscar en roles
+                token.userRole = roles.includes('teacher') || roles.includes('ROLE_TEACHER') ? 'teacher' : 'student';
+              }
             }
             
             token.realmRoles = payload.realm_roles || [];
@@ -169,24 +180,34 @@ export default defineConfig({
               // Extraer el ID del usuario (sub) - CRÍTICO para session.user.id
               token.sub = payload.sub || payload.userId || null;
               
-              // Manejar userRole que puede venir como string o array
-              let selectedRole = payload.selectedRoleForSession;
-              if (!selectedRole) {
-                if (Array.isArray(payload.userRole)) {
-                  selectedRole = payload.userRole[0];
-                } else {
-                  selectedRole = payload.userRole;
-                }
-              }
+              // PRIORIDAD 1: Verificar si el usuario tiene rol de admin
+              const roles = payload.roles || [];
+              const realmRoles = payload.realm_roles || [];
+              const hasAdminRole = roles.includes('admin') || roles.includes('ROLE_ADMIN') || 
+                                  realmRoles.includes('admin') || realmRoles.includes('ROLE_ADMIN');
               
-              // Normalizar el rol
-              if (selectedRole === 'teacher' || selectedRole === 'ROLE_TEACHER') {
-                token.userRole = 'teacher';
-              } else if (selectedRole === 'student' || selectedRole === 'ROLE_STUDENT') {
-                token.userRole = 'student';
+              if (hasAdminRole) {
+                token.userRole = 'admin';
+                console.log('✅ Usuario admin detectado en refresh');
               } else {
-                const roles = payload.roles || [];
-                token.userRole = roles.includes('teacher') || roles.includes('ROLE_TEACHER') ? 'teacher' : 'student';
+                // PRIORIDAD 2: Manejar userRole que puede venir como string o array
+                let selectedRole = payload.selectedRoleForSession;
+                if (!selectedRole) {
+                  if (Array.isArray(payload.userRole)) {
+                    selectedRole = payload.userRole[0];
+                  } else {
+                    selectedRole = payload.userRole;
+                  }
+                }
+                
+                // Normalizar el rol
+                if (selectedRole === 'teacher' || selectedRole === 'ROLE_TEACHER') {
+                  token.userRole = 'teacher';
+                } else if (selectedRole === 'student' || selectedRole === 'ROLE_STUDENT') {
+                  token.userRole = 'student';
+                } else {
+                  token.userRole = roles.includes('teacher') || roles.includes('ROLE_TEACHER') ? 'teacher' : 'student';
+                }
               }
               
               token.realmRoles = payload.realm_roles || [];

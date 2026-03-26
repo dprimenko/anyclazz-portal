@@ -1,0 +1,56 @@
+---
+
+import Main from '../../layout/Main.astro';
+import { Breadcrumb } from '@/ui-library/components/breadcrumb';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { ApiTeacherApprovalRepository } from '@/features/teachers/approvals/infrastructure/ApiTeacherApprovalRepository';
+import { PaginatedTeacherApprovals } from '@/features/teachers/approvals/components/PaginatedTeacherApprovals';
+import { getSession } from 'auth-astro/server';
+import { useTranslations, getLangFromRequest } from '@/i18n';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+
+// Verificar que el usuario sea admin
+if (user?.role !== 'admin') {
+	return Astro.redirect('/dashboard');
+}
+
+const lang = getLangFromRequest(Astro.request, Astro.url);
+const t = useTranslations({ lang });
+
+// Fetch initial data (pending teachers by default)
+const approvalRepository = new ApiTeacherApprovalRepository();
+const initialData = await approvalRepository.listTeacherApprovals({
+	token: accessToken,
+	page: 1,
+	size: 10,
+	statuses: ['pending'],  // Por defecto solo pending
+});
+
+---
+
+<Main title={t('menu.teachers-approvals')}>
+	<div class="px-4 py-2 sm:p-8">
+		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.teachers-approvals')}</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
+		
+		<PaginatedTeacherApprovals 
+			initialData={initialData}
+			token={accessToken}
+			client:load
+		/>
+	</div>
+</Main>

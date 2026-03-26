@@ -61,11 +61,15 @@ export class AnyclazzAuthRepository implements AuthRepository {
         if (!accessToken) {
             console.warn('No access token found in session');
             const sessionRole = (session as any).userRole;
+            // Validar que el rol sea uno de los permitidos
+            const validRole = (sessionRole === 'admin' || sessionRole === 'teacher' || sessionRole === 'student') 
+                ? sessionRole 
+                : 'student';
             const fallbackUser = {
                 id: session.platformId || '',
                 email: session.user.email || '',
                 name: session.user.name || '',
-                role: typeof sessionRole === 'string' ? sessionRole : 'student',
+                role: validRole,
             };
             this.cache.save(fallbackUser);
             return fallbackUser;
@@ -76,11 +80,15 @@ export class AnyclazzAuthRepository implements AuthRepository {
 
         if (!profileData) {
             // Fallback a datos de sesión si falla el API
+            const sessionRole = (session as any).userRole;
+            const validRole = (sessionRole === 'admin' || sessionRole === 'teacher' || sessionRole === 'student') 
+                ? sessionRole 
+                : 'student';
             const fallbackUser = {
                 id: session.platformId || '',
                 email: session.user.email || '',
                 name: session.user.name || '',
-                role: session.userRole || 'student',
+                role: validRole,
             };
             // No guardar en caché si falló el API, usar el caché existente si hay
             return cachedUser || fallbackUser;
@@ -90,17 +98,31 @@ export class AnyclazzAuthRepository implements AuthRepository {
         // Esto respeta la selección del usuario en el selector de roles
         const selectedRole = (session as any).userRole || 'student';
         
-        // Validar que el usuario tenga el rol seleccionado
-        const hasSelectedRole = selectedRole === 'teacher' 
-            ? profileData.roles.includes('ROLE_TEACHER')
-            : profileData.roles.includes('ROLE_STUDENT');
+        // PRIORIDAD 1: Verificar si el usuario tiene rol de admin
+        // Los usuarios admin no tienen studentProfile ni teacherProfile
+        const hasAdminRole = selectedRole === 'admin' || 
+                            profileData.roles.includes('ROLE_ADMIN') || 
+                            profileData.roles.includes('admin');
         
-        // Si no tiene el rol seleccionado, usar el primero disponible
-        const role = hasSelectedRole 
-            ? selectedRole 
-            : (profileData.roles.includes('ROLE_STUDENT') ? 'student' : 'teacher');
+        let role: 'student' | 'teacher' | 'admin';
+        let profile: any = null;
         
-        const profile = role === 'student' ? profileData.studentProfile : profileData.teacherProfile;
+        if (hasAdminRole) {
+            role = 'admin';
+            console.log('✅ Usuario admin confirmado desde API');
+        } else {
+            // PRIORIDAD 2: Validar que el usuario tenga el rol seleccionado
+            const hasSelectedRole = selectedRole === 'teacher' 
+                ? profileData.roles.includes('ROLE_TEACHER')
+                : profileData.roles.includes('ROLE_STUDENT');
+            
+            // Si no tiene el rol seleccionado, usar el primero disponible
+            role = hasSelectedRole 
+                ? (selectedRole as 'student' | 'teacher')
+                : (profileData.roles.includes('ROLE_STUDENT') ? 'student' : 'teacher');
+            
+            profile = role === 'student' ? profileData.studentProfile : profileData.teacherProfile;
+        }
 
         const user: AuthUser = {
             id: profileData.user.id,
@@ -113,7 +135,7 @@ export class AnyclazzAuthRepository implements AuthRepository {
             avatarUrl: profile?.avatar,
             teacherStatus: profile?.status,
             teacherStatusUpdate: profile?.statusUpdatedAt,
-            isSuperTutor: isSuperTutor(profile.superTutorTo),
+            isSuperTutor: profile ? isSuperTutor(profile.superTutorTo) : false,
             createdAt: profileData.user.createdAt,
         };
 

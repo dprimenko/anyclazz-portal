@@ -5,7 +5,7 @@ export interface AuthUser {
     email: string;
     name: string;
     timezone: string;
-    role: 'student' | 'teacher';
+    role: 'student' | 'teacher' | 'admin';
     avatarUrl?: string;
     firstName?: string;
     lastName?: string;

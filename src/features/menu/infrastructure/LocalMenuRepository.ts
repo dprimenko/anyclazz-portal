@@ -109,6 +109,17 @@ export class LocalMenuRepository implements MenuRepository {
         ];
     }
 
+    getAdminMenuItems(): MenuItem[] {
+        return [
+            {
+                id: 'teachers-approvals',
+                label: 'menu.teachers-approvals',
+                icon: 'users-check',
+                href: '/admin/teachers-approvals',
+            }
+        ];
+    }
+
     getCommonMenuItems(): MenuItem[] {
         return [
             {

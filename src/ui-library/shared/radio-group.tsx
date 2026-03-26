@@ -3,7 +3,6 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import { CheckIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Icon } from "@/ui-library/components/ssr/icon/Icon"
 
 function RadioGroup({
   className,
@@ -26,7 +25,7 @@ function RadioGroupItem({
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        "peer size-4 shrink-0 rounded-[4px] w-[20px] h-[20px] disabled:cursor-not-allowed disabled:opacity-50",
+        "peer border-input dark:bg-input/30 data-[state=checked]:bg-[#F4A43A] data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-[#F4A43A] data-[state=checked]:border-[#F4A43A] focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -35,7 +34,7 @@ function RadioGroupItem({
         data-slot="radio-group-indicator"
         className="grid place-content-center text-current transition-none"
       >
-        <Icon icon="check" iconWidth={14} iconHeight={14}/>
+        <CheckIcon className="size-3.5" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   )

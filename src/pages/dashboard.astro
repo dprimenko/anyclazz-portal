@@ -23,6 +23,11 @@ if (!accessToken) {
 const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
 
+// Redirigir usuarios admin a teachers-approvals
+if (user?.role === 'admin') {
+	return Astro.redirect('/admin/teachers-approvals');
+}
+
 const repository = new AnyclazzMyBookingsRepository();
 const upcomingBookings = await repository.getBookings({token: accessToken, filter: 'upcoming', sort: 'desc', page: 1, size: 3});
 const lastBookings = await repository.getBookings({token: accessToken, filter: 'last', sort: 'desc', page: 1, size: 3});
