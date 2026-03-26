@@ -2,6 +2,8 @@ export default {
     'common.share': 'Share',
     'common.likes': '{{count}} Likes',
     'common.reviews': 'reviews',
+    'common.rate': 'Rate',
+    'common.subject': 'Subject',
     'common.students': 'students',
     'common.lessons': 'lessons',
     'common.language.es': 'Spanish',
@@ -108,6 +110,8 @@ export default {
     'dashboard.no_past_lessons.teacher': 'No past lessons',
     'dashboard.no_past_lessons_description.teacher': 'You haven\'t taught any lessons yet. Make sure your profile is ready to welcome new students.',
     'dashboard.no_saved_teachers': 'No saved teachers yet',
+    'dashboard.no_saved_teachers_description': 'You haven\'t saved any teachers. Browse our community and save your favorites to easily find them later.',
+    'dashboard.explore_teachers': 'Explore teachers',
     'dashboard.book_first_lesson': 'Book your first lesson',
     
     'clazzmate.title': 'Clazzmate',

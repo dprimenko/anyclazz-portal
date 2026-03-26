@@ -30,7 +30,7 @@ export function TeachersProvider({ children, teacherRepository, accessToken, lan
     const teachersState = useTeacherList({ teacherRepository, accessToken });
 
     return (
-        <TeachersContext.Provider value={{ ...teachersState, lang }}>
+        <TeachersContext.Provider value={{ ...teachersState, accessToken, lang }}>
             {children}
         </TeachersContext.Provider>
     );

@@ -2,6 +2,8 @@ export default {
     'common.share': 'Compartir',
     'common.likes': 'Me gusta',
     'common.reviews': 'reseñas',
+    'common.rate': 'Valoración',
+    'common.subject': 'Materia',
     'common.students': 'estudiantes',
     'common.lessons': 'lecciones',
     'common.language.es': 'Español',
@@ -106,6 +108,8 @@ export default {
     'dashboard.no_past_lessons': 'No hay clases pasadas',
     'dashboard.no_past_lessons_description': 'Aún no has tomado ninguna clase. Reserva tu primera y comienza tu camino.',
     'dashboard.no_saved_teachers': 'No hay profesores guardados aún',
+    'dashboard.no_saved_teachers_description': 'No has guardado ningún profesor. Explora nuestra comunidad y guarda tus favoritos para encontrarlos fácilmente después.',
+    'dashboard.explore_teachers': 'Explorar profesores',
     'dashboard.book_first_lesson': 'Reserva tu primera clase',
     
     'clazzmate.title': 'Clazzmate',

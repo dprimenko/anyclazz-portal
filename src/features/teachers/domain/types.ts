@@ -59,6 +59,7 @@ export interface Teacher {
     subject: TeacherSubject;
     classTypes: TeacherClassType[];
     rating?: number;
+    averageRating?: number;
     reviewsNumber?: number;
     studentsNumber?: number;
     lessonsNumber?: number;
@@ -76,6 +77,7 @@ export interface Teacher {
     teacherAddress?: TeacherAddress;
     timezone?: string;
     createdAt: string;
+    savedAt?: string | null;
 }
 
 export interface GetTeacherParams extends CommonParams {
@@ -95,6 +97,7 @@ export interface ListTeachersParams extends CommonParams {
     subjectId?: string;
     speakLanguage?: string;
     studentLevelId?: string;
+    savedByStudentId?: string;
 }
 
 export interface ListTeachersResponse {
@@ -191,6 +194,18 @@ export interface CreateReviewResponse {
     updatedAt: string;
 }
 
+export interface SaveTeacherParams extends CommonParams {
+    teacherId: string;
+}
+
+export interface UnsaveTeacherParams extends CommonParams {
+    teacherId: string;
+}
+
+export interface SaveTeacherResponse {
+    message: string;
+}
+
 export interface TeacherRepository {
     getTeacher(params: GetTeacherParams): Promise<Teacher>;
     listTeachers(params: ListTeachersParams): Promise<ListTeachersResponse>;
@@ -198,4 +213,6 @@ export interface TeacherRepository {
     updateTeacher(params: UpdateTeacherParams): Promise<void>;
     getTeacherReviews(params: GetTeacherReviewsParams): Promise<GetTeacherReviewsResponse>;
     createReview(params: CreateReviewParams): Promise<CreateReviewResponse>;
+    saveTeacher(params: SaveTeacherParams): Promise<SaveTeacherResponse>;
+    unsaveTeacher(params: UnsaveTeacherParams): Promise<SaveTeacherResponse>;
 }

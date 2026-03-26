@@ -73,6 +73,9 @@ export default defineConfig({
             console.log('🔍 userRole:', payload.userRole);
             console.log('🔍 roles:', payload.roles);
             
+            // Extraer el ID del usuario (sub) - CRÍTICO para session.user.id
+            token.sub = payload.sub || payload.userId || null;
+            
             // Extraer solo la información esencial
             token.name = payload.name || `${payload.given_name || ''} ${payload.family_name || ''}`.trim() || payload.preferred_username || payload.email;
             
@@ -163,6 +166,9 @@ export default defineConfig({
               console.log('🔄 JWT Payload en refresh:', JSON.stringify(payload, null, 2));
               console.log('🔄 selectedRoleForSession:', payload.selectedRoleForSession);
               
+              // Extraer el ID del usuario (sub) - CRÍTICO para session.user.id
+              token.sub = payload.sub || payload.userId || null;
+              
               // Manejar userRole que puede venir como string o array
               let selectedRole = payload.selectedRoleForSession;
               if (!selectedRole) {
@@ -225,6 +231,7 @@ export default defineConfig({
         // Añadir role al objeto user para facilitar acceso
         if (session.user) {
           (session.user as any).role = token.userRole;
+          (session.user as any).id = token.sub; // CRÍTICO: mapear sub a user.id
         }
         
         // Solo pasar el primer role en lugar de todos los arrays

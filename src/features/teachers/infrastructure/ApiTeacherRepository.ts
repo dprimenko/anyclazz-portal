@@ -1,6 +1,21 @@
 import { FetchClient } from '@/features/shared/services/httpClient';
 import type { ApiTeacher } from './types';
-import type { ClassType, CreateReviewParams, CreateReviewResponse, GetTeacherParams, GetTeacherReviewsParams, GetTeacherReviewsResponse, ListTeachersParams, ListTeachersResponse, Teacher, TeacherRepository, UpdateTeacherParams } from '../domain/types';
+import type { 
+	ClassType, 
+	CreateReviewParams, 
+	CreateReviewResponse, 
+	GetTeacherParams, 
+	GetTeacherReviewsParams, 
+	GetTeacherReviewsResponse, 
+	ListTeachersParams, 
+	ListTeachersResponse, 
+	SaveTeacherParams,
+	SaveTeacherResponse,
+	Teacher, 
+	TeacherRepository, 
+	UnsaveTeacherParams,
+	UpdateTeacherParams 
+} from '../domain/types';
 import { getApiUrl } from '@/features/shared/services/environment';
 import type { StripeConnectStatusResponse } from '@/features/stripe-connect';
 
@@ -29,7 +44,7 @@ export class ApiTeacherRepository implements TeacherRepository {
 		};
 	}
 
-	async listTeachers({ token, page, size, query, country, city, classTypeId, minPrice, maxPrice, subjectCategoryId, subjectId, speakLanguage, studentLevelId }: ListTeachersParams): Promise<ListTeachersResponse> {		
+	async listTeachers({ token, page, size, query, country, city, classTypeId, minPrice, maxPrice, subjectCategoryId, subjectId, speakLanguage, studentLevelId, savedByStudentId }: ListTeachersParams): Promise<ListTeachersResponse> {		
 		const data: Record<string, string | number> = {
 			page: page,
 			size: size,
@@ -43,6 +58,7 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...(subjectId ? { subjectId } : {}),
 			...(speakLanguage ? { speakLanguage } : {}),
 			...(studentLevelId ? { studentLevelId } : {}),
+			...(savedByStudentId ? { savedByStudentId } : {}),
 		};
 
 		const apiTeachersResponse = await this.httpClient.get({
@@ -66,15 +82,20 @@ export class ApiTeacherRepository implements TeacherRepository {
 		};
 
 		const apiTeachersResponse = await this.httpClient.get({
-			url: '/teachers',
+			url: '/me/saved-teachers',
 			token: token,
 			data,
 		});
 
-		const teachers = await apiTeachersResponse.json();
+		const result = await apiTeachersResponse.json();
 		return {
-			teachers: teachers.teachers.map(this.toTeacher),
-			meta: teachers.meta,
+			teachers: result.teachers.map(this.toTeacher),
+			meta: {
+				currentPage: result.pagination.page,
+				lastPage: result.pagination.lastPage,
+				size: result.pagination.size,
+				total: result.pagination.total,
+			},
 		};
 	}
 
@@ -160,6 +181,24 @@ export class ApiTeacherRepository implements TeacherRepository {
 				rating,
 				comment,
 			},
+		});
+
+		return response.json();
+	}
+
+	async saveTeacher({ token, teacherId }: SaveTeacherParams): Promise<SaveTeacherResponse> {
+		const response = await this.httpClient.post({
+			url: `/me/saved-teachers/${teacherId}`,
+			token: token,
+		});
+
+		return response.json();
+	}
+
+	async unsaveTeacher({ token, teacherId }: UnsaveTeacherParams): Promise<SaveTeacherResponse> {
+		const response = await this.httpClient.delete({
+			url: `/me/saved-teachers/${teacherId}`,
+			token: token,
 		});
 
 		return response.json();

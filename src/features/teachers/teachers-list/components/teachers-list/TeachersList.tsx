@@ -20,6 +20,7 @@ export function TeachersList() {
     noResults,
     updateFilters,
     clearFilters,
+    accessToken,
   } = useTeachers();
 
   return (
@@ -44,7 +45,7 @@ export function TeachersList() {
               </div>
             )}
             {teachers.map(teacher => (
-              <TeacherItem key={teacher.id} teacher={teacher} />  
+              <TeacherItem key={teacher.id} teacher={teacher} token={accessToken} />  
             ))}
           </>
       </div>

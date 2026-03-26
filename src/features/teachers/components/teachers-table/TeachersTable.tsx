@@ -18,9 +18,10 @@ export interface TeachersTableProps {
     token?: string;
     emptyState?: React.ReactNode;
     loading?: boolean;
+    mode?: 'all' | 'saved';
 }
 
-export function TeachersTable({teachers, repository, token, emptyState, loading = false} : TeachersTableProps) {
+export function TeachersTable({teachers, repository, token, emptyState, loading = false, mode} : TeachersTableProps) {
     const t = useTranslations();
 
     const [teacherToBook, setTeacherToBook] = useState<Teacher | null>(null);
@@ -40,7 +41,9 @@ export function TeachersTable({teachers, repository, token, emptyState, loading 
                                 <SwiperSlide key={teacher.id} className="!w-auto">
                                     <TeacherItemCard
                                         teacher={teacher} 
+                                        mode={mode}
                                         onBook={() => setTeacherToBook(teacher)}
+                                        token={token}
                                     />
                                 </SwiperSlide>
                             ))}
@@ -51,14 +54,16 @@ export function TeachersTable({teachers, repository, token, emptyState, loading 
                     <div className="hidden md:block w-full">
                         <div className="grid grid-cols-[2fr_2fr_2fr_1.5fr] gap-4 py-3 border-b border-[var(--color-neutral-200)]">
                             <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.teacher')}</Text>
-                            <Text size="text-xs" colorType="tertiary" weight="semibold">Rate</Text>
-                            <Text size="text-xs" colorType="tertiary" weight="semibold">Subject</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.rate')}</Text>
+                            <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.subject')}</Text>
                             <div></div>
                         </div>
                         {teachers.map((teacher) => (
                             <div key={teacher.id}  className="border-b border-[var(--color-neutral-200)] last:border-b-0">
                                 <TeacherItem 
+                                    token={token}
                                     teacher={teacher} 
+                                    mode={mode}
                                     onBook={() => setTeacherToBook(teacher)}
                                 />
                             </div>

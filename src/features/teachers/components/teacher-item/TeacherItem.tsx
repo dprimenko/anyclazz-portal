@@ -4,14 +4,26 @@ import { Text } from "@/ui-library/components/ssr/text/Text";
 import { cn } from "@/lib/utils";
 import type { Teacher } from "../../domain/types";
 import { Button } from "@/ui-library/components/ssr/button/Button";
+import { useSaveTeacher } from "../../hooks/useSaveTeacher";
 
 export interface TeacherItemProps {
     teacher: Teacher;
     onBook: (teacher: Teacher) => void;
+    token?: string;
+    mode?: 'all' | 'saved';
 }
 
-export function TeacherItem({ teacher, onBook }: TeacherItemProps) {
+export function TeacherItem({ teacher, onBook, token, mode }: TeacherItemProps) {
     const t = useTranslations();
+
+    const { isSaved, isLoading: isSaveLoading, toggleSave } = useSaveTeacher({
+        teacherId: teacher.id,
+        token: token || '',
+        initialSavedAt: teacher.savedAt,
+        onError: (error) => {
+            console.error('Error toggling save teacher:', error);
+        }
+    });
 
     const containerClasses = cn(
         "py-4"
@@ -39,15 +51,24 @@ export function TeacherItem({ teacher, onBook }: TeacherItemProps) {
                     <div className="flex flex-col">
                         <div className="flex flex-row gap-1">
                             <Text size="text-sm" colorType="primary" weight="medium">{teacher.averageRating}/5</Text>
-                            <Text size="text-sm" colorType="tertiary">{teacher.reviewsNumber} reviews</Text>
+                            <Text size="text-sm" colorType="tertiary">{teacher.reviewsNumber} {t('common.reviews')}</Text>
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <Text size="text-sm" colorType="secondary">Spanish Teacher</Text>
+                        <Text size="text-sm" colorType="secondary">{teacher.subject.name[getCurrentLang()]}</Text>
                     </div>
                     <div className="flex justify-end gap-3" onClick={(e) => e.stopPropagation()}>
                         <div className={cn("flex gap-2 justify-end")}>
-                            <Button size="lg" icon="chat" />
+                            {mode !== 'saved' && (
+                                <Button 
+                                    size="lg" 
+                                    icon={isSaved ? "heart-filled" : "heart-outline"}
+                                    onClick={() => toggleSave()}
+                                    disabled={isSaveLoading}
+                                    highlighted={isSaved}
+                                />
+                            )}
+                            <Button size="lg" icon="chat" onClick={() => window.location.href = `/messages/${teacher.id}`} />
                             <Button label={t('teachers.book')} colorType="primary" size="lg" fullWidth onClick={() => onBook(teacher)} />
                         </div>
                     </div>

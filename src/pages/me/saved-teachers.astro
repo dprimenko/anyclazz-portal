@@ -40,6 +40,7 @@ const teachers = await repository.listSavedTeachers({token: accessToken, page: 1
 		<PaginatedTeachers 
 			initialTeachers={teachers} 
 			token={accessToken}
+			mode="saved"
 			client:load 
 		/>
 	</div>

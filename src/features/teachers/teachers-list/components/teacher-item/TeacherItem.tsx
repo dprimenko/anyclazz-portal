@@ -17,17 +17,28 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar.tsx";
 import { ClassTypes } from "../../../components/class-types/ClassTypes.tsx";
 import { useState } from "react";
 import { isSuperTutor } from "../../../utils/superTutorHelpers";
+import { useSaveTeacher } from "../../../hooks/useSaveTeacher";
 
 export interface TeacherProps {
     teacher: Teacher;
+    token?: string;
 }
 
-export function TeacherItem({ teacher }: TeacherProps) {
+export function TeacherItem({ teacher, token }: TeacherProps) {
     const t = useTranslations();
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [imageError, setImageError] = useState(false);
 
     const isMobile = useIsMobile();
+    
+    const { isSaved, isLoading: isSaveLoading, toggleSave } = useSaveTeacher({
+        teacherId: teacher.id,
+        token: token || '',
+        initialSavedAt: teacher.savedAt,
+        onError: (error) => {
+            console.error('Error toggling save teacher:', error);
+        }
+    });
     
     // Obtener iniciales del nombre
     const getInitials = (name: string, surname: string) => {
@@ -111,7 +122,7 @@ export function TeacherItem({ teacher }: TeacherProps) {
                                 const lang = languages.find(l => l.code === language.language);
                                 const langName = lang?.name[getLangFromUrl(new URL(window.location.href))] || language.language;
                                 const level = proficiencyLevels.find(l => l.code === language.proficiencyLevel);
-                                const levelName = level ? level.name[getLangFromUrl(new URL(window.location.href))] : language.proficiencyLevel;
+                                const levelName = level?.name[getLangFromUrl(new URL(window.location.href))] || language.proficiencyLevel;
                                 return `${langName} (${levelName})`;
                             }).join(', ')}
                         </Text>
@@ -120,7 +131,14 @@ export function TeacherItem({ teacher }: TeacherProps) {
                 <div className="flex flex-col">
                     <div className="flex flex-col-reverse gap-4 md:flex-col">
                         <div className="flex flex-row gap-3 w-full">
-                            <Button colorType="secondary" size="lg" icon="heart-outline" />
+                            <Button 
+                                colorType="secondary" 
+                                size="lg" 
+                                icon={isSaved ? "heart-filled" : "heart-outline"}
+                                onClick={() => toggleSave()}
+                                disabled={isSaveLoading}
+                                highlighted={isSaved}
+                            />
                             <Button 
                                 colorType="secondary" 
                                 size="lg" 

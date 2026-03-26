@@ -12,6 +12,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     label?: string;
 	colorType?: ColorType;
 	onlyText?: boolean;
+	highlighted?: boolean;
 }
 
 export const Button = ({
@@ -23,6 +24,7 @@ export const Button = ({
     className,
     fullWidth = false,
     onlyText = false,
+	highlighted = false,
 	...props
 }: ButtonProps) => {
     const isIconOnly = Boolean((icon && !label));
@@ -32,9 +34,11 @@ export const Button = ({
 		styles[`btn--${size}`],
 		{ [styles['btn--icon-only']]: isIconOnly },
 		{ 'w-full': fullWidth },
-		{ [styles['btn--secondary']]: colorType === 'secondary' },
+		{ [styles['btn--secondary']]: colorType === 'secondary' && !highlighted },
 		{ [styles['btn--primary']]: colorType === 'primary' },
 		{ [styles['btn--text']]: onlyText },
+		{ [styles['btn--highlighted']]: highlighted },
+		{ 'bg-[var(--color-primary-200)]': highlighted },
 		className
 	);
 
@@ -64,7 +68,7 @@ export const Button = ({
 			className={classes}
 			{...props}
 		>
-            {icon && <Icon icon={icon} iconWidth={iconSize} iconHeight={iconSize} iconColor={iconColor} />}
+            {icon && <Icon icon={icon} iconWidth={iconSize} iconHeight={iconSize} iconColor={highlighted ? '#F4A43A' : iconColor} />}
 			{label && <span className={textClasess}>{label}</span>}
 		</button>
 	);
