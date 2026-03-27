@@ -1,10 +1,45 @@
 ---
 export const prerender = false;
 import Main from '../../layout/Main.astro';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { getSession } from 'auth-astro/server';
+import { useTranslations, getLangFromRequest } from '@/i18n';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { ApiUserRepository } from '@/features/user/infrastructure/ApiUserRepository';
+import { UserProfile } from '@/features/user/settings/user-profile/UserProfile';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const lang = getLangFromRequest(Astro.request, Astro.url);
+const t = useTranslations({ lang });
+
+const authRepository = new AnyclazzAuthRepository();
+const currentUser = await authRepository.getCurrentUser(session);
+
+if (!currentUser?.id) {
+	return Astro.redirect('/login');
+}
+
+const userRepository = new ApiUserRepository();
+const userProfile = await userRepository.getUserProfile({ token: accessToken });
+
+// Leer el tab desde la URL
+const initialTab = Astro.url.searchParams.get('tab') || 'my_details';
 ---
 
-<Main>
-	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-		Settings
+<Main title={t('menu.settings')}>
+	<div class="px-4 py-2 sm:p-8">
+		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.settings')}</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={24} direction="vertical" />
+		<UserProfile user={userProfile} accessToken={accessToken} lang={lang} initialTab={initialTab} client:load />
 	</div>
 </Main>
