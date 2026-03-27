@@ -81,6 +81,11 @@ export default {
     'admin.no_pending_teachers_description': 'No hay profesores pendientes de aprobación en este momento.',
     'admin.no_rejected_teachers': 'No hay profesores rechazados',
     'admin.no_rejected_teachers_description': 'No hay profesores rechazados para mostrar.',
+    'admin.teacher_approved_success': 'Profesor aprobado correctamente',
+    'admin.teacher_rejected_success': 'Profesor rechazado correctamente',
+    'admin.teacher_approve_error': 'Error al aprobar el profesor',
+    'admin.teacher_reject_error': 'Error al rechazar el profesor',
+    'admin.teacher_fetch_error': 'Error al cargar profesores',
 
     'menu.dashboard': 'Inicio',
     'menu.dashboard.upcoming-lessons': 'Próximas clases',

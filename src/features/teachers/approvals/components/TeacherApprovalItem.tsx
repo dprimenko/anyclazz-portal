@@ -91,9 +91,9 @@ export function TeacherApprovalItem({ teacher, onApprove, onReject, isLoading, m
                 <div className="flex justify-end gap-3" onClick={(e) => e.stopPropagation()}>
                     <div className={cn("flex gap-2 justify-end")}>
                         {mode === 'pending' && (
-                            <Button label='Reject' colorType='secondary' icon="close" iconColor="#A4A7AE" onClick={() => onReject(teacher)} />
+                            <Button label={t('common.reject')} colorType='secondary' icon="close" iconColor="#A4A7AE" onClick={() => onReject(teacher)} />
                         )}
-                        <Button label='Approve' colorType='primary' icon="check" onClick={() => onApprove(teacher)}/>
+                        <Button label={t('common.approve')} colorType='primary' icon="check" onClick={() => onApprove(teacher)}/>
                     </div>
                 </div>
             </div>

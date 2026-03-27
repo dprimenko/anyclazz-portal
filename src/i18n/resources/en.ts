@@ -77,6 +77,11 @@ export default {
     'admin.no_pending_teachers_description': 'There are no teachers pending approval at the moment.',
     'admin.no_rejected_teachers': 'No rejected teachers',
     'admin.no_rejected_teachers_description': 'There are no rejected teachers to display.',
+    'admin.teacher_approved_success': 'Teacher approved successfully',
+    'admin.teacher_rejected_success': 'Teacher rejected successfully',
+    'admin.teacher_approve_error': 'Failed to approve teacher',
+    'admin.teacher_reject_error': 'Failed to reject teacher',
+    'admin.teacher_fetch_error': 'Error fetching teachers',
 
     'menu.dashboard': 'Dashboard',
     'menu.dashboard.upcoming-lessons': 'Upcoming Lessons',

@@ -45,7 +45,7 @@ export function PaginatedTeacherApprovals({initialData, token}: PaginatedTeacher
             });
             setData(result);
         } catch (error) {
-            console.error('Error fetching teacher approvals:', error);
+            console.error(t('admin.teacher_fetch_error'), error);
         } finally {
             setLoading(false);
         }
@@ -82,24 +82,24 @@ export function PaginatedTeacherApprovals({initialData, token}: PaginatedTeacher
     const handleApprove = async (teacher: TeacherApproval) => {
         try {
             await repository.approveTeacher({ token, teacherId: teacher.id });
-            console.log('Teacher approved successfully');
+            console.log(t('admin.teacher_approved_success'));
             // Refrescar la lista actual
             await fetchTeacherApprovals(page, search || undefined);
         } catch (error: any) {
-            console.error('Failed to approve teacher:', error);
-            alert(error.message || 'Failed to approve teacher');
+            console.error(t('admin.teacher_approve_error'), error);
+            alert(error.message || t('admin.teacher_approve_error'));
         }
     };
 
     const handleReject = async (teacher: TeacherApproval) => {
         try {
             await repository.rejectTeacher({ token, teacherId: teacher.id });
-            console.log('Teacher rejected successfully');
+            console.log(t('admin.teacher_rejected_success'));
             // Refrescar la lista actual
             await fetchTeacherApprovals(page, search || undefined);
         } catch (error: any) {
-            console.error('Failed to reject teacher:', error);
-            alert(error.message || 'Failed to reject teacher');
+            console.error(t('admin.teacher_reject_error'), error);
+            alert(error.message || t('admin.teacher_reject_error'));
         }
     };
 
