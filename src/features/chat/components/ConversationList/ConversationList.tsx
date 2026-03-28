@@ -4,7 +4,8 @@ import type { Channel, StreamChat } from 'stream-chat';
 import { useConversationList } from '../../hooks/useConversationList';
 import { ConversationItem } from './ConversationItem';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
-import styles from './ConversationList.module.css';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 
 interface ConversationListProps {
 	streamClient: StreamChat;
@@ -41,45 +42,57 @@ export const ConversationList: FC<ConversationListProps> = ({
 	);
 
 	return (
-		<div className={styles.conversationList}>
+		<div className="flex flex-col h-full bg-[var(--color-surface)]">
 			{/* Header */}
-			<div className={styles.conversationList__header}>
-				<h1 className={styles.conversationList__title}>
+			<div className="flex flex-row items-center px-6 py-5">
+				{/* <h1 className="m-0 text-2xl font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
 					Messages
-					{unreadCount > 0 && (
-						<span className={styles.conversationList__badge}>{unreadCount}</span>
-					)}
-				</h1>
+					
+				</h1> */}
+
+				<Text textLevel='h2' size='text-lg' colorType='primary' weight='semibold' className='flex items-center gap-2'>
+					Messages
+					<Chip size="sm" colorType="secondary">
+						{unreadCount}
+					</Chip>
+				</Text>
 			</div>
 
 			{/* Search */}
-			<div className={styles.conversationList__search}>
-				<Icon icon="search" iconWidth={20} iconHeight={20} />
-				<input
-					type="text"
-					placeholder="Search"
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					className={styles.conversationList__searchInput}
-				/>
+			<div className="px-4 pb-4">
+				<div className="relative w-full">
+					<input
+						type="text"
+						placeholder="Search"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="w-full px-4 py-2.5 pl-10 border border-[var(--color-neutral-200)] rounded-lg focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]"
+					/>
+					<Icon
+						icon="search"
+						iconWidth={20}
+						iconHeight={20}
+						className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+					/>
+				</div>
 			</div>
 
 			{/* Conversations */}
-			<div className={styles.conversationList__items}>
+			<div className="flex-1 overflow-y-auto">
 				{isLoading && (
-					<div className={styles.conversationList__loading}>
+					<div className="p-6 text-center text-[var(--color-text-secondary)]">
 						<p>Cargando conversaciones…</p>
 					</div>
 				)}
 
 				{error && (
-					<div className={styles.conversationList__error}>
+					<div className="p-6 text-center text-[var(--color-error)]">
 						<p>Error: {error}</p>
 					</div>
 				)}
 
 				{!isLoading && !error && filteredConversations.length === 0 && (
-					<div className={styles.conversationList__empty}>
+					<div className="p-6 text-center text-[var(--color-text-secondary)]">
 						<p>No hay conversaciones</p>
 					</div>
 				)}

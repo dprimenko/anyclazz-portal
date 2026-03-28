@@ -1,55 +1,78 @@
-/* Chat view wrapper */
-.chatView {
-	height: 100%;
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: var(--color-background);
-}
-
 /* Override Stream Chat styles to match design system */
-.chatView :global(.str-chat__container) {
+
+.streamOverrides :global(.str-chat__container) {
 	height: 100%;
 }
 
-.chatView :global(.str-chat__channel-header) {
-	background-color: var(--color-surface);
-	border-bottom: 1px solid var(--color-border);
-	padding: var(--spacing-4);
-}
-
-.chatView :global(.str-chat__message-list) {
+/* Message list background */
+.streamOverrides :global(.str-chat__list) {
 	background-color: var(--color-background);
 	padding: var(--spacing-4);
 }
 
-.chatView :global(.str-chat__input) {
-	background-color: var(--color-surface);
-	border-top: 1px solid var(--color-border);
-	padding: var(--spacing-4);
+/* Date separator */
+.streamOverrides :global(.str-chat__date-separator) {
+	padding: var(--spacing-4) 0;
 }
 
-.chatView :global(.str-chat__message-simple) {
-	margin-bottom: var(--spacing-2);
+.streamOverrides :global(.str-chat__date-separator-line) {
+	background-color: var(--color-neutral-200);
 }
 
-.chatView :global(.str-chat__message-text) {
-	background-color: var(--color-surface);
-	border-radius: var(--border-radius-lg);
+.streamOverrides :global(.str-chat__date-separator-date) {
+	color: var(--color-text-secondary);
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+/* Message bubbles */
+.streamOverrides :global(.str-chat__message-simple__content) {
+	background-color: #ffffff;
+	border: 1px solid var(--color-neutral-200);
+	border-radius: 0 12px 12px 12px;
 	padding: var(--spacing-2) var(--spacing-3);
+	box-shadow: none;
 }
 
-.chatView :global(.str-chat__message--me .str-chat__message-text) {
-	background-color: var(--color-primary);
-	color: white;
+/* Sent message bubble */
+.streamOverrides :global(.str-chat__message--me .str-chat__message-simple__content) {
+	background-color: #ffffff;
+	border: 1px solid var(--color-neutral-200);
+	border-radius: 12px 0 12px 12px;
 }
 
-.chatView :global(.str-chat__input-flat) {
-	background-color: var(--color-background);
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius-lg);
+/* Message text */
+.streamOverrides :global(.str-chat__message-text-inner) {
+	font-size: 0.875rem;
+	color: var(--color-text-primary);
+	line-height: 1.5;
 }
 
-.chatView :global(.str-chat__input-flat:focus-within) {
-	border-color: var(--color-primary);
+/* Avatar in messages */
+.streamOverrides :global(.str-chat__avatar) {
+	border-radius: 50%;
 }
+
+/* Sender name */
+.streamOverrides :global(.str-chat__message-sender-name) {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-text-primary);
+}
+
+/* Timestamp */
+.streamOverrides :global(.str-chat__message-data) {
+	font-size: 0.75rem;
+	color: var(--color-text-secondary);
+}
+
+/* Remove default box shadow on messages */
+.streamOverrides :global(.str-chat__message-simple) {
+	box-shadow: none;
+}
+
+/* "You" label alignment */
+.streamOverrides :global(.str-chat__message--me .str-chat__message-sender-name) {
+	text-align: right;
+}
+

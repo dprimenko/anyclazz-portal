@@ -3,7 +3,6 @@ import { type FC, useState, useEffect } from 'react';
 import type { StreamChat } from 'stream-chat';
 import { useChatChannel } from '../hooks/useChatChannel';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
-import styles from './ChatWithTeacherButton.module.css';
 
 interface ChatWithTeacherButtonProps {
 	teacherId: string;
@@ -41,11 +40,11 @@ export const ChatWithTeacherButton: FC<ChatWithTeacherButtonProps> = ({
 			onClick={() => setTrigger(teacherId)}
 			disabled={isLoading || !streamClient}
 			aria-label={`Iniciar chat con ${teacherName}`}
-			className={styles.chatButton}
+			className="inline-flex items-center gap-2 py-2 px-4 bg-[var(--color-primary)] text-white border-none rounded-[var(--border-radius-md)] text-base font-medium cursor-pointer transition-colors duration-200 hover:bg-[var(--color-primary-dark)] disabled:opacity-60 disabled:cursor-not-allowed"
 		>
 			<Icon icon="chat" iconWidth={20} iconHeight={20} />
 			{isLoading ? 'Abriendo chat…' : `Chatear con ${teacherName}`}
-			{error && <span className={styles.chatButton__error}>Error: {error}</span>}
+			{error && <span className="block mt-1 text-sm text-[var(--color-error)]">Error: {error}</span>}
 		</button>
 	);
 };

@@ -30,7 +30,7 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOut
         styles['avatar__content']
     );
 
-    const verifiedBadgeSize = size * 0.25;
+    const verifiedBadgeSize = size * 0.3;
     
     // Obtener iniciales del nombre
     const getInitials = (name?: string) => {
@@ -64,7 +64,7 @@ export function Avatar({ src, alt, size = DEFAULT_SIZE, hasVerifiedBadge, hasOut
                 )}
             </div>
             {hasVerifiedBadge && (
-                <div className="absolute bottom-[1px] right-[1px] z-9">
+                <div className="absolute bottom-[1%] right-[1%] z-9">
                     <Icon icon="verified" iconWidth={verifiedBadgeSize} iconHeight={verifiedBadgeSize} />
                 </div>
             )}  

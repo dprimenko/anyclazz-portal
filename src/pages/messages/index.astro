@@ -1,7 +1,7 @@
 ---
 import { getSession } from 'auth-astro/server';
 import { MessagesPage } from '@/features/chat';
-import Base from '../../layout/Base.astro';
+import Main from '@/layout/Main.astro';
 
 export const prerender = false;
 
@@ -16,11 +16,11 @@ const keycloakToken = session.accessToken || '';
 const currentUserId = session.user.id || '';
 ---
 
-<Base title="Messages - AnyClazz">
+<Main title="Messages">
 	<MessagesPage
 		client:only="react"
 		keycloakToken={keycloakToken}
 		currentUserId={currentUserId}
 		initialUserId={undefined}
 	/>
-</Base>
+</Main>

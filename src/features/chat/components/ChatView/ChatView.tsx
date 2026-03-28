@@ -3,12 +3,14 @@ import { type FC, useEffect } from 'react';
 import {
 	Chat,
 	Channel,
-	ChannelHeader,
 	MessageInput,
 	MessageList,
 	Window,
 } from 'stream-chat-react';
 import type { Channel as StreamChannel, StreamChat } from 'stream-chat';
+import { ChatHeader } from './ChatHeader';
+import { CustomMessageInput } from './CustomMessageInput';
+import { CustomDateSeparator, formatMessageTimestamp } from './chatDateFormatters';
 
 // Import Stream Chat React styles
 import 'stream-chat-react/dist/css/v2/index.css';
@@ -28,13 +30,13 @@ export const ChatView: FC<ChatViewProps> = ({ streamClient, channel }) => {
 	}, [channel]);
 
 	return (
-		<div className={styles.chatView}>
+		<div className={`h-full w-full flex flex-col bg-[var(--color-background)] ${styles.streamOverrides}`}>
 			<Chat client={streamClient} theme="str-chat__theme-light">
-				<Channel channel={channel}>
+				<Channel channel={channel} DateSeparator={CustomDateSeparator}>
 					<Window>
-						<ChannelHeader />
-						<MessageList />
-						<MessageInput />
+						<ChatHeader />
+						<MessageList formatDate={formatMessageTimestamp} />
+						<MessageInput Input={CustomMessageInput} />
 					</Window>
 				</Channel>
 			</Chat>

@@ -5,7 +5,7 @@ import { useStreamChat } from '../hooks/useStreamChat';
 import { useAutoOpenChannel } from '../hooks/useAutoOpenChannel';
 import { ConversationList } from './ConversationList/ConversationList';
 import { ChatView } from './ChatView/ChatView';
-import styles from './MessagesPage.module.css';
+import { ProgressIndicator } from '@/ui-library/components/progress-indicator/ProgressIndicator';
 
 interface MessagesPageProps {
 	keycloakToken: string;
@@ -35,17 +35,18 @@ export const MessagesPage: FC<MessagesPageProps> = ({
 
 	if (isLoading || isLoadingInitialChannel) {
 		return (
-			<div className={styles.messagesPage__loading}>
-				<p>Conectando al chat…</p>
+			<div className="flex flex-col items-center justify-center h-full p-6 text-center">
+				<ProgressIndicator size="lg" />
 			</div>
+			
 		);
 	}
 
 	if (error || initialChannelError) {
 		return (
-			<div className={styles.messagesPage__error}>
+			<div className="flex flex-col items-center justify-center h-full p-6 text-center text-[var(--color-error)]">
 				<p>Error al conectar con el chat</p>
-				<p className={styles.messagesPage__errorMessage}>{error || initialChannelError}</p>
+				<p className="mt-2 text-sm text-[var(--color-text-secondary)]">{error || initialChannelError}</p>
 			</div>
 		);
 	}
@@ -55,9 +56,9 @@ export const MessagesPage: FC<MessagesPageProps> = ({
 	}
 
 	return (
-		<div className={styles.messagesPage}>
+		<div className="flex flex-col md:flex-row h-screen bg-[var(--color-background)]">
 			{/* Left sidebar: Conversation list */}
-			<div className={styles.messagesPage__sidebar}>
+			<div className="w-full md:w-[360px] border-b border-b-[var(--color-border)] md:border-b-0 md:border-r md:border-r-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden shrink-0 h-1/2 md:h-full">
 				<ConversationList
 					streamClient={client}
 					currentUserId={currentUserId}
@@ -67,11 +68,11 @@ export const MessagesPage: FC<MessagesPageProps> = ({
 			</div>
 
 			{/* Right pane: Active chat */}
-			<div className={styles.messagesPage__main}>
+			<div className="flex-1 flex flex-col overflow-hidden h-1/2 md:h-full">
 				{activeChannel ? (
 					<ChatView streamClient={client} channel={activeChannel} />
 				) : (
-					<div className={styles.messagesPage__emptyState}>
+					<div className="flex items-center justify-center h-full text-lg text-[var(--color-text-secondary)]">
 						<p>Selecciona una conversación para empezar</p>
 					</div>
 				)}

@@ -1,8 +1,9 @@
 // Individual conversation item in the list
-import { type FC } from 'react';
+import { useMemo, type FC } from 'react';
 import type { Channel } from 'stream-chat';
 import { DateTime } from 'luxon';
-import styles from './ConversationItem.module.css';
+import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
+import { Text } from '@/ui-library/components/ssr/text/Text';
 
 interface ConversationItemProps {
 	channel: Channel;
@@ -23,7 +24,7 @@ export const ConversationItem: FC<ConversationItemProps> = ({
 	);
 
 	const otherUser = otherMember?.user;
-	const userName = otherUser?.name || 'Usuario';
+	const userName = otherUser?.name || 'User';
 	const userImage = otherUser?.image || '/images/default-avatar.png';
 	const isOnline = otherUser?.online || false;
 
@@ -53,9 +54,13 @@ export const ConversationItem: FC<ConversationItemProps> = ({
 		}
 	};
 
+	const userConnectionStatusClass = useMemo(() => {
+		return isOnline ? 'bg-[#17B26A]' : 'bg-[#D5D7DA]';
+	}, [isOnline]);
+
 	return (
 		<div
-			className={`${styles.conversationItem} ${isActive ? styles.conversationItem__active : ''}`}
+			className={`flex flex-col gap-4 py-4 px-3 border-b border-b-[var(--color-neutral-200)] cursor-pointer transition-colors duration-200 relative hover:bg-[#FFF9F3] ${isActive ? 'bg-[#FFF9F3]' : ''}`}
 			onClick={onClick}
 			role="button"
 			tabIndex={0}
@@ -66,34 +71,40 @@ export const ConversationItem: FC<ConversationItemProps> = ({
 			}}
 		>
 			{/* Avatar */}
-			<div className={styles.conversationItem__avatar}>
-				<img src={userImage} alt={userName} />
-				{isOnline && <span className={styles.conversationItem__onlineIndicator} />}
+			<div className="grid grid-cols-[20px_1fr_min-content] items-center shrink-0 w-full">
+				<div>
+					{unreadCount > 0 && <div className="w-2 h-2 bg-[var(--color-primary-700)] rounded-full" />}
+				</div>
+				<div className="flex items-center gap-3 min-w-0">
+					<div className="relative flex-shrink-0">
+						<Avatar 
+							src={userImage} 
+							alt={userName}
+							size={40} 
+						/>
+						<div className={`absolute bottom-0 right-0 w-3 h-3 ${userConnectionStatusClass} border-2 border-white rounded-full`}></div>
+					</div>
+					<div className="flex flex-col items-start flex-1 min-w-0 overflow-hidden">
+						<Text size="text-sm" weight="semibold" colorType="primary" className="truncate w-full">
+							{userName}
+						</Text>
+					</div>
+					<div className='self-start'>
+						{lastMessageTime && (
+							<span className="text-sm text-[var(--color-text-secondary)] shrink-0">
+								{formatTime(lastMessageTime)}
+							</span>
+						)}
+					</div>
+				</div>
 			</div>
 
 			{/* Content */}
-			<div className={styles.conversationItem__content}>
-				<div className={styles.conversationItem__header}>
-					<span className={styles.conversationItem__name}>{userName}</span>
-					{lastMessageTime && (
-						<span className={styles.conversationItem__time}>
-							{formatTime(lastMessageTime)}
-						</span>
-					)}
-				</div>
-
-				<div className={styles.conversationItem__footer}>
-					<p className={styles.conversationItem__message}>
-						{lastMessageText || 'Sin mensajes'}
-					</p>
-					{unreadCount > 0 && (
-						<span className={styles.conversationItem__badge}>{unreadCount}</span>
-					)}
-				</div>
+			<div className="flex pl-4 w-full">
+				<Text colorType='tertiary' size='text-sm'>
+					{lastMessageText || 'Sin mensajes'}
+				</Text>
 			</div>
-
-			{/* Unread indicator dot (only if unread) */}
-			{unreadCount > 0 && <div className={styles.conversationItem__unreadDot} />}
 		</div>
 	);
 };
