@@ -4,13 +4,16 @@ import { AnyclazzAuthRepository } from "../../infrastructure/AnyclazzAuthReposit
 import { getSession } from 'auth-astro/server';
 import { LoggedUserClient } from './LoggedUserClient';
 
+const session = await getSession(Astro.request);
 const loggedUser = new AnyclazzAuthRepository();
-const user = await loggedUser.getCurrentUser(await getSession(Astro.request));
+const user = await loggedUser.getCurrentUser(session);
+const accessToken = (session as any)?.accessToken as string | undefined;
 ---
 
 {user && (
     <LoggedUserClient 
-        user={user} 
+        user={user}
+        accessToken={accessToken}
         client:load
     />
 )}

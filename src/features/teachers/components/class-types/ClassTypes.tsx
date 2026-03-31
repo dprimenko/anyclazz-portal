@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import type { TeacherClassType } from "../../domain/types.ts";
+import type { ui } from "../../../../i18n/ui.ts";
 import { Text } from "../../../../ui-library/components/ssr/text/Text.tsx";
 import { Icon } from "../../../../ui-library/components/ssr/icon/Icon.tsx";
 import { Divider } from "../../../../ui-library/components/ssr/divider/Divider.tsx";
@@ -9,10 +10,11 @@ import classNames from "classnames";
 
 export interface ClassTypesProps {
     classTypes: TeacherClassType[];
+    lang?: keyof typeof ui;
 }
 
-export function ClassTypes({ classTypes }: ClassTypesProps) {
-    const t = useTranslations();
+export function ClassTypes({ classTypes, lang = 'en' }: ClassTypesProps) {
+    const t = useTranslations({ lang });
 
     return (
         <div className={classNames('flex flex-col w-full card p-3 rounded-lg gap-[0.625rem]')}>

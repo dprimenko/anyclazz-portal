@@ -1,6 +1,7 @@
 import { type FC, useEffect, useState } from 'react';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { useTranslations } from '@/i18n';
+import type { ui } from '@/i18n/ui';
 import { useStripeConnectStatus, useStripeConnectActions } from '../../hooks/useStripeConnect';
 import type { StripeConnectStatusResponse } from '../../domain/types';
 import { StripeConnectButton } from '../StripeConnectButton/StripeConnectButton';
@@ -10,23 +11,23 @@ import { Notification } from '@/ui-library/components/notification/Notification'
 export interface StripeConnectSectionProps {
   accessToken: string;
   country?: string;
-  lang?: 'es' | 'en';
   initialStatus?: StripeConnectStatusResponse | null;
   oauthCode?: string | null;
   oauthState?: string | null;
   oauthError?: string | null;
+  lang?: keyof typeof ui;
 }
 
 export const StripeConnectSection: FC<StripeConnectSectionProps> = ({ 
   accessToken,
   country = 'US',
-  lang,
   initialStatus,
   oauthCode,
   oauthState,
   oauthError,
+  lang = 'en',
 }) => {
-  const t = useTranslations(lang ? { lang } : undefined);
+  const t = useTranslations({ lang });
   const { status, isLoading, error: statusError, refetch } = useStripeConnectStatus(accessToken, true, initialStatus);
   const { startOnboarding, completeOAuth, isProcessing, error: actionError } = useStripeConnectActions(accessToken);
   const [oauthProcessed, setOauthProcessed] = useState(false);
@@ -154,7 +155,6 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
             <StripeConnectButton 
               onClick={handleConnect}
               loading={isProcessing}
-              lang={lang}
             />
           )}
           onClose={() => {}}
@@ -170,7 +170,6 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
             <StripeConnectButton 
               onClick={handleConnect}
               loading={isProcessing}
-              lang={lang}
             />
           )}
           onClose={() => {}}
@@ -186,7 +185,6 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
             <StripeConnectButton 
               onClick={handleConnect}
               loading={isProcessing}
-              lang={lang}
             />
           )}
           onClose={() => {}}
@@ -202,7 +200,6 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
             <StripeConnectButton 
               onClick={handleConnect}
               loading={isProcessing}
-              lang={lang}
             />
           )} 
           onClose={() => {}}
@@ -218,7 +215,6 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
             <StripeConnectButton 
               onClick={handleConnect}
               loading={isProcessing}
-              lang={lang}
             />
           )}
           onClose={() => {}}

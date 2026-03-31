@@ -132,6 +132,7 @@ export class AnyclazzAuthRepository implements AuthRepository {
             lastName: profileData.user.lastName,
             timezone: profileData.user.timezone || 'America/New_York',
             role,
+            language: profileData.user.language,
             avatarUrl: profile?.avatar,
             teacherStatus: profile?.status,
             teacherStatusUpdate: profile?.statusUpdatedAt,

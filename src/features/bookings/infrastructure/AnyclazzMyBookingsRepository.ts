@@ -46,6 +46,8 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         });
 
         const data = await apiResponse.json();
+
+        console.log('Fetched bookings data:', data);
         
         return {
             bookings: data.bookings,
@@ -53,12 +55,16 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         };
     }
     
-    async getTeacherAvailability({teacherId, startAt, endAt, duration, token}: GetTeacherAvailabilityParams): Promise<any> {
-        const params = {
+    async getTeacherAvailability({teacherId, startAt, endAt, duration, classTypeId, token}: GetTeacherAvailabilityParams): Promise<any> {
+        const params: Record<string, any> = {
             startAt,
             endAt,
             duration,
         };
+
+        if (classTypeId !== undefined) {
+            params.classTypeId = classTypeId;
+        }
 
         const apiResponse = await this.httpClient.get({
             url: `/teacher-availability/${teacherId}`,

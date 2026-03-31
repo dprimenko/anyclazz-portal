@@ -43,12 +43,12 @@ class ChatApiRepository {
 	 * @param otherUserId - ID of the user to chat with
 	 * @returns Channel information
 	 */
-	async createOrGetChannel(token: string, otherUserId: string): Promise<ChatChannel> {
+	async createOrGetChannel(token: string, otherUserId: string, otherUserRole?: 'teacher' | 'student'): Promise<ChatChannel> {
 		try {
 			const response = await this.httpClient.post({
 				url: CHAT_API_ENDPOINTS.CHANNELS,
 				token,
-				data: { otherUserId },
+				data: { otherUserId, ...(otherUserRole && { otherUserRole }) },
 			});
 
 			if (!response.ok) {
@@ -69,6 +69,6 @@ class ChatApiRepository {
 const chatApiRepository = new ChatApiRepository();
 
 export const getChatToken = (token: string) => chatApiRepository.getChatToken(token);
-export const createOrGetChannel = (token: string, otherUserId: string) =>
-	chatApiRepository.createOrGetChannel(token, otherUserId);
+export const createOrGetChannel = (token: string, otherUserId: string, otherUserRole?: 'teacher' | 'student') =>
+	chatApiRepository.createOrGetChannel(token, otherUserId, otherUserRole);
 

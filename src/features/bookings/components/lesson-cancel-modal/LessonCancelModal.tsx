@@ -91,7 +91,11 @@ export function LessonCancelModal({ lesson, repository, token, onClose, onSucces
                 <Text size="text-md" weight="semibold" colorType="primary">
                     {t('bookings.cancel_lesson')}
                 </Text>
-                {isPaid ? (
+                {lesson.classType?.isGroup ? (
+                    <Text>
+                        {t('bookings.cancel_group_class_message')}
+                    </Text>
+                ) : isPaid ? (
                     <Text textLevel="div">
                         <div dangerouslySetInnerHTML={{ 
                             __html: `${t('bookings.cancel_with_refund_message')}<br/><br/>💡 <strong>${t('bookings.refund_info')}</strong> ${t('bookings.refund_time')}` 

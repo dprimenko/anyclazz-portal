@@ -1,5 +1,5 @@
 ---
-import { getLangFromUrl, useTranslations } from '../../../i18n';
+import { useTranslationsSSR } from '../../../i18n';
 import './styles.css';
 import { LocalMenuRepository } from '../infrastructure/LocalMenuRepository';
 import type { MenuItem } from '../domain/types';
@@ -10,11 +10,10 @@ import { UpgradeSuperTutorBanner } from '@/features/teachers/components/upgrade-
 
 const { class: className, isDark } = Astro.props;
 const { pathname } = Astro.url;
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations({ lang });
 
 const authRepository = new AnyclazzAuthRepository();
-const user = await authRepository.getCurrentUser(await getSession(Astro.request));
+const session = await getSession(Astro.request);
+const user = await authRepository.getCurrentUser(session);
 
 const menuRepository = new LocalMenuRepository();
 let menuItems: MenuItem[] = [];
@@ -37,6 +36,9 @@ const isItemSelected = (item: MenuItem): boolean => {
     }
     return false;
 };
+
+
+const t = useTranslationsSSR({ token: session?.accessToken });
 
 ---
 

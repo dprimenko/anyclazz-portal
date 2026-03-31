@@ -19,7 +19,7 @@ interface TeachersContextValue {
     noResults: boolean;
 }
 
-const TeachersContext = createContext<TeachersContextValue | undefined>(undefined);
+export const TeachersContext = createContext<TeachersContextValue | undefined>(undefined);
 
 export interface TeachersProviderProps extends TeachersPageProps {
     children: ReactNode;

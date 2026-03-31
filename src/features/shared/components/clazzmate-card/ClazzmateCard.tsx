@@ -58,7 +58,7 @@ export function ClazzmateCard({ referralLink, friendsInvited, creditsEarned }: C
                         Credits Earned
                     </Text>
                     <Text size="text-xl" weight="semibold" colorType="primary">
-                        €{creditsEarned.toFixed(2)}
+                        ${creditsEarned.toFixed(2)}
                     </Text>
                 </div>
             </div>

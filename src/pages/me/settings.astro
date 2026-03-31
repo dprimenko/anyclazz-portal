@@ -5,10 +5,12 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { getSession } from 'auth-astro/server';
-import { useTranslations, getLangFromRequest } from '@/i18n';
+import { useTranslationsSSR } from '@/i18n';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { ApiUserRepository } from '@/features/user/infrastructure/ApiUserRepository';
 import { UserProfile } from '@/features/user/settings/user-profile/UserProfile';
+import { StudentPaymentsRepository } from '@/features/students/infrastructure/StudentPaymentsRepository';
+import type { GetStudentPaymentsResponse } from '@/features/students/domain/paymentTypes';
 
 const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
@@ -17,11 +19,10 @@ if (!accessToken) {
 	return Astro.redirect('/login');
 }
 
-const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
-
 const authRepository = new AnyclazzAuthRepository();
 const currentUser = await authRepository.getCurrentUser(session);
+const lang = (currentUser?.language ?? 'en') as 'en' | 'es';
+const t = useTranslationsSSR({ token: session?.accessToken });
 
 if (!currentUser?.id) {
 	return Astro.redirect('/login');
@@ -32,14 +33,25 @@ const userProfile = await userRepository.getUserProfile({ token: accessToken });
 
 // Leer el tab desde la URL
 const initialTab = Astro.url.searchParams.get('tab') || 'my_details';
+
+// Solo cargar pagos si es estudiante
+let initialPayments: GetStudentPaymentsResponse | undefined;
+if (currentUser.role === 'student') {
+    try {
+        const studentPaymentsRepository = new StudentPaymentsRepository();
+        initialPayments = await studentPaymentsRepository.getPaymentHistory({ token: accessToken, page: 1, limit: 10 });
+    } catch (error) {
+        console.error('Error loading student payment history:', error);
+    }
+}
 ---
 
 <Main title={t('menu.settings')}>
-	<div class="px-4 py-2 sm:p-8">
+	<div class="px-4 pt-8 pb-2 md:p-8">
 		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.settings')}</Text>
 		<Space size={16} direction="vertical" />
 		<Divider />
 		<Space size={24} direction="vertical" />
-		<UserProfile user={userProfile} accessToken={accessToken} lang={lang} initialTab={initialTab} client:load />
+		<UserProfile user={userProfile} accessToken={accessToken} initialTab={initialTab} role={currentUser.role} initialPayments={initialPayments} client:load />
 	</div>
 </Main>

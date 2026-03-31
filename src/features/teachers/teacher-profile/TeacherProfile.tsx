@@ -2,6 +2,8 @@ import { Tabs } from "@/ui-library/components/tabs";
 import { useMemo, useState, useEffect } from "react";
 import type { Teacher } from "../domain/types";
 import { useTranslations } from "@/i18n";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
+import type { ui } from "@/i18n/ui";
 import { AvailabilityAndModalitiesManager } from "../availability_and_modalities/AvailabilityAndModalitiesManager";
 import { MyStoriesTab } from "../stories/MyStoriesTab";
 import { PublicInformation } from "./public-information/PublicInformation";
@@ -16,11 +18,11 @@ export interface TeacherProfileProps {
     accessToken: string;
     teacherId?: string;
     initialTab?: string;
-    lang: string;
+    lang?: keyof typeof ui;
 }
 
-export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId, initialTab = 'availability_and_modalities', lang }: TeacherProfileProps) {
-    const t = useTranslations();
+export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId, initialTab = 'availability_and_modalities', lang = 'en' }: TeacherProfileProps) {
+    const t = useTranslations({ lang });
     const repository = useMemo(() => new ApiTeacherRepository(), []);
     const [teacher, setTeacher] = useState<Teacher>(initialTeacher);
 
@@ -112,19 +114,20 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
     }, [initialTab]);
 
     return (
+        <LanguageProvider lang={lang}>
         <div>
             <Tabs tabs={tabs} defaultTab={initialTab} onChange={onTabChange} />
 
             {selectedTab === "public_information" && (
-                <PublicInformation teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
+                <PublicInformation teacher={teacher} accessToken={accessToken} repository={repository} />
             )}
             
             {selectedTab === "location" && (
-                <Location teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
+                <Location teacher={teacher} accessToken={accessToken} repository={repository} />
             )}
             
             {selectedTab === "information" && (
-                <Information teacher={teacher} accessToken={accessToken} repository={repository} lang={lang} />
+                <Information teacher={teacher} accessToken={accessToken} repository={repository} />
             )}
 
             {selectedTab === "super_tutor" && (
@@ -136,7 +139,7 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
             )}
             
             {selectedTab === "payments" && (
-                <Payments teacher={teacher} accessToken={accessToken} lang={lang as 'es' | 'en'} />
+                <Payments teacher={teacher} accessToken={accessToken} />
             )}
             
             {selectedTab === "videos" && teacherId && (
@@ -148,5 +151,6 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
                 />
             )}
         </div>
+        </LanguageProvider>
     );
 }

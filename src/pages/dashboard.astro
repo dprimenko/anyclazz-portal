@@ -1,11 +1,13 @@
 ---
 
 import Main from '../layout/Main.astro';
-import { useTranslations, getLangFromRequest } from '@/i18n';
+import { useTranslationsSSR } from '@/i18n';
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { PaymentsHistoryRepository, PaymentsDashboardSummary } from '@/features/stripe-connect';
+import type { PaymentsDashboardResponse } from '@/features/stripe-connect';
 import { getSession } from 'auth-astro/server';
 import { Dashboard as TeacherDashboard } from '@/features/teachers/dashboard/Dashboard';
 import { TeacherReviewNotification } from '@/features/teachers/components/teacher-review-notification/TeacherReviewNotification';
@@ -22,6 +24,7 @@ if (!accessToken) {
 
 const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
+const lang = (user?.language ?? 'en') as 'en' | 'es';
 
 // Redirigir usuarios admin a teachers-approvals
 if (user?.role === 'admin') {
@@ -32,10 +35,19 @@ const repository = new AnyclazzMyBookingsRepository();
 const upcomingBookings = await repository.getBookings({token: accessToken, filter: 'upcoming', sort: 'desc', page: 1, size: 3});
 const lastBookings = await repository.getBookings({token: accessToken, filter: 'last', sort: 'desc', page: 1, size: 3});
 
-const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
+const t = useTranslationsSSR({ token: session?.accessToken });
 
 const showReviewNotification = user?.role === 'teacher' && (user.teacherStatus === 'pending' || toTimezone(user.teacherStatusUpdate, user.timezone) <= toTimezone(DateTime.now().toISO(), user.timezone).plus({ days: 3 }));
+
+let paymentsDashboard: PaymentsDashboardResponse | null = null;
+if (user?.role === 'teacher') {
+	try {
+		const paymentsRepo = new PaymentsHistoryRepository();
+		paymentsDashboard = await paymentsRepo.getPaymentsDashboard({ token: accessToken });
+	} catch (error) {
+		console.error('Error loading payments dashboard:', error);
+	}
+}
 
 // Mock clazzmate data
 const clazzmate = {
@@ -60,11 +72,11 @@ const clazzmate = {
 		<Space size={16} direction="vertical" />
 
 		<TeacherDashboard 
-			lang={lang} 
 			upcomingLessons={upcomingBookings.bookings} 
 			lastLessons={lastBookings.bookings} 
 			user={user}
 			token={accessToken}
+			paymentsDashboard={paymentsDashboard}
 			client:load 
 		/>
 	</div>

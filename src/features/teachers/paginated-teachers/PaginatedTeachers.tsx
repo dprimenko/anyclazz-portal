@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { EmptyState } from "@/ui-library/components/ssr/empty-state/EmptyState";
 import { useTranslations } from "@/i18n";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
+import type { ui } from "@/i18n/ui";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Space } from "@/ui-library/components/ssr/space/Space";
 import { PageSelector } from "@/ui-library/components/page-selector";
@@ -15,10 +17,11 @@ export interface PaginatedTeachersProps {
     initialTeachers: ListTeachersResponse;
     token: string;
     mode?: 'all' | 'saved';
-}   
+    lang?: keyof typeof ui;
+}
 
-export function PaginatedTeachers({initialTeachers, token, mode = 'all'}: PaginatedTeachersProps) {
-    const t = useTranslations();
+export function PaginatedTeachers({initialTeachers, token, mode = 'all', lang = 'en'}: PaginatedTeachersProps) {
+    const t = useTranslations({ lang });
 
     // Crear repositorio en el cliente
     const repository = useMemo(() => new ApiTeacherRepository(), []);
@@ -80,6 +83,7 @@ export function PaginatedTeachers({initialTeachers, token, mode = 'all'}: Pagina
     const showSearchBar = hasTeachers || search !== "";
 
     return (
+        <LanguageProvider lang={lang}>
         <div className="flex flex-col gap-6">
             {/* Search bar - solo mostrar si hay teachers o hay búsqueda activa */}
             {showSearchBar && (
@@ -137,5 +141,6 @@ export function PaginatedTeachers({initialTeachers, token, mode = 'all'}: Pagina
                 </>
             )}
         </div>
+        </LanguageProvider>
     );
 }

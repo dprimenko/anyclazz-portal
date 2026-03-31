@@ -33,6 +33,7 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
     const endTime = fromISOKeepZone(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
+    const isGroup = lesson.classType?.isGroup ?? lesson.classTypeId?.includes('_group') ?? false;
 
     const [selectedLesson, setSelectedLesson] = useState<BookingWithTeacher | null>(null);
     const [isCancelLessonModalOpen, setIsCancelLessonModalOpen] = useState(false);
@@ -72,11 +73,11 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
 
     const popMenuItems = useMemo(() => {
         return [
-            {
+            ...(!isGroup ? [{
                 label: "Chat",
                 icon: <Icon icon="message-text-square-01" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />,
                 onClick: () => {},
-            },
+            }] : []),
             {
                 label: "Details",
                 icon: <Icon icon="file-02" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />,
@@ -97,9 +98,9 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                 },
             ] : [])
         ];
-    }, [lesson, isPast, user?.role, t]);
+    }, [lesson, isPast, isGroup, user?.role, t]);
 
-    if (!displayPerson) return null;
+    if (!displayPerson && !isGroup) return null;
     
     return (
         <>
@@ -108,20 +109,28 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                 {/* Header */}
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                        <Avatar 
-                            src={displayPerson.avatar} 
-                            size={48} 
-                            alt={`${displayPerson.name} ${displayPerson.surname}`}
-                            hasVerifiedBadge={user?.role === 'student' && 'superTutorTo' in displayPerson ? isSuperTutor(displayPerson.superTutorTo) : false}
-                        />
-                        <div className="flex flex-col">
-                            <Text size="text-sm" weight="semibold" colorType="primary">
-                                {displayPerson.name} {displayPerson.surname}
-                            </Text>
-                            <Text size="text-xs" colorType="tertiary">
-                                {user?.role === 'student' ? t('common.teacher') : t('common.student')}
-                            </Text>
-                        </div>
+                        {displayPerson ? (
+                            <>
+                                <Avatar 
+                                    src={displayPerson.avatar} 
+                                    size={48} 
+                                    alt={`${displayPerson.name} ${displayPerson.surname}`}
+                                    hasVerifiedBadge={user?.role === 'student' && 'superTutorTo' in displayPerson ? isSuperTutor(displayPerson.superTutorTo) : false}
+                                />
+                                <div className="flex flex-col">
+                                    <Text size="text-sm" weight="semibold" colorType="primary">
+                                        {displayPerson.name} {displayPerson.surname}
+                                    </Text>
+                                    <Text size="text-xs" colorType="tertiary">
+                                        {user?.role === 'student' ? t('common.teacher') : t('common.student')}
+                                    </Text>
+                                </div>
+                            </>
+                        ) : (
+                            <Chip colorType="primary" rounded>
+                                <Text size="text-sm" textLevel="span" colorType="accent" weight="medium">{t('bookings.group_class')}</Text>
+                            </Chip>
+                        )}
                     </div>
                     <button type="button" className="p-1">
                         <PopMenu 

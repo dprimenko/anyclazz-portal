@@ -15,10 +15,11 @@ interface WeeklyAgendaProps {
     bookings: GetBookingsResponse;
     user: AuthUser | null;
     token: string;
+    lang?: string;
 }
 
-export function WeeklyAgenda({ bookings: initialBookings, user, token }: WeeklyAgendaProps) {
-    const t = useTranslations();
+export function WeeklyAgenda({ bookings: initialBookings, user, token, lang }: WeeklyAgendaProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Helper para calcular el inicio de semana en formato USA (domingo)
     const getWeekStart = useCallback((date: DateTime) => {
@@ -222,6 +223,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token }: WeeklyA
                                             repository={repository}
                                             token={token}
                                             user={user}
+                                            lang={lang}
                                         />
                                     ))}
                                 </div>

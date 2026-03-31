@@ -36,6 +36,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
     const endTime = fromISOKeepZone(lesson.endAt);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
+    const isGroup = lesson.classType?.isGroup ?? lesson.classTypeId?.includes('_group') ?? false;
 
     const [selectedLesson, setSelectedLesson] = useState<BookingWithTeacher | null>(null);
     const [isCancelLessonModalOpen, setIsCancelLessonModalOpen] = useState(false);
@@ -79,15 +80,15 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
         return startTime < now || lesson.status === 'completed';
     }, [startTime, lesson.status]);
 
-    if (!displayPerson) return null;
+    if (!displayPerson && !isGroup) return null;
 
     const popMenuItems = useMemo(() => {
         return [
-            {
+            ...(!isGroup ? [{
                 label: "Chat",
                 icon: <Icon icon="message-text-square-01" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />,
                 onClick: () => {},
-            },
+            }] : []),
             {
                 label: "Details",
                 icon: <Icon icon="file-02" iconWidth={20} iconHeight={20} iconColor="#A4A7AE" />,
@@ -108,7 +109,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                 },
             ] : [])
         ];
-    }, [lesson, isPast, user?.role, t]);
+    }, [lesson, isPast, isGroup, user?.role, t]);
 
     const containerClasses = cn(
         "py-4",
@@ -136,6 +137,12 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                                     {user?.role === 'teacher' && <Text size="text-sm" colorType="tertiary">{t('common.student')}</Text>}
                                 </div>
                             </div>
+                        </div>
+                    ) : isGroup ? (
+                        <div className="flex items-center">
+                            <Chip colorType="primary" rounded>
+                                <Text size="text-sm" textLevel="span" colorType="accent" weight="medium">{t('bookings.group_class')}</Text>
+                            </Chip>
                         </div>
                     ) : (
                         <div className="flex items-center">

@@ -8,15 +8,14 @@ import type { TeacherLanguage } from '@/features/teachers/domain/types';
 import { useTranslations } from '@/i18n';
 
 interface LanguageSelectorProps {
-    lang: string;
     value: TeacherLanguage[];
     onChange: (languages: TeacherLanguage[]) => void;
     label?: string;
     required?: boolean;
 }
 
-export function LanguageSelector({ lang, value, onChange, label, required }: LanguageSelectorProps) {
-    const t = useTranslations({ lang: lang as 'en' | 'es' });
+export function LanguageSelector({ value, onChange, label, required }: LanguageSelectorProps) {
+    const t = useTranslations();
     // Ensure there's always at least one empty row
     useEffect(() => {
         if (value.length === 0) {
@@ -28,9 +27,9 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
     const levelItems: ComboboxItem[] = useMemo(() => 
         proficiencyLevels.map(level => ({
             value: level.code,
-            label: level.name[lang as keyof typeof level.name],
+            label: level.name[t('common.language') as keyof typeof level.name],
         })),
-        [lang]
+        [t]
     );
 
     // Get available language items for a specific index
@@ -43,9 +42,9 @@ export function LanguageSelector({ lang, value, onChange, label, required }: Lan
             .filter(l => !selectedLanguages.includes(l.code))
             .map(language => ({
                 value: language.code,
-                label: language.name[lang as keyof typeof language.name],
+                label: language.name[t('common.language') as keyof typeof language.name],
             }));
-    }, [lang, value]);
+    }, [t, value]);
 
     const handleLanguageChange = useCallback((index: number, languageCode: string) => {
         const newValue = [...value];

@@ -1,4 +1,6 @@
 import { useTranslations } from '@/i18n';
+import { LanguageProvider } from '@/i18n/LanguageProvider';
+import type { ui } from '@/i18n/ui';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Card } from '@/ui-library/components/ssr/card/Card';
@@ -9,17 +11,20 @@ import 'swiper/css';
 import { LessonsTable } from '@/features/bookings/components/lessons-table/LessonsTable';
 import { useState, useMemo } from 'react';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
+import { PaymentsDashboardSummary } from '@/features/stripe-connect';
+import type { PaymentsDashboardResponse } from '@/features/stripe-connect';
 
 interface DashboardProps {
-    lang: string;
     upcomingLessons: BookingWithTeacher[];
     lastLessons: BookingWithTeacher[];
     user: AuthUser | null;
     token?: string;
+    paymentsDashboard?: PaymentsDashboardResponse | null;
+    lang?: keyof typeof ui;
 }
 
-export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: DashboardProps) {
-    const t = useTranslations({ lang: lang as 'en' | 'es' });
+export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsDashboard, lang = 'en' }: DashboardProps) {
+    const t = useTranslations({ lang });
     const [refreshKey, setRefreshKey] = useState(0);
     
     // Crear repositorio en el cliente
@@ -33,6 +38,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: D
     };
 
     return (
+        <LanguageProvider lang={lang}>
         <>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                 <div className="flex-1 min-w-0">
@@ -72,6 +78,12 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: D
             </div>
 
             <div className="flex flex-col gap-2">
+			{paymentsDashboard && (
+				<>
+					<PaymentsDashboardSummary dashboard={paymentsDashboard} />
+					<div className="mb-4" />
+				</>
+			)}
 			{/* Left Column - Lessons */}
 			<div className="flex flex-col gap-2">
 				<Card bgColor='#FFF9F3' className="px-6 py-5">
@@ -90,7 +102,8 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: D
 						lessons={upcomingLessons} 
 						user={user}
 						token={token}
-						onLessonCancelled={handleLessonCancelled}					lang={lang}						emptyState={user?.role === 'student' ? (
+						onLessonCancelled={handleLessonCancelled} 
+						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_upcoming_lessons')}
 								description={t('dashboard.no_upcoming_lessons_description')}
@@ -125,7 +138,8 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: D
 						lessons={lastLessons} 
 						user={user}
 						token={token}
-						onLessonCancelled={handleLessonCancelled}					lang={lang}						emptyState={user?.role === 'student' ? (
+						onLessonCancelled={handleLessonCancelled} 
+						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_past_lessons')}
 								description={t('dashboard.no_past_lessons_description')}
@@ -177,7 +191,7 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: D
 						</div>
 						<div>
 							<Text size="text-xs" colorType="tertiary">{t('clazzmate.credits_earned')}</Text>
-							<Text size="text-xl" weight="semibold" colorType="primary" className="mt-1">€{clazzmate.creditsEarned.toFixed(2)}</Text>
+							<Text size="text-xl" weight="semibold" colorType="primary" className="mt-1">${clazzmate.creditsEarned.toFixed(2)}</Text>
 						</div>
 					</div>
 				</section>
@@ -216,5 +230,6 @@ export function Dashboard({ lang, upcomingLessons, lastLessons, user, token }: D
 			</div> */}
 		</div>
         </>
+        </LanguageProvider>
     );
 }

@@ -1,19 +1,17 @@
 ---
-import { getLangFromRequest, useTranslations } from "@/i18n/index.ts";
+import { useTranslationsSSR } from "@/i18n/index.ts";
 import Main from "@/layout/Main.astro";
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from "@/features/auth/ssr/infrastructure/AnyclazzAuthRepository";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
-import { StripeConnectSection, StripeDashboardButtonContainer, StripeStatusBadge, StripeTestModeBadge } from "@/features/stripe-connect";
+import { StripeConnectSection, StripeDashboardButtonContainer, StripeStatusBadge, StripeTestModeBadge, PaginatedPayments, PaymentsHistoryRepository, PaymentsDashboardSummary } from "@/features/stripe-connect";
+import type { GetPaymentHistoryResponse, PaymentsDashboardResponse } from "@/features/stripe-connect";
 import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider.tsx";
 import { Breadcrumb } from "@/ui-library/components/breadcrumb";
 import { Space } from "@/ui-library/components/ssr/space/Space";
 
 export const prerender = false;
-
-const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
 
 const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
@@ -23,7 +21,9 @@ if (!accessToken) {
 }
 
 const authRepository = new AnyclazzAuthRepository();
-const user = await authRepository.getCurrentUser(await getSession(Astro.request));
+const user = await authRepository.getCurrentUser(session);
+const lang = (user?.language ?? 'en') as 'en' | 'es';
+const t = useTranslationsSSR({ token: session?.accessToken });
 
 if (!user?.id) {
     return Astro.redirect('/login');
@@ -50,6 +50,22 @@ try {
     console.error('Error loading Stripe Connect status:', error);
 }
 
+// Cargar el historial de pagos en el servidor
+const paymentsHistoryRepository = new PaymentsHistoryRepository();
+let initialPayments: GetPaymentHistoryResponse = { payments: [], meta: { currentPage: 1, lastPage: 1, size: 10, total: 0 } };
+try {
+    initialPayments = await paymentsHistoryRepository.getPaymentHistory({ token: accessToken, page: 1, limit: 10 });
+} catch (error) {
+    console.error('Error loading payment history:', error);
+}
+
+let paymentsDashboard: PaymentsDashboardResponse | null = null;
+try {
+    paymentsDashboard = await paymentsHistoryRepository.getPaymentsDashboard({ token: accessToken });
+} catch (error) {
+    console.error('Error loading payments dashboard:', error);
+}
+
 const requirementsDue = stripeConnectStatus?.requirements?.currently_due?.length || 0;
 
 // Extraer parámetros OAuth de la URL
@@ -69,9 +85,9 @@ const oauthErrorDescription = Astro.url.searchParams.get('error_description');
 		<Space size={16} direction="vertical" />
         
 		<!-- Indicador de Modo Test -->
-		<StripeTestModeBadge lang={lang} client:load />
+		<!-- <StripeTestModeBadge lang={lang} client:load /> -->
 		
-        <div class="flex flex-row items-center justify-between">
+        <div class="flex flex-col gap-2 md:flex-row md:items-center justify-between">
             <div class="flex flex-col">
                 <div class="flex flex-row items-center gap-3">
                     <Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.dashboard.payments')}</Text>
@@ -93,7 +109,6 @@ const oauthErrorDescription = Astro.url.searchParams.get('error_description');
                 <div class="flex flex-col">
                     <StripeDashboardButtonContainer 
                         accessToken={accessToken}
-                        lang={lang}
                         client:load
                     />
                 </div>
@@ -108,13 +123,32 @@ const oauthErrorDescription = Astro.url.searchParams.get('error_description');
         <StripeConnectSection 
             accessToken={accessToken}
             country={teacher.teacherAddress?.country || 'US'}
-            lang={lang}
             initialStatus={stripeConnectStatus}
             oauthCode={oauthCode}
             oauthState={oauthState}
             oauthError={oauthErrorDescription || oauthError}
+            lang={lang}
             client:load
         />
+
+        {!stripeConnectStatus?.connected && !stripeConnectStatus?.can_receive_payments && (
+            <Space size={48} direction="vertical" />
+        )}
+
+		<!-- Historial de pagos -->
+		{paymentsDashboard && (
+			<>
+				<PaymentsDashboardSummary dashboard={paymentsDashboard} lang={lang} client:load />
+				<Space size={32} direction="vertical" />
+			</>
+		)}
+        
+		<PaginatedPayments
+			initialPayments={initialPayments}
+			accessToken={accessToken}
+			lang={lang}
+			client:load
+		/>
 	</div>
 
 	<!-- Script para limpiar URL después de procesar OAuth -->

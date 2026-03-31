@@ -16,7 +16,7 @@ export interface MyStoriesTabProps {
   city?: string;
 }
 
-export function MyStoriesTab({ teacherId, accessToken, country, city }: MyStoriesTabProps) {
+export function MyStoriesTab({ teacherId, accessToken }: MyStoriesTabProps) {
   const t = useTranslations();
   
   const handleVideoUploaded = (story: Story) => {

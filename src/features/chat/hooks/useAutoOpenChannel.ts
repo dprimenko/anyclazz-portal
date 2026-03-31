@@ -7,6 +7,7 @@ interface UseAutoOpenChannelOptions {
 	streamClient: StreamChat | null;
 	keycloakToken: string | null;
 	userId: string | null | undefined;
+	otherUserRole?: 'teacher' | 'student';
 	onChannelReady: (channel: Channel) => void;
 }
 
@@ -25,12 +26,14 @@ export function useAutoOpenChannel({
 	streamClient,
 	keycloakToken,
 	userId,
+	otherUserRole,
 	onChannelReady,
 }: UseAutoOpenChannelOptions): UseAutoOpenChannelReturn {
 	const { channel, isLoading, error } = useChatChannel({
 		streamClient,
 		keycloakToken,
 		otherUserId: userId || null,
+		otherUserRole,
 	});
 
 	useEffect(() => {

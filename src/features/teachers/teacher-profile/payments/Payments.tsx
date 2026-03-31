@@ -8,11 +8,10 @@ import { StripeConnectSection } from '@/features/stripe-connect';
 export interface PaymentsProps {
   teacher: Teacher;
   accessToken: string;
-  lang?: 'es' | 'en';
 }
 
-export const Payments: FC<PaymentsProps> = ({ teacher, accessToken, lang }) => {
-  const t = useTranslations(lang ? { lang } : undefined);
+export const Payments: FC<PaymentsProps> = ({ teacher, accessToken }) => {
+  const t = useTranslations();
 
   return (
     <div className="mt-6 flex flex-col gap-8">
@@ -30,7 +29,6 @@ export const Payments: FC<PaymentsProps> = ({ teacher, accessToken, lang }) => {
       <StripeConnectSection 
         accessToken={accessToken}
         country={teacher.teacherAddress?.country || 'US'}
-        lang={lang}
       />
     </div>
   );

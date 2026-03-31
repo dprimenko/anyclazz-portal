@@ -1,5 +1,7 @@
 import type { CommonParams } from "@/features/shared/domain/types";
 
+export type AppLanguage = 'en' | 'es';
+
 export interface UserProfile {
     id: string;
     name: string;
@@ -10,6 +12,7 @@ export interface UserProfile {
     country?: string | null;
     city?: string | null;
     bio?: string | null;
+    language?: AppLanguage;
 }
 
 export interface UpdateUserData {
@@ -19,6 +22,7 @@ export interface UpdateUserData {
     avatar?: File;
     timezone?: string;
     bio?: string | null;
+    language?: AppLanguage;
     address?: {
         country?: string;
         city?: string;
@@ -60,6 +64,7 @@ export interface MyProfileResponse {
         city: string | null;
         timezone: string;
         bio: string | null;
+        language: AppLanguage;
         createdAt: string;
     };
     roles: string[];
@@ -82,6 +87,7 @@ export interface UpdateProfileResponse {
     timezone: string;
     bio: string | null;
     avatar: string | null;
+    language?: AppLanguage;
     address?: {
         country: string;
         city: string;

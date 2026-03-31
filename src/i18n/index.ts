@@ -1,4 +1,7 @@
 import {ui, defaultLang, routes, showDefaultLang} from './ui';
+import { getApiUrl } from '@/features/shared/services/environment';
+import { useContext, useState, useEffect } from 'react';
+import { LanguageContext } from './LanguageProvider';
 
 const LANG_COOKIE_NAME = 'app_lang';
 
@@ -54,8 +57,7 @@ export function setLangCookie(lang: keyof typeof ui) {
 
 export function getLangFromUrl(url: URL, cookieString?: string): keyof typeof ui {
     // Si no está en la URL, intentar leer de cookie
-    const cookieLang = getLangFromCookie('app_lang');
-    console.log('🌐 Detected language from URL:', cookieLang);
+    const cookieLang = getLangFromCookie(cookieString);
     if (cookieLang) return cookieLang;
     
     // Fallback a defaultLang
@@ -77,6 +79,24 @@ export function getCurrentLang(cookieString?: string): keyof typeof ui {
     return defaultLang;
 }
 
+export async function getLangFromApi({ token }: { token?: string }): Promise<keyof typeof ui | undefined> {
+    if (!token) return getCurrentLang();
+    try {
+        const response = await fetch(`${getApiUrl()}/profile/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) return undefined;
+        const data = await response.json();
+        const lang = data?.user?.language;
+        if (lang && lang in ui) {
+            return lang as keyof typeof ui;
+        }
+    } catch {
+        // silently fail
+    }
+    return undefined;
+}
+
 export function useTranslatedPath(lang: keyof typeof ui) {
     return function translatePath(path: string, l: string = lang) {
         const pathName = path.replaceAll('/', '')
@@ -89,10 +109,47 @@ export function useTranslatedPath(lang: keyof typeof ui) {
     }
 }
 
-export function useTranslations({ lang }: { lang?: keyof typeof ui } = {}) {
-    return function t(key: string, params?: Record<string, string | number>) {
+export function useTranslationsSSR({token}: { token?: string } = {}) {
+    return async function t(key: string, params?: Record<string, string | number>) {
         // Usar el idioma proporcionado o el idioma actual (cookie o default)
-        const currentLang = lang || getCurrentLang();
+        let currentLang;
+        if (token) {
+            currentLang = await getLangFromApi({ token }) || getCurrentLang();
+        } else {
+            currentLang = getCurrentLang();
+        }
+
+        // @ts-ignore
+        let translation = ui[currentLang][key] || ui[defaultLang][key];
+        
+        if (params) {
+            Object.entries(params).forEach(([paramKey, paramValue]) => {
+                const placeholder = `{{${paramKey}}}`;
+                translation = translation.replace(new RegExp(placeholder, 'g'), String(paramValue));
+            });
+        }
+        
+        return translation;
+    }
+}
+
+export function useTranslations({ lang }: { lang?: keyof typeof ui } = {}) {
+    const contextLang = useContext(LanguageContext);
+    // Start with defaultLang so SSR and initial client render produce identical HTML (prevents hydration mismatch).
+    // After mount, update to the cookie-based lang when no explicit provider or prop lang is set.
+    const [cookieLang, setCookieLang] = useState<keyof typeof ui>(defaultLang as keyof typeof ui);
+    useEffect(() => {
+        if (!lang && contextLang === null) {
+            const resolved = getCurrentLang();
+            if (resolved !== cookieLang) setCookieLang(resolved);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return function t(key: string, params?: Record<string, string | number>) {
+        // Priority: explicit lang arg > LanguageProvider context > post-mount cookie > defaultLang
+        const currentLang = lang ?? contextLang ?? cookieLang;
+
         // @ts-ignore
         let translation = ui[currentLang][key] || ui[defaultLang][key];
         

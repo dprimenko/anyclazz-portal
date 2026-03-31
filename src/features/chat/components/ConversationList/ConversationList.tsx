@@ -6,6 +6,7 @@ import { ConversationItem } from './ConversationItem';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Chip } from '@/ui-library/components/ssr/chip/Chip';
+import { useTranslations } from '@/i18n';
 
 interface ConversationListProps {
 	streamClient: StreamChat;
@@ -20,6 +21,7 @@ export const ConversationList: FC<ConversationListProps> = ({
 	activeChannelId,
 	onSelectChannel,
 }) => {
+	const t = useTranslations();
 	const { conversations, isLoading, error } = useConversationList({
 		streamClient,
 		currentUserId,
@@ -51,7 +53,7 @@ export const ConversationList: FC<ConversationListProps> = ({
 				</h1> */}
 
 				<Text textLevel='h2' size='text-lg' colorType='primary' weight='semibold' className='flex items-center gap-2'>
-					Messages
+					{t('chat.messages_title')}
 					<Chip size="sm" colorType="secondary">
 						{unreadCount}
 					</Chip>
@@ -63,7 +65,7 @@ export const ConversationList: FC<ConversationListProps> = ({
 				<div className="relative w-full">
 					<input
 						type="text"
-						placeholder="Search"
+						placeholder={t('chat.search_placeholder')}
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						className="w-full px-4 py-2.5 pl-10 border border-[var(--color-neutral-200)] rounded-lg focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]"
@@ -81,7 +83,7 @@ export const ConversationList: FC<ConversationListProps> = ({
 			<div className="flex-1 overflow-y-auto">
 				{isLoading && (
 					<div className="p-6 text-center text-[var(--color-text-secondary)]">
-						<p>Cargando conversaciones…</p>
+						<p>{t('chat.loading_conversations')}</p>
 					</div>
 				)}
 
@@ -93,7 +95,7 @@ export const ConversationList: FC<ConversationListProps> = ({
 
 				{!isLoading && !error && filteredConversations.length === 0 && (
 					<div className="p-6 text-center text-[var(--color-text-secondary)]">
-						<p>No hay conversaciones</p>
+						<p>{t('chat.no_conversations')}</p>
 					</div>
 				)}
 

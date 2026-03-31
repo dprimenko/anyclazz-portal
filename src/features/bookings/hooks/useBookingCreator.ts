@@ -38,6 +38,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
                 startAt: monthStart.toISO()!,
                 endAt: monthEnd.toISO()!,
                 duration: selectedDuration,
+                classTypeId: selectedClass.type,
             });
 
             // Extract unique dates with availability
@@ -56,7 +57,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         } finally {
             setFetchingAvailableSlots(false);
         }
-    }, [accessToken, teacher.id, currentMonth, selectedDuration]);
+    }, [accessToken, teacher.id, currentMonth, selectedDuration, selectedClass.type]);
 
     // Fetch slots for selected date
     const fetchDaySlots = useCallback(async () => {
@@ -69,13 +70,14 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
                 startAt: DateTime.fromJSDate(selectedDate).startOf('day').toISO()!,
                 endAt: DateTime.fromJSDate(selectedDate).endOf('day').toISO()!,
                 duration: selectedDuration,
+                classTypeId: selectedClass.type,
             });
             setAvailableSlots(slots);
         } catch (error) {
             console.error('Error fetching day slots:', error);
             setAvailableSlots([]);
         }
-    }, [accessToken, teacher.id, selectedDate, selectedDuration]);
+    }, [accessToken, teacher.id, selectedDate, selectedDuration, selectedClass.type]);
 
     const createBooking = useCallback(async (bookingData: CreateBookingParams) => {
         try {

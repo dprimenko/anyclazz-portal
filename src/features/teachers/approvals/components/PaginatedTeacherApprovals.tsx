@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { EmptyState } from "@/ui-library/components/ssr/empty-state/EmptyState";
 import { useTranslations } from "@/i18n";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
+import type { ui } from "@/i18n/ui";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Space } from "@/ui-library/components/ssr/space/Space";
 import { PageSelector } from "@/ui-library/components/page-selector";
@@ -16,10 +18,11 @@ const ITEMS_PER_PAGE = 10;
 export interface PaginatedTeacherApprovalsProps {
     initialData: ListTeacherApprovalsResponse;
     token: string;
+    lang?: keyof typeof ui;
 }
 
-export function PaginatedTeacherApprovals({initialData, token}: PaginatedTeacherApprovalsProps) {
-    const t = useTranslations();
+export function PaginatedTeacherApprovals({initialData, token, lang = 'en'}: PaginatedTeacherApprovalsProps) {
+    const t = useTranslations({ lang });
 
     // Crear repositorio en el cliente
     const repository = useMemo(() => new ApiTeacherApprovalRepository(), []);
@@ -107,6 +110,7 @@ export function PaginatedTeacherApprovals({initialData, token}: PaginatedTeacher
     const showSearchBar = hasTeachers || search !== "";
 
     return (
+        <LanguageProvider lang={lang}>
         <div className="flex flex-col gap-6">
             {/* Filtros con Radio Buttons */}
             <div className="flex gap-6">
@@ -185,5 +189,6 @@ export function PaginatedTeacherApprovals({initialData, token}: PaginatedTeacher
                 </>
             )}
         </div>
+        </LanguageProvider>
     );
 }

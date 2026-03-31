@@ -8,7 +8,7 @@ import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/Anycl
 import { ApiTeacherApprovalRepository } from '@/features/teachers/approvals/infrastructure/ApiTeacherApprovalRepository';
 import { PaginatedTeacherApprovals } from '@/features/teachers/approvals/components/PaginatedTeacherApprovals';
 import { getSession } from 'auth-astro/server';
-import { useTranslations, getLangFromRequest } from '@/i18n';
+import { useTranslationsSSR } from '@/i18n';
 
 const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
@@ -19,14 +19,14 @@ if (!accessToken) {
 
 const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
+const lang = (user?.language ?? 'en') as 'en' | 'es';
 
 // Verificar que el usuario sea admin
 if (user?.role !== 'admin') {
 	return Astro.redirect('/dashboard');
 }
 
-const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
+const t = useTranslationsSSR({ token: session?.accessToken });
 
 // Fetch initial data (pending teachers by default)
 const approvalRepository = new ApiTeacherApprovalRepository();

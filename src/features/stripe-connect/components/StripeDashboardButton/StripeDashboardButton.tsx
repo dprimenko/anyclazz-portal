@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { Button } from '@/ui-library/components/ssr/button/Button';
-import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { useTranslations } from '@/i18n';
 
 export interface StripeDashboardButtonProps {
@@ -25,6 +24,7 @@ export const StripeDashboardButton: FC<StripeDashboardButtonProps> = ({
       onClick={onClick}
       colorType={variant}
       disabled={loading || disabled}
+      fullWidth
       label={loading ? t('common.loading') : t('stripe.open_dashboard')}
       icon="stripe"
     />

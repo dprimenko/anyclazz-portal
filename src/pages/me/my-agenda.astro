@@ -2,7 +2,7 @@
 export const prerender = false;
 import { Breadcrumb } from '@/ui-library/components/breadcrumb';
 import Main from '../../layout/Main.astro';
-import { useTranslations, getLangFromRequest } from '@/i18n';
+import { useTranslationsSSR } from '@/i18n';
 import { getSession } from 'auth-astro/server';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { Text } from '@/ui-library/components/ssr/text/Text';
@@ -25,8 +25,8 @@ const user = await authRepository.getCurrentUser(session);
 const repository = new AnyclazzMyBookingsRepository();
 const bookings = await repository.getBookings({token: accessToken, sort: 'desc', from: DateTime.now().startOf('week').toISO(), to: DateTime.now().endOf('week').toISO(), timezone: 'America/New_York', page: 1, size: 100});
 
-const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
+const lang = (user?.language ?? 'en') as 'en' | 'es';
+const t = useTranslationsSSR({ token: session?.accessToken });
 ---
 
 <Main title="My Agenda">
@@ -43,6 +43,6 @@ const t = useTranslations({ lang });
 		<Divider />
 		<Space size={32} direction="vertical" />
 		
-		<WeeklyAgenda bookings={bookings} user={user} token={accessToken} client:load />
+		<WeeklyAgenda bookings={bookings} user={user} token={accessToken} lang={lang} client:load />
 	</div>
 </Main>

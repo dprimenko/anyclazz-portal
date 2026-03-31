@@ -32,6 +32,7 @@ export class ApiUserRepository implements UserRepository {
             country: data.user.country,
             city: data.user.city,
             bio: data.user.bio,
+            language: data.user.language,
         };
     }
 
@@ -48,6 +49,7 @@ export class ApiUserRepository implements UserRepository {
             if (data.surname !== undefined) form.append('surname', data.surname);
             if (data.timezone) form.append('timezone', data.timezone);
             if (data.bio != null) form.append('bio', data.bio);
+            if (data.language) form.append('language', data.language);
             if (data.address) form.append('address', JSON.stringify(data.address));
             // No añadir Content-Type: el browser lo genera con el boundary
             body = form;
@@ -59,6 +61,7 @@ export class ApiUserRepository implements UserRepository {
                 ...(data.surname !== undefined ? { surname: data.surname } : {}),
                 ...(data.timezone !== undefined ? { timezone: data.timezone } : {}),
                 ...(data.bio !== undefined ? { bio: data.bio } : {}),
+                ...(data.language !== undefined ? { language: data.language } : {}),
                 ...(data.address ? { address: data.address } : {}),
             };
             body = JSON.stringify(jsonBody);

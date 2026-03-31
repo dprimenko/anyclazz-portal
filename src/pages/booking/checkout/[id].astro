@@ -1,7 +1,7 @@
 ---
 import Main from '@/layout/Main.astro';
 export const prerender = false;
-import { getLangFromRequest, useTranslations } from '@/i18n';
+import { useTranslationsSSR } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
@@ -14,9 +14,9 @@ import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure
 import { BookingCheckoutWrapper } from '@/features/bookings/components/booking-checkout/BookingCheckoutWrapper';
 import { proficiencyLevels } from '@/features/teachers/onboarding/data/proficiencyLevels';
 import { isSuperTutor } from '@/features/teachers/utils/superTutorHelpers';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 
-const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
+const session = await getSession(Astro.request);
 
 const { id } = Astro.params;
 
@@ -24,12 +24,17 @@ if (!id) {
     return Astro.redirect('/teachers');
 }
 
-const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
 
 if (!accessToken) {
     return Astro.redirect('/login');
 }
+
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+const lang = user?.language || 'en';
+const t = useTranslationsSSR({ token: session?.accessToken });
 
 const teacherRepository = new AnyclazzMyBookingsRepository();
 const booking = await teacherRepository.getBookingById({ 

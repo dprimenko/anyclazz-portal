@@ -5,7 +5,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon.tsx";
 import { Space } from "@/ui-library/components/ssr/space/Space.tsx";
 import { Text } from "@/ui-library/components/ssr/text/Text.tsx";
 import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon.tsx";
-import { getLangFromRequest, useTranslations } from "@/i18n/index.ts";
+import { getLangFromRequest, useTranslationsSSR } from "@/i18n/index.ts";
 import Main from "@/layout/Main.astro";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
@@ -20,7 +20,7 @@ import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 export const prerender = false;
 
 const lang = getLangFromRequest(Astro.request, Astro.url);
-const t = useTranslations({ lang });
+const t = useTranslationsSSR({ lang });
 
 const { id } = Astro.params;
 
@@ -210,7 +210,7 @@ const hasConfiguredPrices = teacher.classTypes.some(classType =>
             <!-- Right side en mobile: aparece aquí debajo -->
             <div class="block md:hidden">
                 <div class="flex flex-col md:flex-col-reverse gap-4">
-                    {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} client:load />}
+                    {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} lang={lang} client:load />}
                     <div class="flex flex-row gap-3 w-full">
                         <Button colorType="secondary" size="lg" icon="heart-outline" />
                         <Button colorType="secondary" size="lg" icon="chat" />
@@ -237,7 +237,7 @@ const hasConfiguredPrices = teacher.classTypes.some(classType =>
                         <Button colorType="secondary" size="lg" icon="chat" />
                         <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
                     </div>
-                    {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} client:load />}
+                    {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} lang={lang} client:load />}
                 </div>
             </div>
         </div>

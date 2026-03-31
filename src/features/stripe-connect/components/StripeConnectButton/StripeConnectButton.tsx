@@ -1,22 +1,19 @@
 import type { FC } from 'react';
 import { Button } from '@/ui-library/components/ssr/button/Button';
-import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { useTranslations } from '@/i18n';
 
 export interface StripeConnectButtonProps {
   onClick: () => void;
   loading?: boolean;
   disabled?: boolean;
-  lang?: 'es' | 'en';
 }
 
 export const StripeConnectButton: FC<StripeConnectButtonProps> = ({ 
   onClick, 
   loading = false,
   disabled = false,
-  lang,
 }) => {
-  const t = useTranslations(lang ? { lang } : undefined);
+  const t = useTranslations();
 
   return (
     <Button

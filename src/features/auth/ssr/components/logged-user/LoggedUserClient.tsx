@@ -5,17 +5,18 @@ import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import type { AuthUser } from '@/features/auth/domain/types';
 import { Card } from '@/ui-library/components/ssr/card/Card';
 import { UserCache } from '@/features/auth/infrastructure/userCache';
-import { Combobox } from '@/ui-library/components/form/combobox/Combobox';
 import { Dropdown, type DropdownItem } from '@/ui-library/components/form/dropdown';
 import { useMemo, useState } from 'react';
-import { getCurrentLang, useTranslations, setLangCookie } from '@/i18n';
+import { useTranslations, setLangCookie } from '@/i18n';
+import { getApiUrl } from '@/features/shared/services/environment';
 
 interface LoggedUserClientProps {
     user: AuthUser;
+    accessToken?: string;
 }
 
-export function LoggedUserClient({ user }: LoggedUserClientProps) {
-    const t = useTranslations();
+export function LoggedUserClient({ user, accessToken }: LoggedUserClientProps) {
+    const t = useTranslations({ lang: user.language });
     
     const handleLogout = () => {
         console.log('🚪 Logout button clicked');
@@ -52,22 +53,44 @@ export function LoggedUserClient({ user }: LoggedUserClientProps) {
         }
     ];
 
-    const [language, setLanguage] = useState(getCurrentLang());
+    const [language, setLanguage] = useState(user.language ?? 'en');
 
-    const handleLanguageChange = (newLang: string) => {
+    const handleLanguageChange = async (newLang: string) => {
         if (newLang === language) {
             return;
         }
-        
-        // Guardar el idioma en las cookies
+
+        // Actualizar cookie para componentes React cliente
         setLangCookie(newLang as 'en' | 'es');
-        
-        // Recargar la página para aplicar el cambio
+
+        // Limpiar caché para que el siguiente request obtenga el idioma actualizado desde la API
+        new UserCache().clear();
+
+        if (accessToken) {
+            try {
+                await fetch(`${getApiUrl()}/profile/me`, {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: user.email,
+                        name: user.firstName || user.name.split(' ')[0],
+                        surname: user.lastName || user.name.split(' ').slice(1).join(' '),
+                        language: newLang,
+                    }),
+                });
+            } catch {
+                // Cookie already set, proceed with reload
+            }
+        }
+
         window.location.reload();
     };
 
     const languagesItems: DropdownItem[] = useMemo(() => {
-        const currentLang = getCurrentLang();
+        const currentLang = user.language ?? 'en';
         const languages = [
             { id: 'en', name: { en: 'English', es: 'Inglés' } },
             { id: 'es', name: { en: 'Spanish', es: 'Español' } },

@@ -7,72 +7,56 @@
 /* Message list background */
 .streamOverrides :global(.str-chat__list) {
 	background-color: var(--color-background);
-	padding: var(--spacing-4);
+	padding: 8px 0;
+}
+
+/* Remove all default message wrapper chrome since we render fully custom */
+.streamOverrides :global(.str-chat__message-simple) {
+	box-shadow: none;
+	padding: 0;
+	margin: 0;
+}
+
+.streamOverrides :global(.str-chat__message-simple__content) {
+	all: unset;
+}
+
+.streamOverrides :global(.str-chat__message-text-inner) {
+	all: unset;
+}
+
+.streamOverrides :global(.str-chat__message-data) {
+	display: none;
+}
+
+.streamOverrides :global(.str-chat__avatar) {
+	display: none;
+}
+
+.streamOverrides :global(.str-chat__message-sender-name) {
+	display: none;
 }
 
 /* Date separator */
 .streamOverrides :global(.str-chat__date-separator) {
-	padding: var(--spacing-4) 0;
+	padding: 8px 0;
 }
 
-.streamOverrides :global(.str-chat__date-separator-line) {
-	background-color: var(--color-neutral-200);
+/* TextareaComposer internal container — prevent text clipping */
+.streamOverrides :global(.str-chat__message-textarea-container) {
+	overflow: visible !important;
+	height: auto !important;
 }
 
-.streamOverrides :global(.str-chat__date-separator-date) {
-	color: var(--color-text-secondary);
-	font-size: 0.75rem;
-	font-weight: 500;
+.streamOverrides :global(.str-chat__message-textarea) {
+	overflow: auto !important;
+	height: auto !important;
 }
 
-/* Message bubbles */
-.streamOverrides :global(.str-chat__message-simple__content) {
-	background-color: #ffffff;
-	border: 1px solid var(--color-neutral-200);
-	border-radius: 0 12px 12px 12px;
-	padding: var(--spacing-2) var(--spacing-3);
-	box-shadow: none;
-}
-
-/* Sent message bubble */
-.streamOverrides :global(.str-chat__message--me .str-chat__message-simple__content) {
-	background-color: #ffffff;
-	border: 1px solid var(--color-neutral-200);
-	border-radius: 12px 0 12px 12px;
-}
-
-/* Message text */
-.streamOverrides :global(.str-chat__message-text-inner) {
-	font-size: 0.875rem;
-	color: var(--color-text-primary);
-	line-height: 1.5;
-}
-
-/* Avatar in messages */
-.streamOverrides :global(.str-chat__avatar) {
-	border-radius: 50%;
-}
-
-/* Sender name */
-.streamOverrides :global(.str-chat__message-sender-name) {
-	font-size: 0.75rem;
-	font-weight: 600;
-	color: var(--color-text-primary);
-}
-
-/* Timestamp */
-.streamOverrides :global(.str-chat__message-data) {
-	font-size: 0.75rem;
-	color: var(--color-text-secondary);
-}
-
-/* Remove default box shadow on messages */
-.streamOverrides :global(.str-chat__message-simple) {
-	box-shadow: none;
-}
-
-/* "You" label alignment */
-.streamOverrides :global(.str-chat__message--me .str-chat__message-sender-name) {
-	text-align: right;
+/* Remove Stream's default input wrapper padding/height */
+.streamOverrides :global(.str-chat__input-flat) {
+	padding: 0 !important;
+	border: none !important;
+	background: transparent !important;
 }
 

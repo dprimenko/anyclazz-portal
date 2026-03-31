@@ -2,8 +2,7 @@ import { Button } from "@/ui-library/components/ssr/button/Button";
 import type { Teacher } from "../../domain/types";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Text } from "@/ui-library/components/ssr/text/Text";
-import { Space } from "@/ui-library/components/ssr/space/Space";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "@/i18n";
 import { HorizontalInputContainer } from "@/ui-library/components/horizontal-input-container/HorizontalInputContainer";
 import { TextField } from "@/ui-library/components/form/text-field/TextField";
@@ -27,10 +26,9 @@ interface LocationProps {
     teacher: Teacher;
     accessToken: string;
     repository: TeacherRepository;
-    lang?: string;
 }
 
-export function Location({ teacher, accessToken, repository, lang = 'es' }: LocationProps) {
+export function Location({ teacher, accessToken, repository }: LocationProps) {
     const t = useTranslations();
     const [isSaving, setIsSaving] = useState(false);
 
@@ -50,9 +48,9 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
     const countryItems: ComboboxItem[] = useMemo(() => 
         countries.map(country => ({
             value: country.country,
-            label: country.name[lang as keyof typeof country.name],
+            label: country.name[t('common.language') as keyof typeof country.name],
         })),
-        [lang]
+        [t]
     );
 
     // Filter states by selected country
@@ -60,9 +58,9 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
         const filteredStates = states.filter(state => state.country === watchedCountry);
         return filteredStates.map(state => ({
             value: state.state,
-            label: state.name[lang as keyof typeof state.name],
+            label: state.name[t('common.language') as keyof typeof state.name],
         }));
-    }, [lang, watchedCountry]);
+    }, [t, watchedCountry]);
 
     // Filter cities by selected country
     const cityItems: ComboboxItem[] = useMemo(() => {
@@ -70,14 +68,14 @@ export function Location({ teacher, accessToken, repository, lang = 'es' }: Loca
             const countryCities = cities.filter(city => city.country === watchedCountry);
             return countryCities.map(city => ({
                 value: city.city,
-                label: city.name[lang as keyof typeof city.name],
+                label: city.name[t('common.language') as keyof typeof city.name],
             }));
         }
         return cities.map(city => ({
             value: city.city,
-            label: city.name[lang as keyof typeof city.name],
+            label: city.name[t('common.language') as keyof typeof city.name],
         }));
-    }, [lang, watchedCountry]);
+    }, [t, watchedCountry]);
 
     // Transform timezones data to ComboboxItem format
     const timezoneItems: ComboboxItem[] = useMemo(() => 

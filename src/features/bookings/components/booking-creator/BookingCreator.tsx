@@ -15,7 +15,8 @@ import { Button } from "@/ui-library/components/ssr/button/Button";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { SimpleCalendar } from "@/ui-library/components/calendar/SimpleCalendar";
 import { DateTime, fromISOKeepZone } from "@/features/shared/utils/dateConfig";
-import { useTeachers } from "@/features/teachers/providers/TeachersProvider";
+import { useContext } from "react";
+import { TeachersContext } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
 import type { CreateBookingParams } from "../../domain/types";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
@@ -26,13 +27,13 @@ import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 export interface BookingCreatorProps {
     teacher: Teacher;
     onClose?: () => void;
+    accessToken?: string;
 }
 
-export function BookingCreator({teacher, onClose}: BookingCreatorProps) {
+export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}: BookingCreatorProps) {
     const formRef = useRef<HTMLFormElement>(null);
-    const { 
-        accessToken,
-    } = useTeachers();
+    const teachersContext = useContext(TeachersContext);
+    const accessToken = accessTokenProp ?? teachersContext?.accessToken ?? '';
 
     const isMobile = useIsMobile();
 

@@ -35,13 +35,13 @@ export function PriceRangeFilter({ minPrice, maxPrice, fullWidth, onPriceChange 
 
     const getDisplayText = () => {
         if (minPrice && maxPrice) {
-            return `€${minPrice} - €${maxPrice}`;
+            return `$${minPrice} - $${maxPrice}`;
         }
         if (minPrice) {
-            return `${t('common.from')} €${minPrice}`;
+            return `${t('common.from')} $${minPrice}`;
         }
         if (maxPrice) {
-            return `${t('common.up_to')} €${maxPrice}`;
+            return `${t('common.up_to')} $${maxPrice}`;
         }
         return t('teachers.any_price');
     };

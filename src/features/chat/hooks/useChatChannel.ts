@@ -8,6 +8,7 @@ interface UseChatChannelOptions {
 	streamClient: StreamChat | null;
 	keycloakToken: string | null;
 	otherUserId: string | null;
+	otherUserRole?: 'teacher' | 'student';
 }
 
 interface UseChatChannelReturn {
@@ -25,6 +26,7 @@ export function useChatChannel({
 	streamClient,
 	keycloakToken,
 	otherUserId,
+	otherUserRole,
 }: UseChatChannelOptions): UseChatChannelReturn {
 	const [channel, setChannel] = useState<Channel | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +43,7 @@ export function useChatChannel({
 
 			try {
 				// Request backend to create/get the channel
-				const { channelType, channelId } = await createOrGetChannel(keycloakToken, otherUserId);
+				const { channelType, channelId } = await createOrGetChannel(keycloakToken, otherUserId, otherUserRole);
 
 				// Get channel instance from Stream SDK
 				const ch = streamClient.channel(channelType || CHAT_CHANNEL_TYPE, channelId);
@@ -66,7 +68,7 @@ export function useChatChannel({
 		return () => {
 			isMounted = false;
 		};
-	}, [streamClient, keycloakToken, otherUserId]);
+	}, [streamClient, keycloakToken, otherUserId, otherUserRole]);
 
 	return { channel, isLoading, error };
 }

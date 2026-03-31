@@ -31,8 +31,8 @@ interface PublicInformationFormValues {
     subjectId: string;
 }
 
-export function PublicInformation({ teacher, accessToken, repository, lang }: { teacher: Teacher; accessToken: string; repository: TeacherRepository; lang: string }) {
-    const t = useTranslations({ lang: lang as 'en' | 'es' });
+export function PublicInformation({ teacher, accessToken, repository }: { teacher: Teacher; accessToken: string; repository: TeacherRepository; }) {
+    const t = useTranslations();
     const [isSaving, setIsSaving] = useState(false);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [portraitFile, setPortraitFile] = useState<File | null>(null);
@@ -144,7 +144,7 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
             </div>
             <Divider />
             <div className="max-w-[824px]">
-                <HorizontalInputContainer label={t('teacher-profile.name')} required >
+                {/* <HorizontalInputContainer label={t('teacher-profile.name')} required >
                     <Controller
                         name="name"
                         control={control}
@@ -165,7 +165,7 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
                         )}
                     />
                 </HorizontalInputContainer>
-                <Divider margin={20} />
+                <Divider margin={20} /> */}
                 <HorizontalInputContainer label={t('teacher-profile.job-title')} >
                     <Controller
                         name="shortPresentation"
@@ -311,7 +311,6 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
                         }}
                         render={({ field }) => (
                             <LanguageSelector
-                                lang={lang}
                                 value={field.value}
                                 onChange={field.onChange}
                             />
@@ -333,7 +332,7 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
                                     id: level.id,
                                     children: () => (
                                         <span className="text-sm font-medium text-[var(--color-neutral-900)]">
-                                            {level.name[lang as keyof typeof level.name]}
+                                            {level.name[t('common.language') as keyof typeof level.name]}
                                         </span>
                                     ),
                                 }))}
@@ -360,7 +359,7 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
                                     id: cat.id,
                                     children: () => (
                                         <span className="text-sm font-medium text-[var(--color-neutral-900)]">
-                                            {cat.name[lang as keyof typeof cat.name]}
+                                            {cat.name[t('common.language') as keyof typeof cat.name]}
                                         </span>
                                     ),
                                 }))}
@@ -385,7 +384,7 @@ export function PublicInformation({ teacher, accessToken, repository, lang }: { 
                             <Dropdown
                                 items={(SUBJECTS_BY_CATEGORY[watchedCategory] || []).map(subj => ({
                                     value: subj.id,
-                                    label: subj.name[lang as keyof typeof subj.name],
+                                    label: subj.name[t('common.language') as keyof typeof subj.name],
                                     renderItem: (item, isSelected) => (
                                         <div className="flex items-center justify-between w-full">
                                             <span>{item.label}</span>

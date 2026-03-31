@@ -41,6 +41,7 @@ export interface GetTeacherAvailabilityParams extends CommonParams {
     startAt: string;      // ISO 8601 - inicio del rango de búsqueda
     endAt: string;        // ISO 8601 - fin del rango de búsqueda
     duration: number;
+    classTypeId?: string;
 }
 
 export interface GetBookingsParams extends CommonParams {

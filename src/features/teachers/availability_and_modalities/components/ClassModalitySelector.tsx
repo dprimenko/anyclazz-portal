@@ -189,7 +189,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                                                 thousandSeparator={false}
                                             />
                                             <Text textLevel="span" size="text-md" colorType="tertiary">
-                                                €
+                                                $
                                             </Text>
                                         </div>
                                     </div>
@@ -212,7 +212,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                                                 thousandSeparator={false}
                                             />
                                             <Text textLevel="span" size="text-md" colorType="tertiary">
-                                                €
+                                                $
                                             </Text>
                                         </div>
                                     </div>

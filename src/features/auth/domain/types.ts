@@ -6,6 +6,7 @@ export interface AuthUser {
     name: string;
     timezone: string;
     role: 'student' | 'teacher' | 'admin';
+    language?: 'en' | 'es';
     avatarUrl?: string;
     firstName?: string;
     lastName?: string;
@@ -22,6 +23,7 @@ export interface ProfileApiResponse {
         lastName: string;
         createdAt: string;
         roles: string[];
+        language?: 'en' | 'es';
     };
     roles: string[];
     studentProfile?: {

@@ -25,6 +25,7 @@ export const ChatWithTeacherButton: FC<ChatWithTeacherButtonProps> = ({
 		streamClient,
 		keycloakToken,
 		otherUserId: trigger,
+		otherUserRole: 'teacher',
 	});
 
 	// When channel is ready, notify parent
