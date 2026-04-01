@@ -21,6 +21,7 @@ export function Information({ teacher, accessToken, repository }: { teacher: Tea
     const [isSaving, setIsSaving] = useState(false);
     const [videoFile, setVideoFile] = useState<File | null>(null);
     const [shouldRemoveVideo, setShouldRemoveVideo] = useState(false);
+    const [wasProcessing, setWasProcessing] = useState(false);
 
     const { control, handleSubmit, reset } = useForm<InformationFormValues>({
         defaultValues: {
@@ -40,13 +41,21 @@ export function Information({ teacher, accessToken, repository }: { teacher: Tea
         });
     }, [reset, teacher.about, teacher.academicBackground, teacher.certifications, teacher.skills]);
 
-    // Limpiar estado local cuando el video termine de procesarse
+    // Rastrear cuando el video entra en processing
     useEffect(() => {
-        if (teacher.videoPresentationStatus === 'ready' && videoFile) {
+        if (teacher.videoPresentationStatus === 'processing') {
+            setWasProcessing(true);
+        }
+    }, [teacher.videoPresentationStatus]);
+
+    // Limpiar estado local solo cuando el video termina de procesarse (processing -> ready)
+    useEffect(() => {
+        if (teacher.videoPresentationStatus === 'ready' && wasProcessing) {
             setVideoFile(null);
             setShouldRemoveVideo(false);
+            setWasProcessing(false);
         }
-    }, [teacher.videoPresentationStatus, videoFile]);
+    }, [teacher.videoPresentationStatus, wasProcessing]);
 
     const handleVideoChange = useCallback((file: File | null) => {
         if (file) {
