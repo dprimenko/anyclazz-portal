@@ -16,9 +16,10 @@ interface WeeklyAgendaProps {
     user: AuthUser | null;
     token: string;
     lang?: string;
+    initialDate?: string;
 }
 
-export function WeeklyAgenda({ bookings: initialBookings, user, token, lang }: WeeklyAgendaProps) {
+export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, initialDate }: WeeklyAgendaProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Helper para calcular el inicio de semana en formato USA (domingo)
@@ -33,9 +34,9 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang }: W
     const repository = useMemo(() => new AnyclazzMyBookingsRepository(), []);
     
     const [currentWeek, setCurrentWeek] = useState(() => {
-        const now = DateTime.now();
-        const dayOfWeek = now.weekday === 7 ? 0 : now.weekday;
-        return now.minus({ days: dayOfWeek }).startOf('day');
+        const base = initialDate ? DateTime.fromISO(initialDate) : DateTime.now();
+        const dayOfWeek = base.weekday === 7 ? 0 : base.weekday;
+        return base.minus({ days: dayOfWeek }).startOf('day');
     });
     const [bookings, setBookings] = useState(initialBookings);
     const [loading, setLoading] = useState(false);

@@ -117,7 +117,9 @@ const oauthErrorDescription = Astro.url.searchParams.get('error_description');
         
 		<Space size={16} direction="vertical" />
 		<Divider />
-		<Space size={32} direction="vertical" />
+        {!stripeConnectStatus?.connected && (
+		    <Space size={32} direction="vertical" />
+        )}
 
 		<!-- Stripe Connect Section -->
         <StripeConnectSection 
@@ -130,10 +132,6 @@ const oauthErrorDescription = Astro.url.searchParams.get('error_description');
             lang={lang}
             client:load
         />
-
-        {!stripeConnectStatus?.connected && !stripeConnectStatus?.can_receive_payments && (
-            <Space size={48} direction="vertical" />
-        )}
 
 		<!-- Historial de pagos -->
 		{paymentsDashboard && (

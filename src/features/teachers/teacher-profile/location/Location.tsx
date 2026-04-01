@@ -12,14 +12,12 @@ import type { TeacherRepository } from "../../domain/types";
 import { countries } from "../../onboarding/data/countries";
 import { states } from "../../onboarding/data/states";
 import { cities } from "../../onboarding/data/cities";
-import { timezones } from "../../onboarding/data/timezones";
 
 interface LocationFormValues {
     street: string;
     city: string;
     state: string;
     country: string;
-    timezone: string;
 }
 
 interface LocationProps {
@@ -38,7 +36,6 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
             city: teacher.teacherAddress?.city ?? "",
             state: teacher.teacherAddress?.state ?? "",
             country: teacher.teacherAddress?.country ?? "",
-            timezone: teacher.timezone ?? "",
         },
     });
 
@@ -77,24 +74,14 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
         }));
     }, [t, watchedCountry]);
 
-    // Transform timezones data to ComboboxItem format
-    const timezoneItems: ComboboxItem[] = useMemo(() => 
-        timezones.map(tz => ({
-            value: tz.value,
-            label: tz.label,
-        })),
-        []
-    );
-
     useEffect(() => {
         reset({
             street: teacher.teacherAddress?.street ?? "",
             city: teacher.teacherAddress?.city ?? "",
             state: teacher.teacherAddress?.state ?? "",
             country: teacher.teacherAddress?.country ?? "",
-            timezone: teacher.timezone ?? "",
         });
-    }, [reset, teacher.teacherAddress, teacher.timezone]);
+    }, [reset, teacher.teacherAddress]);
 
     const handleSave = useCallback(async (values: LocationFormValues) => {
         setIsSaving(true);
@@ -118,7 +105,6 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
                         country: values.country,
                         fullAddress,
                     },
-                    timezone: values.timezone,
                 },
             });
         } finally {
@@ -213,29 +199,6 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
                         )}
                     />
                 </HorizontalInputContainer>
-                {/* <Divider margin={20} />
-                <HorizontalInputContainer 
-                    label={t('teacher-profile.timezone')} 
-                    required
-                    description={t('teacher-profile.timezone_description')}
-                >
-                    <Controller
-                        name="timezone"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                            <Combobox
-                                items={timezoneItems}
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder={t('teacher-profile.timezone_placeholder')}
-                                searchPlaceholder={t('teacher-profile.timezone_search')}
-                                emptyMessage={t('teacher-profile.timezone_empty')}
-                                fullWidth
-                            />
-                        )}
-                    />
-                </HorizontalInputContainer> */}
                 <div className="flex justify-end mt-4 mb-4">
                     <Button 
                         type="submit"

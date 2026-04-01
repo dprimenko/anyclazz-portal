@@ -1,13 +1,16 @@
 import { Notification } from '@/ui-library/components/notification/Notification';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useMemo } from 'react';
+import { useTranslations } from '@/i18n';
 
 export function TeacherReviewNotification({ reviewStatus }: { reviewStatus?: string }) {
+    const t = useTranslations();
+
     const message = useMemo(() => {
         if (reviewStatus === 'rejected') {
             return (
                 <span>
-                    <strong>Your profile has not been approved. Please contact support for more information.</strong>
+                    <strong>{t('review-notification.rejected_title')}</strong> {t('review-notification.rejected_body')}
                 </span>
             );
         }
@@ -15,29 +18,29 @@ export function TeacherReviewNotification({ reviewStatus }: { reviewStatus?: str
         if (reviewStatus === 'confirmed') {
             return (
                 <span>
-                    <strong>Your profile has been approved!</strong> You can now start receiving bookings. Make sure your profile is fully completed and published.
+                    <strong>{t('review-notification.confirmed_title')}</strong> {t('review-notification.confirmed_body')}
                 </span>
             );
         }
 
         return (
             <span>
-                <strong>Your profile is currently under review by the AnyClazz team.</strong> In the meantime, you can keep completing your profile to increase your chances of approval.
+                <strong>{t('review-notification.pending_title')}</strong> {t('review-notification.pending_body')}
             </span>
         );
-    }, [reviewStatus]);
+    }, [reviewStatus, t]);
 
     const actions = useMemo(() => {
         if (reviewStatus === 'rejected') {
             return (
-                <a href="/contact-us"><Button label='Contact support' colorType='primary' size='lg' fullWidth></Button></a>
+                <a href="/contact-us"><Button label={t('review-notification.contact_support')} colorType='primary' size='lg' fullWidth /></a>
             );
         }
 
         return (
-            <a href="/profile?tab=public_information"><Button label='Complete profile' colorType='primary' size='lg' fullWidth></Button></a>
+            <a href="/profile?tab=public_information"><Button label={t('review-notification.complete_profile')} colorType='primary' size='lg' fullWidth /></a>
         );
-    }, [reviewStatus]);
+    }, [reviewStatus, t]);
 
     return (
         <Notification 

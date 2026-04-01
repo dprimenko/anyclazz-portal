@@ -2,19 +2,17 @@ import { Button } from "@/ui-library/components/ssr/button/Button";
 import type { Teacher } from "../../domain/types";
 import { Divider } from "@/ui-library/components/ssr/divider/Divider";
 import { Text } from "@/ui-library/components/ssr/text/Text";
-import { Space } from "@/ui-library/components/ssr/space/Space";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "@/i18n";
 import { HorizontalInputContainer } from "@/ui-library/components/horizontal-input-container/HorizontalInputContainer";
-import { TextField } from "@/ui-library/components/form/text-field/TextField";
 import { Textarea } from "@/ui-library/components/form/text-area/Textarea";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { FileUpload } from "@/ui-library/components/file-upload";
 import { Controller, useForm } from "react-hook-form";
 import type { TeacherLanguage, TeacherRepository } from "../../domain/types";
 import { LanguageSelector } from "../../onboarding/components/LanguageSelector";
-import { RectangleSelectionGroup, type RectangleSelectionGroupItem } from "@/ui-library/components/form/rectangle-selection-group";
-import { Dropdown, type DropdownItem } from "@/ui-library/components/form/dropdown";
+import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-selection-group";
+import { Dropdown } from "@/ui-library/components/form/dropdown";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { STUDENT_LEVELS, SUBJECT_CATEGORIES, SUBJECTS_BY_CATEGORY } from "../../onboarding/constants";
 import { ImageCropper } from "./ImageCropper";
@@ -31,9 +29,10 @@ interface PublicInformationFormValues {
     subjectId: string;
 }
 
-export function PublicInformation({ teacher, accessToken, repository }: { teacher: Teacher; accessToken: string; repository: TeacherRepository; }) {
+export function PublicInformation({ teacher, accessToken, repository, onSaved }: { teacher: Teacher; accessToken: string; repository: TeacherRepository; onSaved?: () => void; }) {
     const t = useTranslations();
     const [isSaving, setIsSaving] = useState(false);
+    const [selectedSubjectId, setSelectedSubjectId] = useState(teacher.subject?.id ?? '');
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [portraitFile, setPortraitFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -43,7 +42,7 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
     const [avatarCropModalOpen, setAvatarCropModalOpen] = useState(false);
     const [avatarSourceFile, setAvatarSourceFile] = useState<string | null>(null);
 
-    const { control, handleSubmit, reset, watch } = useForm<PublicInformationFormValues>({
+    const { control, handleSubmit, reset, watch, setValue } = useForm<PublicInformationFormValues>({
         defaultValues: {
             name: teacher.name,
             surname: teacher.surname,
@@ -111,6 +110,7 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
             subjectCategoryId: teacher.subjectCategory?.id ?? "",
             subjectId: teacher.subject?.id ?? "",
         });
+        setSelectedSubjectId(teacher.subject?.id ?? '');
     }, [reset, teacher.name, teacher.surname, teacher.shortPresentation, teacher.speaksLanguages, teacher.studentLevel?.id, teacher.subjectCategory?.id, teacher.subject?.id]);
 
     const handleSave = useCallback(async (values: PublicInformationFormValues) => {
@@ -126,15 +126,16 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
                     speaksLanguages: values.speaksLanguages,
                     studentLevelId: values.studentLevelId,
                     subjectCategoryId: values.subjectCategoryId,
-                    subjectId: values.subjectId,
+                    subjectId: selectedSubjectId,
                     ...(avatarFile ? { avatar: avatarFile } : {}),
                     ...(portraitFile ? { portrait: portraitFile } : {}),
                 },
-            });
+            });      
+            window.location.reload();  
         } finally {
             setIsSaving(false);
         }
-    }, [accessToken, avatarFile, portraitFile, repository, teacher.id]);
+    }, [accessToken, avatarFile, portraitFile, repository, teacher.id, selectedSubjectId]);
 
     return (
         <form className="mt-6 flex flex-col gap-8" onSubmit={handleSubmit(handleSave)}>
@@ -201,6 +202,7 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
                             />
                             <div className="flex flex-row">
                                 <Button
+                                    type="button"
                                     onlyText
                                     colorType="secondary"
                                     label={t('teacher-profile.delete')}
@@ -209,6 +211,7 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
                                     disabled={isSaving}
                                 />
                                 <Button
+                                    type="button"
                                     onlyText
                                     colorType="primary"
                                     label={t('teacher-profile.update_photo')}
@@ -364,7 +367,10 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
                                     ),
                                 }))}
                                 value={field.value}
-                                onValueChange={field.onChange}
+                                onValueChange={(val) => {
+                                    field.onChange(val);
+                                    setSelectedSubjectId('');
+                                }}
                                 colorType="primary"
                                 cnn={{ container: 'grid grid-cols-1 sm:grid-cols-2 gap-3' }}
                             />
@@ -376,28 +382,21 @@ export function PublicInformation({ teacher, accessToken, repository }: { teache
                     label={t('onboarding.select_main_area')}
                     required
                 >
-                    <Controller
-                        name="subjectId"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                            <Dropdown
-                                items={(SUBJECTS_BY_CATEGORY[watchedCategory] || []).map(subj => ({
-                                    value: subj.id,
-                                    label: subj.name[t('common.language') as keyof typeof subj.name],
-                                    renderItem: (item, isSelected) => (
-                                        <div className="flex items-center justify-between w-full">
-                                            <span>{item.label}</span>
-                                            {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
-                                        </div>
-                                    ),
-                                }))}
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder={t('onboarding.select_main_area')}
-                                fullWidth
-                            />
-                        )}
+                    <Dropdown
+                        items={(SUBJECTS_BY_CATEGORY[watchedCategory] || []).map(subj => ({
+                            value: subj.id,
+                            label: subj.name[t('common.language') as keyof typeof subj.name],
+                            renderItem: (item, isSelected) => (
+                                <div className="flex items-center justify-between w-full">
+                                    <span>{item.label}</span>
+                                    {isSelected && <Icon icon="check" iconWidth={16} iconHeight={16} className="text-[var(--color-primary-700)]" />}
+                                </div>
+                            ),
+                        }))}
+                        value={selectedSubjectId}
+                        onChange={setSelectedSubjectId}
+                        placeholder={t('onboarding.select_main_area')}
+                        fullWidth
                     />
                 </HorizontalInputContainer>
                 <div className="flex justify-end mt-4 mb-4">

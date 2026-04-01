@@ -55,6 +55,7 @@ export const Dropdown = ({
 	const displayValue = selectedItem ? selectedItem.label : undefined;
 
 	const handleValueChange = (newValue: string) => {
+		if (!newValue) return;
 		if (newValue === '__clear__') {
 			onChange?.('');
 		} else {
@@ -63,12 +64,14 @@ export const Dropdown = ({
 	};
 
 	return (
-		<Select value={value} onValueChange={handleValueChange}>
+		<Select value={value ?? ''} onValueChange={handleValueChange}>
 			<SelectTrigger prefix={prepend} className={classes}>
 				<SelectValue placeholder={placeholder}>
-					<span className="text-[var(--color-neutral-900)]">
-						{displayValue}
-					</span>
+					{displayValue && (
+						<span className="text-[var(--color-neutral-900)]">
+							{displayValue}
+						</span>
+					)}
 				</SelectValue>
 			</SelectTrigger>
 			<SelectContent className="max-h-[300px] overflow-y-auto" disablePortal={disablePortal}>

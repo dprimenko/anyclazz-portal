@@ -3,10 +3,9 @@ import { Space } from "@/ui-library/components/ssr/space/Space";
 import { IconButton } from "@/ui-library/shared/icon-button";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
-import { useTranslations } from "@/i18n";
 
-export function UpgradeSuperTutorBanner() {
-    const t = useTranslations();
+export function UpgradeSuperTutorBanner({translations}: { translations: Record<string, string> }) {
+    const t = translations;
 
     return (
         <Card className="p-4">

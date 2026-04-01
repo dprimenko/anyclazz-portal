@@ -11,9 +11,10 @@ interface BookingCheckoutWrapperProps {
   amount: number;
   currency: string;
   lang?: 'en' | 'es';
+  bookingDate?: string; // ISO 8601 - para redirigir a la semana correcta en /me/my-agenda
 }
 
-export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en' }: BookingCheckoutWrapperProps) {
+export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en', bookingDate }: BookingCheckoutWrapperProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
@@ -28,7 +29,10 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
   };
 
   const handleGoToAgenda = () => {
-    window.location.href = '/me/my-agenda';
+    const day = bookingDate
+      ? bookingDate.slice(0, 10) // YYYY-MM-DD
+      : undefined;
+    window.location.href = day ? `/me/my-agenda?day=${day}` : '/me/my-agenda';
   };
 
   return (

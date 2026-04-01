@@ -126,7 +126,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
   const pastDue = status?.requirements?.past_due?.length || 0;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mb-6">
       {/* Mensaje de éxito OAuth */}
       {successMessage && (
         <Notification 
@@ -149,7 +149,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
       {/* Cuenta NO conectada */}
       {status && !status.connected && (
         <Notification 
-          colorType="info" 
+          colorType="secondary" 
           text={t('stripe.not_connected_description')}
           actions={(
             <StripeConnectButton 
@@ -162,7 +162,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
       )}
 
       {/* Cuenta necesita reconexión */}
-      {status?.needs_reconnection && (
+      {/* {status?.needs_reconnection && (
         <Notification 
           colorType="warning" 
           text={`⚠ ${t('stripe.needs_reconnection')}`}
@@ -174,7 +174,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
           )}
           onClose={() => {}}
         />
-      )}
+      )} */}
 
       {/* Información urgente vencida */}
       {status && status.connected && pastDue > 0 && (

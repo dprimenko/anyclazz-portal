@@ -1,5 +1,5 @@
 import { Tabs } from "@/ui-library/components/tabs";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import type { Teacher } from "../domain/types";
 import { useTranslations } from "@/i18n";
 import { LanguageProvider } from "@/i18n/LanguageProvider";
@@ -84,12 +84,6 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
             },
         },
         {
-            key: "payments",
-            label: t('teacher-profile.payments'),
-            onClick: () => {
-            },
-        },
-        {
             key: "super_tutor",
             label: t('teacher-profile.super_tutor'),
             onClick: () => {
@@ -136,10 +130,6 @@ export function TeacherProfile({ teacher: initialTeacher, accessToken, teacherId
             
             {selectedTab === "availability_and_modalities" && (
                 <AvailabilityAndModalitiesManager teacher={teacher} accessToken={accessToken} />
-            )}
-            
-            {selectedTab === "payments" && (
-                <Payments teacher={teacher} accessToken={accessToken} />
             )}
             
             {selectedTab === "videos" && teacherId && (

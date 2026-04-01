@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { Spinner } from '@/ui-library/shared/spinner';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/i18n';
 
 export interface ProgressIndicatorProps {
   /**
@@ -11,8 +12,7 @@ export interface ProgressIndicatorProps {
   size?: 'sm' | 'default' | 'lg' | 'xl';
   
   /**
-   * Loading message to display
-   * @default 'Loading...'
+   * Loading message to display. Defaults to the translated 'Loading' string.
    */
   message?: string;
   
@@ -41,12 +41,14 @@ export interface ProgressIndicatorProps {
 }
 
 export const ProgressIndicator: FC<ProgressIndicatorProps> = ({
-  message = 'Loading...',
+  message,
   showMessage = true,
   variant = 'default',
   className,
   centered = true,
 }) => {
+  const t = useTranslations();
+  const displayMessage = message ?? t('common.loading');
   return (
     <div
       className={cn(
@@ -62,7 +64,7 @@ export const ProgressIndicator: FC<ProgressIndicatorProps> = ({
           colorType={variant === 'white' ? 'primary' : 'secondary'}
           weight='semibold'
         >
-          {message}
+          {displayMessage}
         </Text>
       )}
     </div>

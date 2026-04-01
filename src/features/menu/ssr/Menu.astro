@@ -90,7 +90,7 @@ const t = useTranslationsSSR({ token: session?.accessToken });
         <div class="menu__content-footer">
             {user?.role === 'teacher' && !user.isSuperTutor && (
                 <>
-                    <UpgradeSuperTutorBanner />
+                    <UpgradeSuperTutorBanner translations={t} />
                 </>
             )}
            {commonMenuItems.map((menuItem) => (

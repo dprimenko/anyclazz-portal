@@ -1,4 +1,4 @@
-import { useTranslations } from '@/i18n';
+import { useTranslations, useTranslationsSSR } from '@/i18n';
 import { LanguageProvider } from '@/i18n/LanguageProvider';
 import type { ui } from '@/i18n/ui';
 import { Button } from '@/ui-library/components/ssr/button/Button';
@@ -38,7 +38,6 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
     };
 
     return (
-        <LanguageProvider lang={lang}>
         <>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                 <div className="flex-1 min-w-0">
@@ -230,6 +229,5 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 			</div> */}
 		</div>
         </>
-        </LanguageProvider>
     );
 }
