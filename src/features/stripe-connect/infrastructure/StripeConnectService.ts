@@ -69,7 +69,7 @@ export class StripeConnectRepository {
    */
   async createDashboardLink(token: string): Promise<StripeDashboardResponse> {
     const response = await this.httpClient.post({
-      url: '/teachers/me/stripe-connect/dashboard-link',
+      url: '/teachers/me/stripe-connect/dashboard',
       token,
       data: {},
     });

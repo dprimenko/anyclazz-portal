@@ -58,7 +58,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
           if (result?.success) {
             setSuccessMessage(t('stripe.connected_success'));
             // Refrescar el estado después de completar OAuth
-            await refetch();
+            window.location.reload();
           }
         } catch (error) {
           console.error('Error completing OAuth:', error);

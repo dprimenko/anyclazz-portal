@@ -1,10 +1,49 @@
 ---
 export const prerender = false;
 import Main from '../../layout/Main.astro';
+import { getImage } from 'astro:assets';
+import { getSession } from 'auth-astro/server';
+import clazzmateImg from '../../assets/images/landing/anyclazz-works-2.webp';
+import { ReferralRepository } from '@/features/shared/infrastructure/ReferralRepository';
+import { ClazzmateContent } from '@/features/shared/components/clazzmate-page/ClazzmateContent';
+import type { ReferralData } from '@/features/shared/domain/referralTypes';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const referralRepository = new ReferralRepository();
+
+let referralData: ReferralData = {
+	referral_code: '',
+	invite_link: '',
+	friends_invited: 0,
+	first_booking_conversions: 0,
+	available_credits: 0,
+};
+
+try {
+	referralData = await referralRepository.getReferralData({ token: accessToken });
+	console.log('Referral data loaded:', referralData);
+} catch (error) {
+	console.error('Error loading referral data:', error);
+}
+
+const inviteUrl = referralData.referral_code
+	? `${Astro.url.origin}/${referralData.referral_code}`
+	: '';
+
+const optimizedImage = await getImage({ src: clazzmateImg, width: 320, height: 240 });
 ---
 
 <Main>
-	<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-		Clazzmate
-	</div>
+	<ClazzmateContent
+		referralData={referralData}
+		inviteUrl={inviteUrl}
+		imageUrl={optimizedImage.src}
+		client:load
+	/>
 </Main>
