@@ -44,7 +44,7 @@ const booking = await teacherRepository.getBookingById({
 
 // Verificar que el booking tiene el payment data necesario
 if (!booking.payment?.clientSecret) {
-    console.error('Booking does not have payment data:', booking);
+    console.error('Booking does not have payment data:', JSON.stringify(booking, null, 2));
     return Astro.redirect('/teachers');
 }
 

@@ -124,22 +124,31 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
             return;
         }
         
-        // La fecha selectedTime ya viene con timezone incluido en formato ISO8601
-        const startAt = DateTime.fromISO(selectedTime);
-        const endAt = startAt.plus({ minutes: selectedDuration });
-        
-        const bookingData: CreateBookingParams = {
-            teacherId: teacher.id,
-            token: accessToken!,
-            classTypeId: selectedClass.type,
-            startAt: startAt.toISO()!,
-            endAt: endAt.toISO()!,
-        };
-        
-        const booking = await createBooking(bookingData);
+        try {
+            // La fecha selectedTime ya viene con timezone incluido en formato ISO8601
+            const startAt = DateTime.fromISO(selectedTime);
+            const endAt = startAt.plus({ minutes: selectedDuration });
+            
+            const bookingData: CreateBookingParams = {
+                teacherId: teacher.id,
+                token: accessToken!,
+                classTypeId: selectedClass.type,
+                startAt: startAt.toISO()!,
+                endAt: endAt.toISO()!,
+            };
+            
+            const booking = await createBooking(bookingData);
 
-        window.location.href = `/booking/checkout/${booking?.id}`;
-    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken, availableSlots]);
+            if (!booking?.id) {
+                console.error('Booking created but no ID returned:', booking);
+                return;
+            }
+
+            window.location.href = `/booking/checkout/${booking.id}`;
+        } catch (error) {
+            console.error('Error submitting booking:', error);
+        }
+    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken, createBooking]);
 
     return (
         <form ref={formRef} onSubmit={formSubmitHandler} className={classes}>

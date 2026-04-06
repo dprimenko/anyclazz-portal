@@ -95,6 +95,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         });
 
         const response = await apiResponse.json();
+        console.log('createBooking response:', response);
         return response;
     }
 
@@ -107,6 +108,8 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
 
         const data = await apiResponse.json();
 
+        console.log('getBookingById raw response:', JSON.stringify(data, null, 2));
+
         data['classType'] = {
             type: data['classType'].type as unknown as ClassType,
             price: {
@@ -114,6 +117,15 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
                 currency: data['classType'].price.currencyCode,
             }
         };
+
+        // Map snake_case payment fields to camelCase
+        if (data['payment']) {
+            data['payment'] = {
+                ...data['payment'],
+                clientSecret: data['payment'].clientSecret ?? data['payment'].client_secret,
+                paymentIntentId: data['payment'].paymentIntentId ?? data['payment'].payment_intent_id,
+            };
+        }
 
         return data;
     }

@@ -61,6 +61,7 @@ export class FetchClient {
 			headers: {
 				...headers,
 				'Content-Type': contentType,
+				'Accept': 'application/json',
 				...(token ? { 'Authorization': `Bearer ${token}` } : {})
 			},
 			body: JSON.stringify(data),
