@@ -2,7 +2,7 @@
 import Base from '@/layout/Base.astro';
 import OnboardingLayout from '@/features/teachers/onboarding/OnboardingLayout';
 import OnboardingStep3 from '@/features/teachers/onboarding/OnboardingStep3';
-import { getLangFromUrl } from '@/i18n';
+import { getLangFromAstro } from '@/i18n';
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
@@ -14,7 +14,7 @@ if (!token) {
   return Astro.redirect('/login');
 }
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromAstro(Astro.cookies);
 
 // Obtener el perfil completo del usuario
 const authRepository = new AnyclazzAuthRepository();

@@ -21,8 +21,8 @@ if (!accessToken) {
 
 const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
-const lang = (user?.language ?? 'en') as 'en' | 'es';
-const t = useTranslationsSSR({ token: session?.accessToken });
+const lang = Astro.cookies.get('app_lang')?.value || 'en';
+const t = useTranslationsSSR();
 
 const repository = new AnyclazzMyBookingsRepository();
 // Obtener primera página (10 items por página)
@@ -45,11 +45,6 @@ const upcomingBookings = await repository.getBookings({token: accessToken, page:
 
 		<PaginatedLessons 
 			initialLessons={upcomingBookings} 
-			repository={repository} 
-			user={user} 
-			token={accessToken}
-			lang={lang}
-			client:load 
-		/>
+
 	</div>
 </Main>

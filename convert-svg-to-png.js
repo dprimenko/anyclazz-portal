@@ -17,8 +17,6 @@ const svgFiles = [
 ];
 
 async function convertSvgToPng() {
-  console.log('🎨 Convirtiendo SVGs a PNG con transparencia...\n');
-
   for (const file of svgFiles) {
     const inputPath = path.join(svgDir, file.input);
     const outputPng = path.join(svgDir, file.input.replace('.svg', '.png'));
@@ -28,9 +26,6 @@ async function convertSvgToPng() {
       const originalStats = await fs.stat(inputPath);
       const originalSizeKB = (originalStats.size / 1024).toFixed(2);
       const originalSizeMB = (originalStats.size / (1024 * 1024)).toFixed(2);
-
-      console.log(`📁 ${file.input}`);
-      console.log(`   Tamaño original: ${originalSizeMB} MB (${originalSizeKB} KB)`);
 
       // Convertir SVG a PNG con transparencia
       await sharp(inputPath, { density: 300 })
@@ -52,16 +47,10 @@ async function convertSvgToPng() {
       
       const comparison = originalStats.size > pngStats.size ? 'reducción' : 'aumento';
       const difference = Math.abs(((pngStats.size - originalStats.size) / originalStats.size) * 100).toFixed(1);
-
-      console.log(`   ✅ PNG: ${pngSizeMB} MB (${pngSizeKB} KB) - ${difference}% ${comparison}\n`);
-
     } catch (error) {
       console.error(`   ❌ Error procesando ${file.input}:`, error.message);
     }
   }
-
-  console.log('✨ Conversión completada!');
-  console.log('\n💡 Tip: Los PNGs mantienen transparencia. Ahora optimizando con pngquant...\n');
 
   // Intentar optimizar adicionalmente con pngquant si está instalado
   try {

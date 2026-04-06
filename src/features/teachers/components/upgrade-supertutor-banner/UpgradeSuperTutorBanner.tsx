@@ -4,8 +4,17 @@ import { IconButton } from "@/ui-library/shared/icon-button";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 
-export function UpgradeSuperTutorBanner({translations}: { translations: Record<string, string> }) {
-    const t = translations;
+type TranslationFunction = (key: string, params?: Record<string, string | number>) => string;
+
+export function UpgradeSuperTutorBanner({
+    translations
+}: { 
+    translations: TranslationFunction | Record<string, string> 
+}) {
+    // Función helper para manejar ambos casos
+    const t = typeof translations === 'function' 
+        ? translations 
+        : (key: string) => translations[key] || key;
 
     return (
         <Card className="p-4">

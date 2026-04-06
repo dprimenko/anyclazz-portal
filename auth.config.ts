@@ -67,12 +67,6 @@ export default defineConfig({
           try {
             const payload = JSON.parse(atob(account.access_token.split('.')[1]));
             
-            // 🔍 DEBUG: Ver todo el payload del token
-            console.log('🔍 JWT Payload completo:', JSON.stringify(payload, null, 2));
-            console.log('🔍 selectedRoleForSession:', payload.selectedRoleForSession);
-            console.log('🔍 userRole:', payload.userRole);
-            console.log('🔍 roles:', payload.roles);
-            
             // Extraer el ID del usuario (sub) - CRÍTICO para session.user.id
             token.sub = payload.sub || payload.userId || null;
             
@@ -88,7 +82,6 @@ export default defineConfig({
             
             if (hasAdminRole) {
               token.userRole = 'admin';
-              console.log('✅ Usuario admin detectado');
             } else {
               // PRIORIDAD 2: Manejar userRole que puede venir como string o array
               let selectedRole = payload.selectedRoleForSession;
@@ -115,9 +108,6 @@ export default defineConfig({
             token.realmRoles = payload.realm_roles || [];
             token.roles = payload.roles || [];
             token.platformId = payload.platformId || payload.platform_id || null;
-            
-            console.log('✅ token.userRole asignado:', token.userRole);
-            
           } catch (error) {
             console.error('Error decoding JWT:', error);
           }
@@ -129,7 +119,6 @@ export default defineConfig({
       // Verificar si el token necesita ser refrescado
       // Solo hacer refresh si el usuario tiene refresh token
       if (!token.hasRefreshToken) {
-        console.log('⏱️  No refresh token available');
         return token;
       }
       
@@ -138,7 +127,6 @@ export default defineConfig({
       const shouldRefresh = token.accessTokenExpires && now >= (token.accessTokenExpires as number) - (5 * 60 * 1000); // Refrescar 5 minutos antes de expirar
       
       if (shouldRefresh && token.refreshToken) {
-        console.log('🔄 Access token expiring soon, refreshing...');
         
         try {
           const tokenUrl = `${keycloakIssuer}/protocol/openid-connect/token`;
@@ -158,8 +146,6 @@ export default defineConfig({
           if (response.ok) {
             const refreshedTokens = await response.json();
             
-            console.log('✅ Token refreshed successfully');
-            
             // Actualizar tokens
             token.accessToken = refreshedTokens.access_token;
             token.idToken = refreshedTokens.id_token;
@@ -174,9 +160,6 @@ export default defineConfig({
             try {
               const payload = JSON.parse(atob(refreshedTokens.access_token.split('.')[1]));
               
-              console.log('🔄 JWT Payload en refresh:', JSON.stringify(payload, null, 2));
-              console.log('🔄 selectedRoleForSession:', payload.selectedRoleForSession);
-              
               // Extraer el ID del usuario (sub) - CRÍTICO para session.user.id
               token.sub = payload.sub || payload.userId || null;
               
@@ -188,7 +171,6 @@ export default defineConfig({
               
               if (hasAdminRole) {
                 token.userRole = 'admin';
-                console.log('✅ Usuario admin detectado en refresh');
               } else {
                 // PRIORIDAD 2: Manejar userRole que puede venir como string o array
                 let selectedRole = payload.selectedRoleForSession;
@@ -214,7 +196,6 @@ export default defineConfig({
               token.roles = payload.roles || [];
               token.platformId = payload.platformId || payload.platform_id || null;
               
-              console.log('✅ token.userRole actualizado:', token.userRole);
             } catch (error) {
               console.error('Error decoding refreshed JWT:', error);
             }
@@ -259,9 +240,6 @@ export default defineConfig({
         const roles = (token.roles as string[]) || [];
         const realmRoles = (token.realmRoles as string[]) || [];
         (session as any).primaryRole = roles[0] || realmRoles[0] || null;
-        
-        console.log('📦 Session userRole final:', (session as any).userRole);
-        console.log('📦 Session user.role final:', session.user?.role);
       }
       
       // Asegurar que el nombre esté disponible en la sesión

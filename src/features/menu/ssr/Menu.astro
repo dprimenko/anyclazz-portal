@@ -37,8 +37,9 @@ const isItemSelected = (item: MenuItem): boolean => {
     return false;
 };
 
-
-const t = useTranslationsSSR({ token: session?.accessToken });
+const lang = Astro.cookies.get('app_lang')?.value || 'en';
+console.log('Current language for Menu component:', lang);
+const t = useTranslationsSSR(lang);
 
 ---
 
@@ -93,7 +94,7 @@ const t = useTranslationsSSR({ token: session?.accessToken });
                     <UpgradeSuperTutorBanner translations={t} />
                 </>
             )}
-           {commonMenuItems.map((menuItem) => (
+           <!-- {commonMenuItems.map((menuItem) => (
                 <a href={menuItem.href}>
                     <li>
                             <div class:list={[
@@ -132,7 +133,7 @@ const t = useTranslationsSSR({ token: session?.accessToken });
                             )}
                     </li>
                 </a>
-            ))}
+            ))} -->
         </div>
     </div>
 </div>

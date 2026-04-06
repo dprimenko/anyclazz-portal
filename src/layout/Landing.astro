@@ -8,8 +8,8 @@ import { getSession } from 'auth-astro/server';
 
 const logo = '/images/logo.svg';
 
-import { getLangFromUrl } from '../i18n';
-const lang = getLangFromUrl(Astro.url);
+import { getLangFromAstro } from '../i18n';
+const lang = getLangFromAstro(Astro.cookies);
 
 const {title, description, keywords = [], isDark} = Astro.props;
 

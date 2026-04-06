@@ -7,16 +7,19 @@ import { Card } from '@/ui-library/components/ssr/card/Card';
 import { UserCache } from '@/features/auth/infrastructure/userCache';
 import { Dropdown, type DropdownItem } from '@/ui-library/components/form/dropdown';
 import { useMemo, useState } from 'react';
-import { useTranslations, setLangCookie } from '@/i18n';
-import { getApiUrl } from '@/features/shared/services/environment';
+import { useTranslations, getCurrentLang } from '@/i18n';
 
 interface LoggedUserClientProps {
+    lang?: 'en' | 'es';
     user: AuthUser;
     accessToken?: string;
 }
 
-export function LoggedUserClient({ user, accessToken }: LoggedUserClientProps) {
-    const t = useTranslations({ lang: user.language });
+export function LoggedUserClient({ lang, user }: LoggedUserClientProps) {
+    // Usar el idioma de la prop si existe, sino el de la cookie actual
+    const currentLang = lang || getCurrentLang() || 'en';
+    const t = useTranslations({ lang: currentLang as 'en' | 'es' });
+    const [language, setLanguage] = useState<string>(currentLang);
     
     const handleLogout = () => {
         console.log('🚪 Logout button clicked');
@@ -53,44 +56,36 @@ export function LoggedUserClient({ user, accessToken }: LoggedUserClientProps) {
         }
     ];
 
-    const [language, setLanguage] = useState(user.language ?? 'en');
-
     const handleLanguageChange = async (newLang: string) => {
         if (newLang === language) {
             return;
         }
 
-        // Actualizar cookie para componentes React cliente
-        setLangCookie(newLang as 'en' | 'es');
+        try {
+            // Llamar al endpoint API para establecer la cookie en el servidor
+            const response = await fetch('/api/set-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ lang: newLang }),
+            });
 
-        // Limpiar caché para que el siguiente request obtenga el idioma actualizado desde la API
-        new UserCache().clear();
-
-        if (accessToken) {
-            try {
-                await fetch(`${getApiUrl()}/profile/me`, {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: user.email,
-                        name: user.firstName || user.name.split(' ')[0],
-                        surname: user.lastName || user.name.split(' ').slice(1).join(' '),
-                        language: newLang,
-                    }),
-                });
-            } catch {
-                // Cookie already set, proceed with reload
+            if (response.ok) {
+                // Limpiar caché del usuario
+                new UserCache().clear();
+                
+                // Recargar la página para aplicar el cambio
+                window.location.reload();
+            } else {
+                console.error('Failed to set language:', await response.text());
             }
+        } catch (error) {
+            console.error('Error setting language:', error);
         }
-
-        window.location.reload();
     };
 
     const languagesItems: DropdownItem[] = useMemo(() => {
-        const currentLang = user.language ?? 'en';
         const languages = [
             { id: 'en', name: { en: 'English', es: 'Inglés' } },
             { id: 'es', name: { en: 'Spanish', es: 'Español' } },
@@ -105,7 +100,7 @@ export function LoggedUserClient({ user, accessToken }: LoggedUserClientProps) {
                 </div>
             ),
         }));
-    }, []);
+    }, [currentLang]);
 
     return (
         <PopMenu

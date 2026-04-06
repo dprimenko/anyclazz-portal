@@ -21,8 +21,8 @@ if (!accessToken) {
 
 const authRepository = new AnyclazzAuthRepository();
 const currentUser = await authRepository.getCurrentUser(session);
-const lang = (currentUser?.language ?? 'en') as 'en' | 'es';
-const t = useTranslationsSSR({ token: session?.accessToken });
+const lang = Astro.cookies.get('app_lang')?.value || 'en';
+const t = useTranslationsSSR(lang);
 
 if (!currentUser?.id) {
 	return Astro.redirect('/login');

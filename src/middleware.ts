@@ -18,7 +18,6 @@ import { AnyclazzAuthRepository } from "./features/auth/ssr/infrastructure/Anycl
 import { ApiTeacherRepository } from "./features/teachers/infrastructure/ApiTeacherRepository";
 
 function invalidateSession(context: any, reason: string) {
-  console.log(`Invalidating session: ${reason}`);
   clearAccountValidationCache();
   
   // Limpiar caché de usuario - solo en cliente
@@ -26,7 +25,6 @@ function invalidateSession(context: any, reason: string) {
     try {
       localStorage.removeItem('anyclazz_user_profile');
       localStorage.removeItem('anyclazz_user_profile_expiry');
-      console.log('🗑️  User cache cleared');
     } catch (error) {
       console.error('Error clearing user cache:', error);
     }
@@ -81,7 +79,6 @@ async function checkTeacherOnboarding(session: any, pathname: string): Promise<{
       teacher.shortPresentation;
     
     if (!hasAllFields) {
-      console.log('🎓 Teacher onboarding incomplete, redirecting to onboarding');
       return { needsOnboarding: true, redirectTo: '/onboarding/what-do-you-teach' };
     }
     
@@ -98,7 +95,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   
   // SALIR TEMPRANO si estamos en rutas de autenticación para evitar loops
   if (pathname.startsWith('/api/auth/')) {
-    console.log(`✅ Auth API route, skipping middleware: ${pathname}`);
     return next();
   }
   
@@ -107,8 +103,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isLoggingOut = loggedOutCookie?.value === 'true';
   
   if (isLoggingOut) {
-    console.log('🚪 User logged out flag detected, ignoring session');
-    
     // NO eliminar la cookie aquí, dejar que login.astro la lea también
     // La cookie expirará automáticamente después de 120 segundos
     

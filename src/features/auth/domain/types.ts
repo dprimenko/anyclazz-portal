@@ -12,6 +12,7 @@ export interface AuthUser {
     lastName?: string;
     teacherStatus?: string;
     teacherStatusUpdate?: string;
+    isSuperTutor?: boolean;
     createdAt?: string;
 }
 
@@ -21,6 +22,7 @@ export interface ProfileApiResponse {
         email: string;
         firstName: string;
         lastName: string;
+        timezone?: string;
         createdAt: string;
         roles: string[];
         language?: 'en' | 'es';
@@ -42,6 +44,8 @@ export interface ProfileApiResponse {
         avatar: string;
         status: string;
         statusUpdate: string;
+        statusUpdatedAt: string;
+        superTutorTo?: string;
         createdAt: string;
     };
 }

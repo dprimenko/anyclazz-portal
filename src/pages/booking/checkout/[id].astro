@@ -33,8 +33,8 @@ if (!accessToken) {
 
 const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
-const lang = user?.language || 'en';
-const t = useTranslationsSSR({ token: session?.accessToken });
+const lang = Astro.cookies.get('app_lang')?.value || 'en';
+const t = useTranslationsSSR(lang);
 
 const teacherRepository = new AnyclazzMyBookingsRepository();
 const booking = await teacherRepository.getBookingById({ 

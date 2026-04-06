@@ -1,7 +1,7 @@
 import {ui, defaultLang, routes, showDefaultLang} from './ui';
-import { getApiUrl } from '@/features/shared/services/environment';
 import { useContext, useState, useEffect } from 'react';
 import { LanguageContext } from './LanguageProvider';
+import type { AstroCookies } from 'astro';
 
 const LANG_COOKIE_NAME = 'app_lang';
 
@@ -29,16 +29,24 @@ function setCookieClient(name: string, value: string, days: number = 365) {
     const date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     const expires = `expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value};${expires};path=/`;
+    document.cookie = `${name}=${value};${expires};path=/;SameSite=Lax`;
 }
 
 // Función para obtener el idioma de la cookie (funciona en cliente y servidor)
-export function getLangFromCookie(cookieString?: string): keyof typeof ui | undefined {
+export function getLangFromCookie(
+    cookiesOrString?: AstroCookies | string
+): keyof typeof ui | undefined {
     let lang: string | undefined;
     
-    if (cookieString) {
-        // SSR: leer de cookieString
-        lang = getCookieFromString(cookieString, LANG_COOKIE_NAME);
+    if (cookiesOrString) {
+        // Si es un objeto AstroCookies (Astro SSR)
+        if (typeof cookiesOrString === 'object' && 'get' in cookiesOrString) {
+            lang = cookiesOrString.get(LANG_COOKIE_NAME)?.value;
+        }
+        // Si es un string de cookies (legacy SSR)
+        else if (typeof cookiesOrString === 'string') {
+            lang = getCookieFromString(cookiesOrString, LANG_COOKIE_NAME);
+        }
     } else if (typeof window !== 'undefined') {
         // Client: leer de document.cookie
         lang = getCookieClient(LANG_COOKIE_NAME);
@@ -50,51 +58,71 @@ export function getLangFromCookie(cookieString?: string): keyof typeof ui | unde
     return undefined;
 }
 
-// Función para guardar el idioma en la cookie
+// Función para guardar el idioma en la cookie (cliente React)
 export function setLangCookie(lang: keyof typeof ui) {
     setCookieClient(LANG_COOKIE_NAME, lang);
 }
 
-export function getLangFromUrl(url: URL, cookieString?: string): keyof typeof ui {
-    // Si no está en la URL, intentar leer de cookie
-    const cookieLang = getLangFromCookie(cookieString);
+// ============================================================
+// Helpers para Astro SSR
+// ============================================================
+
+/**
+ * Obtiene el idioma desde las cookies de Astro
+ * Usar en páginas .astro con Astro.cookies
+ */
+export function getLangFromAstro(cookies: AstroCookies): keyof typeof ui {
+    const cookieLang = cookies.get(LANG_COOKIE_NAME)?.value;
+    if (cookieLang && cookieLang in ui) {
+        return cookieLang as keyof typeof ui;
+    }
+    return defaultLang;
+}
+
+/**
+ * Guarda el idioma en las cookies de Astro
+ * Usar en páginas .astro con Astro.cookies
+ */
+export function setLangInAstro(cookies: AstroCookies, lang: keyof typeof ui) {
+    cookies.set(LANG_COOKIE_NAME, lang, { 
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365, // 1 año
+        sameSite: 'lax'
+    });
+}
+
+/**
+ * Obtiene el idioma desde la URL o cookies (fallback a defaultLang)
+ * @deprecated Usa getLangFromAstro(Astro.cookies) en páginas .astro
+ */
+export function getLangFromUrl(url: URL, cookiesOrString?: AstroCookies | string): keyof typeof ui {
+    // Intentar leer de cookie
+    const cookieLang = getLangFromCookie(cookiesOrString);
     if (cookieLang) return cookieLang;
     
     // Fallback a defaultLang
     return defaultLang;
 }
 
-// Helper para usar en páginas Astro SSR - obtiene el idioma desde la URL y cookies del request
+/**
+ * Helper para usar en páginas Astro SSR - obtiene el idioma desde cookies del request
+ * @deprecated Usa getLangFromAstro(Astro.cookies) en su lugar
+ */
 export function getLangFromRequest(request: Request, url: URL): keyof typeof ui {
     const cookieHeader = request.headers.get('cookie');
     return getLangFromUrl(url, cookieHeader || undefined);
 }
 
-export function getCurrentLang(cookieString?: string): keyof typeof ui {
-    // Intentar leer de cookie (funciona en SSR si se pasa cookieString, y en cliente)
-    const cookieLang = getLangFromCookie(cookieString);
+/**
+ * Obtiene el idioma actual desde cookies (funciona en cliente y servidor)
+ * @param cookiesOrString - Puede ser AstroCookies (Astro SSR) o string de cookies (legacy)
+ */
+export function getCurrentLang(cookiesOrString?: AstroCookies | string): keyof typeof ui {
+    const cookieLang = getLangFromCookie(cookiesOrString);
     if (cookieLang) {
         return cookieLang;
     }
     return defaultLang;
-}
-
-export async function getLangFromApi({ token }: { token?: string }): Promise<keyof typeof ui | undefined> {
-    if (!token) return getCurrentLang();
-    try {
-        const response = await fetch(`${getApiUrl()}/profile/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) return undefined;
-        const data = await response.json();
-        const lang = data?.user?.language;
-        if (lang && lang in ui) {
-            return lang as keyof typeof ui;
-        }
-    } catch {
-        // silently fail
-    }
-    return undefined;
 }
 
 export function useTranslatedPath(lang: keyof typeof ui) {
@@ -109,15 +137,13 @@ export function useTranslatedPath(lang: keyof typeof ui) {
     }
 }
 
-export function useTranslationsSSR({token}: { token?: string } = {}) {
-    return async function t(key: string, params?: Record<string, string | number>) {
-        // Usar el idioma proporcionado o el idioma actual (cookie o default)
-        let currentLang;
-        if (token) {
-            currentLang = await getLangFromApi({ token }) || getCurrentLang();
-        } else {
-            currentLang = getCurrentLang();
-        }
+/**
+ * Hook de traducciones para usar en código SSR (páginas .astro)
+ * Lee el idioma desde cookies
+ */
+export function useTranslationsSSR(lang?: string) {
+    return function t(key: string, params?: Record<string, string | number>) {
+        const currentLang = lang ?? 'en';
 
         // @ts-ignore
         let translation = ui[currentLang][key] || ui[defaultLang][key];
@@ -135,9 +161,10 @@ export function useTranslationsSSR({token}: { token?: string } = {}) {
 
 export function useTranslations({ lang }: { lang?: keyof typeof ui } = {}) {
     const contextLang = useContext(LanguageContext);
-    // Start with defaultLang so SSR and initial client render produce identical HTML (prevents hydration mismatch).
-    // After mount, update to the cookie-based lang when no explicit provider or prop lang is set.
-    const [cookieLang, setCookieLang] = useState<keyof typeof ui>(defaultLang as keyof typeof ui);
+    // When lang is explicitly provided, use it directly without cookie state
+    // This ensures SSR and client render use the same value (prevents hydration mismatch)
+    // Only use cookieLang state when no explicit lang or context is provided
+    const [cookieLang, setCookieLang] = useState<keyof typeof ui>(lang || defaultLang as keyof typeof ui);
     useEffect(() => {
         if (!lang && contextLang === null) {
             const resolved = getCurrentLang();

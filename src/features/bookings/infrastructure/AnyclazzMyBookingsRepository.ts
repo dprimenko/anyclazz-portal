@@ -47,7 +47,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
 
         const data = await apiResponse.json();
 
-        console.log('Fetched bookings data:', data);
+        //console.log('Fetched bookings data:', data);
         
         return {
             bookings: data.bookings,

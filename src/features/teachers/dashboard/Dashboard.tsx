@@ -1,5 +1,4 @@
-import { useTranslations, useTranslationsSSR } from '@/i18n';
-import { LanguageProvider } from '@/i18n/LanguageProvider';
+import { useTranslations } from '@/i18n';
 import type { ui } from '@/i18n/ui';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
@@ -100,8 +99,7 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 					<LessonsTable 
 						lessons={upcomingLessons} 
 						user={user}
-						token={token}
-						onLessonCancelled={handleLessonCancelled} 
+						token={token}					lang={lang}						onLessonCancelled={handleLessonCancelled} 
 						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_upcoming_lessons')}
@@ -136,8 +134,7 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 					<LessonsTable 
 						lessons={lastLessons} 
 						user={user}
-						token={token}
-						onLessonCancelled={handleLessonCancelled} 
+						token={token}					lang={lang}						onLessonCancelled={handleLessonCancelled} 
 						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_past_lessons')}
