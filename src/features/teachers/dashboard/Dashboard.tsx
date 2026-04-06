@@ -12,6 +12,10 @@ import { useState, useMemo } from 'react';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 import { PaymentsDashboardSummary } from '@/features/stripe-connect';
 import type { PaymentsDashboardResponse } from '@/features/stripe-connect';
+import { ClazzmateCard } from '@/features/shared/components/clazzmate-card/ClazzmateCard';
+import { SavedTeacherCard } from '@/features/teachers/components/saved-teacher-card/SavedTeacherCard';
+import type { Teacher } from '@/features/teachers/domain/types';
+import type { ReferralData } from '@/features/shared/domain/referralTypes';
 
 interface DashboardProps {
     upcomingLessons: BookingWithTeacher[];
@@ -20,9 +24,12 @@ interface DashboardProps {
     token?: string;
     paymentsDashboard?: PaymentsDashboardResponse | null;
     lang?: keyof typeof ui;
+    savedTeachers?: Teacher[];
+    referralData?: ReferralData | null;
+    inviteUrl?: string;
 }
 
-export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsDashboard, lang = 'en' }: DashboardProps) {
+export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsDashboard, lang = 'en', savedTeachers = [], referralData, inviteUrl = '' }: DashboardProps) {
     const t = useTranslations({ lang });
     const [refreshKey, setRefreshKey] = useState(0);
     
@@ -82,6 +89,7 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 					<div className="mb-4" />
 				</>
 			)}
+			<div className={user?.role === 'student' ? "grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4 items-start" : "flex flex-col gap-2"}>
 			{/* Left Column - Lessons */}
 			<div className="flex flex-col gap-2">
 				<Card bgColor='#FFF9F3' className="px-6 py-5">
@@ -153,77 +161,49 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 				</Card>
 			</div>
 
-			{/* <div className={styles.sidebar}>
-				<section className={styles.clazzmateCard}>
-					<div className={styles.clazzmateHeader}>
-						<div className={styles.clazzmateIcon}>
-							<Icon icon="access" iconWidth={20} iconHeight={20} />
-						</div>
-						<Text textLevel="h3" size="text-lg" weight="semibold" colorType="primary">
-							Clazzmate
-						</Text>
-					</div>
-					
-					<Text size="text-sm" colorType="tertiary" className="mb-4">
-						{t('clazzmate.invite_earn')}
-					</Text>
-					<Text size="text-xs" colorType="tertiary" className="mb-4">
-						{t('clazzmate.description')}
-					</Text>
+			{/* Right Column - Student sidebar */}
+			{user?.role === 'student' && (
+				<div className="flex flex-col gap-4">
+					<ClazzmateCard
+						referralLink={inviteUrl}
+						friendsInvited={referralData?.friends_invited ?? 0}
+						creditsEarned={referralData?.available_credits ?? 0}
+						lang={lang}
+					/>
 
-					<div className={styles.referralLink}>
-						<Text size="text-sm" colorType="secondary" className="flex-1 truncate">
-							{clazzmate.referralLink}
-						</Text>
-						<button onClick={handleCopyLink} className={styles.copyButton}>
-							<Icon icon={copied ? "check" : "copy"} iconWidth={16} iconHeight={16} />
-						</button>
-					</div>
-
-					<div className={styles.clazzmateStats}>
-						<div>
-							<Text size="text-xs" colorType="tertiary">{t('clazzmate.friends_invited')}</Text>
-							<Text size="text-xl" weight="semibold" colorType="primary" className="mt-1">{clazzmate.friendsInvited}</Text>
-						</div>
-						<div>
-							<Text size="text-xs" colorType="tertiary">{t('clazzmate.credits_earned')}</Text>
-							<Text size="text-xl" weight="semibold" colorType="primary" className="mt-1">${clazzmate.creditsEarned.toFixed(2)}</Text>
-						</div>
-					</div>
-				</section>
-
-				<section className={styles.savedTeachersSection}>
-					<div className={styles.sectionHeader}>
-						<Text textLevel="h3" size="text-lg" weight="semibold" colorType="primary">
-							{t('dashboard.saved_teachers')}
-						</Text>
-						<a href="/me/saved-teachers" className={styles.viewAll}>
-							<Text size="text-sm" colorType="accent">
-								{t('dashboard.view_all')}
+					<Card bgColor='#FFFFFF' className="px-6 py-5">
+						<div className="flex justify-between items-center mb-4">
+							<Text textLevel="h2" size="text-lg" weight="semibold" colorType="primary">
+								{t('dashboard.saved_teachers')}
 							</Text>
-						</a>
-					</div>
-					
-					<div className={styles.teachersList}>
-						{savedTeachers.map((teacher) => (
-							<div key={teacher.id} className={styles.savedTeacher}>
-								<div className="relative">
-									<Avatar src={teacher.avatar} size={40} hasVerifiedBadge={teacher.isSuperTeacher} />
-									{teacher.isOnline && <div className={styles.onlineDot} />}
-								</div>
-								<div className="flex-1 min-w-0">
-									<Text size="text-sm" weight="semibold" colorType="primary" className="truncate">
-										{teacher.name} {teacher.surname}
-									</Text>
-									<Text size="text-xs" colorType="tertiary" className="truncate">
-										{teacher.subject.name.en}
-									</Text>
-								</div>
+							<a href="/me/saved-teachers" className="no-underline transition-opacity hover:opacity-70">
+								<Text size="text-sm" colorType="accent" underline>
+									{t('dashboard.view_all')}
+								</Text>
+							</a>
+						</div>
+
+						{savedTeachers.length > 0 ? (
+							<div className="flex flex-col gap-2">
+								{savedTeachers.slice(0, 4).map((teacher) => (
+									<SavedTeacherCard
+										key={teacher.id}
+										teacher={teacher}
+										isOnline={teacher.isOnline}
+										onClick={() => window.location.href = `/teacher/${teacher.id}`}
+									/>
+								))}
 							</div>
-						))}
-					</div>
-				</section>
-			</div> */}
+						) : (
+							<EmptyState
+								title={t('dashboard.no_saved_teachers')}
+								description={t('dashboard.no_saved_teachers_description')}
+							/>
+						)}
+					</Card>
+				</div>
+			)}
+			</div>
 		</div>
         </>
     );

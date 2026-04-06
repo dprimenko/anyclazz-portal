@@ -21,7 +21,8 @@ export const routeConfig: RouteConfig = {
     '/api/auth',
     '/404',
     '/robots.txt',
-    '/favicon.ico'
+    '/favicon.ico',
+    '/ref'
   ],
   protectedRoutes: [
     '/dashboard',

@@ -34,7 +34,7 @@ try {
 }
 
 const inviteUrl = referralData.referral_code
-	? `${Astro.url.origin}/${referralData.referral_code}`
+	? `${Astro.url.origin}/ref/${referralData.referral_code}`
 	: '';
 
 const optimizedImage = await getImage({ src: "https://anyclazz.b-cdn.net/b8ff5b6aea0a3dd88236864b85f225e0dbfa5077%20(1).jpg", width: 320, height: 240 });

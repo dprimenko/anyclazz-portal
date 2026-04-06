@@ -178,6 +178,7 @@ export default {
     'clazzmate.available_credits': 'Available credit',
     'clazzmate.copy_link': 'Copy link',
     'clazzmate.link_copied': 'Link copied!',
+    'clazzmate.credits_earned': 'Credits Earned',
     'location.placeholder': 'Where are you?',
     'location.search_not_found': 'No results found',
 
@@ -626,4 +627,9 @@ export default {
     'payments.dashboard.classes_given': 'Classes given',
     'payments.dashboard.last_30_days': 'Last 30 days',
     'common.status': 'Status',
+
+    // Landing
+    'landing.ready.title': 'Ready to Start Learning?',
+    'landing.ready.subtitle': 'Join thousands of students who are already achieving their goals with personalized teaching.',
+    'landing.ready.cta': 'Get Started',
 }

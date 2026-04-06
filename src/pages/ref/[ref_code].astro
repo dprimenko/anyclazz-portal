@@ -1,0 +1,54 @@
+---
+export const prerender = false;
+
+const { ref_code } = Astro.params;
+
+// Only redirect codes that look like valid referral codes (alphanumeric + hyphens/underscores)
+if (!ref_code || !/^[A-Za-z0-9_-]{3,}$/.test(ref_code)) {
+	return Astro.redirect('/404');
+}
+
+// Generate PKCE code_verifier and code_challenge (required by Keycloak)
+function base64urlEncode(buffer: ArrayBuffer): string {
+	return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_')
+		.replace(/=+$/, '');
+}
+
+const verifierBytes = new Uint8Array(32);
+crypto.getRandomValues(verifierBytes);
+const codeVerifier = base64urlEncode(verifierBytes.buffer);
+
+const challengeBytes = await crypto.subtle.digest(
+	'SHA-256',
+	new TextEncoder().encode(codeVerifier)
+);
+const codeChallenge = base64urlEncode(challengeBytes);
+
+const keycloakIssuer =
+	import.meta.env.KEYCLOAK_ISSUER || 'http://localhost:8081/realms/anyclazz';
+const keycloakClientId = import.meta.env.KEYCLOAK_CLIENT_ID || 'anyclazz-app';
+const redirectUri = encodeURIComponent(`${Astro.url.origin}/api/auth/callback/keycloak`);
+
+const registrationUrl =
+	`${keycloakIssuer}/protocol/openid-connect/registrations` +
+	`?client_id=${encodeURIComponent(keycloakClientId)}` +
+	`&response_type=code` +
+	`&scope=openid+profile+email` +
+	`&redirect_uri=${redirectUri}` +
+	`&code_challenge=${codeChallenge}` +
+	`&code_challenge_method=S256` +
+	`&ref=${encodeURIComponent(ref_code)}`;
+
+// Store the code_verifier in the same cookie Auth.js expects during callback
+Astro.cookies.set('authjs.pkce.code_verifier', codeVerifier, {
+	httpOnly: true,
+	sameSite: 'lax',
+	path: '/',
+	secure: import.meta.env.NODE_ENV === 'production',
+	maxAge: 60 * 10, // 10 minutos
+});
+
+return Astro.redirect(registrationUrl, 302);
+---

@@ -13,6 +13,10 @@ import { Dashboard as TeacherDashboard } from '@/features/teachers/dashboard/Das
 import { TeacherReviewNotification } from '@/features/teachers/components/teacher-review-notification/TeacherReviewNotification';
 import { DateTime } from 'luxon';
 import { toTimezone } from '@/features/shared/utils/dateConfig';
+import { ReferralRepository } from '@/features/shared/infrastructure/ReferralRepository';
+import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
+import type { ReferralData } from '@/features/shared/domain/referralTypes';
+import type { Teacher } from '@/features/teachers/domain/types';
 
 
 const session = await getSession(Astro.request);
@@ -49,12 +53,27 @@ if (user?.role === 'teacher') {
 	}
 }
 
-// Mock clazzmate data
-const clazzmate = {
-    referralLink: 'anyclazz.nn.com/4060020',
-    friendsInvited: 3,
-    creditsEarned: 20.00
-};
+let referralData: ReferralData | null = null;
+let savedTeachers: Teacher[] = [];
+let inviteUrl = '';
+if (user?.role === 'student') {
+	try {
+		const referralRepo = new ReferralRepository();
+		referralData = await referralRepo.getReferralData({ token: accessToken });
+		inviteUrl = referralData.referral_code
+			? `${Astro.url.origin}/ref/${referralData.referral_code}`
+			: '';
+	} catch (error) {
+		console.error('Error loading referral data:', error);
+	}
+	try {
+		const teacherRepo = new ApiTeacherRepository();
+		const savedTeachersResponse = await teacherRepo.listSavedTeachers({ token: accessToken, page: 1, size: 4 });
+		savedTeachers = savedTeachersResponse.teachers;
+	} catch (error) {
+		console.error('Error loading saved teachers:', error);
+	}
+}
 
 ---
 
@@ -78,7 +97,9 @@ const clazzmate = {
 			token={accessToken}
 			paymentsDashboard={paymentsDashboard}
 			lang={lang}
-
+			referralData={referralData}
+			savedTeachers={savedTeachers}
+			inviteUrl={inviteUrl}
 			client:load 
 		/>
 	</div>

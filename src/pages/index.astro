@@ -7,8 +7,10 @@ import { SectionExplore } from '@/features/landing/section-explore/SectionExplor
 import { SectionTestimonials } from '@/features/landing/section-testimonials/SectionTestimonials';
 import { SectionReady } from '@/features/landing/section-ready/SectionReady';
 import { Footer } from '@/features/landing/footer/Footer';
+import { getLangFromAstro } from '@/i18n';
 
 const session = await getSession(Astro.request);
+const lang = getLangFromAstro(Astro.cookies) as 'en' | 'es';
 ---
 
 <Landing>
@@ -33,7 +35,7 @@ const session = await getSession(Astro.request);
   </div>
   <SectionTestimonials client:visible />
   <div class="bg-[var(--color-primary-700)]">
-      <SectionReady />
+      <SectionReady lang={lang} />
   </div>
   <div class="bg-[#F9F9F9]">
       <Footer />
