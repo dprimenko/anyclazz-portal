@@ -15,10 +15,11 @@ export interface LessonDetailsModalProps {
     onCancel?: () => void;
     onSendMessage?: () => void;
     onJoin?: () => void;
+    lang?: 'en' | 'es';
 }
 
-export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, onJoin }: LessonDetailsModalProps) {
-    const t = useTranslations();
+export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, onJoin, lang }: LessonDetailsModalProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Parsear manteniendo la zona horaria original del backend
     const startTime = fromISOKeepZone(lesson.startAt);

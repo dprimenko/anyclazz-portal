@@ -8,7 +8,7 @@ const session = await getSession(Astro.request);
 const loggedUser = new AnyclazzAuthRepository();
 const user = await loggedUser.getCurrentUser(session);
 const accessToken = (session as any)?.accessToken as string | undefined;
-const lang = Astro.cookies.get('app_lang')?.value || 'en';
+const lang = (Astro.cookies.get('app_lang')?.value || 'en') as 'en' | 'es';
 ---
 
 {user && (

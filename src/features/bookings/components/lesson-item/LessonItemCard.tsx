@@ -206,6 +206,7 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                 <LessonDetailsModal
                     lesson={selectedLesson}
                     onClose={closeLessonDetails}
+                    lang={lang as 'en' | 'es' | undefined}
                     onCancel={() => {
                         openLessonCancel();
                         closeLessonDetails();
@@ -225,6 +226,7 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                     lesson={lesson}
                     repository={repository}
                     token={token}
+                    lang={lang as 'en' | 'es' | undefined}
                     onClose={closeLessonCancel}
                     onSuccess={() => {
                         closeLessonCancel();

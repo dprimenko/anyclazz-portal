@@ -34,7 +34,7 @@ const repository = new AnyclazzMyBookingsRepository();
 const upcomingBookings = await repository.getBookings({token: accessToken, filter: 'upcoming', sort: 'desc', page: 1, size: 3});
 const lastBookings = await repository.getBookings({token: accessToken, filter: 'last', sort: 'desc', page: 1, size: 3});
 
-const lang = Astro.cookies.get('app_lang')?.value || 'en';
+const lang = (Astro.cookies.get('app_lang')?.value || 'en') as 'en' | 'es';
 const t = useTranslationsSSR();
 
 const showReviewNotification = user?.role === 'teacher' && (user.teacherStatus === 'pending' || toTimezone(user.teacherStatusUpdate, user.timezone) <= toTimezone(DateTime.now().toISO(), user.timezone).plus({ days: 3 }));

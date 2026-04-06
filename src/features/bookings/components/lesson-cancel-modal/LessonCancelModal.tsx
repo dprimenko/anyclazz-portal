@@ -14,10 +14,11 @@ export interface LessonCancelModalProps {
     token: string;
     onClose: () => void;
     onSuccess?: () => void;
+    lang?: 'en' | 'es';
 }
 
-export function LessonCancelModal({ lesson, repository, token, onClose, onSuccess }: LessonCancelModalProps) {
-    const t = useTranslations();
+export function LessonCancelModal({ lesson, repository, token, onClose, onSuccess, lang }: LessonCancelModalProps) {
+    const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     
     const { cancel, loading, error } = useCancelBooking({

@@ -21,7 +21,7 @@ if (!accessToken) {
 
 const authRepository = new AnyclazzAuthRepository();
 const user = await authRepository.getCurrentUser(session);
-const lang = Astro.cookies.get('app_lang')?.value || 'en';
+const lang = (Astro.cookies.get('app_lang')?.value || 'en') as 'en' | 'es';
 const t = useTranslationsSSR();
 
 const repository = new AnyclazzMyBookingsRepository();

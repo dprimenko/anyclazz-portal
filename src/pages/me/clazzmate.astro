@@ -3,7 +3,7 @@ export const prerender = false;
 import Main from '../../layout/Main.astro';
 import { getImage } from 'astro:assets';
 import { getSession } from 'auth-astro/server';
-import clazzmateImg from '../../assets/images/landing/anyclazz-works-2.webp';
+import { getLangFromAstro } from '@/i18n';
 import { ReferralRepository } from '@/features/shared/infrastructure/ReferralRepository';
 import { ClazzmateContent } from '@/features/shared/components/clazzmate-page/ClazzmateContent';
 import type { ReferralData } from '@/features/shared/domain/referralTypes';
@@ -14,6 +14,8 @@ const accessToken = session?.accessToken as string;
 if (!accessToken) {
 	return Astro.redirect('/login');
 }
+
+const lang = getLangFromAstro(Astro.cookies);
 
 const referralRepository = new ReferralRepository();
 
@@ -27,7 +29,6 @@ let referralData: ReferralData = {
 
 try {
 	referralData = await referralRepository.getReferralData({ token: accessToken });
-	console.log('Referral data loaded:', referralData);
 } catch (error) {
 	console.error('Error loading referral data:', error);
 }
@@ -36,14 +37,15 @@ const inviteUrl = referralData.referral_code
 	? `${Astro.url.origin}/${referralData.referral_code}`
 	: '';
 
-const optimizedImage = await getImage({ src: clazzmateImg, width: 320, height: 240 });
+const optimizedImage = await getImage({ src: "https://anyclazz.b-cdn.net/b8ff5b6aea0a3dd88236864b85f225e0dbfa5077%20(1).jpg", width: 320, height: 240 });
 ---
 
-<Main>
+<Main title="Clazzmate">
 	<ClazzmateContent
 		referralData={referralData}
 		inviteUrl={inviteUrl}
 		imageUrl={optimizedImage.src}
+		lang={lang}
 		client:load
 	/>
 </Main>

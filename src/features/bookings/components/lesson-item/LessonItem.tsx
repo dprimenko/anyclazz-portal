@@ -205,6 +205,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                 <LessonDetailsModal
                     lesson={selectedLesson}
                     onClose={closeLessonDetails}
+                    lang={lang as 'en' | 'es' | undefined}
                     onCancel={() => {
                         closeLessonDetails();
                         openLessonCancel();
@@ -224,6 +225,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                     lesson={lesson}
                     repository={repository}
                     token={token}
+                    lang={lang as 'en' | 'es' | undefined}
                     onClose={closeLessonCancel}
                     onSuccess={() => {
                         closeLessonCancel();
