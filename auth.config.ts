@@ -22,7 +22,6 @@ export default defineConfig({
       authorization: {
         url: `${keycloakIssuer}/protocol/openid-connect/auth`,
         params: {
-          prompt: "login",
           scope: "openid profile email roles"
         }
       },
