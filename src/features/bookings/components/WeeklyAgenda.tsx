@@ -183,6 +183,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                             colorType="primary"
                             fullWidth
                         />
+                    </a>
                 </div>
             </div>
 
