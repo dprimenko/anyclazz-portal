@@ -10,6 +10,7 @@ import { AnyclazzMyBookingsRepository } from '../infrastructure/AnyclazzMyBookin
 import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import { Card } from '@/ui-library/components/ssr/card/Card';
 import { LessonItem } from './lesson-item/LessonItem';
+import { LessonItemCard } from './lesson-item/LessonItemCard';
 
 interface WeeklyAgendaProps {
     bookings: GetBookingsResponse;
@@ -131,7 +132,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
     return (
         <Card className="flex flex-col">
             {/* Header */}
-            <div className="flex justify-between p-6 border-b border-[var(--color-neutral-200)]">
+            <div className="flex flex-col sm:flex-row sm:justify-between p-4 sm:p-6 border-b border-[var(--color-neutral-200)] gap-4 sm:gap-0">
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-3">
                         <Text size="text-lg" weight="semibold" colorType="primary">
@@ -148,7 +149,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                     </Text>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     {/* Week Navigation */}
                     <div className="flex items-center gap-2 bg-white border border-[var(--color-neutral-300)] rounded-lg px-3">
                         <button 
@@ -160,7 +161,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                         
                         <button 
                             onClick={goToCurrentWeek}
-                            className="px-3 py-1 hover:bg-neutral-100 transition-colors border-x border-[var(--color-neutral-300)] py-2.5"
+                            className="flex-1 px-3 py-2.5 hover:bg-neutral-100 transition-colors border-x border-[var(--color-neutral-300)] text-center"
                         >
                             <Text size="text-sm" colorType="secondary" weight='semibold'>{t('common.week')} {weekNumber}</Text>
                         </button>
@@ -174,15 +175,14 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                     </div>
 
                     {/* Schedule Lesson Button */}
-                    <a href="/teachers">
+                    <a href="/teachers" className="w-full sm:w-auto">
                         <Button 
-							icon="plus" 
+                            icon="plus" 
                             iconColor='#FDD7A5'
-							label={t('dashboard.schedule_lesson')} 
-							colorType="primary"
-							className="flex-1 md:flex-none"
-						/>
-                    </a>
+                            label={t('dashboard.schedule_lesson')} 
+                            colorType="primary"
+                            fullWidth
+                        />
                 </div>
             </div>
 
@@ -199,9 +199,9 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                     const isToday = day.hasSame(DateTime.now(), 'day');
 
                     return (
-                        <div key={dayKey} className="flex flex-row p-5 border-b border-[var(--color-neutral-200)]">
+                        <div key={dayKey} className="flex flex-col sm:flex-row p-4 sm:p-5 border-b border-[var(--color-neutral-200)] gap-3 sm:gap-0">
                             {/* Day Header */}
-                            <div className="flex gap-2 md:w-[140px]">
+                            <div className="flex gap-2 sm:w-[140px] sm:shrink-0">
                                 <Text 
                                     size="text-sm" 
                                     weight="semibold" 
@@ -212,22 +212,37 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                                 </Text>
                             </div>
 
-                            {/* Lessons for this day */}
+                            {/* Lessons for this day - Desktop */}
                             {dayBookings.length > 0 && (
-                                <div className="flex flex-col gap-2.5 w-full">
-                                    {dayBookings.map((booking) => (
-                                        <LessonItem 
-                                            key={booking.id} 
-                                            isHighlited
-                                            innerTableHeader
-                                            lesson={booking} 
-                                            repository={repository}
-                                            token={token}
-                                            user={user}
-                                            lang={lang}
-                                        />
-                                    ))}
-                                </div>
+                                <>
+                                    <div className="hidden sm:flex flex-col gap-2.5 w-full">
+                                        {dayBookings.map((booking) => (
+                                            <LessonItem 
+                                                key={booking.id} 
+                                                isHighlited
+                                                innerTableHeader
+                                                lesson={booking} 
+                                                repository={repository}
+                                                token={token}
+                                                user={user}
+                                                lang={lang}
+                                            />
+                                        ))}
+                                    </div>
+                                    {/* Mobile: horizontal scroll of cards */}
+                                    <div className="flex sm:hidden flex-row gap-3 overflow-x-auto pb-1 -mx-4 px-4">
+                                        {dayBookings.map((booking) => (
+                                            <LessonItemCard
+                                                key={booking.id}
+                                                lesson={booking}
+                                                repository={repository}
+                                                token={token}
+                                                user={user}
+                                                lang={lang}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
                             )}
                         </div>
                     );
