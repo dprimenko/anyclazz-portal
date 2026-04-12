@@ -12,9 +12,10 @@ interface BookingCheckoutWrapperProps {
   currency: string;
   lang?: 'en' | 'es';
   bookingDate?: string; // ISO 8601 - para redirigir a la semana correcta en /me/my-agenda
+  bookingId?: string; // Para recargar la booking hasta que la URL de la meeting esté disponible
 }
 
-export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en', bookingDate }: BookingCheckoutWrapperProps) {
+export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en', bookingDate, bookingId }: BookingCheckoutWrapperProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
@@ -29,10 +30,11 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
   };
 
   const handleGoToAgenda = () => {
-    const day = bookingDate
-      ? bookingDate.slice(0, 10) // YYYY-MM-DD
-      : undefined;
-    window.location.href = day ? `/me/my-agenda?day=${day}` : '/me/my-agenda';
+    const params = new URLSearchParams();
+    if (bookingDate) params.set('day', bookingDate.slice(0, 10));
+    if (bookingId) params.set('bookingId', bookingId);
+    const query = params.toString();
+    window.location.href = query ? `/me/my-agenda?${query}` : '/me/my-agenda';
   };
 
   return (
