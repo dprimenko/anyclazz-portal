@@ -11,17 +11,18 @@ const footerSections = [
     {
         title: "For Teachers",
         links: [
-            { label: "Become a Teacher", href: "/become-teacher" },
+            { label: "Become a Teacher", href: "/api/auth/keycloak-register?role=teacher" },
             { label: "Teacher Resources", href: "/resources" },
             { label: "Teacher Support", href: "/support" }
         ]
     },
     {
-        title: "Company",
+        title: "Legal",
         links: [
-            { label: "About Us", href: "/about" },
-            { label: "Contact", href: "/contact" },
-            { label: "Privacy Policy", href: "/privacy" }
+            { label: "Privacy Policy", href: "/legal/privacy-policy" },
+            { label: "Terms & Conditions", href: "/legal/terms-and-conditions" },
+            { label: "Cookie Policy", href: "/legal/cookie-policy" },
+            { label: "Legal Notice", href: "/legal/legal-notice" }
         ]
     }
 ];

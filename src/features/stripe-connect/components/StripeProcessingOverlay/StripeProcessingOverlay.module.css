@@ -1,0 +1,85 @@
+.stripeOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgb(from var(--color-neutral-300) r g b / 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background-color: var(--color-neutral-100, #ffffff);
+  border-radius: 16px;
+  padding: 40px 48px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+}
+
+.stripeLogo {
+  opacity: 0.9;
+}
+
+.spinnerWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #635BFF;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-neutral-900, #111827);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600, #4b5563);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.secureNotice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--color-neutral-500, #6b7280);
+  padding-top: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 32px 24px;
+    margin: 0 16px;
+  }
+}

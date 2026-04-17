@@ -9,6 +9,7 @@ import { getSession } from 'auth-astro/server';
 const logo = '/images/logo.svg';
 
 import { getLangFromAstro } from '../i18n';
+import { Footer } from '@/features/landing/footer/Footer';
 const lang = getLangFromAstro(Astro.cookies);
 
 const {title, description, keywords = [], isDark} = Astro.props;
@@ -138,6 +139,8 @@ const defaultDescription = '';
         <main>
             <slot/>
         </main>
-        </main>
+        <footer class="bg-[#F9F9F9]">
+            <Footer />
+        </footer>
     </body>
 </html>

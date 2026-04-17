@@ -531,6 +531,13 @@ export default {
     'stripe.description': 'Connect your Stripe account to receive payments directly for your classes',
     'stripe.connect_button': 'Connect with Stripe',
     'stripe.connecting': 'Connecting...',
+    'stripe.redirecting_to_stripe': 'Redirecting to Stripe...',
+    'stripe.redirecting_description': 'You will be redirected to Stripe to complete the connection. Please do not close this window.',
+    'stripe.processing_connection': 'Processing connection...',
+    'stripe.processing_description': 'We are completing the connection with your Stripe account. Please wait a moment.',
+    'stripe.secure_process': 'Secure process powered by Stripe',
+    'stripe.do_not_close': 'Do not close this window',
+    'stripe.wait': 'One moment please...',
     'stripe.open_dashboard': 'Open Stripe Dashboard',
     
     // Status

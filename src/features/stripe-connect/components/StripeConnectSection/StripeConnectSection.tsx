@@ -5,6 +5,7 @@ import type { ui } from '@/i18n/ui';
 import { useStripeConnectStatus, useStripeConnectActions } from '../../hooks/useStripeConnect';
 import type { StripeConnectStatusResponse } from '../../domain/types';
 import { StripeConnectButton } from '../StripeConnectButton/StripeConnectButton';
+import { StripeProcessingOverlay } from '../StripeProcessingOverlay/StripeProcessingOverlay';
 import { ProgressIndicator } from '@/ui-library/components/progress-indicator/ProgressIndicator';
 import { Notification } from '@/ui-library/components/notification/Notification';
 
@@ -32,6 +33,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
   const { startOnboarding, completeOAuth, isProcessing, error: actionError } = useStripeConnectActions(accessToken);
   const [oauthProcessed, setOauthProcessed] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Detectar si es mobile
   const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -98,7 +100,8 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
         sessionStorage.setItem('stripe_oauth_state', response.state);
       }
       
-      // Redirigir a Stripe OAuth
+      // Mostrar overlay antes de redirigir
+      setIsRedirecting(true);
       window.location.href = response.onboarding_url;
     }
   };
@@ -125,7 +128,14 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
   const requirementsDue = status?.requirements?.currently_due?.length || 0;
   const pastDue = status?.requirements?.past_due?.length || 0;
 
+  // Overlay de procesamiento: redirigiendo a Stripe o procesando callback OAuth
+  const showRedirectingOverlay = isRedirecting;
+  const showProcessingOverlay = isProcessing && !!oauthCode && !oauthProcessed;
+
   return (
+    <>
+      {showRedirectingOverlay && <StripeProcessingOverlay mode="redirecting" lang={lang} />}
+      {showProcessingOverlay && <StripeProcessingOverlay mode="processing" lang={lang} />}
     <div className="flex flex-col gap-4 mb-6">
       {/* Mensaje de éxito OAuth */}
       {successMessage && (
@@ -230,5 +240,6 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
         />
       )}
     </div>
+    </>
   );
 };
