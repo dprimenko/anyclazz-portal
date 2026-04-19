@@ -5,6 +5,7 @@ export interface MenuItem {
     href?: string;
     onClick?: () => void;
     subItems?: MenuItem[];
+    showBadge?: boolean; // Si debe mostrar un badge dinámico
 }
 
 export interface MenuRepository {

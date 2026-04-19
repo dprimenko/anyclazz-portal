@@ -7,12 +7,14 @@ import { ConversationList } from './ConversationList/ConversationList';
 import { ChatView } from './ChatView/ChatView';
 import { ProgressIndicator } from '@/ui-library/components/progress-indicator/ProgressIndicator';
 import { useTranslations } from '@/i18n';
+import type { ui } from '@/i18n/ui';
 
 interface MessagesPageProps {
 	keycloakToken: string;
 	currentUserId: string;
 	initialUserId?: string;
 	initialUserRole?: 'teacher' | 'student';
+	lang?: keyof typeof ui;
 }
 
 export const MessagesPage: FC<MessagesPageProps> = ({ 
@@ -20,6 +22,7 @@ export const MessagesPage: FC<MessagesPageProps> = ({
 	currentUserId, 
 	initialUserId,
 	initialUserRole,
+	lang = 'en',
 }) => {
 	const { client, isLoading, error } = useStreamChat({ keycloakToken });
 	const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
@@ -86,7 +89,7 @@ export const MessagesPage: FC<MessagesPageProps> = ({
 			{/* Right pane: Active chat — full screen on mobile */}
 			<div className={`flex-1 flex flex-col overflow-hidden h-full ${showChatOnMobile ? 'flex' : 'hidden md:flex'}`}>
 				{activeChannel ? (
-					<ChatView streamClient={client} channel={activeChannel} accessToken={keycloakToken} onBack={handleBackToList} />
+					<ChatView streamClient={client} channel={activeChannel} accessToken={keycloakToken} onBack={handleBackToList} lang={lang} />
 				) : (
 					<div className="flex items-center justify-center h-full text-lg text-[var(--color-text-secondary)]">
 						<p>{t('chat.select_conversation')}</p>

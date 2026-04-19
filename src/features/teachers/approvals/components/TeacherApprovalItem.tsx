@@ -20,8 +20,8 @@ export function TeacherApprovalItem({ teacher, onApprove, onReject, isLoading, m
     const lang = getCurrentLang();
 
     const formatDate = (dateString: string) => {
-        const dt = DateTime.fromISO(dateString);
-        return dt.toFormat('MMM dd, yyyy \u2013 HH:mm (ZZZZ)');
+        const dt = DateTime.fromISO(dateString, { setZone: true });
+        return dt.toFormat('MMM dd, yyyy \u2013 HH:mm');
     };
 
     const containerClasses = cn(

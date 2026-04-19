@@ -12,6 +12,7 @@ import { ModalStory } from '@/features/stories/feed/components/story-view/ModalS
 import { VideoEditModal } from '@/features/stories/feed/components/video-edit-modal/VideoEditModal';
 import { subscribe, unsubscribe } from '@/features/shared/services/domainEventsBus';
 import { VideoUploadEvents } from '@/features/stories/feed/components/video-upload-modal/domain/events';
+import { ProgressIndicator } from '@/ui-library/components/progress-indicator';
 
 const repository = new ApiStoryRepository();
 const PAGE_SIZE = 10;
@@ -129,6 +130,7 @@ export function TeacherStoriesList({ teacherId, accessToken }: MyStoriesTabProps
                     story={selectedStory} 
                     storyRepository={repository}
                     accessToken={accessToken}
+                    currentUserId={teacherId}
                     onClose={() => setSelectedStory(null)} 
                 />
             )}
@@ -145,7 +147,7 @@ export function TeacherStoriesList({ teacherId, accessToken }: MyStoriesTabProps
             {/* Loading state */}
             {loading && (
                 <div className="flex items-center justify-center py-12">
-                    <Text colorType="tertiary">{t('common.loading')}...</Text>
+                    <ProgressIndicator message={t('common.loading')} />
                 </div>
             )}
 

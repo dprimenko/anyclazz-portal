@@ -57,23 +57,25 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
                 </div>
 				{user?.role === 'student' && (
 					<div className="flex gap-[0.75rem] w-full md:w-auto md:flex-shrink-0">
-						<a href="/teachers">
+						{/* <a href="/teachers" className='w-full md:w-auto'>
 							<Button 
 								icon="calendar-plus" 
 								label={t('dashboard.schedule_lesson')} 
 								colorType="secondary"
 								className="flex-1 md:flex-none"
+								fullWidth
 								onClick={() => window.location.href = '/teachers'}
 							/>
-						</a>
+						</a> */}
 
-						<a href="/teachers">
+						<a href="/teachers" className='w-full md:w-auto'>
 							<Button 
 								icon="search" 
 								iconColor='#FDD7A5'
 								
 								label={t('dashboard.find_teacher')} 
 								colorType="primary"
+								fullWidth
 								className="flex-1 md:flex-none"
 								onClick={() => window.location.href = '/teachers'}
 							/>
@@ -167,7 +169,7 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 					<ClazzmateCard
 						referralLink={inviteUrl}
 						friendsInvited={referralData?.friends_invited ?? 0}
-						creditsEarned={referralData?.available_credits ?? 0}
+						creditsEarned={referralData?.available_credit_amount ?? 0}
 						lang={lang}
 					/>
 

@@ -18,7 +18,7 @@ export default {
     'common.date_and_time': 'Fecha y hora:',
     'common.cancel': 'Cancelar',
     'common.price': 'Precio',
-    'common.eur_price': '{{amount}}€',
+    'common.eur_price': '{{amount}}$',
     'common.usd_price': '${{amount}}',
     'common.minutes_long': '{{minutes}} minutos',
     'common.minutes_short': '{{minutes}} min',

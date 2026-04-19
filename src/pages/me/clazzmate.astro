@@ -29,6 +29,7 @@ let referralData: ReferralData = {
 
 try {
 	referralData = await referralRepository.getReferralData({ token: accessToken });
+	console.log('Referral data loaded:', referralData);
 } catch (error) {
 	console.error('Error loading referral data:', error);
 }

@@ -14,6 +14,7 @@ if (!session?.user) {
 
 const keycloakToken = session.accessToken || '';
 const currentUserId = session.user.id || '';
+const lang = (Astro.cookies.get('app_lang')?.value || 'en') as 'en' | 'es';
 ---
 
 <Main title="Messages">
@@ -22,5 +23,6 @@ const currentUserId = session.user.id || '';
 		keycloakToken={keycloakToken}
 		currentUserId={currentUserId}
 		initialUserId={undefined}
+		lang={lang}
 	/>
 </Main>

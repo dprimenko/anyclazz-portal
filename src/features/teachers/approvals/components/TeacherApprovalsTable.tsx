@@ -1,7 +1,5 @@
 import { useTranslations } from '@/i18n';
 import type { TeacherApproval, TeacherApprovalFilter } from '../domain/types';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import type React from "react";
 import { ProgressIndicator } from "@/ui-library/components/progress-indicator";
@@ -34,24 +32,17 @@ export function TeacherApprovalsTable({
         <>
             {teachers.length > 0 && (
                 <>
-                    {/* Mobile Swiper - solo visible en móvil */}
-                    <div className="md:hidden -mx-6 px-6">
-                        <Swiper
-                            slidesPerView="auto"
-                            spaceBetween={12}
-                            className="!overflow-visible"
-                        >
-                            {teachers.map((teacher) => (
-                                <SwiperSlide key={teacher.id} className="!w-auto">
-                                    <TeacherApprovalItemCard
-                                        teacher={teacher} 
-                                        onApprove={onApprove}
-                                        onReject={onReject}
-                                        isLoading={actionLoading}
-                                    />
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
+                    {/* Mobile Cards - solo visible en móvil */}
+                    <div className="md:hidden flex flex-col gap-3">
+                        {teachers.map((teacher) => (
+                            <TeacherApprovalItemCard
+                                key={teacher.id}
+                                teacher={teacher} 
+                                onApprove={onApprove}
+                                onReject={onReject}
+                                isLoading={actionLoading}
+                            />
+                        ))}
                     </div>
 
                     {/* Desktop Table - solo visible en desktop */}

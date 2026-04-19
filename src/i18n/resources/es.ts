@@ -1,6 +1,7 @@
 export default {
     'common.language': 'es',
     'common.share': 'Compartir',
+    'common.send_message': 'Enviar mensaje',
     'common.likes': 'Me gusta',
     'common.reviews': 'reseñas',
     'common.rate': 'Valoración',
@@ -183,6 +184,7 @@ export default {
     'clazzmate.copy_link': 'Copiar enlace',
     'clazzmate.link_copied': '¡Enlace copiado!',
     'clazzmate.credits_earned': 'Créditos ganados',
+    'clazzmate.discount': 'Descuento Clazzmate',
     'location.placeholder': '¿Dónde estás?',
     'location.search_not_found': 'No se encontraron resultados',
 

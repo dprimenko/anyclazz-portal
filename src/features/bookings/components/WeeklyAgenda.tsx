@@ -42,6 +42,52 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
     const [bookings, setBookings] = useState(initialBookings);
     const [loading, setLoading] = useState(false);
     const isFirstRender = useRef(true);
+    const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const pollingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const stopPolling = useCallback(() => {
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
+        }
+        if (pollingTimeoutRef.current) {
+            clearTimeout(pollingTimeoutRef.current);
+            pollingTimeoutRef.current = null;
+        }
+    }, []);
+
+    // Polling para meetingUrl cuando se llega con ?bookingId= tras un pago
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('bookingId');
+
+        if (!bookingId) return;
+
+        const poll = async () => {
+            try {
+                const booking = await repository.getBookingById({ bookingId, token });
+                if (booking.meetingUrl) {
+                    setBookings(prev => ({
+                        ...prev,
+                        bookings: prev.bookings.map(b => b.id === bookingId ? booking : b)
+                    }));
+                    stopPolling();
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('bookingId');
+                    window.history.replaceState({}, '', url.toString());
+                }
+            } catch (error) {
+                console.error('Error polling booking for meetingUrl:', error);
+            }
+        };
+
+        poll();
+        pollingIntervalRef.current = setInterval(poll, 5000);
+        pollingTimeoutRef.current = setTimeout(stopPolling, 2 * 60 * 1000);
+
+        return () => stopPolling();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Calcular el inicio y fin de la semana actual (formato USA: domingo a sábado)
     const weekStart = currentWeek;

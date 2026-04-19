@@ -25,6 +25,7 @@ export interface BookingWithTeacher extends Booking {
         currency: string;
         paymentIntentId: string;
         status?: string;
+        requiresAction?: boolean;
     };
 }
 
@@ -88,9 +89,33 @@ export interface CancelBookingResponse {
     message: string;
 }
 
+export interface IReferralDiscount {
+    discount_amount: number;
+    discount_percent: number;
+    original_amount: number;
+    charged_amount: number;
+    currency: string;
+    credit_type: 'referred_first_booking' | 'referrer_reward';
+}
+
+export interface IBookingPaymentPreview {
+    booking_id: string;
+    original_amount: number;
+    charged_amount: number;
+    discount_amount: number;
+    discount_percent: number | null;
+    currency: string;
+    referral_discount: IReferralDiscount | null;
+}
+
+export interface GetBookingPaymentPreviewParams extends CommonParams {
+    bookingId: string;
+}
+
 export interface BookingsRepository {
     getBookings(params: GetBookingsParams): Promise<GetBookingsResponse>;
     getTeacherAvailability(params: GetTeacherAvailabilityParams): Promise<any>;
     getBookingById(params: GetBookingByIdParams): Promise<BookingWithTeacher>;
+    getBookingPaymentPreview(params: GetBookingPaymentPreviewParams): Promise<IBookingPaymentPreview>;
     cancelBooking(params: CancelBookingParams): Promise<CancelBookingResponse>;
 }

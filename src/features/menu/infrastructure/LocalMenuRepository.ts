@@ -37,6 +37,7 @@ export class LocalMenuRepository implements MenuRepository {
                 label: 'menu.messages',
                 icon: 'chat',
                 href: '/messages',
+                showBadge: true,
             },
             {
                 id: 'feed',
@@ -99,6 +100,7 @@ export class LocalMenuRepository implements MenuRepository {
                 label: 'menu.messages',
                 icon: 'chat',
                 href: '/messages',
+                showBadge: true,
             },
             {
                 id: 'feed',

@@ -16,13 +16,14 @@ export interface StoryViewProps {
     index: number;
     playing: boolean;
 	userRole?: string;
+	currentUserId?: string;
     onVisibilityChange: (index: number, isVisible: boolean) => void;
 	onVideoUpload: () => void;
 	storyRepository: StoryRepository;
 	accessToken: string;
 }
 
-export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload, storyRepository, accessToken, userRole }: StoryViewProps) {
+export function StoryView({ story, index, playing, onVisibilityChange, onVideoUpload, storyRepository, accessToken, userRole, currentUserId }: StoryViewProps) {
 	const t = useTranslations();
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -55,6 +56,15 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 			url: `${window.location.origin}/feed/${story.id}`,
 		});
 	}, [story]);
+
+	const handleSendMessage = useCallback(() => {
+		if (story.teacher?.id) {
+			window.location.href = `/messages/${story.teacher.id}`;
+		}
+	}, [story.teacher?.id]);
+
+	// Check if this is the current user's video
+	const isOwnVideo = currentUserId && story.teacher?.id === currentUserId;
 
     // IntersectionObserver for iOS compatibility - auto play/pause videos based on visibility
 	useEffect(() => {
@@ -127,12 +137,12 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
     return (
         <div className="relative snap-center w-full h-full sm:rounded-[20px]" ref={containerRef}>
 			<StoryPlayer ref={videoRef} story={story} isMuted={isMuted} onToggleSound={toggleSound} isPlaying={isPlaying} onTogglePlay={togglePlay} onVideoUpload={onVideoUpload} userRole={userRole} />
-			<div className="absolute inset-0 z-[1] grid grid-cols-[1fr_max-content] md:grid-cols-1 bg-gradient-to-b from-transparent from-85% to-black/75 sm:rounded-[20px]">
+			<div className="absolute inset-0 z-[3] grid grid-cols-[1fr_max-content] md:grid-cols-1 bg-gradient-to-b from-transparent from-85% to-black/75 sm:rounded-[20px] pointer-events-none">
 				{/* Info section - left column */}
 				<StoryInfo story={story} />
 
 				{/* Actions - right column (solo mobile) */}
-				<div className="flex md:hidden flex-col items-center justify-end gap-6 p-4 pb-6">
+				<div className="flex md:hidden flex-col items-center justify-end gap-6 p-4 pb-6 pointer-events-auto">
 					<IconButton 
 						icon="thumbs-up"
 						label={t('common.likes', { count: likeCount })}
@@ -140,8 +150,15 @@ export function StoryView({ story, index, playing, onVisibilityChange, onVideoUp
 						highlighted={isLiked}
 						onClick={toggleLike}
 					/>
-					<IconButton icon="message-text-square-01" label="Chat" variant="ghost" />
-					<IconButton icon="share-03" label="Share" variant="ghost" onClick={shareVideo} />
+					{!isOwnVideo && (
+						<IconButton 
+							icon="message-text-square-01" 
+							label={t('common.send_message')} 
+							variant="ghost" 
+							onClick={handleSendMessage}
+						/>
+					)}
+					<IconButton icon="share-03" label={t('common.share')} variant="ghost" onClick={shareVideo} />
 				</div>
 			</div>
 		</div>

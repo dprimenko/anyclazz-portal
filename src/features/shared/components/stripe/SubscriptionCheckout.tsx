@@ -9,6 +9,9 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 import { formatPrice } from '../../utils/formatPrice';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
+import { publish } from '@/features/shared/services/domainEventsBus';
+import { SharedDomainEvents } from '@/features/shared/domain/events';
+import { ProgressIndicator } from '@/ui-library/components/progress-indicator/ProgressIndicator';
 
 interface SubscriptionCheckoutProps {
   plan: StripePlan;
@@ -30,7 +33,6 @@ function CheckoutForm({
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
   const { createSubscription } = useCreateSubscription(token);
 
@@ -38,12 +40,16 @@ function CheckoutForm({
     e.preventDefault();
 
     if (!stripe || !elements) {
-      setError('Stripe is not initialized');
+      const errorMessage = 'Stripe is not initialized';
+      publish(SharedDomainEvents.showToast, {
+        message: errorMessage,
+        variant: 'error',
+      });
+      onError(errorMessage);
       return;
     }
 
     setLoading(true);
-    setError(null);
 
     try {
       // Paso 1: Confirmar el SetupIntent con los datos del formulario
@@ -70,18 +76,31 @@ function CheckoutForm({
           throw new Error(t('subscription.failed_to_create_subscription'));
         }
 
-        // Manejar los diferentes estados de la suscripción
-        if (subscription.status === 'active') {
-          // ✅ Suscripción activada exitosamente
-          onSuccess(subscription.subscription_id);
-        } else if (subscription.status === 'incomplete' && subscription.client_secret) {
-          // Algunos casos requieren confirmación adicional (SCA/3D Secure)
+        console.log('Subscription created:', { 
+          status: subscription.status, 
+          requires_action: subscription.requires_action,
+          has_client_secret: !!subscription.client_secret 
+        });
+
+        // Si requiere acción adicional (3DS en el PaymentIntent de la primera factura)
+        if (subscription.requires_action && subscription.client_secret) {
+          console.log('Confirming invoice payment with 3DS...');
           const { error: paymentError } = await stripe.confirmCardPayment(subscription.client_secret);
           
           if (paymentError) {
+            console.error('Payment confirmation failed:', paymentError);
             throw new Error(getStripeErrorMessage(paymentError));
           }
           
+          // Pago completado con 3DS - el webhook activará el super tutor
+          console.log('3DS payment confirmed successfully');
+          onSuccess(subscription.subscription_id);
+          return;
+        }
+
+        // Manejar los diferentes estados de la suscripción cuando NO requiere acción adicional
+        if (subscription.status === 'active' || subscription.status === 'incomplete') {
+          // ✅ Suscripción activada exitosamente (sin 3DS adicional)
           onSuccess(subscription.subscription_id);
         } else if (subscription.requires_payment_method) {
           throw new Error(t('subscription.requires_payment_method'));
@@ -94,7 +113,10 @@ function CheckoutForm({
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      publish(SharedDomainEvents.showToast, {
+        message: errorMessage,
+        variant: 'error',
+      });
       onError(errorMessage);
     } finally {
       setLoading(false);
@@ -103,12 +125,6 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 mt-4">
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <Text colorType="primary" size="text-sm">{error}</Text>
-        </div>
-      )}
-
       {/* PaymentElement de Stripe - soporta card + PayPal automáticamente */}
       <div id="stripe_payment_methods">
         <PaymentElement 
@@ -208,7 +224,12 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : 'Failed to process PayPal payment';
           console.error('Error processing PayPal return:', err);
-          setInitError(errorMessage);
+          
+          // Mostrar error como toast
+          publish(SharedDomainEvents.showToast, {
+            message: errorMessage,
+            variant: 'error',
+          });
           onError(errorMessage);
 
           // Limpiar los parámetros de la URL
@@ -260,10 +281,8 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Text colorType="tertiary">
-          {processingPayPal ? t('subscription.processing_paypal_payment') : t('subscription.initializing_payment')}
-        </Text>
+      <div className="flex items-center justify-center py-6">
+          <ProgressIndicator message={processingPayPal ? t('subscription.processing_paypal_payment') : t('subscription.initializing_payment')} />
       </div>
     );
   }

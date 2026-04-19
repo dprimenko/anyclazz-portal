@@ -8,7 +8,7 @@ import { Chip } from "@/ui-library/components/ssr/chip/Chip";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import type { Teacher, TeacherClassType } from "@/features/teachers/domain/types";
 import { TextWithIcon } from "@/ui-library/components/ssr/text-with-icon/TextWithIcon";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useEffect, useState } from "react";
 import { RectangleSelectionGroup } from "@/ui-library/components/form/rectangle-selection-group/RectangleSelectionGroup";
 import { getClassTypeIcon } from "@/features/teachers/utils/classTypeIcon";
 import { Button } from "@/ui-library/components/ssr/button/Button";
@@ -19,6 +19,7 @@ import { useContext } from "react";
 import { TeachersContext } from "@/features/teachers/providers/TeachersProvider";
 import { useBookingCreator } from "../../hooks/useBookingCreator";
 import type { CreateBookingParams } from "../../domain/types";
+import { useStudentTimezone } from "@/features/user/hooks/useStudentTimezone";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
 import { getLangFromUrl } from "@/i18n";
@@ -36,6 +37,7 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
     const accessToken = accessTokenProp ?? teachersContext?.accessToken ?? '';
 
     const isMobile = useIsMobile();
+    const [isLoading, setIsLoading] = useState(false);
 
     const {
         availableSlots,
@@ -55,6 +57,11 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
         teacher,
         accessToken,
     });
+
+    // Limpiar la hora seleccionada cuando cambia la duración
+    useEffect(() => {
+        setSelectedTime(undefined);
+    }, [selectedDuration, setSelectedTime]);
 
     const t = useTranslations();
     const classes = classNames(styles["booking-creator__container"]);
@@ -88,22 +95,21 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
         ),
     })), [selectedClass, t]);
 
+    const studentTimezone = useStudentTimezone(accessToken);
+
     const availableTimes = useMemo(() => availableSlots.map(({startAt, timezone}) => {
-        // Parsear el ISO manteniendo la zona horaria original del backend
-        const dateTime = fromISOKeepZone(startAt, timezone);
-        const formattedTime = dateTime.toFormat('HH:mm');
-        const timezoneFormat = dateTime.toFormat('ZZZZ');
+        // Convertir al timezone del estudiante
+        const formattedTime = fromISOKeepZone(startAt, timezone).setZone(studentTimezone).toFormat('HH:mm');
         
         return {
             id: startAt,
             children: () => (
                 <div className="flex flex-col gap-0.5 w-full items-center">
                     <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{formattedTime}</Text>
-                    <Text textLevel="span" colorType="tertiary" size="text-xs">{timezoneFormat}</Text>
                 </div>
             ),
         };
-    }), [availableSlots]);
+    }), [availableSlots, studentTimezone]);
 
     const priceAmount = useMemo(() => {
         console.log(selectedClass);
@@ -124,6 +130,8 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
             return;
         }
         
+        setIsLoading(true);
+        
         try {
             // La fecha selectedTime ya viene con timezone incluido en formato ISO8601
             const startAt = DateTime.fromISO(selectedTime);
@@ -141,14 +149,16 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
 
             if (!booking?.id) {
                 console.error('Booking created but no ID returned:', booking);
+                setIsLoading(false);
                 return;
             }
 
             window.location.href = `/booking/checkout/${booking.id}`;
         } catch (error) {
             console.error('Error submitting booking:', error);
+            setIsLoading(false);
         }
-    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken, createBooking]);
+    }, [selectedTime, selectedDuration, selectedClass, teacher, accessToken, createBooking, t]);
 
     return (
         <form ref={formRef} onSubmit={formSubmitHandler} className={classes}>
@@ -250,13 +260,20 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
                         {availableSlots.length > 0 && (
                             <div className="flex flex-col gap-2 w-full">
                                 <Text weight="medium" colorType="primary">{t('booking.available_times')}</Text>
-                                <RectangleSelectionGroup className="flex-row w-full" cnn={{container: "grid grid-cols-3 gap-3"}} items={availableTimes} value={selectedTime} onValueChange={(value) => setSelectedTime(value)} />
+                                <RectangleSelectionGroup 
+                                    key={`times-${selectedDuration}-${selectedDate?.toISOString()}`}
+                                    className="flex-row w-full" 
+                                    cnn={{container: "grid grid-cols-3 gap-3"}} 
+                                    items={availableTimes} 
+                                    value={selectedTime} 
+                                    onValueChange={(value) => setSelectedTime(value)} 
+                                />
                             </div>
                         )}
                     </div>
                     <div className={classNames(actionsClasses, styles['booking-creator__desktop-actions'])}>
-                        <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} />
-                        <Button colorType="primary" label={t('teachers.book-now')} type="submit"/>
+                        <Button colorType="secondary" onlyText label={t('common.cancel')} onClick={onClose} disabled={isLoading} />
+                        <Button colorType="primary" label={t('teachers.book-now')} type="submit" isLoading={isLoading} />
                     </div>
                 </div>
             </div>
@@ -271,7 +288,7 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
                         </div>
                     </div>
                 )}
-                <Button colorType="primary" label={t('teachers.book-now')} type="submit" className="w-full" />
+                <Button colorType="primary" label={t('teachers.book-now')} type="submit" className="w-full" isLoading={isLoading} />
             </div>
         </form>
     );

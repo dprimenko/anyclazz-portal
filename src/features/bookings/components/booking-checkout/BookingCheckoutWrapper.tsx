@@ -13,9 +13,10 @@ interface BookingCheckoutWrapperProps {
   lang?: 'en' | 'es';
   bookingDate?: string; // ISO 8601 - para redirigir a la semana correcta en /me/my-agenda
   bookingId?: string; // Para recargar la booking hasta que la URL de la meeting esté disponible
+  requiresAction?: boolean; // ✨ Indica si el backend detectó que requiere 3DS adicional
 }
 
-export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en', bookingDate, bookingId }: BookingCheckoutWrapperProps) {
+export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en', bookingDate, bookingId, requiresAction = false }: BookingCheckoutWrapperProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
@@ -46,6 +47,7 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
         onSuccess={handleSuccess}
         onError={handleError}
         lang={lang}
+        requiresAction={requiresAction}
       />
 
       {showSuccessModal && (

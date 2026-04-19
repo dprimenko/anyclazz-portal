@@ -2,8 +2,7 @@ import type { TeacherApproval } from "../domain/types";
 import { getCurrentLang, useTranslations } from "@/i18n";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Text } from "@/ui-library/components/ssr/text/Text";
-import { Button } from "@/ui-library/shared/button";
-import { Icon } from "@/ui-library/components/ssr/icon/Icon";
+import { Button } from "@/ui-library/components/ssr/button/Button";
 import { DateTime } from "luxon";
 import { cities } from '@/features/teachers/onboarding/data/cities';
 
@@ -19,8 +18,8 @@ export function TeacherApprovalItemCard({ teacher, onApprove, onReject, isLoadin
     const lang = getCurrentLang();
     
     const formatDate = (dateString: string) => {
-        const dt = DateTime.fromISO(dateString);
-        return dt.toFormat('MMM dd, yyyy \u2013 HH:mm (ZZZZ)');
+        const dt = DateTime.fromISO(dateString, { setZone: true });
+        return dt.toFormat('MMM dd, yyyy \u2013 HH:mm');
     };
 
     const location = teacher.location 
@@ -42,7 +41,7 @@ export function TeacherApprovalItemCard({ teacher, onApprove, onReject, isLoadin
 
     return (
         <div 
-            className="bg-white rounded-2xl p-5 min-w-[280px] flex flex-col gap-4 border border-neutral-200">
+            className="bg-white rounded-2xl p-5 w-full flex flex-col gap-4 border border-neutral-200">
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -81,45 +80,24 @@ export function TeacherApprovalItemCard({ teacher, onApprove, onReject, isLoadin
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
-                <div className="flex flex-row gap-2">
-                    <Button 
-                        size="icon-lg" 
-                        variant="ghost"
-                        onClick={() => window.location.href = `/teacher/${teacher.id}`}
-                        disabled={isLoading}
-                    >
-                        <Icon icon="eye" iconWidth={20} iconHeight={20} />
-                    </Button>
-                    <Button 
-                        size="icon-lg" 
-                        variant="ghost"
-                        onClick={() => window.location.href = `/messages/${teacher.id}`}
-                        disabled={isLoading}
-                    >
-                        <Icon icon="chat" iconWidth={20} iconHeight={20} />
-                    </Button>
-                </div>
+            <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                 <Button 
-                    size="lg" 
-                    variant="default"
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => onApprove(teacher)}
-                    disabled={isLoading}
-                >
-                    <Icon icon="check" iconWidth={16} iconHeight={16} />
-                    {t('common.approve')}
-                </Button>
-                <Button 
-                    size="lg" 
-                    variant="destructive"
-                    className="w-full"
+                    label={t('common.reject')} 
+                    colorType='secondary' 
+                    icon="close" 
+                    iconColor="#A4A7AE" 
+                    fullWidth
                     onClick={() => onReject(teacher)}
                     disabled={isLoading}
-                >
-                    <Icon icon="x" iconWidth={16} iconHeight={16} />
-                    {t('common.reject')}
-                </Button>
+                />
+                <Button 
+                    label={t('common.approve')} 
+                    colorType='primary' 
+                    icon="check" 
+                    fullWidth
+                    onClick={() => onApprove(teacher)}
+                    disabled={isLoading}
+                />
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import { Icon } from '../../../ui-library/components/ssr/icon/Icon';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { getSession } from 'auth-astro/server';
 import { UpgradeSuperTutorBanner } from '@/features/teachers/components/upgrade-supertutor-banner/UpgradeSuperTutorBanner';
+import { UnreadMessagesBadge } from './components/UnreadMessagesBadge';
 
 const { class: className, isDark } = Astro.props;
 const { pathname } = Astro.url;
@@ -14,6 +15,7 @@ const { pathname } = Astro.url;
 const authRepository = new AnyclazzAuthRepository();
 const session = await getSession(Astro.request);
 const user = await authRepository.getCurrentUser(session);
+const accessToken = session?.accessToken as string;
 
 const menuRepository = new LocalMenuRepository();
 let menuItems: MenuItem[] = [];
@@ -59,6 +61,11 @@ const t = useTranslationsSSR(lang);
                                     )}
                                 </div>
                                 <div class="text-base font-semibold menu__item-text">{t(menuItem.label as keyof typeof t)}</div>
+                                {menuItem.showBadge && user?.id && accessToken && (
+                                    <div class="ml-auto">
+                                        <UnreadMessagesBadge accessToken={accessToken} userId={user.id} client:load />
+                                    </div>
+                                )}
                                 {menuItem.subItems?.length && <div class="menu__item-chevron"><Icon icon={isItemSelected(menuItem) ? 'chevron-up' : 'chevron-down'} /></div>}
                             </div>
                             {menuItem.subItems?.length && isItemSelected(menuItem) && 

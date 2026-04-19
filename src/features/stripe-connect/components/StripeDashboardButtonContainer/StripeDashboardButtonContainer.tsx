@@ -22,10 +22,7 @@ export const StripeDashboardButtonContainer: FC<StripeDashboardButtonContainerPr
   const { openDashboard, isProcessing } = useStripeConnectActions(accessToken);
 
   const handleOpenDashboard = async () => {
-    const response = await openDashboard();
-    if (response?.url) {
-      window.open(response.url, '_blank');
-    }
+    window.open("https://dashboard.stripe.com/", '_blank');
   };
 
   return (

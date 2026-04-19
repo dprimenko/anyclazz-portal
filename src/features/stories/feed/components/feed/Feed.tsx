@@ -91,6 +91,15 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 		});
 	}, [currentStory]);
 
+	const handleSendMessage = useCallback(() => {
+		if (currentStory?.teacher?.id) {
+			window.location.href = `/messages/${currentStory.teacher.id}`;
+		}
+	}, [currentStory?.teacher?.id]);
+
+	// Check if current story is from the current user
+	const isOwnVideo = teacherId && currentStory?.teacher?.id === teacherId;
+
 	if (loading) {
 		return (
 			<div className={styles.feed}>
@@ -154,7 +163,8 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 							story={story} 
 							index={index} 
 							playing={(currentIndex - 1) === index} 
-							userRole={userRole} 
+							userRole={userRole}
+							currentUserId={teacherId}
 							onVisibilityChange={handleVideoVisibilityChange} 
 							onVideoUpload={openUploadModal}
 							storyRepository={repository}
@@ -172,7 +182,13 @@ export function Feed({ storyId, accessToken, userRole, teacherId }: FeedProps) {
 					highlighted={isLiked}
 					onClick={toggleLike}
 				/>
-				<IconButton icon="message-text-square-01" label="Send message" />
+				{!isOwnVideo && (
+					<IconButton 
+						icon="message-text-square-01" 
+						label={t('common.send_message')} 
+						onClick={handleSendMessage}
+					/>
+				)}
 				<IconButton icon="share-03" label="Share" onClick={shareVideo}/>
 			</div>
 

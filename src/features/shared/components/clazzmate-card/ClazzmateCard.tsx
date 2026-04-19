@@ -23,7 +23,7 @@ export function ClazzmateCard({ referralLink, friendsInvited, creditsEarned, lan
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const formattedCredits = `€${creditsEarned.toFixed(2).replace('.', ',')}`;
+    const formattedCredits = `$${(creditsEarned ?? 0).toFixed(2)}`;
 
     return (
         <Card bgColor="#FFFFFF" className="p-4">

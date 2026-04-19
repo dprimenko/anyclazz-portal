@@ -13,6 +13,7 @@ export interface SubscriptionResponse {
   client_secret: string | null;
   payment_intent_status?: string | null;
   requires_payment_method?: boolean;
+  requires_action?: boolean;
   is_upgrade?: boolean;
   message?: string;
 }

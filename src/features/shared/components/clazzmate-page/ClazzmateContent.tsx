@@ -89,7 +89,7 @@ export const ClazzmateContent: FC<ClazzmateContentProps> = ({ referralData, invi
                     <Text size="text-sm" colorType="tertiary">{t('clazzmate.available_credits')}</Text>
                     <Space size={8} direction="vertical" />
                     <Text size="text-3xl" weight="semibold" colorType="primary">
-                        €{referralData.available_credits}
+                        ${(referralData.available_credit_amount ?? 0).toFixed(2)}
                     </Text>
                 </Card>
             </div>

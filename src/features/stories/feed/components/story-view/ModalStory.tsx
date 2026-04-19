@@ -7,17 +7,20 @@ import { IconButton } from "@/ui-library/shared";
 import { useCallback } from "react";
 import { useTranslations } from "@/i18n";
 import { useStoryLike } from "../../hooks/useStoryLike";
+import { Control } from "../story-player/Control";
 
 export interface ModalStoryProps {
     story: Story;
     storyRepository: StoryRepository;
     accessToken: string;
     onClose?: () => void;
+    currentUserId?: string;
 }
 
-export function ModalStory({ story, storyRepository, accessToken, onClose }: ModalStoryProps) {
+export function ModalStory({ story, storyRepository, accessToken, onClose, currentUserId }: ModalStoryProps) {
     const t = useTranslations();
     const modalRoot = document.getElementById('portal-root');
+    const isOwnVideo = currentUserId && story.teacher?.id === currentUserId;
 
     // Use the like hook for the story in modal
     const { likeCount, isLiked, isLoading: isLikeLoading, toggleLike } = useStoryLike({
@@ -35,18 +38,23 @@ export function ModalStory({ story, storyRepository, accessToken, onClose }: Mod
 		});
 	}, [story]);
 
+    const handleSendMessage = useCallback(() => {
+        if (story.teacher?.id) {
+            window.location.href = `/messages/${story.teacher.id}`;
+        }
+    }, [story.teacher?.id]);
+
     if (!modalRoot) {
 		return null;
 	}
 
-    const onOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.target instanceof HTMLElement && e.target.classList.value !== e.currentTarget.classList.value) return;
-        onClose?.();
-    }, []);
-
     return ReactDOM.createPortal(
-        <Overlay className="flex items-center justify-center" onClick={onOverlayClick}>
+        <Overlay className="flex items-center justify-center">
              <div className="relative flex flex-col self-center h-full w-full md:aspect-[9/16] md:w-auto md:px-5 py-10">
+                {/* Close button */}
+                <div className="absolute top-[3rem] right-[0.625rem] md:right-[2rem] z-[10]">
+                    <Control icon="close" onClick={onClose} />
+                </div>
                 <StoryView 
                     story={story} 
                     index={0} 
@@ -55,6 +63,7 @@ export function ModalStory({ story, storyRepository, accessToken, onClose }: Mod
                     onVideoUpload={() => {}}
                     storyRepository={storyRepository}
                     accessToken={accessToken}
+                    currentUserId={currentUserId}
                 />
                 {/* Desktop action buttons - centered */}
                 <div className="hidden md:flex absolute top-1/2 right-[-84px] -translate-y-1/2 flex-col gap-6 z-10">
@@ -64,8 +73,14 @@ export function ModalStory({ story, storyRepository, accessToken, onClose }: Mod
                         highlighted={isLiked}
                         onClick={toggleLike}
                     />
-                    <IconButton icon="message-text-square-01" label="Send message" />
-                    <IconButton icon="share-03" label="Share" onClick={shareVideo}/>
+                    {!isOwnVideo && (
+                        <IconButton 
+                            icon="message-text-square-01" 
+                            label={t('common.send_message')} 
+                            onClick={handleSendMessage}
+                        />
+                    )}
+                    <IconButton icon="share-03" label={t('common.share')} onClick={shareVideo}/>
                 </div>
              </div>
         </Overlay>,

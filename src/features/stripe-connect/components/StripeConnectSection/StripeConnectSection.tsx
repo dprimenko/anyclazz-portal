@@ -130,7 +130,8 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
 
   // Overlay de procesamiento: redirigiendo a Stripe o procesando callback OAuth
   const showRedirectingOverlay = isRedirecting;
-  const showProcessingOverlay = isProcessing && !!oauthCode && !oauthProcessed;
+  // Mostrar overlay de processing si hay código OAuth pendiente de procesar O si está procesando
+  const showProcessingOverlay = (!!oauthCode && !!oauthState && !oauthProcessed) || (isProcessing && !!oauthCode);
 
   return (
     <>
@@ -157,7 +158,7 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
       )}
 
       {/* Cuenta NO conectada */}
-      {status && !status.connected && (
+      {status && !status.connected && !successMessage && (
         <Notification 
           colorType="secondary" 
           text={t('stripe.not_connected_description')}

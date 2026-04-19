@@ -20,7 +20,7 @@ const { cancel, loading, error } = useCancelBooking({
     onSuccess: (response) => {
         console.log(response.message);
         if (response.refunded) {
-            console.log(`Reembolso: €${response.refundAmount}`);
+            console.log(`Reembolso: $${response.refundAmount}`);
         }
     },
     onError: (errorMsg) => {

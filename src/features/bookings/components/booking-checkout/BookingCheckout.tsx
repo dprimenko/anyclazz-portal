@@ -6,6 +6,8 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 import { formatPrice } from '@/features/shared/utils/formatPrice';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
+import { publish } from '@/features/shared/services/domainEventsBus';
+import { SharedDomainEvents } from '@/features/shared/domain/events';
 
 interface BookingCheckoutProps {
   clientSecret: string; // ✨ Ahora viene del backend al crear el booking
@@ -14,35 +16,57 @@ interface BookingCheckoutProps {
   onSuccess: () => void;
   onError: (error: string) => void;
   lang?: 'en' | 'es';
+  requiresAction?: boolean; // ✨ Indica si el backend detectó que requiere 3DS adicional
 }
 
 // Componente interno que usa el PaymentElement y confirma el pago
 function CheckoutForm({ 
+  clientSecret,
   amount,
   currency,
   onSuccess, 
   onError, 
-  lang = 'en' 
+  lang = 'en',
+  requiresAction = false
 }: BookingCheckoutProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const t = useTranslations({ lang });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      setError('Stripe is not initialized');
+      const errorMessage = 'Stripe is not initialized';
+      publish(SharedDomainEvents.showToast, {
+        message: errorMessage,
+        variant: 'error',
+      });
+      onError(errorMessage);
       return;
     }
 
     setLoading(true);
-    setError(null);
 
     try {
-      // Confirmar el pago con Stripe
+      // Si el backend ya detectó que requiere acción adicional (3DS)
+      if (requiresAction && clientSecret) {
+        console.log('Payment requires action, confirming with 3DS...');
+        const { error: paymentError } = await stripe.confirmCardPayment(clientSecret);
+        
+        if (paymentError) {
+          console.error('3DS confirmation failed:', paymentError);
+          throw new Error(getStripeErrorMessage(paymentError));
+        }
+        
+        // Pago completado con 3DS - el webhook actualizará la reserva
+        console.log('Payment confirmed with 3DS successfully');
+        onSuccess();
+        return;
+      }
+
+      // Flujo normal: confirmar el pago con Stripe
       const { error: confirmError } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -60,7 +84,10 @@ function CheckoutForm({
       onSuccess();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      publish(SharedDomainEvents.showToast, {
+        message: errorMessage,
+        variant: 'error',
+      });
       onError(errorMessage);
     } finally {
       setLoading(false);
@@ -69,12 +96,6 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 mt-4">
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <Text colorType="primary" size="text-sm">{error}</Text>
-        </div>
-      )}
-
       {/* PaymentElement de Stripe - soporta card + PayPal automáticamente */}
       <div id="stripe_payment_methods">
         <PaymentElement 
@@ -104,7 +125,7 @@ function CheckoutForm({
 }
 
 // Componente principal que recibe el clientSecret del backend
-export function BookingCheckout({ clientSecret, amount, currency, onSuccess, onError, lang = 'en' }: BookingCheckoutProps) {
+export function BookingCheckout({ clientSecret, amount, currency, onSuccess, onError, lang = 'en', requiresAction = false }: BookingCheckoutProps) {
   const publishableKey = "pk_test_51SdvZdRpuaFax7XpwLl84SqWauVhApPg4eCmdm9BzdbTzK2vQBzACLJ5jTcqFuD0Wsrl3vXW8QXaYy0VHio1mAlq00zmj0s5ot";
   
   if (!publishableKey) {
@@ -153,6 +174,7 @@ export function BookingCheckout({ clientSecret, amount, currency, onSuccess, onE
         currency={currency}
         onSuccess={onSuccess} 
         onError={onError}
+        requiresAction={requiresAction}
       />
     </Elements>
   );

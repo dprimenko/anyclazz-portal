@@ -8,6 +8,9 @@ import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Card } from '@/ui-library/components/ssr/card/Card';
 import { formatPrice } from '../../utils/formatPrice';
 import { useTranslations } from '@/i18n';
+import { publish } from '@/features/shared/services/domainEventsBus';
+import { SharedDomainEvents } from '@/features/shared/domain/events';
+import { ProgressIndicator } from '@/ui-library/components/progress-indicator/ProgressIndicator';
 
 interface SubscriptionCheckoutPageProps {
   interval: 'week' | 'month' | 'year';
@@ -18,7 +21,7 @@ interface SubscriptionCheckoutPageProps {
 export function SubscriptionCheckoutPage({ interval, accessToken, lang }: SubscriptionCheckoutPageProps) {
   const [plan, setPlan] = useState<StripePlan | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const t = useTranslations({ lang });
 
   console.log('SubscriptionCheckoutPage mounted', { interval, accessToken: accessToken?.substring(0, 20), lang });
@@ -29,14 +32,14 @@ export function SubscriptionCheckoutPage({ interval, accessToken, lang }: Subscr
     async function loadPlan() {
       try {
         setLoading(true);
-        setError(null);
+        setLoadError(null);
         console.log('Loading plan:', interval);
         const planData = await getSuperTutorPlan(accessToken, interval);
         console.log('Plan loaded:', planData);
         setPlan(planData);
       } catch (err) {
         console.error('Error loading plan:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load plan');
+        setLoadError(err instanceof Error ? err.message : 'Failed to load plan');
       } finally {
         setLoading(false);
       }
@@ -57,21 +60,25 @@ export function SubscriptionCheckoutPage({ interval, accessToken, lang }: Subscr
   }
 
   function handleError(errorMessage: string) {
-    setError(errorMessage);
+    // Mostrar error como toast en lugar de ocultar el formulario
+    publish(SharedDomainEvents.showToast, {
+      message: errorMessage,
+      variant: 'error',
+    });
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 text-center">
-        <Text colorType="tertiary">{t('subscription.loading')}</Text>
+      <div className="flex items-center justify-center py-12">
+          <ProgressIndicator message={t('common.loading')} />
       </div>
     );
   }
-
-  if (error || !plan) {
+  
+  if (loadError || !plan) {
     return (
       <div className="flex items-center justify-center p-12 text-center">
-        <Text colorType="primary">{error || t('subscription.failed_to_load_data')}</Text>
+        <Text colorType="primary">{loadError || t('subscription.failed_to_load_data')}</Text>
       </div>
     );
   }

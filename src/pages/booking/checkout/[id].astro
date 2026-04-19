@@ -48,12 +48,30 @@ if (!booking.payment?.clientSecret) {
     return Astro.redirect('/teachers');
 }
 
+// Obtener preview de precio (descuento Clazzmate si aplica)
+let paymentPreview = null;
+try {
+    paymentPreview = await teacherRepository.getBookingPaymentPreview({
+        token: accessToken,
+        bookingId: id,
+    });
+} catch (e) {
+    // Si falla el preview no bloqueamos el checkout
+    console.warn('Could not fetch payment preview:', e);
+}
+
+const referralDiscount = paymentPreview?.referral_discount ?? null;
+
+const studentTimezone = user?.timezone ?? null;
+
 const dateFormatted = (datetime: string) => {
-	return DateTime.fromISO(datetime).toLocaleString(DateTime.DATE_FULL);
+	const dt = DateTime.fromISO(datetime, { setZone: true });
+	return (studentTimezone ? dt.setZone(studentTimezone) : dt).toLocaleString(DateTime.DATE_FULL);
 };
 
 const timeFormatted = (datetime: string) => {
-	return DateTime.fromISO(datetime).toFormat('HH:mm ZZZZ')
+	const dt = DateTime.fromISO(datetime, { setZone: true });
+	return (studentTimezone ? dt.setZone(studentTimezone) : dt).toFormat('HH:mm');
 };
 
 const durationFormatted = (startAt: string, endAt: string) => {
@@ -148,10 +166,16 @@ const getProficiencyLevelName = (code: string) => {
 							<Text>{t(`classtype.${booking.classTypeId}`)}</Text>
 							<Text colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: booking.payment.amount.toFixed(2) })}</Text>
 						</div>
+						{referralDiscount && (
+							<div class="flex flex-row justify-between">
+								<Text colorType="accent" weight="medium">{t('clazzmate.discount')} (-{referralDiscount.discount_percent}%)</Text>
+								<Text colorType="accent" weight="medium">-{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: referralDiscount.discount_amount.toFixed(2) })}</Text>
+							</div>
+						)}
 						<Divider />
 						<div class="flex flex-row justify-between">
 								<Text>{t('common.total')}</Text>
-								<Text weight="medium" size="text-lg" colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: booking.payment.amount.toFixed(2) })}</Text>
+								<Text weight="medium" size="text-lg" colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: (referralDiscount ? referralDiscount.charged_amount : booking.payment.amount).toFixed(2) })}</Text>
 						</div>
 					</div>
 				</div>
@@ -163,7 +187,7 @@ const getProficiencyLevelName = (code: string) => {
 						clientSecret={booking.payment.clientSecret}
 						amount={booking.payment.amount}
 						currency={booking.payment.currency}
-
+						requiresAction={booking.payment.requiresAction}
 						lang={lang}
 						bookingDate={booking.startAt}
 						bookingId={id}

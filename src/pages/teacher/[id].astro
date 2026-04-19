@@ -12,6 +12,7 @@ import { Button } from "@/ui-library/components/ssr/button/Button";
 import { ClassTypes } from "@/features/teachers/components/class-types/ClassTypes";
 import { TeacherDetail } from "@/features/teachers/teacher-detail/components/TeacherDetail.tsx";
 import { TeacherBookingButton } from "@/features/teachers/teacher-detail/components/TeacherBookingButton.tsx";
+import { TeacherActionButtons } from "@/features/teachers/teacher-detail/components/TeacherActionButtons.tsx";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
 import { getSession } from 'auth-astro/server';
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
@@ -217,11 +218,17 @@ const backButtonText = isTeacher ? t('teachers.back-to-my-profile') : t('teacher
             <div class="block md:hidden">
                 <div class="flex flex-col md:flex-col-reverse gap-4">
                     {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} lang={lang} client:load />}
-                    <div class="flex flex-row gap-3 w-full">
-                        <Button colorType="secondary" size="lg" icon="heart-outline" />
-                        <Button colorType="secondary" size="lg" icon="chat" />
-                        <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
-                    </div>
+                    {!isTeacher && (
+                        <div class="flex flex-row gap-3 w-full">
+                            <TeacherActionButtons 
+                                teacherId={teacher.id} 
+                                accessToken={accessToken} 
+                                initialSavedAt={teacher.savedAt} 
+                                client:load 
+                            />
+                            <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -238,11 +245,17 @@ const backButtonText = isTeacher ? t('teachers.back-to-my-profile') : t('teacher
         <div class="hidden md:block md:w-[320px] md:flex-shrink-0">
             <div class="sticky top-6">
                 <div class="flex flex-col gap-4">
-                    <div class="flex flex-row gap-3 w-full">
-                        <Button colorType="secondary" size="lg" icon="heart-outline" />
-                        <Button colorType="secondary" size="lg" icon="chat" />
-                        <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
-                    </div>
+                    {!isTeacher && (
+                        <div class="flex flex-row gap-3 w-full">
+                            <TeacherActionButtons 
+                                teacherId={teacher.id} 
+                                accessToken={accessToken} 
+                                initialSavedAt={teacher.savedAt} 
+                                client:load 
+                            />
+                            <TeacherBookingButton teacher={teacher as unknown as Teacher} accessToken={accessToken} client:only="react" />
+                        </div>
+                    )}
                     {hasConfiguredPrices && <ClassTypes classTypes={teacher.classTypes} lang={lang} client:load />}
                 </div>
             </div>
