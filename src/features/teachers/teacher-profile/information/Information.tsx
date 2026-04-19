@@ -169,7 +169,7 @@ export function Information({ teacher, accessToken, repository }: { teacher: Tea
                     <Button 
                         type="submit"
                         colorType="primary"
-                        disabled={isSaving}
+                        isLoading={isSaving}
                         label={isSaving ? t('common.saving') : t('common.save')}
                     />
                 </div>

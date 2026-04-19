@@ -13,15 +13,17 @@ export function Hero() {
             <div className="flex flex-col items-center justify-center gap-6">
                 <div className="max-w-[72ch]">
                     <Text colorType="primary" weight="semibold" textLevel="h1" className="!text-3xl md:!text-6xl" textalign="center">
-                        Master Any Subject With Expert Teachers
+                        Teach what you know. Get paid the moment it's done.
                     </Text>
                 </div>
                 <div className="max-w-[64ch]">
-                    <Text colorType="tertiary" textLevel="h3" textalign="center" className="!text-lg md:!text-xl">Connect with passionate educators across all subjects. Learn online, in-person, or in groups with personalized attention.</Text>
+                    <Text colorType="tertiary" textLevel="h3" textalign="center" className="!text-lg md:!text-xl">Post a short intro video. Students across the US discover you and book directly. Instant payout after every class — no waiting, no chasing. Finally, a platform built around the teacher.</Text>
                 </div>
                 <div className="flex flex-col md:flex-row justify-center gap-3 mt-5 w-full md:w-auto md:mt-6">
-                    <Button label='Start Learning Today' colorType='primary' size='xl' className="shrink-0 w-full md:w-auto" />
-                    <Button label='Watch Demo' colorType='secondary' size='xl' className="shrink-0 w-full md:w-auto" icon="play-circle" />
+                    <a href="/api/auth/keycloak-register?role=teacher" className="shrink-0 w-full md:w-auto">
+                        <Button label='Create your free teacher profile' colorType='primary' size='xl' className="w-full" />
+                    </a>
+                    {/* <Button label='Watch Demo' colorType='secondary' size='xl' className="shrink-0 w-full md:w-auto" icon="play-circle" /> */}
                 </div>
             </div>
             <Space size={64} direction="vertical" />
@@ -58,44 +60,44 @@ export function Hero() {
                 </div>
                 <div className="grow-1 flex flex-col w-full">
                     <Text colorType="primary" weight="semibold" textLevel="h2" className="!text-3xl md:!text-5xl max-w-[18ch]">
-                        A Growing Global Learning Community
+                        Students are already here. Now it's your turn.
                     </Text>
                     <Space size={20} direction="vertical" />
                     <Text colorType="tertiary" textLevel="h4" size="text-lg">
-                        Thousands of students and teachers around the world are already connecting through AnyClazz to share knowledge, skills, and experiences — one lesson at a time.
+                        Anyclazz launches now in the United States — with a student base ready and waiting. The platform is built to get teachers booked fast, paid instantly, and growing without the friction of every other platform you've tried.
                     </Text>
                     <Space size={64} direction="vertical" />
                     <div className="grid md:grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 md:gap-x-20 md:gap-y-12">
                         <div className="flex flex-col gap-2">
                             <Text colorType="accent" weight="semibold" className="!text-4xl md:!text-5xl">
-                                50,000+
-                            </Text>
-                            <Text colorType="primary" weight="medium" className="!text-sm md:!text-base">
-                                Expert Teachers
-                            </Text>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <Text colorType="accent" weight="semibold" className="!text-4xl md:!text-5xl">
-                                500,000+
-                            </Text>
-                            <Text colorType="primary" weight="medium" className="!text-sm md:!text-base">
-                                Happy Students
-                            </Text>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <Text colorType="accent" weight="semibold" className="!text-4xl md:!text-5xl">
                                 180+
                             </Text>
                             <Text colorType="primary" weight="medium" className="!text-sm md:!text-base">
-                                Subjects Taught
+                                Subjects with active student demand
                             </Text>
                         </div>
                         <div className="flex flex-col gap-2">
                             <Text colorType="accent" weight="semibold" className="!text-4xl md:!text-5xl">
-                                95%
+                                &lt;1 min
                             </Text>
                             <Text colorType="primary" weight="medium" className="!text-sm md:!text-base">
-                                Success Rate
+                                Time to receive payment after your class ends
+                            </Text>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <Text colorType="accent" weight="semibold" className="!text-4xl md:!text-5xl">
+                                3
+                            </Text>
+                            <Text colorType="primary" weight="medium" className="!text-sm md:!text-base">
+                                Ways to teach: 1-on-1, group, in person
+                            </Text>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <Text colorType="accent" weight="semibold" className="!text-4xl md:!text-5xl">
+                                $0
+                            </Text>
+                            <Text colorType="primary" weight="medium" className="!text-sm md:!text-base">
+                                Cost to join and create your profile
                             </Text>
                         </div>
                     </div>

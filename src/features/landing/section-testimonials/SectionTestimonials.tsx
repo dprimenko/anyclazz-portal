@@ -84,10 +84,10 @@ export function SectionTestimonials() {
             <div className="container m-auto px-4">
                 <div className="flex flex-col gap-4 mb-12">
                     <Text colorType="primary" weight="semibold" textLevel="h2" className="!text-3xl md:!text-4xl">
-                        What Our Students Say
+                        Students are ready. Teachers make it happen.
                     </Text>
                     <Text colorType="tertiary" className="!text-base md:!text-lg">
-                        Real stories from students who achieved their goals
+                        Behind every student result is a teacher who showed up. These are the people you'd be teaching.
                     </Text>
                 </div>
                 

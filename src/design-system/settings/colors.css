@@ -30,4 +30,19 @@
   --color-primary-800: #E0921F;
   --color-primary-900: #B8761A;
   --color-primary-1000: #8F5A14;
+
+  /* Success Colors */
+  --color-success-100: #00C951;
+  --color-success-200: #00A63E;
+  --color-success-300: #016630;
+
+  /* Error Colors */
+  --color-error-100: #FB2C36;
+  --color-error-200: #E7000B;
+  --color-error-300: #C10007;
+
+  /* Warning Colors */
+  --color-warning-100: #E17100;
+  --color-warning-200: #BB4D00;
+  --color-warning-300: #7B3306;
 }

@@ -8,6 +8,9 @@ import { TeacherAvailabilityRepository } from "../infrastructure/TeacherAvailabi
 import { TeacherModalitiesRepository } from "../infrastructure/TeacherModalitiesRepository";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { useTranslations } from '@/i18n';
+import { publish } from '@/features/shared/services/domainEventsBus';
+import { SharedDomainEvents } from '@/features/shared/domain/events';
+import type { ToastProps } from '@/ui-library/components/toast/types';
 
 export interface AvailabilityAndModalitiesManagerProps {
     teacher: Teacher;
@@ -41,26 +44,20 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
     }, [teacher.id, accessToken]);
 
     const handleModalitiesChange = (modalities: TeacherClassType[]) => {
-        console.log('Selected modalities:', modalities);
         setSelectedModalities(modalities);
     };
 
     const handleAvailabilityChange = (availability: DayAvailability[]) => {
-        console.log('Selected availability:', availability);
         setSelectedAvailability(availability);
     };
 
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            // Guardar modalidades
             if (selectedModalities.length > 0) {
                 await modalitiesRepo.saveClassTypes(teacher.id, selectedModalities, accessToken);
             }
-
-            console.log('Selected availability to save:', selectedAvailability);
             
-            // Guardar disponibilidad usando la zona horaria del profesor
             if (selectedAvailability.length > 0) {
                 await availabilityRepo.saveAvailability(
                     teacher.id,
@@ -70,16 +67,22 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                 );
             }
             
-            console.log('Configuration saved successfully');
+            publish<ToastProps>(SharedDomainEvents.showToast, {
+                message: t('teacher-profile.availability_modalities_save_success'),
+                variant: 'success',
+            });
         } catch (error) {
-            console.error('Failed to save configuration:', error);
+            publish<ToastProps>(SharedDomainEvents.showToast, {
+                message: t('teacher-profile.availability_modalities_save_error'),
+                variant: 'error',
+            });
         } finally {
             setIsSaving(false);
         }
     };
 
     return (
-        <div className="mt-6 flex flex-col gap-8">
+        <div className="mt-6 flex flex-col gap-8" suppressHydrationWarning>
             <div className="flex flex-col gap-[2px]">
                 <Text size="text-lg" weight="semibold" colorType="primary">{t('teacher-profile.set_availability_modalities')}</Text>
                 <Text size="text-md" colorType="tertiary">{t('teacher-profile.set_availability_modalities_description')}</Text>
@@ -102,7 +105,7 @@ export function AvailabilityAndModalitiesManager({ teacher, accessToken }: Avail
                 <Button 
                     onClick={handleSave}
                     colorType="primary"
-                    disabled={isSaving}
+                    isLoading={isSaving}
                     label={isSaving ? t('common.saving') : t('common.save')}
                 />
             </div> 

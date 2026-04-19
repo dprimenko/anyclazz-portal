@@ -116,28 +116,6 @@ export default function OnboardingStep4({ lang, teacherId, token, initialData }:
                 />
             </div>
 
-            {/* Terms and Conditions */}
-            {/* <div className="mb-8 flex items-start gap-3">
-                <input
-                    type="checkbox"
-                    id="terms"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-2 border-[var(--color-neutral-300)] text-[var(--color-primary-700)] focus:ring-2 focus:ring-[var(--color-primary-700)] focus:ring-offset-0 cursor-pointer"
-                />
-                <label htmlFor="terms" className="text-sm text-[var(--color-neutral-700)] cursor-pointer">
-                    {t('onboarding.terms.agree')}{' '}
-                    <a 
-                        href="about:blank" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-[var(--color-primary-700)] underline hover:text-[var(--color-primary-800)]"
-                    >
-                        {t('onboarding.terms.link')}
-                    </a>
-                </label>
-            </div> */}
-
             <label className="mb-8 flex items-center gap-3 cursor-pointer">
                 <Checkbox
                     id="terms"
@@ -147,7 +125,7 @@ export default function OnboardingStep4({ lang, teacherId, token, initialData }:
                 <Text textLevel='span' weight="medium" size="text-md" className="user-select-none">
                     {t('onboarding.terms.agree')}{' '}
                     <a 
-                        href="about:blank" 
+                        href="/legal/terms-and-conditions" 
                         target="_blank" 
                         rel="noopener noreferrer"
                     >

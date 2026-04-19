@@ -214,6 +214,7 @@ export default {
     'teachers.view-profile': 'Ver perfil',
     'teachers.book-now': 'Reservar ahora',
     'teachers.back-to-teachers': 'volver a profesores',
+    'teachers.back-to-my-profile': 'volver a mi perfil',
     'teachers.class-types-pricing': 'Tipo de clase y precios:',
     'teachers.no_results': 'No pudimos encontrar profesores que coincidan con tu búsqueda. Intenta ajustar tus filtros o usar diferentes palabras clave.',
     'teachers.any_price': 'Cualquier precio',
@@ -349,6 +350,8 @@ export default {
     'teacher-profile.no_videos_description': 'Este profesor aún no ha compartido ningún video',
     'teacher-profile.set_availability_modalities': 'Configura tu Disponibilidad y Modalidades',
     'teacher-profile.set_availability_modalities_description': 'Gestiona tus formatos de enseñanza, disponibilidad y precios de lecciones, todo en un solo lugar. Selecciona cómo enseñas, cuándo estás disponible y la duración de tus lecciones. Los precios se ajustarán automáticamente según los formatos y duraciones que establezcas. Puedes actualizar esto en cualquier momento si tu horario o preferencias cambian.',
+    'teacher-profile.availability_modalities_save_success': 'Tu disponibilidad y modalidades se han guardado correctamente',
+    'teacher-profile.availability_modalities_save_error': 'No se pudo guardar la configuración. Por favor, inténtalo de nuevo',
     'teacher-profile.class_modality': 'Modalidad de clase',
     'teacher-profile.choose_available_days': 'Elige tus días y horarios disponibles',
     'teacher-profile.add_time_ranges': 'Añade uno o más rangos de horario para cada día que enseñes.',
@@ -638,7 +641,7 @@ export default {
     'common.status': 'Estado',
 
     // Landing
-    'landing.ready.title': '¿Listo para empezar a aprender?',
-    'landing.ready.subtitle': 'Únete a miles de estudiantes que ya están alcanzando sus objetivos con enseñanza personalizada.',
-    'landing.ready.cta': 'Empezar',
+    'landing.ready.title': 'En cualquier momento. Anyclazz.',
+    'landing.ready.subtitle': 'Gratis unirse. Perfil en vivo en 10 minutos. Pagado instantáneamente después de cada clase. La única pregunta es: ¿qué estás esperando?',
+    'landing.ready.cta': 'Crea tu perfil de profesor gratis',
 }

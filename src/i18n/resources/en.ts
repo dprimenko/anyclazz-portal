@@ -210,6 +210,7 @@ export default {
     'teachers.book': 'Book',
     'teachers.book-now': 'Book now',
     'teachers.back-to-teachers': 'back to teachers',
+    'teachers.back-to-my-profile': 'back to my profile',
     'teachers.class-types-pricing': 'Class type & prices:',
     'teachers.no_results': 'We couldn\'t find any teachers that match your search. Try adjusting your filters or using different keywords.',
     'teachers.any_price': 'Any price',
@@ -347,6 +348,8 @@ export default {
     'teacher-profile.no_videos_description': 'This teacher hasn\'t shared any videos yet',
     'teacher-profile.set_availability_modalities': 'Set Your Availability & Modalities',
     'teacher-profile.set_availability_modalities_description': 'Manage your teaching formats, availability, and lesson pricing — all in one place. Select how you teach, when you\'re available, and the duration of your lessons. Prices will automatically adjust based on the formats and durations you set. You can update this anytime if your schedule or preferences change.',
+    'teacher-profile.availability_modalities_save_success': 'Your availability and modalities have been saved successfully',
+    'teacher-profile.availability_modalities_save_error': 'Could not save settings. Please try again',
     'teacher-profile.class_modality': 'Class modality',
     'teacher-profile.choose_available_days': 'Choose your available days and times',
     'teacher-profile.add_time_ranges': 'Add one or more time ranges for each day you teach.',
@@ -636,7 +639,7 @@ export default {
     'common.status': 'Status',
 
     // Landing
-    'landing.ready.title': 'Ready to Start Learning?',
-    'landing.ready.subtitle': 'Join thousands of students who are already achieving their goals with personalized teaching.',
-    'landing.ready.cta': 'Get Started',
+    'landing.ready.title': 'Anytime. Anyclazz.',
+    'landing.ready.subtitle': 'Free to join. Profile live in 10 minutes. Paid instantly after every class. The only question is — what are you waiting for?',
+    'landing.ready.cta': 'Create your free teacher profile',
 }

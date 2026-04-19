@@ -11,23 +11,23 @@ export function SectionWorks() {
     const steps = [
         {
             id: 1,
-            label: "Step 1",
-            title: "Choose Your Subject",
-            description: "Browse our extensive catalog of subjects and find the perfect match for your learning goals.",
+            label: "STEP 1",
+            title: "Create your profile — free, takes 10 minutes",
+            description: "Add your subject, experience, and rates. No approval wait. You're live as soon as you finish.",
             image: getImageUrl(worksImage1WebP)
         },
         {
             id: 2,
-            label: "Step 2",
-            title: "Connect with a Teacher",
-            description: "Review teacher profiles, ratings, and experience to select the perfect educator for your needs.",
+            label: "STEP 2",
+            title: "Post your intro video",
+            description: "30–60 seconds on your phone. Students browse teacher videos like a feed — yours is how they find and choose you.",
             image: getImageUrl(worksImage2WebP)
         },
         {
             id: 3,
-            label: "Step 3",
-            title: "Start Learning",
-            description: "Begin your personalized learning journey with flexible scheduling and interactive lessons.",
+            label: "STEP 3",
+            title: "Teach and get paid — instantly",
+            description: "Class ends. Payment hits your account. No pending, no chasing, no waiting. Every single time.",
             image: getImageUrl(worksImage3WebP)
         }
     ];
@@ -71,16 +71,13 @@ export function SectionWorks() {
     return (
         <div className="container m-auto flex flex-col w-full px-4 gap-12 py-16 md:py-24 md:gap-24" data-testid="section-works">
             <div className="flex flex-col">
-                <Text colorType="accent" weight="semibold" className="!text-sm md:!text-base">
-                    How AnyClazz Works
-                </Text>
                 <Space size={12} direction="vertical" />
                 <Text colorType="primary" weight="semibold" textLevel="h2" className="!text-3xl md:!text-4xl">
-                    From Choosing a Subject to Your First Lesson
+                    From sign-up to first booking — faster than you'd expect.
                 </Text>
                 <Space size={16} direction="vertical" />
                 <Text colorType="tertiary" className="!text-base md:!text-lg max-w-[50ch]">
-                    Spend smarter, lower your bills, get cashback on everything you buy, and unlock credit to grow your business.
+                    No approval process. No cold outreach. No waiting days to see your money. Here's how it works from the moment you join.
                 </Text>
             </div>
             <div className="flex flex-col md:flex-row md:items-center gap-12 md:gap-16">

@@ -130,14 +130,14 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
     const CLASS_MODALITY_OPTIONS = getClassModalityOptions(t);
     
     return (
-        <div className="flex flex-col md:flex-row gap-4 md:flex-grow-[0.25]">
+        <div className="flex flex-col md:flex-row gap-4 md:flex-grow-[0.25]" suppressHydrationWarning>
             <div className="flex flex-col gap-1 w-[312px]">
                 <Text textLevel="h3" size="text-sm" weight="semibold" colorType="primary">
                     {t('teacher-profile.class_modality')} <span className="text-[#F4A43A]">*</span>
                 </Text>
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-grow-[0.5]">
+            <div className="flex flex-col gap-3 md:flex-grow-[0.5]" suppressHydrationWarning>
                 {CLASS_MODALITY_OPTIONS.map((option) => {
                     const checked = isSelected(option.id);
                     
@@ -150,6 +150,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                                     ? "border-[#F4A43A] border-2" 
                                     : "border-[#E9EAEB] bg-white"
                             )}
+                            suppressHydrationWarning
                         >
                             <label className="flex items-start gap-3 cursor-pointer">
                                 <Checkbox
@@ -171,7 +172,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                             {/* Pricing Inputs */}
                             {checked && (
                                 <div className="flex flex-col gap-3 pl-8 pt-2" suppressHydrationWarning>
-                                    <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
+                                    <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg" suppressHydrationWarning>
                                         <Text textLevel="span" size="text-md" weight="medium" colorType="primary">
                                             {t('teacher-profile.minutes_lesson', { minutes: 30 })}
                                         </Text>
@@ -187,6 +188,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                                                 decimalScale={2}
                                                 fixedDecimalScale={false}
                                                 thousandSeparator={false}
+                                                suppressHydrationWarning
                                             />
                                             <Text textLevel="span" size="text-md" colorType="tertiary">
                                                 $
@@ -194,7 +196,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
+                                    <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg" suppressHydrationWarning>
                                         <Text textLevel="span" size="text-md" weight="medium" colorType="primary">
                                             {t('teacher-profile.minutes_lesson', { minutes: 60 })}
                                         </Text>
@@ -210,6 +212,7 @@ export function ClassModalitySelector({ selectedClassTypes = [], onChange }: Cla
                                                 decimalScale={2}
                                                 fixedDecimalScale={false}
                                                 thousandSeparator={false}
+                                                suppressHydrationWarning
                                             />
                                             <Text textLevel="span" size="text-md" colorType="tertiary">
                                                 $

@@ -203,7 +203,7 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
                     <Button 
                         type="submit"
                         colorType="primary"
-                        disabled={isSaving}
+                        isLoading={isSaving}
                         label={isSaving ? t('common.saving') : t('common.save')}
                     />
                 </div> 

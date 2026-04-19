@@ -30,6 +30,7 @@ if (!id) {
 
 const session = await getSession(Astro.request);
 const accessToken = session?.accessToken as string;
+const userRole = (session as any)?.userRole || 'student';
 
 if (!accessToken) {
     return Astro.redirect('/login');
@@ -54,6 +55,11 @@ const hasConfiguredPrices = teacher.classTypes.some(classType =>
     classType.durations.some(duration => duration.price.amount)
 );
 
+// Determinar texto y enlace del botón de retorno según el rol
+const isTeacher = userRole === 'teacher';
+const backButtonHref = isTeacher ? '/profile' : '/teachers';
+const backButtonText = isTeacher ? t('teachers.back-to-my-profile') : t('teachers.back-to-teachers');
+
 ---
 
 <Main>
@@ -64,14 +70,14 @@ const hasConfiguredPrices = teacher.classTypes.some(classType =>
             class="w-full h-[170px] object-cover rounded-xl"
         />
         
-        <!-- Back to teachers button -->
+        <!-- Back button -->
         <div class="absolute top-6 left-6">
             <a 
-                href="/teachers" 
+                href={backButtonHref}
                 class="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-md hover:bg-white transition-colors"
             >
                 <Icon icon="arrow-left" iconWidth={20} iconHeight={20} />
-                <Text size="text-sm" weight="medium" colorType="primary">{t('teachers.back-to-teachers')}</Text>
+                <Text size="text-sm" weight="medium" colorType="primary">{backButtonText}</Text>
             </a>
         </div>
 

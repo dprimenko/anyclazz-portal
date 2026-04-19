@@ -20,7 +20,7 @@ export function SectionReady({ lang }: SectionReadyProps) {
                 </Text>
             </div>
             <div className="flex justify-center mt-11">
-                <a href="/api/auth/keycloak-register?role=student">
+                <a href="/api/auth/keycloak-register?role=teacher">
                     <Button label={t('landing.ready.cta')} colorType="secondary" size="lg" />
                 </a>
             </div>

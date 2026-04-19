@@ -6,6 +6,7 @@ import { Avatar } from '@/ui-library/components/ssr/avatar/Avatar';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { AnyclazzAuthRepository } from '../features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { getSession } from 'auth-astro/server';
+import { ToastContainer } from '@/ui-library/components/toast/ToastContainer';
 
 const logo = '/images/logo.svg';
 const loggedUser = new AnyclazzAuthRepository();
@@ -40,6 +41,7 @@ const user = await loggedUser.getCurrentUser(await getSession(Astro.request));
             </div>
         </header>
         <main class='main__container'>
+            <ToastContainer client:load />
             <slot/>
         </main>
     </div>
