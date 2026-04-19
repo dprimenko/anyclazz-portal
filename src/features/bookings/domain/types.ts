@@ -26,6 +26,7 @@ export interface BookingWithTeacher extends Booking {
         paymentIntentId: string;
         status?: string;
         requiresAction?: boolean;
+        referral_discount?: IReferralDiscount | null;
     };
 }
 

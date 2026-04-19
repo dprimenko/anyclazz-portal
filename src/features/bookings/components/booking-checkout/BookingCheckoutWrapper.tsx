@@ -51,7 +51,7 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
       />
 
       {showSuccessModal && (
-        <Modal width={480} persistent>
+        <Modal width={480} persistent fitContent>
           <div className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl gap-6">
             <div className="w-[48px] h-[48px] bg-[#FFF4E7] rounded-full flex items-center justify-center">
               <Icon icon="check-rounded" iconWidth={20} iconHeight={20} />

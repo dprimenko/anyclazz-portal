@@ -124,6 +124,7 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
                 ...data['payment'],
                 clientSecret: data['payment'].clientSecret ?? data['payment'].client_secret,
                 paymentIntentId: data['payment'].paymentIntentId ?? data['payment'].payment_intent_id,
+                referral_discount: data['payment'].referral_discount ?? null,
             };
         }
 

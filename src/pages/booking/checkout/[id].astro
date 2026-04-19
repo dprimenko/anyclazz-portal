@@ -48,19 +48,7 @@ if (!booking.payment?.clientSecret) {
     return Astro.redirect('/teachers');
 }
 
-// Obtener preview de precio (descuento Clazzmate si aplica)
-let paymentPreview = null;
-try {
-    paymentPreview = await teacherRepository.getBookingPaymentPreview({
-        token: accessToken,
-        bookingId: id,
-    });
-} catch (e) {
-    // Si falla el preview no bloqueamos el checkout
-    console.warn('Could not fetch payment preview:', e);
-}
-
-const referralDiscount = paymentPreview?.referral_discount ?? null;
+const referralDiscount = booking.payment.referral_discount ?? null;
 
 const studentTimezone = user?.timezone ?? null;
 
@@ -164,7 +152,7 @@ const getProficiencyLevelName = (code: string) => {
 					<div class="flex flex-col gap-1.5 w-full">
 						<div class="flex flex-row justify-between">
 							<Text>{t(`classtype.${booking.classTypeId}`)}</Text>
-							<Text colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: booking.payment.amount.toFixed(2) })}</Text>
+							<Text colorType="primary">{t(`common.${booking.payment.currency.toLowerCase()}_price`, { amount: (referralDiscount ? referralDiscount.original_amount : booking.payment.amount).toFixed(2) })}</Text>
 						</div>
 						{referralDiscount && (
 							<div class="flex flex-row justify-between">
