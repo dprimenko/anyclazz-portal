@@ -1,25 +1,47 @@
 import { useState } from 'react';
 import { BookingCheckout } from './BookingCheckout';
+import { SavedPaymentMethods } from './SavedPaymentMethods';
 import { Modal } from '@/ui-library/components/modal/Modal';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
+import { usePaymentMethods } from '@/features/bookings/hooks/usePaymentMethods';
 
 interface BookingCheckoutWrapperProps {
-  clientSecret: string; // ✨ Viene del backend al crear el booking
+  clientSecret: string;
   amount: number;
   currency: string;
+  accessToken: string;
   lang?: 'en' | 'es';
-  bookingDate?: string; // ISO 8601 - para redirigir a la semana correcta en /me/my-agenda
-  bookingId?: string; // Para recargar la booking hasta que la URL de la meeting esté disponible
-  requiresAction?: boolean; // ✨ Indica si el backend detectó que requiere 3DS adicional
+  bookingDate?: string;
+  bookingId?: string;
+  requiresAction?: boolean;
 }
 
-export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 'en', bookingDate, bookingId, requiresAction = false }: BookingCheckoutWrapperProps) {
+export function BookingCheckoutWrapper({
+  clientSecret,
+  amount,
+  currency,
+  accessToken,
+  lang = 'en',
+  bookingDate,
+  bookingId,
+  requiresAction = false,
+}: BookingCheckoutWrapperProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [saveForFuture, setSaveForFuture] = useState(false);
+
+  const { paymentMethods, loading: loadingMethods } = usePaymentMethods(accessToken);
+
   const t = useTranslations({ lang });
+
+  const selectedSavedMethod =
+    selectedPaymentMethodId !== null
+      ? (paymentMethods.find((m) => m.payment_method_id === selectedPaymentMethodId) ?? null)
+      : null;
 
   const handleSuccess = () => {
     setShowSuccessModal(true);
@@ -40,6 +62,20 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
 
   return (
     <>
+      {!loadingMethods && paymentMethods.length > 0 && (
+        <div className="mb-4 flex flex-col gap-2">
+          <Text size="text-sm" weight="medium" colorType="secondary" className="mb-1">
+            {t('checkout.saved_payment_methods')}
+          </Text>
+          <SavedPaymentMethods
+            paymentMethods={paymentMethods}
+            selectedId={selectedPaymentMethodId}
+            onSelect={setSelectedPaymentMethodId}
+            lang={lang}
+          />
+        </div>
+      )}
+
       <BookingCheckout
         clientSecret={clientSecret}
         amount={amount}
@@ -48,6 +84,10 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
         onError={handleError}
         lang={lang}
         requiresAction={requiresAction}
+        selectedSavedMethod={selectedSavedMethod}
+        saveForFuture={saveForFuture}
+        onSaveForFutureChange={setSaveForFuture}
+        accessToken={accessToken}
       />
 
       {showSuccessModal && (
@@ -64,9 +104,9 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
                 {t('booking.payment_successful_message')}
               </Text>
             </div>
-            <Button 
-              colorType="primary" 
-              label={t('booking.go_to_agenda')} 
+            <Button
+              colorType="primary"
+              label={t('booking.go_to_agenda')}
               onClick={handleGoToAgenda}
               fullWidth
             />
@@ -76,3 +116,4 @@ export function BookingCheckoutWrapper({ clientSecret, amount, currency, lang = 
     </>
   );
 }
+

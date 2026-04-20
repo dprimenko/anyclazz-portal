@@ -7,7 +7,7 @@ import { MyDetails } from "../my-details/MyDetails";
 import { ChangePassword } from "../change-password/ChangePassword";
 import { useTranslations } from "@/i18n";
 import { Tabs } from "@/ui-library/components/tabs";
-import { PaginatedStudentPayments } from "@/features/students/components/billing/PaginatedStudentPayments";
+import { BillingTab } from "../billing/BillingTab";
 import type { GetStudentPaymentsResponse } from "@/features/students/domain/paymentTypes";
 
 export interface UserProfileProps {
@@ -39,12 +39,12 @@ export function UserProfile({ user: initialUser, accessToken, initialTab, role, 
             onClick: () => {
             },
         },
-        ...(isStudent ? [{
+        {
             key: "billing",
             label: t('user-settings.billing'),
             onClick: () => {
             },
-        }] : []),
+        },
     ];
 
     const [selectedTab, setSelectedTab] = useState(initialTab);
@@ -73,10 +73,12 @@ export function UserProfile({ user: initialUser, accessToken, initialTab, role, 
             {selectedTab === "password" && (
                 <ChangePassword accessToken={accessToken} repository={repository} lang={lang} />
             )}
-            {selectedTab === "billing" && initialPayments && (
-                <PaginatedStudentPayments
-                    initialPayments={initialPayments}
+            {selectedTab === "billing" && (
+                <BillingTab
+                    role={(role as 'student' | 'teacher') ?? 'student'}
                     accessToken={accessToken}
+                    lang={lang}
+                    initialPayments={role === 'student' ? initialPayments : undefined}
                 />
             )}
         </div>

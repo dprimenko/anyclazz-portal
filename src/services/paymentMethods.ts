@@ -2,6 +2,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface PaymentMethod {
   payment_method_id: string;
+  stripe_payment_method_id?: string;
   type: 'card' | 'paypal';
   card_brand?: string;
   card_last4?: string;
@@ -75,7 +76,7 @@ export async function setDefaultPaymentMethod(
   paymentMethodId: string
 ): Promise<void> {
   const response = await fetch(`${API_URL}/payment-methods/${paymentMethodId}/default`, {
-    method: 'POST',
+    method: 'PATCH',
     headers: {
       'Authorization': `Bearer ${token}`,
     },

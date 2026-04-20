@@ -45,6 +45,11 @@ const upcomingBookings = await repository.getBookings({token: accessToken, page:
 
 		<PaginatedLessons 
 			initialLessons={upcomingBookings} 
-
+			user={user} 
+			token={accessToken}
+			lang={lang}
+			filter="upcoming"
+			client:load 
+		/>
 	</div>
 </Main>

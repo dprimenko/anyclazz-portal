@@ -189,7 +189,7 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                         <a href={`/booking/checkout/${lesson.id}`} className="block">
                             <Button 
                                 label={t('common.pay')} 
-                                colorType="primary"
+                                colorType="secondary"
                                 fullWidth
                             />
                         </a>

@@ -251,6 +251,13 @@ export default {
     'booking.go_to_agenda': 'Go to My Agenda',
     'booking.processing_paypal_payment': 'Processing PayPal payment...',
 
+    'checkout.saved_payment_methods': 'Saved payment methods',
+    'checkout.new_payment_method': 'New payment method',
+    'checkout.save_for_future': 'Save for future purchases',
+    'checkout.card_expires': 'Expires {{month}}/{{year}}',
+    'checkout.card_expired': 'Expired',
+    'checkout.default': 'Default',
+
     'subscription.checkout': 'Checkout',
     'subscription.upgrade_to_super_tutor': 'Upgrade to Super Tutor',
     'subscription.get_verified_badge': 'Get your verified badge and start standing out today.',
@@ -621,6 +628,36 @@ export default {
     'user-settings.confirm_new_password': 'Confirm new password',
     'user-settings.password_changed_success': 'Password updated successfully.',
     'user-settings.wrong_current_password': 'Current password is incorrect.',
+
+    // Payments — saved methods
+    'payments.payment_method_title': 'Payment method',
+    'payments.payment_method_description': 'Update your billing details and address.',
+    'payments.card_details': 'Card details',
+    'payments.select_default': 'Select default payment method.',
+    'payments.add_new_method': '+ Add new payment method',
+    'payments.set_as_default': 'Set as default',
+    'payments.remove': 'Remove',
+    'payments.add_method_title': 'Add new payment method',
+    'payments.add_method_subtitle': 'Enter your card details.',
+    'payments.add_card': 'Add card',
+    'payments.adding_card': 'Adding card...',
+    'payments.no_payment_methods': 'No payment methods saved yet.',
+    'payments.save_as_default': 'Set as default payment method',
+    'payments.card_saved': 'Payment method saved successfully.',
+    'payments.card_removed': 'Payment method removed.',
+    'payments.card_set_default': 'Default payment method updated.',
+    'payments.error_loading': 'Failed to load payment methods.',
+
+    // Payments — subscription history (teachers)
+    'payments.subscription_history': 'Subscription history',
+    'payments.subscription_history_description': 'History of your Super Tutor subscription payments.',
+    'payments.no_subscription_payments': 'No subscription payments found.',
+    'payments.plan': 'Plan',
+    'payments.amount': 'Amount',
+    'payments.date': 'Date',
+    'payments.interval.week': 'Weekly',
+    'payments.interval.month': 'Monthly',
+    'payments.interval.year': 'Annual',
 
     // Payments history
     'payments.billing_history': 'Billing history',

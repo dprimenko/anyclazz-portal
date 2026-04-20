@@ -255,6 +255,13 @@ export default {
     'booking.go_to_agenda': 'Ir a Mi Agenda',
     'booking.processing_paypal_payment': 'Procesando pago de PayPal...',
 
+    'checkout.saved_payment_methods': 'Métodos de pago guardados',
+    'checkout.new_payment_method': 'Nuevo método de pago',
+    'checkout.save_for_future': 'Guardar para futuras compras',
+    'checkout.card_expires': 'Vence {{month}}/{{year}}',
+    'checkout.card_expired': 'Vencida',
+    'checkout.default': 'Predeterminado',
+
     'subscription.checkout': 'Finalizar compra',
     'subscription.upgrade_to_super_tutor': 'Actualizar a Super Tutor',
     'subscription.get_verified_badge': 'Obtén tu insignia verificada y comienza a destacar hoy.',
@@ -623,6 +630,36 @@ export default {
     'user-settings.confirm_new_password': 'Confirmar nueva contraseña',
     'user-settings.password_changed_success': 'Contraseña actualizada correctamente.',
     'user-settings.wrong_current_password': 'La contraseña actual es incorrecta.',
+
+    // Payments — métodos guardados
+    'payments.payment_method_title': 'Método de pago',
+    'payments.payment_method_description': 'Actualiza tus datos de facturación y dirección.',
+    'payments.card_details': 'Detalles de la tarjeta',
+    'payments.select_default': 'Selecciona el método de pago predeterminado.',
+    'payments.add_new_method': '+ Añadir nuevo método de pago',
+    'payments.set_as_default': 'Establecer como predeterminado',
+    'payments.remove': 'Eliminar',
+    'payments.add_method_title': 'Añadir nuevo método de pago',
+    'payments.add_method_subtitle': 'Introduce los datos de tu tarjeta.',
+    'payments.add_card': 'Añadir tarjeta',
+    'payments.adding_card': 'Añadiendo tarjeta...',
+    'payments.no_payment_methods': 'Aún no tienes métodos de pago guardados.',
+    'payments.save_as_default': 'Establecer como método de pago predeterminado',
+    'payments.card_saved': 'Método de pago guardado correctamente.',
+    'payments.card_removed': 'Método de pago eliminado.',
+    'payments.card_set_default': 'Método de pago predeterminado actualizado.',
+    'payments.error_loading': 'Error al cargar los métodos de pago.',
+
+    // Payments — historial de suscripciones (profesores)
+    'payments.subscription_history': 'Historial de suscripciones',
+    'payments.subscription_history_description': 'Historial de pagos de tu suscripción Super Tutor.',
+    'payments.no_subscription_payments': 'No se encontraron pagos de suscripción.',
+    'payments.plan': 'Plan',
+    'payments.amount': 'Importe',
+    'payments.date': 'Fecha',
+    'payments.interval.week': 'Semanal',
+    'payments.interval.month': 'Mensual',
+    'payments.interval.year': 'Anual',
 
     // Payments history
     'payments.billing_history': 'Historial de pagos',
