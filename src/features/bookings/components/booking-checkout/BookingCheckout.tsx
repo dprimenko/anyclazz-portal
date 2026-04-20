@@ -14,6 +14,7 @@ import type { PaymentMethod } from '@/services/paymentMethods';
 
 interface BookingCheckoutProps {
   clientSecret: string;
+  setupClientSecret?: string;
   amount: number;
   currency: string;
   onSuccess: () => void;
@@ -26,8 +27,19 @@ interface BookingCheckoutProps {
   accessToken?: string;
 }
 
+const cardElementStyle = {
+  base: {
+    fontSize: '14px',
+    color: '#1a1a1a',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    '::placeholder': { color: '#9ca3af' },
+  },
+  invalid: { color: '#ef4444' },
+};
+
 function CheckoutForm({
   clientSecret,
+  useSetupFlow,
   amount,
   currency,
   onSuccess,
@@ -38,7 +50,7 @@ function CheckoutForm({
   saveForFuture = false,
   onSaveForFutureChange,
   accessToken,
-}: BookingCheckoutProps) {
+}: Omit<BookingCheckoutProps, 'setupClientSecret'> & { useSetupFlow: boolean }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -66,7 +78,10 @@ function CheckoutForm({
       }
 
       // Flow: pay with a saved payment method
-      if (selectedSavedMethod?.stripe_payment_method_id) {
+      if (selectedSavedMethod) {
+        if (!selectedSavedMethod.stripe_payment_method_id) {
+          throw new Error('Saved payment method has no Stripe ID');
+        }
         const pmId = selectedSavedMethod.stripe_payment_method_id;
 
         if (selectedSavedMethod.type === 'paypal') {
@@ -90,38 +105,57 @@ function CheckoutForm({
         return;
       }
 
-      // Flow: new payment method via PaymentElement
-      if (!elements) {
-        throw new Error('Payment form not ready');
-      }
+      // Flow: new card via PaymentElement
+      if (!elements) throw new Error('Payment form not ready');
 
-      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: window.location.href,
-        },
-        redirect: 'if_required',
-      });
+      if (useSetupFlow) {
+        // SetupIntent mode: confirmSetup attaches the PM to the Customer.
+        const { setupIntent, error: setupError } = await stripe.confirmSetup({
+          elements,
+          confirmParams: { return_url: window.location.href },
+          redirect: 'if_required',
+        });
+        if (setupError) throw new Error(getStripeErrorMessage(setupError));
 
-      if (confirmError) throw new Error(getStripeErrorMessage(confirmError));
+        const attachedPmId = typeof setupIntent?.payment_method === 'string'
+          ? setupIntent.payment_method
+          : setupIntent?.payment_method?.id;
 
-      // Save the payment method for future use if requested
-      if (saveForFuture && accessToken) {
-        const pm = paymentIntent?.payment_method;
-        const pmId = typeof pm === 'string' ? pm : pm?.id ?? null;
-        if (pmId) {
+        if (!attachedPmId) throw new Error('SetupIntent did not return a payment method');
+
+        // Confirm the PaymentIntent with the now-attached PM.
+        // If the backend already confirmed it via webhook, treat as success.
+        const { error: payError } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: attachedPmId,
+        });
+        if (payError) {
+          const alreadySucceeded =
+            payError.code === 'payment_intent_unexpected_state' &&
+            (payError as any).payment_intent?.status === 'succeeded';
+          if (!alreadySucceeded) throw new Error(getStripeErrorMessage(payError));
+        }
+
+        if (saveForFuture && accessToken) {
           try {
             await savePaymentMethod(accessToken, {
-              stripe_payment_method_id: pmId,
+              stripe_payment_method_id: attachedPmId,
               set_as_default: false,
             });
-          } catch {
+          } catch (saveErr) {
             publish(SharedDomainEvents.showToast, {
-              message: t('payments.error_loading'),
+              message: saveErr instanceof Error ? saveErr.message : t('payments.error_loading'),
               variant: 'error',
             });
           }
         }
+      } else {
+        // PaymentIntent mode: Elements was initialized with pi_ secret (setup intent unavailable).
+        const { error: confirmError } = await stripe.confirmPayment({
+          elements,
+          confirmParams: { return_url: window.location.href },
+          redirect: 'if_required',
+        });
+        if (confirmError) throw new Error(getStripeErrorMessage(confirmError));
       }
 
       onSuccess();
@@ -151,7 +185,7 @@ function CheckoutForm({
         </div>
       )}
 
-      {isUsingNewMethod && onSaveForFutureChange && (
+      {isUsingNewMethod && onSaveForFutureChange && useSetupFlow && (
         <label className="flex items-center gap-2 cursor-pointer">
           <Checkbox
             id="save-for-future"
@@ -204,6 +238,7 @@ const appearance = {
 
 export function BookingCheckout({
   clientSecret,
+  setupClientSecret,
   amount,
   currency,
   onSuccess,
@@ -215,6 +250,9 @@ export function BookingCheckout({
   onSaveForFutureChange,
   accessToken,
 }: BookingCheckoutProps) {
+  const useSetupFlow = !!setupClientSecret;
+  const elementsSecret = setupClientSecret || clientSecret;
+
   if (!clientSecret) {
     return (
       <div className="p-3 bg-red-50 border border-red-200 rounded-lg mt-4">
@@ -224,10 +262,11 @@ export function BookingCheckout({
   }
 
   return (
-    <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+    <Elements stripe={stripePromise} options={{ clientSecret: elementsSecret, appearance }}>
       <CheckoutForm
         lang={lang}
         clientSecret={clientSecret}
+        useSetupFlow={useSetupFlow}
         amount={amount}
         currency={currency}
         onSuccess={onSuccess}

@@ -89,14 +89,14 @@ export async function getActiveSubscription(token: string): Promise<{ subscripti
   return response.json();
 }
 
-export async function createSetupIntent(token: string): Promise<SetupIntentResponse> {
+export async function createSetupIntent(token: string, usage: string = 'subscription'): Promise<SetupIntentResponse> {
   const response = await fetch(`${API_URL}/setup-intent`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ usage: 'subscription' }),
+    body: JSON.stringify({ usage }),
   });
 
   if (!response.ok) {

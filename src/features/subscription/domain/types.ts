@@ -1,6 +1,7 @@
 export interface CreateSubscriptionRequest {
   interval: 'week' | 'month' | 'year';
   payment_method_id?: string;
+  saved_payment_method_id?: string;
   setup_intent_id?: string;
 }
 

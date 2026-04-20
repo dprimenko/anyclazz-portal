@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BookingCheckout } from './BookingCheckout';
 import { SavedPaymentMethods } from './SavedPaymentMethods';
 import { Modal } from '@/ui-library/components/modal/Modal';
@@ -7,6 +7,7 @@ import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
 import { usePaymentMethods } from '@/features/bookings/hooks/usePaymentMethods';
+import { createSetupIntent } from '@/services/stripe';
 
 interface BookingCheckoutWrapperProps {
   clientSecret: string;
@@ -33,8 +34,25 @@ export function BookingCheckoutWrapper({
   const [error, setError] = useState<string | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [saveForFuture, setSaveForFuture] = useState(false);
+  const [setupClientSecret, setSetupClientSecret] = useState<string | null>(null);
+  const [setupIntentReady, setSetupIntentReady] = useState(false);
 
   const { paymentMethods, loading: loadingMethods } = usePaymentMethods(accessToken);
+
+  // Pre-select the default payment method once loaded
+  useEffect(() => {
+    if (selectedPaymentMethodId === null && paymentMethods.length > 0) {
+      const defaultMethod = paymentMethods.find((m) => m.is_default) ?? paymentMethods[0];
+      setSelectedPaymentMethodId(defaultMethod.payment_method_id);
+    }
+  }, [paymentMethods]);
+
+  useEffect(() => {
+    createSetupIntent(accessToken, 'payment_method')
+      .then(({ client_secret }) => setSetupClientSecret(client_secret))
+      .catch(() => {/* non-blocking: checkout will fall back to confirmPayment */})
+      .finally(() => setSetupIntentReady(true));
+  }, [accessToken]);
 
   const t = useTranslations({ lang });
 
@@ -62,7 +80,7 @@ export function BookingCheckoutWrapper({
 
   return (
     <>
-      {!loadingMethods && paymentMethods.length > 0 && (
+      {paymentMethods.length > 0 && (
         <div className="mb-4 flex flex-col gap-2">
           <Text size="text-sm" weight="medium" colorType="secondary" className="mb-1">
             {t('checkout.saved_payment_methods')}
@@ -76,19 +94,26 @@ export function BookingCheckoutWrapper({
         </div>
       )}
 
-      <BookingCheckout
-        clientSecret={clientSecret}
-        amount={amount}
-        currency={currency}
-        onSuccess={handleSuccess}
-        onError={handleError}
-        lang={lang}
-        requiresAction={requiresAction}
-        selectedSavedMethod={selectedSavedMethod}
-        saveForFuture={saveForFuture}
-        onSaveForFutureChange={setSaveForFuture}
-        accessToken={accessToken}
-      />
+      {(!setupIntentReady || loadingMethods) ? (
+        <div className="flex justify-center py-8">
+          <div className="w-6 h-6 border-2 border-[#FDB022] border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <BookingCheckout
+          clientSecret={clientSecret}
+          setupClientSecret={setupClientSecret ?? undefined}
+          amount={amount}
+          currency={currency}
+          onSuccess={handleSuccess}
+          onError={handleError}
+          lang={lang}
+          requiresAction={requiresAction}
+          selectedSavedMethod={selectedSavedMethod}
+          saveForFuture={saveForFuture}
+          onSaveForFutureChange={setSaveForFuture}
+          accessToken={accessToken}
+        />
+      )}
 
       {showSuccessModal && (
         <Modal width={480} persistent fitContent>

@@ -5,6 +5,7 @@ import { useCreateSubscription } from '@/features/subscription';
 import { getStripeErrorMessage } from '@/utils/stripeErrors';
 import type { StripePlan } from '@/services/stripe';
 import { createSetupIntent } from '@/services/stripe';
+import { getPaymentMethods, savePaymentMethod, type PaymentMethod } from '@/services/paymentMethods';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { formatPrice } from '../../utils/formatPrice';
 import { Button } from '@/ui-library/components/ssr/button/Button';
@@ -12,6 +13,8 @@ import { useTranslations } from '@/i18n';
 import { publish } from '@/features/shared/services/domainEventsBus';
 import { SharedDomainEvents } from '@/features/shared/domain/events';
 import { ProgressIndicator } from '@/ui-library/components/progress-indicator/ProgressIndicator';
+import { SavedPaymentMethods } from '@/features/bookings/components/booking-checkout/SavedPaymentMethods';
+import { Checkbox } from '@/ui-library/shared/checkbox';
 
 interface SubscriptionCheckoutProps {
   plan: StripePlan;
@@ -27,9 +30,12 @@ function CheckoutForm({
   token, 
   onSuccess, 
   onError, 
-  setupIntentId, 
+  setupIntentId,
+  selectedSavedMethod,
+  saveForFuture = false,
+  onSaveForFutureChange,
   lang = 'en' 
-}: SubscriptionCheckoutProps & { setupIntentId: string }) {
+}: SubscriptionCheckoutProps & { setupIntentId: string; selectedSavedMethod: PaymentMethod | null; saveForFuture?: boolean; onSaveForFutureChange?: (v: boolean) => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -39,12 +45,9 @@ function CheckoutForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe) {
       const errorMessage = 'Stripe is not initialized';
-      publish(SharedDomainEvents.showToast, {
-        message: errorMessage,
-        variant: 'error',
-      });
+      publish(SharedDomainEvents.showToast, { message: errorMessage, variant: 'error' });
       onError(errorMessage);
       return;
     }
@@ -52,13 +55,36 @@ function CheckoutForm({
     setLoading(true);
 
     try {
+      // Flow: pay with a saved payment method — skip SetupIntent entirely
+      if (selectedSavedMethod) {
+        const subscription = await createSubscription({
+          interval: plan.interval,
+          saved_payment_method_id: selectedSavedMethod.payment_method_id,
+        });
+
+        if (!subscription) throw new Error(t('subscription.failed_to_create_subscription'));
+
+        if (subscription.requires_action && subscription.client_secret) {
+          const { error: paymentError } = await stripe.confirmCardPayment(subscription.client_secret);
+          if (paymentError) throw new Error(getStripeErrorMessage(paymentError));
+        } else if (subscription.status !== 'active' && subscription.status !== 'incomplete') {
+          throw new Error(`Unexpected subscription status: ${subscription.status}`);
+        }
+
+        onSuccess(subscription.subscription_id);
+        return;
+      }
+
+      // Flow: new payment method via SetupIntent + PaymentElement
+      if (!elements) throw new Error('Payment form not ready');
+
       // Paso 1: Confirmar el SetupIntent con los datos del formulario
       const { error: setupError, setupIntent } = await stripe.confirmSetup({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/super-tutor/checkout/${plan.interval}?subscription=pending`, // PayPal redirige aquí
+          return_url: `${window.location.origin}/super-tutor/checkout/${plan.interval}?subscription=pending`,
         },
-        redirect: 'if_required', // Solo redirige si es necesario (ej: PayPal)
+        redirect: 'if_required',
       });
 
       if (setupError) {
@@ -67,6 +93,22 @@ function CheckoutForm({
 
       // Paso 2: Si el SetupIntent fue exitoso SIN redirección, crear la suscripción
       if (setupIntent && setupIntent.status === 'succeeded') {
+        // Save PM for future purchases if requested
+        if (saveForFuture) {
+          const attachedPmId = typeof setupIntent.payment_method === 'string'
+            ? setupIntent.payment_method
+            : setupIntent.payment_method?.id;
+          if (attachedPmId) {
+            try {
+              await savePaymentMethod(token, { stripe_payment_method_id: attachedPmId, set_as_default: false });
+            } catch (saveErr) {
+              publish(SharedDomainEvents.showToast, {
+                message: saveErr instanceof Error ? saveErr.message : t('payments.error_loading'),
+                variant: 'error',
+              });
+            }
+          }
+        }
         const subscription = await createSubscription({
           interval: plan.interval,
           setup_intent_id: setupIntentId,
@@ -123,19 +165,36 @@ function CheckoutForm({
     }
   }
 
+  const isUsingNewMethod = !selectedSavedMethod;
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 mt-4">
-      {/* PaymentElement de Stripe - soporta card + PayPal automáticamente */}
-      <div id="stripe_payment_methods">
-        <PaymentElement 
-          options={{
-            layout: {
-              type: 'tabs',
-              defaultCollapsed: false,
-            }
-          }}
-        />
-      </div>
+      {/* PaymentElement — only shown when NOT using a saved method */}
+      {isUsingNewMethod && (
+        <div id="stripe_payment_methods">
+          <PaymentElement 
+            options={{
+              layout: {
+                type: 'tabs',
+                defaultCollapsed: false,
+              }
+            }}
+          />
+        </div>
+      )}
+
+      {isUsingNewMethod && onSaveForFutureChange && (
+        <label className="flex items-center gap-2 cursor-pointer">
+          <Checkbox
+            id="save-for-future-sub"
+            checked={saveForFuture}
+            onCheckedChange={(checked) => onSaveForFutureChange(Boolean(checked))}
+          />
+          <span className="text-sm text-gray-700 select-none">
+            {t('checkout.save_for_future')}
+          </span>
+        </label>
+      )}
 
       <Button
         type="submit"
@@ -160,6 +219,9 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   const [initError, setInitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingPayPal, setProcessingPayPal] = useState(false);
+  const [savedMethods, setSavedMethods] = useState<PaymentMethod[]>([]);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [saveForFuture, setSaveForFuture] = useState(false);
   const t = useTranslations({ lang });
   const { createSubscription } = useCreateSubscription(token);
 
@@ -264,11 +326,19 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
         setInitError(null);
         setLoading(true);
 
-        // Crear SetupIntent en el backend
-        const setupIntent = await createSetupIntent(token);
-        
+        const [setupIntent, methods] = await Promise.all([
+          createSetupIntent(token),
+          getPaymentMethods(token).catch(() => [] as PaymentMethod[]),
+        ]);
+
         setClientSecret(setupIntent.client_secret);
         setSetupIntentId(setupIntent.setup_intent_id);
+
+        if (methods.length > 0) {
+          setSavedMethods(methods);
+          const defaultMethod = methods.find((m) => m.is_default) ?? methods[0];
+          setSelectedPaymentMethodId(defaultMethod.payment_method_id);
+        }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : t('subscription.failed_to_initialize_payment');
         setInitError(errorMessage);
@@ -295,6 +365,10 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
     );
   }
 
+  const selectedSavedMethod = selectedPaymentMethodId !== null
+    ? (savedMethods.find((m) => m.payment_method_id === selectedPaymentMethodId) ?? null)
+    : null;
+
   const appearance = {
     theme: 'stripe' as const,
     variables: {
@@ -314,15 +388,34 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   };
 
   return (
-    <Elements stripe={stripePromise} options={options}>
-      <CheckoutForm 
-        lang={lang}
-        plan={plan} 
-        token={token} 
-        onSuccess={onSuccess} 
-        onError={onError}
-        setupIntentId={setupIntentId}
-      />
-    </Elements>
+    <div className="flex flex-col gap-4">
+      {savedMethods.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <Text size="text-sm" weight="medium" colorType="secondary">
+            {t('checkout.saved_payment_methods')}
+          </Text>
+          <SavedPaymentMethods
+            paymentMethods={savedMethods}
+            selectedId={selectedPaymentMethodId}
+            onSelect={setSelectedPaymentMethodId}
+            lang={lang}
+          />
+        </div>
+      )}
+
+      <Elements stripe={stripePromise} options={options}>
+        <CheckoutForm 
+          lang={lang}
+          plan={plan} 
+          token={token} 
+          onSuccess={onSuccess} 
+          onError={onError}
+          setupIntentId={setupIntentId}
+          selectedSavedMethod={selectedSavedMethod}
+          saveForFuture={saveForFuture}
+          onSaveForFutureChange={setSaveForFuture}
+        />
+      </Elements>
+    </div>
   );
 }

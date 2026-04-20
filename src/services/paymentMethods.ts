@@ -2,7 +2,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface PaymentMethod {
   payment_method_id: string;
-  stripe_payment_method_id?: string;
+  stripe_payment_method_id: string;
   type: 'card' | 'paypal';
   card_brand?: string;
   card_last4?: string;

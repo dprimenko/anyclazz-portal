@@ -255,6 +255,8 @@ export default {
     'checkout.new_payment_method': 'New payment method',
     'checkout.save_for_future': 'Save for future purchases',
     'checkout.card_expires': 'Expires {{month}}/{{year}}',
+    'checkout.expiry': 'Expiry',
+    'checkout.cvc': 'CVC',
     'checkout.card_expired': 'Expired',
     'checkout.default': 'Default',
 
