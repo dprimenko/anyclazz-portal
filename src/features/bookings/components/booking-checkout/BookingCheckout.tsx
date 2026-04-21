@@ -218,10 +218,7 @@ function CheckoutForm({
   );
 }
 
-const stripePromise = loadStripe(
-  import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY ||
-    'pk_test_51SdvZdRpuaFax7XpwLl84SqWauVhApPg4eCmdm9BzdbTzK2vQBzACLJ5jTcqFuD0Wsrl3vXW8QXaYy0VHio1mAlq00zmj0s5ot'
-);
+const stripePromise = loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 const appearance = {
   theme: 'stripe' as const,
