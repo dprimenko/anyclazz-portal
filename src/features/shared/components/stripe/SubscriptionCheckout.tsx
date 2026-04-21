@@ -225,7 +225,7 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   const t = useTranslations({ lang });
   const { createSubscription } = useCreateSubscription(token);
 
-  const publishableKey = "pk_test_51SdvZdRpuaFax7XpwLl84SqWauVhApPg4eCmdm9BzdbTzK2vQBzACLJ5jTcqFuD0Wsrl3vXW8QXaYy0VHio1mAlq00zmj0s5ot";
+  const publishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
   
   if (!publishableKey) {
     console.error('Stripe publishable key is not configured');
