@@ -1,4 +1,4 @@
-import { getSvgByName } from "../../../../utils/getSvgByName.ts";
+import { getSvgUrl } from "../../../../utils/getSvgByName.ts";
 
 export interface IconProps extends React.HTMLAttributes<HTMLImageElement> {
     image: string;
@@ -18,7 +18,7 @@ export const SvgImage = (
 
         return (
             <img 
-                src={getSvgByName(`${image}`)}
+                src={getSvgUrl(`${image}`)}
                 width={imageWidth}
                 height={imageHeight}
                 alt={`${image} image`}

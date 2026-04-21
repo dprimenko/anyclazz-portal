@@ -1,62 +1,88 @@
 
-const svgModules = import.meta.glob('../assets/images/**/*.svg', { 
-  import: 'default', 
-  query: '?raw', 
-  eager: true 
+// URL map: just path→URL strings (a few KB, not the SVG content).
+// Vite emits each SVG as a separate cacheable file in /_astro/.
+const svgUrlModules = import.meta.glob('../assets/images/**/*.svg', {
+  import: 'default',
+  query: '?url',
+  eager: true,
 });
 
-const svgMap: Record<string, string> = {};
+const svgUrlMap: Record<string, string> = {};
 
-Object.entries(svgModules).forEach(([path, content]) => {
+Object.entries(svgUrlModules).forEach(([path, url]) => {
   const relativePath = path
-    .replace('../assets/images/', '') 
-    .replace('.svg', ''); 
-    
-  if (relativePath && typeof content === 'string') {
-    svgMap[relativePath.toLowerCase()] = content;
-    
+    .replace('../assets/images/', '')
+    .replace('.svg', '');
+
+  if (relativePath && typeof url === 'string') {
+    svgUrlMap[relativePath.toLowerCase()] = url;
+
     const fileName = relativePath.split('/').pop() || '';
     if (fileName) {
-      svgMap[fileName.toLowerCase()] = content;
+      svgUrlMap[fileName.toLowerCase()] = url;
     }
   }
 });
 
-export function getSvgByName(
-  name: string, 
-  options?: { 
-    color?: string; 
-  }
-): string {
+// Cache for already-fetched colored variants so we only fetch once per color.
+const colorCache: Record<string, string> = {};
+
+/**
+ * Returns the SVG URL (no color applied). Works synchronously — safe for SSR.
+ */
+export function getSvgUrl(name: string): string {
+  return svgUrlMap[name.toLowerCase()] || '';
+}
+
+/**
+ * Returns the SVG as a data URI with the requested color applied.
+ * Fetches the file once and caches the result per (name, color) pair.
+ * Falls back to the plain URL if fetching fails.
+ */
+export async function getSvgByNameAsync(
+  name: string,
+  options?: { color?: string },
+): Promise<string> {
   const svgName = name.toLowerCase();
-  const svg = svgMap[svgName];
-  
-  if (!svg) {
-    const availableSvgs = Object.keys(svgMap).join(', ');
-    console.warn(`SVG "${name}" not found. Available: ${availableSvgs}`);
+  const url = svgUrlMap[svgName];
+
+  if (!url) {
+    console.warn(`SVG "${name}" not found.`);
     return '';
   }
-  
-  let modifiedSvg = svg;
-  
-  // Apply color by replacing fill and stroke attributes throughout the SVG
-  if (options?.color) {
-    // Replace fill attributes, but keep fill="none" unchanged
-    modifiedSvg = modifiedSvg.replace(/fill="(?!none)[^"]*"/g, `fill="${options.color}"`);
-    
-    // Replace stroke attributes, but keep stroke="none" unchanged
-    modifiedSvg = modifiedSvg.replace(/stroke="(?!none)[^"]*"/g, `stroke="${options.color}"`);
+
+  if (!options?.color) {
+    return url;
   }
-  
-  // Convert SVG to data URI
-  const encodedSvg = encodeURIComponent(modifiedSvg);
-  return `data:image/svg+xml,${encodedSvg}`;
+
+  const cacheKey = `${svgName}__${options.color}`;
+  if (colorCache[cacheKey]) return colorCache[cacheKey];
+
+  try {
+    const response = await fetch(url);
+    let svg = await response.text();
+    svg = svg.replace(/fill="(?!none)[^"]*"/g, `fill="${options.color}"`);
+    svg = svg.replace(/stroke="(?!none)[^"]*"/g, `stroke="${options.color}"`);
+    const dataUri = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+    colorCache[cacheKey] = dataUri;
+    return dataUri;
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * Synchronous helper kept for backwards-compat. Returns the plain URL.
+ * Color is NOT applied here — use getSvgByNameAsync when color is needed.
+ */
+export function getSvgByName(name: string, _options?: { color?: string }): string {
+  return getSvgUrl(name);
 }
 
 export function getAvailableSvgs(): string[] {
-  return Object.keys(svgMap);
+  return Object.keys(svgUrlMap);
 }
 
 export function svgExists(name: string): boolean {
-  return name.toLowerCase() in svgMap;
+  return name.toLowerCase() in svgUrlMap;
 }
