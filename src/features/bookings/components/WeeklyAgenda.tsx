@@ -63,6 +63,10 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
 
         if (!bookingId) return;
 
+        // Las clases presenciales (onsite) no generan meetingUrl, no hace falta polling
+        const bookingInList = initialBookings.bookings.find(b => b.id === bookingId);
+        if (bookingInList?.classType?.type?.startsWith('onsite_')) return;
+
         const poll = async () => {
             try {
                 const booking = await repository.getBookingById({ bookingId, token });

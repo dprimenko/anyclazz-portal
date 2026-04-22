@@ -20,6 +20,7 @@ const session = await getSession(Astro.request);
 
 const { id } = Astro.params;
 
+
 if (!id) {
     return Astro.redirect('/teachers');
 }

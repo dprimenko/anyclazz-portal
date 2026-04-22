@@ -85,6 +85,28 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
                     </div>
                 </div>
 
+                {/* Class Address Section — only for confirmed onsite bookings */}
+                {lesson.teacher?.teacherAddress?.street && (
+                    <div className={styles.addressSection}>
+                        <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
+                            {t('booking.class_address')}
+                        </Text>
+                        <div className={styles.addressRow}>
+                            <Icon icon="building-05" iconWidth={20} iconHeight={20} />
+                            <div>
+                                <Text size="text-sm" colorType="secondary">
+                                    {lesson.teacher.teacherAddress.street}
+                                </Text>
+                                {lesson.teacher.teacherAddress.city && (
+                                    <Text size="text-sm" colorType="tertiary">
+                                        {lesson.teacher.teacherAddress.city}
+                                    </Text>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Teacher Section */}
                 {lesson.teacher && (
                     <div className={styles.teacherSection}>

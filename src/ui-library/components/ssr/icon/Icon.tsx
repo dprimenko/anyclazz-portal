@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { getSvgUrl, getSvgByNameAsync } from "../../../../utils/getSvgByName.ts";
+import { getSvgByName } from "../../../../utils/getSvgByName.ts";
 
 export interface IconProps extends React.HTMLAttributes<HTMLImageElement> {
     icon: string;
@@ -19,17 +18,7 @@ export const Icon = (
         ...props
     }: IconProps) => {
 
-        const iconPath = `icons/${icon}`;
-        // Initial value: plain URL — works synchronously in SSR and avoids layout shift.
-        const [src, setSrc] = useState(() => getSvgUrl(iconPath));
-
-        useEffect(() => {
-            if (iconColor) {
-                getSvgByNameAsync(iconPath, { color: iconColor }).then(setSrc);
-            } else {
-                setSrc(getSvgUrl(iconPath));
-            }
-        }, [icon, iconColor]);
+        const src = getSvgByName(`icons/${icon}`, { color: iconColor });
 
         if (!src) {
             return (

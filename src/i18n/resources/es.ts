@@ -250,6 +250,7 @@ export default {
     'booking.select_time_required': 'Por favor selecciona una hora para tu clase',
     'booking.checkout': 'Finalizar compra',
     'booking.lesson_details': 'Detalles de la lección',
+    'booking.class_address': 'Dirección de la clase',
     'booking.payment_successful': 'Pago Exitoso',
     'booking.payment_successful_message': 'Tu pago ha sido procesado exitosamente. Tu clase está confirmada — recibirás un recordatorio antes de que comience.',
     'booking.go_to_agenda': 'Ir a Mi Agenda',

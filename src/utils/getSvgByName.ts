@@ -7,7 +7,16 @@ const svgUrlModules = import.meta.glob('../assets/images/**/*.svg', {
   eager: true,
 });
 
+// Raw content map: only icons (not the large landing SVGs).
+// Used for synchronous color transformation without a fetch round-trip.
+const svgRawModules = import.meta.glob('../assets/images/icons/*.svg', {
+  import: 'default',
+  query: '?raw',
+  eager: true,
+});
+
 const svgUrlMap: Record<string, string> = {};
+const svgRawMap: Record<string, string> = {};
 
 Object.entries(svgUrlModules).forEach(([path, url]) => {
   const relativePath = path
@@ -24,8 +33,20 @@ Object.entries(svgUrlModules).forEach(([path, url]) => {
   }
 });
 
-// Cache for already-fetched colored variants so we only fetch once per color.
-const colorCache: Record<string, string> = {};
+Object.entries(svgRawModules).forEach(([path, content]) => {
+  const relativePath = path
+    .replace('../assets/images/', '')
+    .replace('.svg', '');
+
+  if (relativePath && typeof content === 'string') {
+    svgRawMap[relativePath.toLowerCase()] = content;
+
+    const fileName = relativePath.split('/').pop() || '';
+    if (fileName) {
+      svgRawMap[fileName.toLowerCase()] = content;
+    }
+  }
+});
 
 /**
  * Returns the SVG URL (no color applied). Works synchronously — safe for SSR.
@@ -35,48 +56,36 @@ export function getSvgUrl(name: string): string {
 }
 
 /**
- * Returns the SVG as a data URI with the requested color applied.
- * Fetches the file once and caches the result per (name, color) pair.
- * Falls back to the plain URL if fetching fails.
+ * Returns a data URI with the requested color applied, or the plain URL as fallback.
+ * Uses the pre-loaded raw SVG content map — no fetch needed.
+ */
+export function getSvgByName(name: string, options?: { color?: string }): string {
+  const svgName = name.toLowerCase();
+  const rawContent = svgRawMap[svgName];
+
+  if (!rawContent) {
+    // Fall back to URL (e.g. for non-icon SVGs or icons not in the raw map)
+    return getSvgUrl(name);
+  }
+
+  if (!options?.color) {
+    return `data:image/svg+xml,${encodeURIComponent(rawContent)}`;
+  }
+
+  let svg = rawContent;
+  svg = svg.replace(/fill="(?!none)[^"]*"/g, `fill="${options.color}"`);
+  svg = svg.replace(/stroke="(?!none)[^"]*"/g, `stroke="${options.color}"`);
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+/**
+ * Async variant kept for backwards-compat. Delegates to the synchronous getSvgByName.
  */
 export async function getSvgByNameAsync(
   name: string,
   options?: { color?: string },
 ): Promise<string> {
-  const svgName = name.toLowerCase();
-  const url = svgUrlMap[svgName];
-
-  if (!url) {
-    console.warn(`SVG "${name}" not found.`);
-    return '';
-  }
-
-  if (!options?.color) {
-    return url;
-  }
-
-  const cacheKey = `${svgName}__${options.color}`;
-  if (colorCache[cacheKey]) return colorCache[cacheKey];
-
-  try {
-    const response = await fetch(url);
-    let svg = await response.text();
-    svg = svg.replace(/fill="(?!none)[^"]*"/g, `fill="${options.color}"`);
-    svg = svg.replace(/stroke="(?!none)[^"]*"/g, `stroke="${options.color}"`);
-    const dataUri = `data:image/svg+xml,${encodeURIComponent(svg)}`;
-    colorCache[cacheKey] = dataUri;
-    return dataUri;
-  } catch {
-    return url;
-  }
-}
-
-/**
- * Synchronous helper kept for backwards-compat. Returns the plain URL.
- * Color is NOT applied here — use getSvgByNameAsync when color is needed.
- */
-export function getSvgByName(name: string, _options?: { color?: string }): string {
-  return getSvgUrl(name);
+  return getSvgByName(name, options);
 }
 
 export function getAvailableSvgs(): string[] {
