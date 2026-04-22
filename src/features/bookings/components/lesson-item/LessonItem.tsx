@@ -177,13 +177,13 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                                         colorType="secondary"
                                     />
                                 </a>
-                            ) : lesson.meetingUrl ? (
+                            ) : !lesson.classTypeId.startsWith('onsite') && (lesson.meetingUrl ? (
                                 <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
                                     <Button label={t('common.join')} colorType="primary" />
                                 </a>
                             ) : (
                                 <Button label={t('common.join')} colorType="primary" disabled />
-                            )}
+                            ))}
                         </div>
                         <div className="flex justify-end">
                             <div className="w-[20px] grid place-items-center cursor-pointer">
@@ -211,12 +211,8 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                         openLessonCancel();
                     }}
                     onSendMessage={() => {
-                        console.log('Send message');
-                        closeLessonDetails();
-                    }}
-                    onJoin={() => {
-                        console.log('Join lesson');
-                        closeLessonDetails();
+                        const chatUserId = user?.role === 'teacher' ? lesson.student?.id : lesson.teacher?.id;
+                        if (chatUserId) window.location.href = `/messages/${chatUserId}`;
                     }}
                 />
             )}

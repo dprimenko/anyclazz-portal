@@ -14,11 +14,10 @@ export interface LessonDetailsModalProps {
     onClose: () => void;
     onCancel?: () => void;
     onSendMessage?: () => void;
-    onJoin?: () => void;
     lang?: 'en' | 'es';
 }
 
-export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, onJoin, lang }: LessonDetailsModalProps) {
+export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, lang }: LessonDetailsModalProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Parsear manteniendo la zona horaria original del backend
@@ -173,13 +172,14 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, o
                     )}
                 </div>
 
-                {onJoin && (
-                    <Button 
-                        label={t('common.join')} 
-                        colorType="primary" 
-                        fullWidth 
-                        onClick={onJoin}
-                    />
+                {!lesson.classTypeId.startsWith('onsite') && (
+                    lesson.meetingUrl ? (
+                        <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
+                            <Button label={t('common.join')} colorType="primary" fullWidth />
+                        </a>
+                    ) : (
+                        <Button label={t('common.join')} colorType="primary" fullWidth disabled />
+                    )
                 )}
             </div>
         </Modal>

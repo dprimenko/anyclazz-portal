@@ -193,13 +193,13 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                                 fullWidth
                             />
                         </a>
-                    ) : lesson.meetingUrl ? (
+                    ) : !lesson.classTypeId.startsWith('onsite') && (lesson.meetingUrl ? (
                         <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer" className="block">
                             <Button label={t('common.join')} colorType="primary" fullWidth />
                         </a>
                     ) : (
                         <Button label={t('common.join')} colorType="primary" disabled fullWidth />
-                    )}
+                    ))}
                 </div>
             </div>
             {selectedLesson && (
@@ -212,12 +212,8 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                         closeLessonDetails();
                     }}
                     onSendMessage={() => {
-                        console.log('Send message');
-                        closeLessonDetails();
-                    }}
-                    onJoin={() => {
-                        console.log('Join lesson');
-                        closeLessonDetails();
+                        const chatUserId = user?.role === 'teacher' ? lesson.student?.id : lesson.teacher?.id;
+                        if (chatUserId) window.location.href = `/messages/${chatUserId}`;
                     }}
                 />
             )}
