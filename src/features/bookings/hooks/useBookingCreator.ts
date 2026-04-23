@@ -14,7 +14,7 @@ const repository = new AnyclazzMyBookingsRepository();
 export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps) {
     const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
     const [selectedDuration, setSelectedDuration] = useState<number>(30);
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | undefined>();
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
@@ -61,6 +61,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
 
     // Fetch slots for selected date
     const fetchDaySlots = useCallback(async () => {
+        if (!selectedDate) return;
         setSelectedTime(undefined); // Reset selected time when fetching new slots
 
         try {
@@ -120,17 +121,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
                 .sort((a, b) => a.getTime() - b.getTime());
             
             if (futureDates.length > 0) {
-                // Check if current selected date is still available
-                const currentSelectedStillAvailable = futureDates.some(date => {
-                    const dateStart = DateTime.fromJSDate(date).startOf('day');
-                    const selectedStart = DateTime.fromJSDate(selectedDate).startOf('day');
-                    return dateStart.equals(selectedStart);
-                });
-                
-                // Only change selected date if it's not available anymore
-                if (!currentSelectedStillAvailable) {
-                    setSelectedDate(futureDates[0]);
-                }
+                setSelectedDate(futureDates[0]);
             }
         }
     }, [availableDates]);
@@ -146,7 +137,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         selectedClass,
         selectedDuration,
         selectedDate,
-        setSelectedDate,
+        setSelectedDate: setSelectedDate as (date: Date | undefined) => void,
         setSelectedDuration,
         selectedTime,
         setSelectedTime,
