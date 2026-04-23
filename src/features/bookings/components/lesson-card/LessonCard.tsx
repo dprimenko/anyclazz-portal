@@ -2,7 +2,7 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Text } from "@/ui-library/components/ssr/text/Text";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import type { BookingWithTeacher } from "../../domain/types";
-import { fromISOKeepZone } from "@/features/shared/utils/dateConfig";
+import { fromISOKeepZone, getUserTimezone } from "@/features/shared/utils/dateConfig";
 import classNames from "classnames";
 import styles from "./LessonCard.module.css";
 import { Button } from "@/ui-library/components/ssr/button/Button";
@@ -14,11 +14,12 @@ export interface LessonCardProps {
     onChat?: () => void;
     onDetails?: () => void;
     onCancel?: () => void;
+    userTimezone?: string;
 }
 
-export function LessonCard({ booking, showActions = false, onChat, onDetails, onCancel }: LessonCardProps) {
-    // Parsear manteniendo la zona horaria original del backend
-    const startDateTime = fromISOKeepZone(booking.startAt);
+export function LessonCard({ booking, showActions = false, onChat, onDetails, onCancel, userTimezone }: LessonCardProps) {
+    // Usar el timezone del usuario (DB) con fallback al del navegador
+    const startDateTime = fromISOKeepZone(booking.startAt).setZone(userTimezone || getUserTimezone());
     const dayOfWeek = startDateTime.toFormat('ccc');
     const time = startDateTime.toFormat('HH:mm');
     

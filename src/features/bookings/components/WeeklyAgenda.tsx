@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
-import { DateTime, fromISOKeepZone } from '@/features/shared/utils/dateConfig';
+import { DateTime, fromISOKeepZone, getUserTimezone } from '@/features/shared/utils/dateConfig';
 import type { BookingWithTeacher, GetBookingsResponse } from '@/features/bookings/domain/types';
 import type { AuthUser } from '@/features/auth/domain/types';
 import { useTranslations } from '@/i18n';
@@ -132,10 +132,11 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
     // Agrupar bookings por día
     const bookingsByDay = useMemo(() => {
         const groups: Record<string, BookingWithTeacher[]> = {};
+        const userTz = user?.timezone || getUserTimezone();
         
         bookings.bookings.forEach(booking => {
-            // Parsear manteniendo la zona horaria original del backend
-            const dayKey = fromISOKeepZone(booking.startAt).toFormat('yyyy-MM-dd');
+            // Agrupar por el día en el timezone del usuario
+            const dayKey = fromISOKeepZone(booking.startAt).setZone(userTz).toFormat('yyyy-MM-dd');
             if (!groups[dayKey]) {
                 groups[dayKey] = [];
             }
@@ -277,6 +278,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                                                 token={token}
                                                 user={user}
                                                 lang={lang}
+                                                userTimezone={user?.timezone}
                                             />
                                         ))}
                                     </div>
@@ -290,6 +292,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                                                 token={token}
                                                 user={user}
                                                 lang={lang}
+                                                userTimezone={user?.timezone}
                                             />
                                         ))}
                                     </div>

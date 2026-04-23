@@ -4,7 +4,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import type { BookingWithTeacher } from "../../domain/types";
-import { fromISOKeepZone } from "@/features/shared/utils/dateConfig";
+import { fromISOKeepZone, getUserTimezone } from "@/features/shared/utils/dateConfig";
 import { useTranslations } from "@/i18n";
 import styles from "./LessonDetailsModal.module.css";
 import { useEffect } from "react";
@@ -14,15 +14,17 @@ export interface LessonDetailsModalProps {
     onClose: () => void;
     onCancel?: () => void;
     onSendMessage?: () => void;
+    userTimezone?: string;
     lang?: 'en' | 'es';
 }
 
-export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, lang }: LessonDetailsModalProps) {
+export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, userTimezone, lang }: LessonDetailsModalProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
-    // Parsear manteniendo la zona horaria original del backend
-    const startTime = fromISOKeepZone(lesson.startAt);
-    const endTime = fromISOKeepZone(lesson.endAt);
+    // Convertir al timezone del usuario (DB) o del navegador como fallback
+    const tz = userTimezone || getUserTimezone();
+    const startTime = fromISOKeepZone(lesson.startAt).setZone(tz);
+    const endTime = fromISOKeepZone(lesson.endAt).setZone(tz);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     
     return (

@@ -12,7 +12,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { PopMenu } from "@/ui-library/components/pop-menu/PopMenu";
 import cn from "classnames";
 import { LessonCancelModal } from "../lesson-cancel-modal/LessonCancelModal";
-import { DateTime, fromISOKeepZone } from "@/features/shared/utils/dateConfig";
+import { DateTime, fromISOKeepZone, getUserTimezone } from "@/features/shared/utils/dateConfig";
 import { RateTutorModal } from "../rate-tutor-modal/RateTutorModal";
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
 
@@ -23,14 +23,16 @@ export interface LessonItemCardProps {
     token?: string;
     onLessonCancelled?: () => void;
     lang?: string;
+    userTimezone?: string;
 }
 
-export function LessonItemCard({ lesson, user, repository, token, onLessonCancelled, lang }: LessonItemCardProps) {
+export function LessonItemCard({ lesson, user, repository, token, onLessonCancelled, lang, userTimezone }: LessonItemCardProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
-    // Parsear manteniendo la zona horaria original del backend
-    const startTime = fromISOKeepZone(lesson.startAt);
-    const endTime = fromISOKeepZone(lesson.endAt);
+    // Usar el timezone del usuario (DB) con fallback al del navegador
+    const tz = userTimezone || getUserTimezone();
+    const startTime = fromISOKeepZone(lesson.startAt).setZone(tz);
+    const endTime = fromISOKeepZone(lesson.endAt).setZone(tz);
     const duration = endTime.diff(startTime, 'minutes').minutes;
     const displayPerson = user?.role === 'teacher' ? lesson.student : lesson.teacher;
     const isGroup = lesson.classType?.isGroup ?? lesson.classTypeId?.includes('_group') ?? false;
@@ -207,6 +209,7 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                     lesson={selectedLesson}
                     onClose={closeLessonDetails}
                     lang={lang as 'en' | 'es' | undefined}
+                    userTimezone={userTimezone}
                     onCancel={() => {
                         openLessonCancel();
                         closeLessonDetails();
