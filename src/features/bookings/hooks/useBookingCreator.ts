@@ -64,10 +64,14 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         setSelectedTime(undefined); // Reset selected time when fetching new slots
 
         try {
+            const selectedDay = DateTime.fromJSDate(selectedDate).startOf('day');
+            const isToday = selectedDay.equals(DateTime.now().startOf('day'));
+            const startAt = isToday ? DateTime.now().toISO()! : selectedDay.toISO()!;
+
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
                 teacherId: teacher.id,
-                startAt: DateTime.fromJSDate(selectedDate).startOf('day').toISO()!,
+                startAt,
                 endAt: DateTime.fromJSDate(selectedDate).endOf('day').toISO()!,
                 duration: selectedDuration,
                 classTypeId: selectedClass.type,
