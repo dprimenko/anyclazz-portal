@@ -207,6 +207,7 @@ export default {
     'reviews.already_reviewed': 'Ya has calificado a este profesor.',
 
     'teachers.list.title': '{{count}} profesores en {{location}}',
+    'teachers.list.title_global': '{{count}} profesores',
     'teachers.list.subtitle': 'Reserva tu próxima clase.',
     'teachers.error_fetching_teachers': 'Error al obtener profesores. Por favor, inténtalo de nuevo más tarde.',
     'teachers.super-tutor': 'Súper Tutor',
@@ -251,6 +252,7 @@ export default {
     'booking.checkout': 'Finalizar compra',
     'booking.lesson_details': 'Detalles de la lección',
     'booking.class_address': 'Dirección de la clase',
+        'booking.teacher_time': 'Hora del profesor',
     'booking.payment_successful': 'Pago Exitoso',
     'booking.payment_successful_message': 'Tu pago ha sido procesado exitosamente. Tu clase está confirmada — recibirás un recordatorio antes de que comience.',
     'booking.go_to_agenda': 'Ir a Mi Agenda',

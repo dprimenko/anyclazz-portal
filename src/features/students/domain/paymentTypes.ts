@@ -34,6 +34,7 @@ export interface StudentPaymentItem {
     class_type: StudentPaymentClassType;
     booking_date: string;
     payment_date: string;
+    timezone?: string;    // IANA timezone del profesor, para interpretar booking_date
     status: StudentPaymentStatus;
     receipt: StudentPaymentReceipt;
 }

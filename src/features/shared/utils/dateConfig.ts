@@ -168,9 +168,9 @@ export function fromISOKeepZone(isoString: string, timezone?: string): DateTime 
 }
 
 /**
- * Helper para obtener el timezone de un booking, con fallbacks
- * @deprecated El campo timezone ya no existe en bookings (v2.0). Las fechas ahora vienen con timezone incluido en formato ISO8601.
- * @param booking - Objeto booking que puede tener timezone
+ * Helper para obtener el timezone de un booking, con fallbacks.
+ * El campo `timezone` en bookings representa el IANA timezone del profesor.
+ * @param booking - Objeto booking con campo timezone opcional
  * @param teacherTimezone - Timezone del profesor como fallback
  * @returns Timezone a usar, o 'America/New_York' como último fallback
  */
@@ -179,5 +179,46 @@ export function getBookingTimezone(
   teacherTimezone?: string
 ): string {
   return booking.timezone || teacherTimezone || 'America/New_York';
+}
+
+/**
+ * Formatea una fecha UTC de booking en el timezone del usuario logueado.
+ * Usar en cards/listas de bookings.
+ * @param isoUtc - Fecha en formato ISO 8601 UTC (ej: "2026-04-28T14:00:00+00:00")
+ * @param userTimezone - Timezone IANA del usuario (ej: "Europe/Madrid")
+ * @param locale - Locale para el formato (default: 'es-ES')
+ */
+export function formatBookingInUserTimezone(
+  isoUtc: string,
+  userTimezone: string,
+  locale = 'es-ES'
+): string {
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: userTimezone,
+  }).format(new Date(isoUtc));
+}
+
+/**
+ * Formatea la hora de un booking en el timezone del profesor.
+ * Usar en detalle de booking para mostrar "Hora del profesor".
+ * @param isoUtc - Fecha en formato ISO 8601 UTC (ej: "2026-04-28T14:00:00+00:00")
+ * @param teacherTimezone - Timezone IANA del profesor (booking.timezone)
+ * @param locale - Locale para el formato (default: 'es-ES')
+ */
+export function formatBookingInTeacherTimezone(
+  isoUtc: string,
+  teacherTimezone: string,
+  locale = 'es-ES'
+): string {
+  return new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: teacherTimezone,
+  }).format(new Date(isoUtc));
 }
 

@@ -1,21 +1,8 @@
-import { useEffect, useState } from 'react';
-import { createPaymentIntent } from '@/services/stripe';
-
-interface UsePayPalBookingReturnHandlerProps {
-  token: string;
-  onSuccess?: () => void;
-  onError?: (error: string) => void;
+/** @deprecated PayPal is no longer supported. */
+export function usePayPalBookingReturnHandler(_props: { token: string; onSuccess?: () => void; onError?: (error: string) => void }) {
+  return { isProcessing: false, error: null };
 }
 
-/**
- * Hook para manejar el retorno de PayPal después de confirmar el SetupIntent para bookings.
- * 
- * Cuando el usuario aprueba el pago en PayPal, Stripe redirige de vuelta a:
- * /me/my-agenda?payment=pending&booking_id=xxx&setup_intent=seti_xxx
- * 
- * Este hook detecta esos parámetros y crea el payment intent automáticamente.
- */
-export function usePayPalBookingReturnHandler({ token, onSuccess, onError }: UsePayPalBookingReturnHandlerProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

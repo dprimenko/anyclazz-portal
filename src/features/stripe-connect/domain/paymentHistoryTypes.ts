@@ -40,6 +40,7 @@ export interface PaymentHistoryItem {
     class_type: PaymentHistoryClassType;
     booking_date: string;
     payment_date: string;
+    timezone?: string;    // IANA timezone del profesor, para interpretar booking_date
     status: PaymentHistoryStatus;
     invoice: PaymentHistoryInvoice;
     receipt: PaymentHistoryReceipt;

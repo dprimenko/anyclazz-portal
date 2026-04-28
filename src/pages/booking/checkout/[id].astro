@@ -173,7 +173,6 @@ const getProficiencyLevelName = (code: string) => {
 				<div class="flex flex-col w-full card rounded-xl p-5">
 					<Text weight="medium" colorType="primary" className="mb-4">{t('common.payment_method')}</Text>
 					<BookingCheckoutWrapper 
-						clientSecret={booking.payment.clientSecret}
 						amount={booking.payment.amount}
 						currency={booking.payment.currency}
 						requiresAction={booking.payment.requiresAction}

@@ -5,9 +5,11 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import type { BookingWithTeacher } from "../../domain/types";
 import { fromISOKeepZone, getUserTimezone } from "@/features/shared/utils/dateConfig";
+import { formatBookingInTeacherTimezone } from "@/features/shared/utils/dateConfig";
 import { useTranslations } from "@/i18n";
 import styles from "./LessonDetailsModal.module.css";
 import { useEffect } from "react";
+import { cities } from "@/features/teachers/onboarding/data/cities";
 
 export interface LessonDetailsModalProps {
     lesson: BookingWithTeacher;
@@ -26,6 +28,14 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
     const startTime = fromISOKeepZone(lesson.startAt).setZone(tz);
     const endTime = fromISOKeepZone(lesson.endAt).setZone(tz);
     const duration = endTime.diff(startTime, 'minutes').minutes;
+    
+    // Timezone del profesor (del booking) para mostrar referencia horaria
+    const teacherTz = lesson.timezone;
+    const showTeacherTime = teacherTz && teacherTz !== tz;
+
+    const cityName = lesson.teacher?.teacherAddress?.city
+        ? (cities.find(c => c.city === lesson.teacher!.teacherAddress!.city)?.name[lang ?? 'en'] ?? lesson.teacher.teacherAddress.city)
+        : null;
     
     return (
         <Modal onClose={onClose} width={480} withCloseIcon fitContent>
@@ -60,9 +70,19 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
                     </Text>
                 </div>
 
+                {/* Hora del profesor cuando difiere de la del usuario */}
+                {showTeacherTime && (
+                    <div className={styles.infoRow}>
+                        <Icon icon="globe-01" iconWidth={20} iconHeight={20} />
+                        <Text size="text-sm" colorType="tertiary">
+                            {t('booking.teacher_time')}: {formatBookingInTeacherTimezone(lesson.startAt, teacherTz)} - {formatBookingInTeacherTimezone(lesson.endAt, teacherTz)} ({teacherTz})
+                        </Text>
+                    </div>
+                )}
+
                 {/* Lesson Details Section */}
                 <div className={styles.detailsSection}>
-                    <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
+                    <Text size="texIt-sm" weight="semibold" colorType="primary" className="mb-3">
                         {t('booking.lesson_details')}
                     </Text>
 
@@ -98,9 +118,9 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
                                 <Text size="text-sm" colorType="secondary">
                                     {lesson.teacher.teacherAddress.street}
                                 </Text>
-                                {lesson.teacher.teacherAddress.city && (
+                                {cityName && (
                                     <Text size="text-sm" colorType="tertiary">
-                                        {lesson.teacher.teacherAddress.city}
+                                        {cityName}
                                     </Text>
                                 )}
                             </div>

@@ -113,8 +113,8 @@ export class AnyclazzMyBookingsRepository implements BookingsRepository {
         data['classType'] = {
             type: data['classType'].type as unknown as ClassType,
             price: {
-                amount: data['classType'].price.price,
-                currency: data['classType'].price.currencyCode,
+                price: data['classType'].price?.price ?? data['classType'].price?.amount,
+                currency: data['classType'].price?.currencyCode ?? data['classType'].price?.currency,
             }
         };
 

@@ -55,34 +55,21 @@ export const SavedPaymentMethods: FC<SavedPaymentMethodsProps> = ({
               {isSelected && <div className="w-2 h-2 rounded-full bg-[#FDB022]" />}
             </div>
 
-            {method.type === 'card' ? (
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <Text size="text-sm" weight="medium" colorType="primary">
-                  {cardBrandLabel(method.card_brand)}
-                </Text>
-                <Text size="text-sm" colorType="primary">
-                  ••••{method.card_last4}
-                </Text>
-                <Text
-                  size="text-xs"
-                  colorType={method.is_expired ? 'primary' : 'tertiary'}
-                  className={`ml-auto flex-shrink-0 ${method.is_expired ? 'text-red-500' : ''}`}
-                >
-                  {expiryLabel(method)}
-                </Text>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <Text size="text-sm" weight="medium" colorType="primary">
-                  PayPal
-                </Text>
-                {method.paypal_email && (
-                  <Text size="text-xs" colorType="tertiary" className="ml-auto truncate">
-                    {method.paypal_email}
-                  </Text>
-                )}
-              </div>
-            )}
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Text size="text-sm" weight="medium" colorType="primary">
+                {cardBrandLabel(method.card_brand)}
+              </Text>
+              <Text size="text-sm" colorType="primary">
+                ••••{method.card_last4}
+              </Text>
+              <Text
+                size="text-xs"
+                colorType={method.is_expired ? 'primary' : 'tertiary'}
+                className={`ml-auto flex-shrink-0 ${method.is_expired ? 'text-red-500' : ''}`}
+              >
+                {expiryLabel(method)}
+              </Text>
+            </div>
 
             {method.is_default && (
               <span className="text-xs text-[#FDB022] font-medium flex-shrink-0">

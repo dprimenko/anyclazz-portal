@@ -7,8 +7,9 @@ export interface Booking {
     teacherId: string;
     studentId: string;
     classTypeId: string;
-    startAt: string;      // ISO 8601 con timezone incluido
-    endAt: string;        // ISO 8601 con timezone incluido
+    startAt: string;      // ISO 8601 UTC, e.g. "2026-04-28T14:00:00+00:00"
+    endAt: string;        // ISO 8601 UTC, e.g. "2026-04-28T15:00:00+00:00"
+    timezone: string;     // IANA timezone del profesor, e.g. "America/New_York"
     meetingUrl?: string;
     status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
     createdAt?: string;

@@ -29,13 +29,17 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         setFetchingAvailableSlots(true);
 
         try {
+            const now = DateTime.now();
             const monthStart = DateTime.fromJSDate(currentMonth).startOf('month');
             const monthEnd = DateTime.fromJSDate(currentMonth).endOf('month');
+            // For the current month, start from now so today only appears if it still has slots ahead
+            const isCurrentMonth = monthStart.year === now.year && monthStart.month === now.month;
+            const startAt = isCurrentMonth ? now.toISO()! : monthStart.toISO()!;
 
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
                 teacherId: teacher.id,
-                startAt: monthStart.toISO()!,
+                startAt,
                 endAt: monthEnd.toISO()!,
                 duration: selectedDuration,
                 classTypeId: selectedClass.type,

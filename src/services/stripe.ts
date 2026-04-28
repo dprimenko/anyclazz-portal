@@ -131,7 +131,7 @@ export async function cancelSubscription(
 export async function createPaymentIntent(
   token: string,
   bookingId: string,
-  setupIntentId: string
+  savePaymentMethod: boolean = false
 ): Promise<PaymentIntentResponse> {
   const response = await fetch(`${API_URL}/payment-intents`, {
     method: 'POST',
@@ -141,7 +141,7 @@ export async function createPaymentIntent(
     },
     body: JSON.stringify({ 
       booking_id: bookingId,
-      setup_intent_id: setupIntentId 
+      save_payment_method: savePaymentMethod,
     }),
   });
 

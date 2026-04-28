@@ -74,7 +74,10 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
     }
     
     const price = useMemo(() => {
-        return formatPrice(lesson.classType.price?.price ?? 0, lesson.classType.price?.currency ?? 'USD', lang || 'en');
+        const amount = lesson.classType.price?.price ?? lesson.payment?.amount;
+        const currency = lesson.classType.price?.currency ?? lesson.payment?.currency ?? 'USD';
+        if (amount == null) return null;
+        return formatPrice(amount, currency, lang || 'en');
     }, [lesson, lang]);
 
     const isPast = useMemo(() => {
@@ -161,7 +164,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                     </div>
                     <div className="flex flex-col">
                         {innerTableHeader && <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.price')}</Text>}
-                        <Text size="text-sm" colorType="secondary">{price}</Text>
+                        <Text size="text-sm" colorType="secondary">{price ?? '—'}</Text>
                     </div>
                     <div className="flex items-center">
                         <Chip textColor={isOnline(lesson.classTypeId) ? '#F4A43A' : '#175CD3'} bgColor={isOnline(lesson.classTypeId) ? '#FFF9F2' : '#EFF8FF'} borderColor={isOnline(lesson.classTypeId) ? '#FFEACF' : '#B2DDFF'}>

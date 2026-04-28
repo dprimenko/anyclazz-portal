@@ -203,6 +203,7 @@ export default {
     'reviews.already_reviewed': 'You have already reviewed this teacher.',
 
     'teachers.list.title': '{{count}} teachers in {{location}}',
+    'teachers.list.title_global': '{{count}} teachers',
     'teachers.list.subtitle': 'Book your next lesson.',
     'teachers.error_fetching_teachers': 'Error fetching teachers. Please try again later.',
     'teachers.super-tutor': 'Super Tutor',
@@ -247,6 +248,7 @@ export default {
     'booking.checkout': 'Checkout',
     'booking.lesson_details': 'Lesson details',
     'booking.class_address': 'Class address',
+        'booking.teacher_time': "Teacher's time",
     'booking.payment_successful': 'Payment Successful',
     'booking.payment_successful_message': 'Your payment has been processed successfully. Your lesson is now confirmed — you\'ll receive a reminder before it starts.',
     'booking.go_to_agenda': 'Go to My Agenda',

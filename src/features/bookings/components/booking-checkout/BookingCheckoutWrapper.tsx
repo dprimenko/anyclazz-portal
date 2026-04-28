@@ -7,21 +7,19 @@ import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
 import { usePaymentMethods } from '@/features/bookings/hooks/usePaymentMethods';
-import { createSetupIntent } from '@/services/stripe';
+import { createPaymentIntent } from '@/services/stripe';
 
 interface BookingCheckoutWrapperProps {
-  clientSecret: string;
   amount: number;
   currency: string;
   accessToken: string;
   lang?: 'en' | 'es';
   bookingDate?: string;
-  bookingId?: string;
+  bookingId: string;
   requiresAction?: boolean;
 }
 
 export function BookingCheckoutWrapper({
-  clientSecret,
   amount,
   currency,
   accessToken,
@@ -34,8 +32,8 @@ export function BookingCheckoutWrapper({
   const [error, setError] = useState<string | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [saveForFuture, setSaveForFuture] = useState(false);
-  const [setupClientSecret, setSetupClientSecret] = useState<string | null>(null);
-  const [setupIntentReady, setSetupIntentReady] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentReady, setPaymentReady] = useState(false);
 
   const { paymentMethods, loading: loadingMethods } = usePaymentMethods(accessToken);
 
@@ -47,12 +45,27 @@ export function BookingCheckoutWrapper({
     }
   }, [paymentMethods]);
 
+  // Create PaymentIntent on mount
   useEffect(() => {
-    createSetupIntent(accessToken, 'payment_method')
-      .then(({ client_secret }) => setSetupClientSecret(client_secret))
-      .catch(() => {/* non-blocking: checkout will fall back to confirmPayment */})
-      .finally(() => setSetupIntentReady(true));
-  }, [accessToken]);
+    createPaymentIntent(accessToken, bookingId, false)
+      .then(({ client_secret }) => setClientSecret(client_secret))
+      .catch(() => setError('Failed to initialize payment'))
+      .finally(() => setPaymentReady(true));
+  }, [accessToken, bookingId]);
+
+  // When user toggles "save for future", recreate the PI with the correct flag
+  const handleSaveForFutureChange = async (value: boolean) => {
+    setSaveForFuture(value);
+    setPaymentReady(false);
+    try {
+      const { client_secret } = await createPaymentIntent(accessToken, bookingId, value);
+      setClientSecret(client_secret);
+    } catch {
+      // keep existing clientSecret if recreation fails
+    } finally {
+      setPaymentReady(true);
+    }
+  };
 
   const t = useTranslations({ lang });
 
@@ -94,14 +107,13 @@ export function BookingCheckoutWrapper({
         </div>
       )}
 
-      {(!setupIntentReady || loadingMethods) ? (
+      {(!paymentReady || loadingMethods || !clientSecret) ? (
         <div className="flex justify-center py-8">
           <div className="w-6 h-6 border-2 border-[#FDB022] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <BookingCheckout
           clientSecret={clientSecret}
-          setupClientSecret={setupClientSecret ?? undefined}
           amount={amount}
           currency={currency}
           onSuccess={handleSuccess}
@@ -110,7 +122,7 @@ export function BookingCheckoutWrapper({
           requiresAction={requiresAction}
           selectedSavedMethod={selectedSavedMethod}
           saveForFuture={saveForFuture}
-          onSaveForFutureChange={setSaveForFuture}
+          onSaveForFutureChange={handleSaveForFutureChange}
           accessToken={accessToken}
         />
       )}

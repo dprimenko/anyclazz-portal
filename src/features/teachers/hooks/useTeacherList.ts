@@ -30,10 +30,7 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 	const [fetchingTeachers, setFetchingTeachers] = useState(false);
     const [errorFetchingTeachers, setErrorFetchingTeachers] = useState<string | undefined>(undefined);
 
-    const [filters, setFilters] = useState<TeacherFilters>({
-        city: 'ny', // New York por defecto
-        country: 'us', // Estados Unidos por defecto
-    });
+    const [filters, setFilters] = useState<TeacherFilters>({});
     const [page, setPage] = useState(1);
     const previousPage = usePrevious(page);
 	const [pages, setPages] = useState(1);
@@ -99,10 +96,7 @@ export function useTeacherList({ teacherRepository, accessToken }: TeachersPageP
 	}, []);
 
 	const clearFilters = useCallback(() => {
-		setFilters(prev => ({
-			city: prev.city, // Mantener ciudad actual
-			country: prev.country, // Mantener país actual
-		}));
+		setFilters({});
 		setPage(1);
 	}, []);
 

@@ -33,15 +33,18 @@ function TeachersSectionContent() {
   }, [totalTeachers]);
 
   const teachersLocation = useMemo(() => {
-    if (!filters.city) return "Madrid";
-    
+    if (!filters.city) return null;
     const city = cities.find(c => c.city === filters.city);
-    return city ? city.name[lang as keyof typeof city.name] : "Madrid";
+    return city ? city.name[lang as keyof typeof city.name] : null;
   }, [filters.city, lang]);
 
   return (
     <div className={styles["teachers-section__container"]}>
-      <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">{t('teachers.list.title', {count: countTeachers, location: teachersLocation})}</Text>
+      <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">
+        {teachersLocation
+          ? t('teachers.list.title', { count: countTeachers, location: teachersLocation })
+          : t('teachers.list.title_global', { count: countTeachers })}
+      </Text>
       <Text textLevel="h4" colorType="tertiary">{t('teachers.list.subtitle')}</Text>
       <Divider margin={16} />
       <Space size={16} direction="vertical" />
