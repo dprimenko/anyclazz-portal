@@ -33,21 +33,34 @@ export const GET: APIRoute = async ({ redirect, url, cookies }) => {
     authUrl.searchParams.set('code_challenge_method', 'S256');
     authUrl.searchParams.set('login_hint', `register:${role}`);
 
-    // Store code_verifier for Auth.js callback
+    // Detectar si la request viene por HTTPS (producción) para usar el prefijo correcto
+    // en las cookies de auth.js. Esto debe coincidir con lo que auth.js espera leer.
+    const useSecureCookies = url.protocol === 'https:';
+    const secure = useSecureCookies;
+
+    // Store code_verifier para el callback de auth.js.
+    // El nombre debe coincidir con el override de auth.config.ts (sin prefijo __Secure-).
     cookies.set('authjs.pkce.code_verifier', codeVerifier, {
       path: '/',
       maxAge: 60 * 10,
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure,
     });
 
-    cookies.set('oauth_callback_url', callbackUrl, {
+    // Indicar a auth.js a dónde redirigir tras el callback exitoso.
+    // Auth.js lee esta cookie en el handler /api/auth/callback/keycloak.
+    // En producción (HTTPS) usa el prefijo __Secure- (comportamiento por defecto de auth.js).
+    const callbackUrlCookieName = useSecureCookies
+      ? '__Secure-authjs.callback-url'
+      : 'authjs.callback-url';
+
+    cookies.set(callbackUrlCookieName, callbackUrl, {
       path: '/',
       maxAge: 60 * 10,
-      httpOnly: true,
+      httpOnly: false,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure,
     });
 
     return redirect(authUrl.toString(), 302);

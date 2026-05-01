@@ -34,7 +34,7 @@ export default defineConfig({
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 60 * 60, // 1 hora (sin offline_access, no hay refresh de larga duración)
+    maxAge: 8 * 60 * 60, // 8 horas de inactividad máxima
   },
   cookies: {
     pkceCodeVerifier: {
@@ -56,6 +56,9 @@ export default defineConfig({
         token.refreshToken = account.refresh_token;
         token.idToken = account.id_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : Date.now() + 60 * 60 * 1000; // expires_at en ms
+        
+        // Registrar momento del login para controlar sesión máxima absoluta
+        token.loginAt = Date.now();
         
         // Detectar si el usuario tiene refresh token
         // Nota: Sin offline_access, el refresh token tiene duración limitada
@@ -115,6 +118,11 @@ export default defineConfig({
         return token;
       }
       
+      // Comprobar expiración absoluta de sesión.
+      // NOTA: El check real se hace en middleware.ts donde tenemos acceso a las cookies
+      // (necesario para detectar la preferencia "remember me").
+      // Aquí solo forzamos expiración si no hay refresh token Y el access token ha expirado.
+
       // Verificar si el token necesita ser refrescado
       // Solo hacer refresh si el usuario tiene refresh token
       if (!token.hasRefreshToken) {
@@ -216,9 +224,10 @@ export default defineConfig({
       return token;
     },
     async session({ session, token }): Promise<Session> {
-      // Si hay un error de refresh, invalidar la sesión
-      if (token.error === 'RefreshAccessTokenError') {
-        return { ...session, error: 'RefreshAccessTokenError' } as Session;
+      // Si hay un error de refresh o expiración absoluta, propagar el error para que
+      // el middleware invalide la sesión
+      if (token.error === 'RefreshAccessTokenError' || token.error === 'SessionExpired') {
+        return { ...session, error: token.error as string } as Session;
       }
       
       // Solo pasar datos esenciales a la sesión (reduce tamaño de cookie)
@@ -239,6 +248,11 @@ export default defineConfig({
         const roles = (token.roles as string[]) || [];
         const realmRoles = (token.realmRoles as string[]) || [];
         (session as any).primaryRole = roles[0] || realmRoles[0] || null;
+
+        // Exponer loginAt para que el middleware pueda verificar la duración máxima de sesión
+        if (token.loginAt) {
+          (session as any).loginAt = token.loginAt;
+        }
       }
       
       // Asegurar que el nombre esté disponible en la sesión

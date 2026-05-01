@@ -24,6 +24,8 @@ const nextUrl = Astro.url.searchParams.get('next') || '/login';
             'authjs.session-token',
             '__Secure-authjs.session-token',
             '__Host-authjs.csrf-token',
+            'ac_session_pref',
+            'ac_remember_me',
         ];
         
         console.log('🧹 Clearing cookies from client side...');

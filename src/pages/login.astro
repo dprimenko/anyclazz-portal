@@ -30,6 +30,10 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 <Base>
 	<div class="login-container">
 		<div class="loader"></div>
+		<label class="remember-me-label">
+			<input type="checkbox" id="remember-me-checkbox" />
+			<span>Recordarme (30 días)</span>
+		</label>
 	</div>
 
 	<style>
@@ -39,20 +43,7 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 			align-items: center;
 			justify-content: center;
 			height: 100dvh;
-			width: ;
 			gap: 20px;
-			text-align: center;
-		}
-
-		h1 {
-			font-size: 2rem;
-			margin-bottom: 1rem;
-			color: var(--neutral-800);
-		}
-
-		p {
-			font-size: 1.1rem;
-			color: var(--neutral-600);
 		}
 
 		.loader {
@@ -64,20 +55,21 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 			animation: spin 1s linear infinite;
 		}
 
-		#manual-login {
-			margin-top: 20px;
-			padding: 12px 24px;
-			background-color: var(--primary-500);
-			color: white;
-			border: none;
-			border-radius: 8px;
+		.remember-me-label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 0.9rem;
+			color: var(--neutral-600, #6b7280);
 			cursor: pointer;
-			font-size: 1rem;
-			transition: background-color 0.2s;
+			user-select: none;
 		}
 
-		#manual-login:hover {
-			background-color: var(--primary-600);
+		.remember-me-label input {
+			width: 16px;
+			height: 16px;
+			accent-color: var(--primary-500);
+			cursor: pointer;
 		}
 
 		@keyframes spin {
@@ -91,34 +83,30 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 
 		async function redirectToKeycloak() {
 			try {
-				console.log('Iniciando redirección a Keycloak...');
-				
-				// Obtener el callbackUrl de la URL actual y guardarlo en sessionStorage
 				const urlParams = new URLSearchParams(window.location.search);
 				const callbackUrl = urlParams.get('callbackUrl');
-				
 				if (callbackUrl) {
 					sessionStorage.setItem('auth_callback_url', callbackUrl);
-					console.log('Callback URL guardado:', callbackUrl);
 				}
-				
+
+				const rememberMe = (document.getElementById('remember-me-checkbox') as HTMLInputElement)?.checked ?? false;
+
+				// Señalizar la preferencia "remember me" mediante una cookie temporal.
+				// El endpoint /api/auth/callback la leerá para extender la session cookie.
+				if (rememberMe) {
+					document.cookie = 'ac_remember_me=1; path=/; max-age=300; SameSite=Lax';
+				} else {
+					document.cookie = 'ac_remember_me=; path=/; max-age=0';
+				}
+
 				await signIn("keycloak");
 			} catch (error) {
 				console.error('Error durante el sign in:', error);
-				const manualButton = document.getElementById('manual-login');
-				if (manualButton) {
-					manualButton.textContent = 'Error - Hacer clic para reintentar';
-				}
 			}
 		}
 
+		// Auto-redirigir a Keycloak igual que antes.
+		// El usuario puede marcar "Recordarme" antes de que ocurra la redirección.
 		setTimeout(redirectToKeycloak, 100);
-
-		const manualButton = document.getElementById('manual-login');
-		if (manualButton) {
-			manualButton.onclick = () => {
-				redirectToKeycloak();
-			};
-		}
 	</script>
 </Base>

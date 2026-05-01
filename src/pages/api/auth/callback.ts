@@ -2,7 +2,49 @@ import type { APIRoute } from 'astro';
 import { getSession } from 'auth-astro/server';
 import { routeConfig } from '../../../config/routes';
 
-export const GET: APIRoute = async ({ request, redirect, url }) => {
+const REMEMBER_ME_MAX_AGE = 30 * 24 * 60 * 60; // 30 días en segundos
+
+/**
+ * Extiende la cookie de sesión de auth.js si el usuario eligió "Recordarme".
+ * auth.js crea la cookie como session cookie (sin maxAge) por defecto.
+ * Aquí la re-emitimos con maxAge=30d si ac_remember_me=1.
+ */
+function applyRememberMe(cookies: any, remember: boolean): void {
+  if (!remember) return;
+
+  const isProd = process.env.NODE_ENV === 'production';
+  const sessionTokenName = isProd
+    ? '__Secure-authjs.session-token'
+    : 'authjs.session-token';
+
+  const sessionTokenValue = cookies.get(sessionTokenName)?.value;
+  if (!sessionTokenValue) return;
+
+  // Re-emitir la session cookie con maxAge de 30 días
+  cookies.set(sessionTokenName, sessionTokenValue, {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    secure: isProd,
+    maxAge: REMEMBER_ME_MAX_AGE,
+  });
+
+  // Cookie de preferencia que el middleware usará para saber que hay "remember me"
+  // y así no aplicar el límite absoluto de 8h
+  cookies.set('ac_session_pref', 'remember_me', {
+    httpOnly: false, // El middleware lo lee server-side, pero no necesita ser httpOnly
+    sameSite: 'lax',
+    path: '/',
+    maxAge: REMEMBER_ME_MAX_AGE,
+  });
+
+  // Limpiar la cookie temporal de solicitud
+  cookies.delete('ac_remember_me', { path: '/' });
+
+  console.log('🔒 Remember Me applied: session cookie extended to 30 days');
+}
+
+export const GET: APIRoute = async ({ request, redirect, url, cookies }) => {
   try {
     const session = await getSession(request);
     
@@ -10,7 +52,11 @@ export const GET: APIRoute = async ({ request, redirect, url }) => {
       console.log('No session found in callback, redirecting to login');
       return redirect(routeConfig.loginRoute);
     }
-    
+
+    // Aplicar "Recordarme" si el usuario lo había seleccionado antes de ir a Keycloak
+    const wantsRememberMe = cookies.get('ac_remember_me')?.value === '1';
+    applyRememberMe(cookies, wantsRememberMe);
+
     // Intentar obtener el callbackUrl de los parámetros de la URL
     const callbackUrl = url.searchParams.get('callbackUrl');
     

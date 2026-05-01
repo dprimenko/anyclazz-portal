@@ -146,15 +146,31 @@ export const onRequest = defineMiddleware(async (context, next) => {
   
   console.log(`🛡️  Auth Middleware - Path: ${pathname}, Session: ${!!session?.user}, Validation: ${validationLevel}`);
   
-  // Si hay un error de refresh token, invalidar la sesión
+  // Si hay un error de refresh token o sesión expirada, invalidar la sesión
   // PERO solo si NO estamos ya en una ruta de logout/auth para evitar loops
-  if (session && (session as any).error === 'RefreshAccessTokenError') {
+  if (session && ['RefreshAccessTokenError', 'SessionExpired'].includes((session as any).error)) {
     // Evitar loop: no redirigir si ya estamos en logout o clear-cookies
     if (!pathname.includes('/keycloak-logout') && !pathname.includes('/clear-cookies')) {
-      console.log('❌ RefreshAccessTokenError detected, invalidating session');
-      return invalidateSession(context, 'Refresh token expired or invalid');
+      console.log(`❌ ${(session as any).error} detected, invalidating session`);
+      return invalidateSession(context, ((session as any).error as string));
     } else {
-      console.log('⚠️  RefreshAccessTokenError detected but already in logout flow, continuing');
+      console.log(`⚠️  Session error detected but already in logout flow, continuing`);
+    }
+  }
+
+  // Verificar la duración máxima absoluta de la sesión para evitar rolling sessions
+  // indefinidas. El check aquí (en lugar de en el jwt callback) permite leer el cookie
+  // de preferencia "remember me" y aplicar el límite correcto.
+  if (session?.user && (session as any).loginAt) {
+    const sessionAge = Date.now() - (session as any).loginAt;
+    const hasRememberMe = context.cookies.get('ac_session_pref')?.value === 'remember_me';
+    const maxSessionAge = hasRememberMe
+      ? 30 * 24 * 60 * 60 * 1000  // 30 días con remember me
+      : 8 * 60 * 60 * 1000;        // 8 horas sin remember me
+
+    if (sessionAge > maxSessionAge) {
+      console.log(`⏰ Session absolute max exceeded (${Math.round(sessionAge / 3600000)}h), invalidating`);
+      return invalidateSession(context, 'Session absolute max exceeded');
     }
   }
   
@@ -229,6 +245,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
       return context.redirect(onboardingCheck.redirectTo);
     }
   }
-  
-  return next();
+
+  // Añadir Cache-Control: no-store en páginas autenticadas para evitar que el
+  // navegador sirva la página desde bfcache tras el logout (botón "atrás").
+  const response = await next();
+  if (session?.user && !pathname.startsWith('/api/') && !pathname.startsWith('/_astro/')) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+  }
+  return response;
 });

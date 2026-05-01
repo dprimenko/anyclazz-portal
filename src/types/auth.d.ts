@@ -27,6 +27,10 @@ declare module '@auth/core/types' {
     accessTokenExpires?: number;
     error?: string;
     hasRefreshToken?: boolean;
+    /** Timestamp (ms) del momento del login, para controlar la duración máxima de sesión */
+    loginAt?: number;
+    /** Si es true, la sesión puede durar hasta 30 días; si no, máximo 8h */
+    rememberMe?: boolean;
   }
 }
 
