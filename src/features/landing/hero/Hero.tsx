@@ -53,7 +53,7 @@ export function Hero() {
             </div>
             <Space size={96} direction="vertical" />
             <div className="flex flex-col-reverse md:flex-row w-full gap-12 md:gap-24 md:mt-[104px]">
-                <div className="relative w-full aspect-[592/560] bg-[var(--color-primary-700)] rounded-2xl overflow-visible">
+                <div className="relative w-full aspect-[592/560] bg-[var(--color-primary-700)] rounded-2xl overflow-visible mt-12 md:mt-0">
                     <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[90%]">
                         <OptimizedLandingImage image="growing-preview" />
                     </div>

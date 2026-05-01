@@ -60,7 +60,7 @@ const dateFormatted = (datetime: string) => {
 
 const timeFormatted = (datetime: string) => {
 	const dt = DateTime.fromISO(datetime, { setZone: true });
-	return (studentTimezone ? dt.setZone(studentTimezone) : dt).toFormat('HH:mm');
+	return (studentTimezone ? dt.setZone(studentTimezone) : dt).toFormat('h:mm a');
 };
 
 const durationFormatted = (startAt: string, endAt: string) => {

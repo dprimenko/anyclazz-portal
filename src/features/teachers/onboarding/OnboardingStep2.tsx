@@ -131,6 +131,7 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
                                     id={option.id}
                                     checked={checked}
                                     onCheckedChange={() => handleToggle(option.id)}
+                                    onClick={(e) => e.stopPropagation()}
                                     className="mt-0.5 flex-shrink-0"
                                 />
                                 <div className="flex flex-col gap-1 flex-1">

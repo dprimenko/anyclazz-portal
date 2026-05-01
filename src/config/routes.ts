@@ -23,7 +23,9 @@ export const routeConfig: RouteConfig = {
     '/robots.txt',
     '/favicon.ico',
     '/ref',
-    '/legal'
+    '/legal',
+    '/contact',
+    '/api/contact'
   ],
   protectedRoutes: [
     '/dashboard',

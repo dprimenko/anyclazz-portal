@@ -99,7 +99,7 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
 
     const availableTimes = useMemo(() => availableSlots.map(({startAt, timezone}) => {
         // Convertir al timezone del estudiante
-        const formattedTime = fromISOKeepZone(startAt, timezone).setZone(studentTimezone).toFormat('HH:mm');
+        const formattedTime = fromISOKeepZone(startAt, timezone).setZone(studentTimezone).toFormat('h:mm a');
         
         return {
             id: startAt,

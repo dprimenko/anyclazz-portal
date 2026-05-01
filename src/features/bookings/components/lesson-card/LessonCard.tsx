@@ -21,7 +21,7 @@ export function LessonCard({ booking, showActions = false, onChat, onDetails, on
     // Usar el timezone del usuario (DB) con fallback al del navegador
     const startDateTime = fromISOKeepZone(booking.startAt).setZone(userTimezone || getUserTimezone());
     const dayOfWeek = startDateTime.toFormat('ccc');
-    const time = startDateTime.toFormat('HH:mm');
+    const time = startDateTime.toFormat('h:mm a');
     
     const containerClasses = classNames(
         "flex flex-row gap-4 p-4 rounded-lg border border-neutral-200 bg-white",

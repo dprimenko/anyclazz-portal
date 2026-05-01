@@ -156,7 +156,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                     )}
                     <div className="flex flex-col">
                         {innerTableHeader && <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.date')}</Text>}
-                        <Text size="text-sm" colorType="secondary">{startTime.toFormat('cccc dd HH:mm')}</Text>
+                        <Text size="text-sm" colorType="secondary">{startTime.toFormat('cccc dd h:mm a')}</Text>
                     </div>
                     <div className="flex flex-col">
                         {innerTableHeader && <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.duration')}</Text>}
