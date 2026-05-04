@@ -75,7 +75,7 @@ export const MessagesPage: FC<MessagesPageProps> = ({
 	}
 
 	return (
-		<div className="flex flex-col md:flex-row h-screen bg-[var(--color-background)]">
+		<div className="flex flex-col md:flex-row h-dvh bg-[var(--color-background)]">
 			{/* Left sidebar: Conversation list — hidden on mobile when chat is active */}
 			<div className={`w-full md:w-[360px] md:border-r md:border-r-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden shrink-0 h-full ${showChatOnMobile ? 'hidden md:block' : 'block'}`}>
 				<ConversationList

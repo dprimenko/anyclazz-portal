@@ -35,7 +35,7 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
     ];
 
     return (
-        <div className="flex flex-col md:flex-row w-full h-screen md:min-h-screen bg-[#FFFDFB]">
+        <div className="flex flex-col md:flex-row w-full h-dvh md:min-h-dvh bg-[#FFFDFB]">
             {/* Left Sidebar - Desktop only */}
             <div className="hidden md:flex md:w-64 lg:w-80 bg-[var(--color-bg-active)] p-8">
                 <div className="flex flex-col w-full">

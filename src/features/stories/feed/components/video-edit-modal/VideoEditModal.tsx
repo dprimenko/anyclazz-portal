@@ -95,7 +95,7 @@ export const VideoEditModal: FC<VideoEditModalProps> = ({
 
   return (
     <Modal onClose={onClose} width={480}>
-      <div className="flex flex-col bg-white w-full md:max-h-[90vh] h-full md:h-auto overflow-hidden">
+      <div className="flex flex-col bg-white w-full md:max-h-[90dvh] h-full md:h-auto overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between p-6 flex-shrink-0 md:border-b-0">
           <div>
