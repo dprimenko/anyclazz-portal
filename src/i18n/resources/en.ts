@@ -281,7 +281,7 @@ export default {
     'subscription.processing': 'Processing...',
     'subscription.success': 'Subscription Successful',
     'subscription.success_message': 'Your Super Tutor subscription is now active. Your verified badge will appear on your profile immediately.',
-    'subscription.refund_policy': "By pressing the \"Confirm payment\" button, you agree to Prepay's Refund and Payment Policy. It's safe to pay on Prepay. All transactions are protected by SSL encryption.",
+    'subscription.refund_policy': 'All transactions are secured with SSL encryption.',
     'subscription.boost_your_profile': 'Boost your profile',
     'subscription.supertutors_increase_chance': 'Supertutors increase their chance of getting new students by a 78%',
     'subscription.stand_out_attract_students': 'Stand out and attract more students',

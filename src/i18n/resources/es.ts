@@ -285,7 +285,7 @@ export default {
     'subscription.processing': 'Procesando...',
     'subscription.success': 'Suscripción Exitosa',
     'subscription.success_message': 'Tu suscripción a Super Tutor está ahora activa. Tu insignia verificada aparecerá en tu perfil inmediatamente.',
-    'subscription.refund_policy': 'Al presionar el botón "Confirmar pago", aceptas la Política de Reembolso y Pago de Prepay. Es seguro pagar en Prepay. Todas las transacciones están protegidas por encriptación SSL.',
+    'subscription.refund_policy': 'Todas las transacciones están protegidas con cifrado SSL.',
     'subscription.boost_your_profile': 'Impulsa tu perfil',
     'subscription.supertutors_increase_chance': 'Los Super Tutores aumentan su probabilidad de conseguir nuevos estudiantes en un 78%',
     'subscription.stand_out_attract_students': 'Destaca y atrae más estudiantes',

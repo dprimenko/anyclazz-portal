@@ -7,6 +7,7 @@ import type { StripePlan } from '@/services/stripe';
 import { createSetupIntent } from '@/services/stripe';
 import { getPaymentMethods, savePaymentMethod, type PaymentMethod } from '@/services/paymentMethods';
 import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { formatPrice } from '../../utils/formatPrice';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
@@ -205,9 +206,16 @@ function CheckoutForm({
         fullWidth
       />
       
-      <Text size="text-xs" colorType="tertiary" className="text-center leading-relaxed">
-        {t('subscription.refund_policy')}
-      </Text>
+      <div className="flex flex-col items-center gap-1.5 pt-1">
+        <Text size="text-xs" colorType="tertiary" className="text-center">
+          {t('subscription.refund_policy')}
+        </Text>
+        <div className="flex items-center gap-1.5">
+          <Icon icon="shield" iconWidth={12} iconHeight={12} className="text-[var(--color-neutral-400)]" />
+          <span className="text-xs text-[var(--color-neutral-400)]">Powered by</span>
+          <Icon icon="stripe" iconWidth={36} iconHeight={15} className="text-[var(--color-neutral-400)]" />
+        </div>
+      </div>
     </form>
   );
 }
