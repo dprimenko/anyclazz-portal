@@ -8,6 +8,7 @@ import { UserCache } from '@/features/auth/infrastructure/userCache';
 import { Dropdown, type DropdownItem } from '@/ui-library/components/form/dropdown';
 import { useMemo, useState } from 'react';
 import { useTranslations, getCurrentLang } from '@/i18n';
+import { useSessionTracking } from '@/features/auth/hooks/useSessionTracking';
 
 interface LoggedUserClientProps {
     lang?: 'en' | 'es';
@@ -15,9 +16,10 @@ interface LoggedUserClientProps {
     accessToken?: string;
 }
 
-export function LoggedUserClient({ lang, user }: LoggedUserClientProps) {
+export function LoggedUserClient({ lang, user, accessToken }: LoggedUserClientProps) {
     // Usar el idioma de la prop si existe, sino el de la cookie actual
     const currentLang = lang || getCurrentLang() || 'en';
+    useSessionTracking(accessToken);
     const t = useTranslations({ lang: currentLang as 'en' | 'es' });
     const [language, setLanguage] = useState<string>(currentLang);
     

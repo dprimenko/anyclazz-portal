@@ -30,10 +30,6 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 <Base>
 	<div class="login-container">
 		<div class="loader"></div>
-		<label class="remember-me-label">
-			<input type="checkbox" id="remember-me-checkbox" />
-			<span>Recordarme (30 días)</span>
-		</label>
 	</div>
 
 	<style>
@@ -55,23 +51,6 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 			animation: spin 1s linear infinite;
 		}
 
-		.remember-me-label {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			font-size: 0.9rem;
-			color: var(--neutral-600, #6b7280);
-			cursor: pointer;
-			user-select: none;
-		}
-
-		.remember-me-label input {
-			width: 16px;
-			height: 16px;
-			accent-color: var(--primary-500);
-			cursor: pointer;
-		}
-
 		@keyframes spin {
 			0% { transform: rotate(0deg); }
 			100% { transform: rotate(360deg); }
@@ -87,16 +66,6 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 				const callbackUrl = urlParams.get('callbackUrl');
 				if (callbackUrl) {
 					sessionStorage.setItem('auth_callback_url', callbackUrl);
-				}
-
-				const rememberMe = (document.getElementById('remember-me-checkbox') as HTMLInputElement)?.checked ?? false;
-
-				// Señalizar la preferencia "remember me" mediante una cookie temporal.
-				// El endpoint /api/auth/callback la leerá para extender la session cookie.
-				if (rememberMe) {
-					document.cookie = 'ac_remember_me=1; path=/; max-age=300; SameSite=Lax';
-				} else {
-					document.cookie = 'ac_remember_me=; path=/; max-age=0';
 				}
 
 				await signIn("keycloak");
