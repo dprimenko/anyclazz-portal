@@ -28,7 +28,7 @@ const repository = new AnyclazzMyBookingsRepository();
 const lastBookings = await repository.getBookings({token: accessToken, page: 1, size: 10, filter: 'last', sort: 'desc'});
 ---
 
-<Main title="Last Lessons">
+<Main title="Last Lessons" noindex={true}>
 	<div class="px-4 py-2 sm:p-8">
 		<Breadcrumb
 			items={[

@@ -63,7 +63,7 @@ const backButtonText = isTeacher ? t('teachers.back-to-my-profile') : t('teacher
 
 ---
 
-<Main>
+<Main title={`${teacher.name} ${teacher.surname}`} noindex={true}>
     <div class="relative p-1">
         <img
             src={teacher.portrait || "https://anyclazz.b-cdn.net/fe57ea75605c476cadd30a1f53474fc1eacc7c28.jpg"}

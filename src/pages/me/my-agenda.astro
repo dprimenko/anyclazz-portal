@@ -40,7 +40,7 @@ const lang = (user?.language ?? 'en') as keyof typeof ui;
 const t = (key: string) => (ui[lang] as Record<string, string>)?.[key] ?? (ui[defaultLang] as Record<string, string>)[key] ?? key;
 ---
 
-<Main title="My Agenda">
+<Main title="My Agenda" noindex={true}>
 	<div class="px-4 py-2 sm:p-8">
 		<Breadcrumb
 			items={[

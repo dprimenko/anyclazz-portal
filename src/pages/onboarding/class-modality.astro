@@ -47,7 +47,7 @@ const initialData = teacher ? {
 } : undefined;
 ---
 
-<Base>
+<Base noindex={true}>
     <OnboardingLayout currentStep={2} totalSteps={4} client:load>
         <OnboardingStep2 
           lang={lang} 

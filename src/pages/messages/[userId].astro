@@ -20,7 +20,7 @@ const currentUserId = session.user.id || '';
 const lang = (Astro.cookies.get('app_lang')?.value || 'en') as 'en' | 'es';
 ---
 
-<Main title="Messages">
+<Main title="Messages" noindex={true}>
 	<MessagesPage
 		client:only="react"
 		keycloakToken={keycloakToken}

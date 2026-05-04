@@ -24,7 +24,7 @@ const repository = new ApiTeacherRepository();
 const teachers = await repository.listSavedTeachers({token: accessToken, page: 1, size: 10});
 ---
 
-<Main title="Saved Teachers">
+<Main title="Saved Teachers" noindex={true}>
 	<div class="px-4 py-2 sm:p-8">
 		<Breadcrumb
 			items={[

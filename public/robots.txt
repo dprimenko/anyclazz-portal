@@ -1,2 +1,19 @@
 User-agent: *
 Allow: /
+
+# Rutas privadas - no indexar
+Disallow: /dashboard
+Disallow: /login
+Disallow: /logout-cleanup
+Disallow: /profile
+Disallow: /payments
+Disallow: /onboarding/
+Disallow: /booking/
+Disallow: /messages/
+Disallow: /me/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /ref/
+Disallow: /auth-error
+
+Sitemap: https://anyclazz.com/sitemap-index.xml

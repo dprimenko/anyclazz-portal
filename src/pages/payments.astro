@@ -75,7 +75,7 @@ const oauthError = Astro.url.searchParams.get('error');
 const oauthErrorDescription = Astro.url.searchParams.get('error_description');
 ---
 
-<Main title="Payments">
+<Main title="Payments" noindex={true}>
 	<div class="px-4 py-2 sm:p-8">
 		<Breadcrumb
 			items={[

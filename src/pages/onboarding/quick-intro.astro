@@ -48,7 +48,7 @@ const initialData = teacher ? {
 } : undefined;
 ---
 
-<Base>
+<Base noindex={true}>
     <OnboardingLayout currentStep={4} client:load>
         <OnboardingStep4 lang={lang} teacherId={teacherId} token={token} initialData={initialData} client:load />
     </OnboardingLayout>

@@ -39,7 +39,7 @@ const initialData = await approvalRepository.listTeacherApprovals({
 
 ---
 
-<Main title={t('menu.teachers-approvals')}>
+<Main title={t('menu.teachers-approvals')} noindex={true}>
 	<div class="px-4 py-2 sm:p-8">
 		<Text colorType='primary' weight='semibold' size="text-2xl">{t('menu.teachers-approvals')}</Text>
 		<Space size={16} direction="vertical" />
