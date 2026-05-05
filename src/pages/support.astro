@@ -7,18 +7,23 @@ import Landing from '@/layout/Landing.astro';
     description="Whether you're just getting started or already teaching regularly, support is always available when you need it."
     keywords={['teacher support', 'help', 'booking', 'payment', 'profile setup']}
 >
-    <div class="container mx-auto px-4 py-32 max-w-3xl">
-        <h1 class="text-4xl font-bold mb-8 text-[var(--color-neutral-900)]">Teacher Support</h1>
+    <section class="px-4 pt-32 pb-20">
+        <div class="flex flex-col items-center text-center mb-16">
+            <p class="text-sm font-semibold text-[var(--color-primary-700)] mb-3">For Teachers</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">Teacher Support</h1>
+            <p class="text-lg text-neutral-500 max-w-[50ch]">We're here to help — not just point you at an article.</p>
+        </div>
+        <div class="container mx-auto max-w-3xl">
+            <p class="text-lg text-[var(--color-neutral-700)] leading-relaxed mb-8">
+                Whether you're just getting started or already teaching regularly, support is always available
+                when you need it. From setting up your profile to sorting out a booking or a payment question,
+                we're here to help — not just point you at an article. And because payments run through Stripe,
+                you can count on a system that's stable, secure, and handles everything behind the scenes.
+            </p>
 
-        <p class="text-lg text-[var(--color-neutral-700)] leading-relaxed mb-8">
-            Whether you're just getting started or already teaching regularly, support is always available
-            when you need it. From setting up your profile to sorting out a booking or a payment question,
-            we're here to help — not just point you at an article. And because payments run through Stripe,
-            you can count on a system that's stable, secure, and handles everything behind the scenes.
-        </p>
-
-        <p class="text-lg text-[var(--color-neutral-700)]">
-            Contact: <a href="mailto:info@anyclazz.com" class="text-[var(--color-primary-600)] hover:underline">info@anyclazz.com</a>
-        </p>
-    </div>
+            <p class="text-lg text-[var(--color-neutral-700)]">
+                Contact: <a href="mailto:info@anyclazz.com" class="text-[var(--color-primary-600)] hover:underline">info@anyclazz.com</a>
+            </p>
+        </div>
+    </section>
 </Landing>

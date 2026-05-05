@@ -7,15 +7,20 @@ import Landing from '@/layout/Landing.astro';
     description="Everything you need to run your classes is in one place. Manage your schedule, track bookings, and monitor your earnings."
     keywords={['teacher resources', 'manage classes', 'schedule', 'earnings', 'bookings']}
 >
-    <div class="container mx-auto px-4 py-32 max-w-3xl">
-        <h1 class="text-4xl font-bold mb-8 text-[var(--color-neutral-900)]">Teacher Resources</h1>
-
-        <p class="text-lg text-[var(--color-neutral-700)] leading-relaxed">
-            Everything you need to run your classes is in one place. Manage your schedule, stay in touch
-            with students, and track your progress without jumping between tools. You'll always have a clear
-            view of your bookings, your feedback, and your earnings — with financials powered by Stripe,
-            so there are no surprises. Just a straightforward picture of where you stand and how you're
-            growing.
-        </p>
-    </div>
+    <section class="px-4 pt-32 pb-20">
+        <div class="flex flex-col items-center text-center mb-16">
+            <p class="text-sm font-semibold text-[var(--color-primary-700)] mb-3">For Teachers</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">Teacher Resources</h1>
+            <p class="text-lg text-neutral-500 max-w-[50ch]">Everything you need to run your classes, all in one place.</p>
+        </div>
+        <div class="container mx-auto max-w-3xl">
+            <p class="text-lg text-[var(--color-neutral-700)] leading-relaxed">
+                Everything you need to run your classes is in one place. Manage your schedule, stay in touch
+                with students, and track your progress without jumping between tools. You'll always have a clear
+                view of your bookings, your feedback, and your earnings — with financials powered by Stripe,
+                so there are no surprises. Just a straightforward picture of where you stand and how you're
+                growing.
+            </p>
+        </div>
+    </section>
 </Landing>

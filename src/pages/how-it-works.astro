@@ -7,15 +7,20 @@ import Landing from '@/layout/Landing.astro';
     description="Find teachers near you or online, choose someone who fits your style and budget, and book a session in just a few clicks."
     keywords={['how it works', 'find teachers', 'book lessons', 'online classes']}
 >
-    <div class="container mx-auto px-4 py-32 max-w-3xl">
-        <h1 class="text-4xl font-bold mb-8 text-[var(--color-neutral-900)]">How It Works</h1>
-
-        <p class="text-lg text-[var(--color-neutral-700)] leading-relaxed">
-            Explore different subjects, find teachers near you or online, and choose someone who fits your
-            style, schedule, and budget. Once you find the right match, booking a session takes just a few
-            clicks. Whether it's a one-on-one or a small group class, everything works around your life —
-            not the other way around. Payments are handled securely through Stripe, so you can focus
-            entirely on learning.
-        </p>
-    </div>
+    <section class="px-4 pt-32 pb-20">
+        <div class="flex flex-col items-center text-center mb-16">
+            <p class="text-sm font-semibold text-[var(--color-primary-700)] mb-3">For Students</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">How It Works</h1>
+            <p class="text-lg text-neutral-500 max-w-[50ch]">Find the right teacher, book a session in clicks, and focus entirely on learning.</p>
+        </div>
+        <div class="container mx-auto max-w-3xl">
+            <p class="text-lg text-[var(--color-neutral-700)] leading-relaxed">
+                Explore different subjects, find teachers near you or online, and choose someone who fits your
+                style, schedule, and budget. Once you find the right match, booking a session takes just a few
+                clicks. Whether it's a one-on-one or a small group class, everything works around your life —
+                not the other way around. Payments are handled securely through Stripe, so you can focus
+                entirely on learning.
+            </p>
+        </div>
+    </section>
 </Landing>
