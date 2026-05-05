@@ -7,9 +7,14 @@ import Landing from '@/layout/Landing.astro';
     description="Learn how Anyclazz uses cookies and similar technologies to improve your experience on our platform."
     keywords={['cookies', 'tracking', 'privacy', 'data collection']}
 >
-    <div class="container mx-auto px-4 py-20 max-w-4xl">
+    <section class="px-4 pt-32 pb-20">
+        <div class="flex flex-col items-center text-center mb-16">
+            <p class="text-sm font-semibold text-[var(--color-primary-700)] mb-3">Legal</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">Cookie Policy</h1>
+            <p class="text-lg text-neutral-500 max-w-[50ch]">How Anyclazz uses cookies and similar technologies on our platform.</p>
+        </div>
+        <div class="container mx-auto max-w-4xl">
         <div class="prose prose-lg max-w-none">
-            <h1 class="text-4xl font-bold mb-8 text-[var(--color-neutral-900)]">Cookie Policy</h1>
 
             <section class="mb-10">
                 <h2 class="text-2xl font-semibold mb-4 text-[var(--color-neutral-800)]">1. Introduction</h2>
@@ -146,5 +151,6 @@ import Landing from '@/layout/Landing.astro';
                 </p>
             </section>
         </div>
-    </div>
+        </div>
+    </section>
 </Landing>

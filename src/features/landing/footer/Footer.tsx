@@ -17,6 +17,13 @@ const footerSections = [
         ]
     },
     {
+        title: "Company",
+        links: [
+            { label: "About Us", href: "/about" },
+            { label: "Contact", href: "/contact" }
+        ]
+    },
+    {
         title: "Legal",
         links: [
             { label: "Privacy Policy", href: "/legal/privacy-policy" },
@@ -53,7 +60,7 @@ export function Footer() {
                     </div>
                     
                     {/* Footer sections */}
-                    <div className="grid grid-cols-1 md:grid-cols-[max-content_max-content_max-content] gap-12 md:gap-8 mb-16 md:justify-self-end">
+                    <div className="grid grid-cols-1 md:grid-cols-[max-content_max-content_max-content_max-content] gap-12 md:gap-8 mb-16 md:justify-self-end">
                         {footerSections.map((section) => (
                             <div key={section.title}>
                                 <Text 

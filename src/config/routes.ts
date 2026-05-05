@@ -25,7 +25,11 @@ export const routeConfig: RouteConfig = {
     '/ref',
     '/legal',
     '/contact',
-    '/api/contact'
+    '/api/contact',
+    '/how-it-works',
+    '/resources',
+    '/support',
+    '/about'
   ],
   protectedRoutes: [
     '/dashboard',
