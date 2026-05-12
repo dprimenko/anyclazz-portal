@@ -22,6 +22,7 @@ export const routeConfig: RouteConfig = {
     '/404',
     '/robots.txt',
     '/favicon.ico',
+    '/.well-known',
     '/ref',
     '/legal',
     '/contact',
