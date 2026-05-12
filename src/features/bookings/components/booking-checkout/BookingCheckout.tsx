@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { getStripeErrorMessage } from '@/utils/stripeErrors';
@@ -128,6 +128,10 @@ function CheckoutForm({
                 type: 'tabs',
                 defaultCollapsed: false,
               },
+              wallets: {
+                applePay: 'auto',
+                googlePay: 'auto',
+              },
             }}
           />
         </div>
@@ -200,6 +204,14 @@ export function BookingCheckout({
   accessToken,
   stripeAccountId,
 }: BookingCheckoutProps) {
+  const stripePromise = useMemo(
+    () =>
+      stripeAccountId
+        ? loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY, { stripeAccount: stripeAccountId })
+        : loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY),
+    [stripeAccountId]
+  );
+
   if (!clientSecret) {
     return (
       <div className="p-3 bg-red-50 border border-red-200 rounded-lg mt-4">
@@ -207,10 +219,6 @@ export function BookingCheckout({
       </div>
     );
   }
-
-  const stripePromise = stripeAccountId
-    ? loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY, { stripeAccount: stripeAccountId })
-    : loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
   return (
     <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
