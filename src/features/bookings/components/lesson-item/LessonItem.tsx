@@ -175,7 +175,7 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                     </div>
                     <div className="flex justify-end gap-3" onClick={(e) => e.stopPropagation()}>
                         <div className={cn("flex gap-2 justify-end", isPast && "invisible")}>
-                            {user?.role === 'student' && (lesson.status === 'pending' || lesson.status === 'failed') ? (
+                            {user?.role === 'student' && (lesson.status === 'pending' || lesson.status === 'failed') && lesson.status !== 'processing' ? (
                                 <a href={`/booking/checkout/${lesson.id}`}>
                                     <Button
                                         label={t('common.pay')}

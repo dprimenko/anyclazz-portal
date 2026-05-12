@@ -11,7 +11,7 @@ export interface Booking {
     endAt: string;        // ISO 8601 UTC, e.g. "2026-04-28T15:00:00+00:00"
     timezone: string;     // IANA timezone del profesor, e.g. "America/New_York"
     meetingUrl?: string;
-    status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
+    status: 'pending' | 'processing' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
     createdAt?: string;
     updatedAt?: string;
 }

@@ -35,3 +35,14 @@ export async function createPaymentIntent(
 
   return response.json();
 }
+
+export async function markBookingProcessing(token: string, bookingId: string): Promise<void> {
+  const response = await fetch(`${API_URL}/bookings/${bookingId}/processing`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    console.error(`[markBookingProcessing] Failed for booking ${bookingId}: ${response.status} ${response.statusText}`);
+  }
+  // The webhook will confirm the booking regardless
+}

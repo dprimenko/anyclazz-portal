@@ -24,6 +24,7 @@ interface BookingCheckoutProps {
   saveForFuture?: boolean;
   onSaveForFutureChange?: (value: boolean) => void;
   accessToken?: string;
+  stripeAccountId?: string | null;
 }
 
 const cardElementStyle = {
@@ -172,8 +173,6 @@ function CheckoutForm({
   );
 }
 
-const stripePromise = loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
-
 const appearance = {
   theme: 'stripe' as const,
   variables: {
@@ -199,6 +198,7 @@ export function BookingCheckout({
   saveForFuture,
   onSaveForFutureChange,
   accessToken,
+  stripeAccountId,
 }: BookingCheckoutProps) {
   if (!clientSecret) {
     return (
@@ -207,6 +207,10 @@ export function BookingCheckout({
       </div>
     );
   }
+
+  const stripePromise = stripeAccountId
+    ? loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY, { stripeAccount: stripeAccountId })
+    : loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
   return (
     <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>

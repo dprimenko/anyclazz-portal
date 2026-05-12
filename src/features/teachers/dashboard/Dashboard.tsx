@@ -31,16 +31,28 @@ interface DashboardProps {
 
 export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsDashboard, lang = 'en', savedTeachers = [], referralData, inviteUrl = '' }: DashboardProps) {
     const t = useTranslations({ lang });
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [upcomingList, setUpcomingList] = useState(upcomingLessons);
+    const [lastList, setLastList] = useState(lastLessons);
+    const [refreshing, setRefreshing] = useState(false);
     
     // Crear repositorio en el cliente
     const repository = useMemo(() => new AnyclazzMyBookingsRepository(), []);
 
-    const handleLessonCancelled = () => {
-        // Trigger a refresh by changing the key
-        setRefreshKey(prev => prev + 1);
-        // In a real app, you'd want to refresh the data from the server
-        window.location.reload();
+    const handleLessonCancelled = async () => {
+        if (!token) return;
+        setRefreshing(true);
+        try {
+            const [upcoming, last] = await Promise.all([
+                repository.getBookings({ token, filter: 'upcoming', sort: 'desc', page: 1, size: 3 }),
+                repository.getBookings({ token, filter: 'last', sort: 'desc', page: 1, size: 3 }),
+            ]);
+            setUpcomingList(upcoming.bookings);
+            setLastList(last.bookings);
+        } catch (error) {
+            console.error('Error refreshing lessons:', error);
+        } finally {
+            setRefreshing(false);
+        }
     };
 
     return (
@@ -107,9 +119,10 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 					</div>
 					
 					<LessonsTable 
-						lessons={upcomingLessons} 
-						user={user}
-						token={token}					lang={lang}						onLessonCancelled={handleLessonCancelled} 
+					lessons={upcomingList} 
+					user={user}
+					token={token}				lang={lang}					loading={refreshing}
+					onLessonCancelled={handleLessonCancelled}
 						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_upcoming_lessons')}
@@ -142,9 +155,10 @@ export function Dashboard({ upcomingLessons, lastLessons, user, token, paymentsD
 					</div>
 					
 					<LessonsTable 
-						lessons={lastLessons} 
-						user={user}
-						token={token}					lang={lang}						onLessonCancelled={handleLessonCancelled} 
+					lessons={lastList} 
+					user={user}
+					token={token}				lang={lang}					loading={refreshing}
+					onLessonCancelled={handleLessonCancelled}
 						emptyState={user?.role === 'student' ? (
 							<EmptyState
 								title={t('dashboard.no_past_lessons')}

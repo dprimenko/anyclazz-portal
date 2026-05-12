@@ -45,6 +45,7 @@ export interface PaymentIntentResponse {
   currency: string;
   status: string;
   type: 'booking' | 'subscription';
+  stripe_account_id?: string | null;
 }
 
 export async function getSuperTutorPlans(token: string): Promise<GetPlansResponse> {

@@ -8,6 +8,7 @@ import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
 import { usePaymentMethods } from '@/features/bookings/hooks/usePaymentMethods';
 import { createPaymentIntent } from '@/services/stripe';
+import { markBookingProcessing } from '@/services/payment';
 
 interface BookingCheckoutWrapperProps {
   amount: number;
@@ -33,6 +34,7 @@ export function BookingCheckoutWrapper({
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [saveForFuture, setSaveForFuture] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [stripeAccountId, setStripeAccountId] = useState<string | null>(null);
   const [paymentReady, setPaymentReady] = useState(false);
 
   const { paymentMethods, loading: loadingMethods } = usePaymentMethods(accessToken);
@@ -48,7 +50,10 @@ export function BookingCheckoutWrapper({
   // Create PaymentIntent on mount
   useEffect(() => {
     createPaymentIntent(accessToken, bookingId, false)
-      .then(({ client_secret }) => setClientSecret(client_secret))
+      .then((res) => {
+        setClientSecret(res.client_secret);
+        setStripeAccountId(res.stripe_account_id ?? null);
+      })
       .catch(() => setError('Failed to initialize payment'))
       .finally(() => setPaymentReady(true));
   }, [accessToken, bookingId]);
@@ -58,8 +63,9 @@ export function BookingCheckoutWrapper({
     setSaveForFuture(value);
     setPaymentReady(false);
     try {
-      const { client_secret } = await createPaymentIntent(accessToken, bookingId, value);
-      setClientSecret(client_secret);
+      const res = await createPaymentIntent(accessToken, bookingId, value);
+      setClientSecret(res.client_secret);
+      setStripeAccountId(res.stripe_account_id ?? null);
     } catch {
       // keep existing clientSecret if recreation fails
     } finally {
@@ -74,7 +80,8 @@ export function BookingCheckoutWrapper({
       ? (paymentMethods.find((m) => m.payment_method_id === selectedPaymentMethodId) ?? null)
       : null;
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
+    await markBookingProcessing(accessToken, bookingId);
     setShowSuccessModal(true);
   };
 
@@ -124,6 +131,7 @@ export function BookingCheckoutWrapper({
           saveForFuture={saveForFuture}
           onSaveForFutureChange={handleSaveForFutureChange}
           accessToken={accessToken}
+          stripeAccountId={stripeAccountId}
         />
       )}
 

@@ -11,6 +11,8 @@ import { Chip } from '@/ui-library/components/ssr/chip/Chip';
 import { Card } from '@/ui-library/components/ssr/card/Card';
 import { LessonItem } from './lesson-item/LessonItem';
 import { LessonItemCard } from './lesson-item/LessonItemCard';
+import { LessonDetailsModal } from './lesson-details-modal/LessonDetailsModal';
+import { LessonCancelModal } from './lesson-cancel-modal/LessonCancelModal';
 
 interface WeeklyAgendaProps {
     bookings: GetBookingsResponse;
@@ -41,6 +43,8 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
     });
     const [bookings, setBookings] = useState(initialBookings);
     const [loading, setLoading] = useState(false);
+    const [directLesson, setDirectLesson] = useState<BookingWithTeacher | null>(null);
+    const [isDirectCancelOpen, setIsDirectCancelOpen] = useState(false);
     const isFirstRender = useRef(true);
     const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const pollingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -54,6 +58,42 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
             clearTimeout(pollingTimeoutRef.current);
             pollingTimeoutRef.current = null;
         }
+    }, []);
+
+    // Abrir modal de detalles cuando se llega con ?lessonId= en la URL
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const lessonId = urlParams.get('lessonId');
+
+        if (!lessonId) return;
+
+        const loadDirectLesson = async () => {
+            // Limpiar el param de la URL antes de cargar
+            const url = new URL(window.location.href);
+            url.searchParams.delete('lessonId');
+            window.history.replaceState({}, '', url.toString());
+
+            // Buscar la booking en la lista actual
+            const inList = initialBookings.bookings.find(b => b.id === lessonId);
+            if (inList) {
+                setDirectLesson(inList);
+                return;
+            }
+
+            // Si no está en la lista, obtenerla individualmente
+            try {
+                const booking = await repository.getBookingById({ bookingId: lessonId, token });
+                setDirectLesson(booking);
+                // Navegar a la semana donde cae esa booking
+                const bookingDate = DateTime.fromISO(booking.startAt);
+                setCurrentWeek(getWeekStart(bookingDate));
+            } catch (error) {
+                console.error('Error fetching booking by lessonId:', error);
+            }
+        };
+
+        loadDirectLesson();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Polling para meetingUrl cuando se llega con ?bookingId= tras un pago
@@ -181,6 +221,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
     }, [weekStart]);
 
     return (
+    <>
         <Card className="flex flex-col">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:justify-between p-4 sm:p-6 border-b border-[var(--color-neutral-200)] gap-4 sm:gap-0">
@@ -279,6 +320,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                                                 user={user}
                                                 lang={lang}
                                                 userTimezone={user?.timezone}
+                                                onLessonCancelled={fetchWeekBookings}
                                             />
                                         ))}
                                     </div>
@@ -293,6 +335,7 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                                                 user={user}
                                                 lang={lang}
                                                 userTimezone={user?.timezone}
+                                                onLessonCancelled={fetchWeekBookings}
                                             />
                                         ))}
                                     </div>
@@ -303,5 +346,38 @@ export function WeeklyAgenda({ bookings: initialBookings, user, token, lang, ini
                 })}
             </div>
         </Card>
+
+        {/* Modal de detalles abierto directamente desde ?lessonId= en la URL */}
+        {directLesson && !isDirectCancelOpen && (
+            <LessonDetailsModal
+                lesson={directLesson}
+                onClose={() => setDirectLesson(null)}
+                onCancel={() => setIsDirectCancelOpen(true)}
+                onSendMessage={() => {
+                    const chatUserId = user?.role === 'teacher' ? directLesson.student?.id : directLesson.teacher?.id;
+                    if (chatUserId) window.location.href = `/messages/${chatUserId}`;
+                }}
+                userTimezone={user?.timezone}
+                lang={lang as 'en' | 'es'}
+            />
+        )}
+        {directLesson && isDirectCancelOpen && (
+            <LessonCancelModal
+                lesson={directLesson}
+                repository={repository}
+                token={token}
+                lang={lang as 'en' | 'es'}
+                onClose={() => {
+                    setIsDirectCancelOpen(false);
+                    setDirectLesson(null);
+                }}
+                onSuccess={() => {
+                    setIsDirectCancelOpen(false);
+                    setDirectLesson(null);
+                    fetchWeekBookings();
+                }}
+            />
+        )}
+    </>
     );
 }

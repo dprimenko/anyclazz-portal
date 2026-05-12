@@ -187,7 +187,7 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
     
                 {/* Action Button */}
                 <div className={cn("mt-2", isPast && "hidden")} onClick={(e) => e.stopPropagation()}>
-                    {user?.role === 'student' && (lesson.status === 'pending' || lesson.status === 'failed') ? (
+                    {user?.role === 'student' && (lesson.status === 'pending' || lesson.status === 'failed') && lesson.status !== 'processing' ? (
                         <a href={`/booking/checkout/${lesson.id}`} className="block">
                             <Button 
                                 label={t('common.pay')} 
