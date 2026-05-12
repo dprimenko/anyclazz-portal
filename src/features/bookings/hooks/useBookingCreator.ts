@@ -7,11 +7,12 @@ import type { CreateBookingParams } from "../domain/types";
 export interface BookingCreatorProps {
     teacher: Teacher;
     accessToken: string;
+    studentTimezone?: string;
 }
 
 const repository = new AnyclazzMyBookingsRepository();
 
-export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps) {
+export function useBookingCreator({ teacher, accessToken, studentTimezone }: BookingCreatorProps) {
     const [selectedClass, setSelectedClass] = useState<TeacherClassType>(teacher.classTypes[0]);
     const [selectedDuration, setSelectedDuration] = useState<number>(30);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -29,12 +30,15 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         setFetchingAvailableSlots(true);
 
         try {
-            const now = DateTime.now();
+            const tz = studentTimezone || DateTime.now().zoneName;
+            const now = DateTime.now().setZone(tz);
             const monthStart = DateTime.fromJSDate(currentMonth).startOf('month');
             const monthEnd = DateTime.fromJSDate(currentMonth).endOf('month');
             // For the current month, start from now so today only appears if it still has slots ahead
             const isCurrentMonth = monthStart.year === now.year && monthStart.month === now.month;
-            const startAt = isCurrentMonth ? now.toISO()! : monthStart.toISO()!;
+            const startAt = isCurrentMonth
+                ? now.toISO()!
+                : monthStart.setZone(tz, { keepLocalTime: true }).toISO()!;
 
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
@@ -61,7 +65,7 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         } finally {
             setFetchingAvailableSlots(false);
         }
-    }, [accessToken, teacher.id, currentMonth, selectedDuration, selectedClass.type]);
+    }, [accessToken, teacher.id, currentMonth, selectedDuration, selectedClass.type, studentTimezone]);
 
     // Fetch slots for selected date
     const fetchDaySlots = useCallback(async () => {
@@ -69,24 +73,35 @@ export function useBookingCreator({ teacher, accessToken }: BookingCreatorProps)
         setSelectedTime(undefined); // Reset selected time when fetching new slots
 
         try {
-            const selectedDay = DateTime.fromJSDate(selectedDate).startOf('day');
-            const isToday = selectedDay.equals(DateTime.now().startOf('day'));
-            const startAt = isToday ? DateTime.now().toISO()! : selectedDay.toISO()!;
+            const tz = studentTimezone || DateTime.now().zoneName;
+            const now = DateTime.now().setZone(tz);
+            const selectedDay = DateTime.fromJSDate(selectedDate).setZone(tz, { keepLocalTime: true });
+            const isToday = selectedDay.hasSame(now, 'day');
+            const startAt = isToday
+                ? now.toISO()!
+                : selectedDay.startOf('day').toISO()!;
 
             const slots = await repository.getTeacherAvailability({ 
                 token: accessToken,
                 teacherId: teacher.id,
                 startAt,
-                endAt: DateTime.fromJSDate(selectedDate).endOf('day').toISO()!,
+                endAt: selectedDay.endOf('day').toISO()!,
                 duration: selectedDuration,
                 classTypeId: selectedClass.type,
             });
-            setAvailableSlots(slots);
+
+            // Filter to only slots matching the selected date in student timezone
+            // (defensive: prevents cross-day slots if startAt was sent with wrong offset)
+            const selectedDateKey = selectedDay.toFormat('yyyy-MM-dd');
+            const filteredSlots = slots.filter((slot: any) =>
+                DateTime.fromISO(slot.startAt).setZone(tz).toFormat('yyyy-MM-dd') === selectedDateKey
+            );
+            setAvailableSlots(filteredSlots);
         } catch (error) {
             console.error('Error fetching day slots:', error);
             setAvailableSlots([]);
         }
-    }, [accessToken, teacher.id, selectedDate, selectedDuration, selectedClass.type]);
+    }, [accessToken, teacher.id, selectedDate, selectedDuration, selectedClass.type, studentTimezone]);
 
     const createBooking = useCallback(async (bookingData: CreateBookingParams) => {
         try {

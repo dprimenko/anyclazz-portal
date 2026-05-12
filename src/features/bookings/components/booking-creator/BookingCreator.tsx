@@ -39,6 +39,8 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
     const isMobile = useIsMobile();
     const [isLoading, setIsLoading] = useState(false);
 
+    const studentTimezone = useStudentTimezone(accessToken);
+
     const {
         availableSlots,
         availableDates,
@@ -56,6 +58,7 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
     } = useBookingCreator({
         teacher,
         accessToken,
+        studentTimezone,
     });
 
     // Limpiar la hora seleccionada cuando cambia la duración
@@ -94,8 +97,6 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
             </div>
         ),
     })), [selectedClass, t]);
-
-    const studentTimezone = useStudentTimezone(accessToken);
 
     const availableTimes = useMemo(() => availableSlots.map(({startAt, timezone}) => {
         // Convertir al timezone del estudiante
