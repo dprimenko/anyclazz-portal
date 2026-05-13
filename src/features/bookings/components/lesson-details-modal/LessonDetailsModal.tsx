@@ -4,7 +4,7 @@ import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import type { BookingWithTeacher } from "../../domain/types";
-import { fromISOKeepZone, getUserTimezone } from "@/features/shared/utils/dateConfig";
+import { DateTime, fromISOKeepZone, getUserTimezone } from "@/features/shared/utils/dateConfig";
 import { formatBookingInTeacherTimezone } from "@/features/shared/utils/dateConfig";
 import { useTranslations } from "@/i18n";
 import styles from "./LessonDetailsModal.module.css";
@@ -32,6 +32,9 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
     // Timezone del profesor (del booking) para mostrar referencia horaria
     const teacherTz = lesson.timezone;
     const showTeacherTime = teacherTz && teacherTz !== tz;
+
+    const now = DateTime.now();
+    const isJoinable = now >= startTime.minus({ minutes: 10 }) && now <= endTime.plus({ minutes: 10 });
 
     const cityName = lesson.teacher?.teacherAddress?.city
         ? (cities.find(c => c.city === lesson.teacher!.teacherAddress!.city)?.name[lang ?? 'en'] ?? lesson.teacher.teacherAddress.city)
@@ -195,7 +198,7 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
                 </div>
 
                 {!lesson.classTypeId.startsWith('onsite') && (
-                    lesson.meetingUrl ? (
+                    isJoinable && lesson.meetingUrl ? (
                         <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
                             <Button label={t('common.join')} colorType="primary" fullWidth />
                         </a>

@@ -73,6 +73,11 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
         return startTime < now;
     }, [startTime]);
 
+    const isJoinable = useMemo(() => {
+        const now = DateTime.now();
+        return now >= startTime.minus({ minutes: 10 }) && now <= endTime.plus({ minutes: 10 });
+    }, [startTime, endTime]);
+
     const popMenuItems = useMemo(() => {
         return [
             ...(!isGroup ? [{
@@ -195,13 +200,15 @@ export function LessonItemCard({ lesson, user, repository, token, onLessonCancel
                                 fullWidth
                             />
                         </a>
-                    ) : !lesson.classTypeId.startsWith('onsite') && (lesson.meetingUrl ? (
-                        <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer" className="block">
-                            <Button label={t('common.join')} colorType="primary" fullWidth />
-                        </a>
-                    ) : (
-                        <Button label={t('common.join')} colorType="primary" disabled fullWidth />
-                    ))}
+                    ) : !lesson.classTypeId.startsWith('onsite') && (
+                        isJoinable && lesson.meetingUrl ? (
+                            <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer" className="block">
+                                <Button label={t('common.join')} colorType="primary" fullWidth />
+                            </a>
+                        ) : (
+                            <Button label={t('common.join')} colorType="primary" disabled fullWidth />
+                        )
+                    )}
                 </div>
             </div>
             {selectedLesson && (

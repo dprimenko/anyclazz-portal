@@ -15,46 +15,24 @@ const nextUrl = Astro.url.searchParams.get('next') || '/login';
         <p>Cerrando sesión...</p>
     </div>
     
-    <script define:inline is:inline>
-        // Limpiar todas las cookies relacionadas con auth
-        const cookiesToClear = [
-            'authjs.pkce.code_verifier',
-            'authjs.callback-url',
-            'authjs.csrf-token',
-            'authjs.session-token',
-            '__Secure-authjs.session-token',
-            '__Host-authjs.csrf-token',
-            'ac_session_pref',
-            'ac_remember_me',
-        ];
-        
-        console.log('🧹 Clearing cookies from client side...');
-        
-        cookiesToClear.forEach(cookieName => {
-            // Borrar con diferentes paths y domains
-            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;`;
-            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;`;
-            console.log(`🗑️  Cleared ${cookieName}`);
-        });
-        
-        // Limpiar localStorage (incluyendo el caché de usuario)
-        console.log('🧹 Clearing localStorage...');
+    <script>
+        // authjs.session-token es httpOnly — JS no puede borrarlo con document.cookie.
+        // Llamamos al signOut de auth.js para que él mismo limpie su cookie correctamente.
+        const { signOut } = await import('auth-astro/client');
+
+        // Limpiar localStorage
         try {
             localStorage.removeItem('anyclazz_user_profile');
             localStorage.removeItem('anyclazz_user_profile_expiry');
-            console.log('✅ User cache cleared');
-        } catch (error) {
-            console.error('Error clearing localStorage:', error);
-        }
-        
-        console.log('✅ Cookies cleared, redirecting to login...');
-        
-        // Redirigir después de limpiar las cookies
-        const nextUrl = new URLSearchParams(window.location.search).get('next') || '/login';
-        setTimeout(() => {
-            window.location.href = nextUrl;
-        }, 100);
+        } catch (_) {}
+
+        const nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
+
+        // signOut llama a POST /api/auth/signout con el CSRF token y borra la sesión.
+        // redirect: false para controlar nosotros la redirección final.
+        await signOut({ redirect: false });
+
+        window.location.href = nextUrl;
     </script>
 </body>
 </html>

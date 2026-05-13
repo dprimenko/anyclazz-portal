@@ -127,7 +127,9 @@ export const POST: APIRoute = async ({ request, redirect, cookies, url }) => {
     }
 
     const callbackUrl = url.searchParams.get('callbackUrl');
-    const redirectPath = callbackUrl ? `/login?callbackUrl=${callbackUrl}` : '/login';
+    // Pasar por logout-cleanup para limpiar también las cookies del cliente (no-httpOnly)
+    const nextPath = callbackUrl ? `/login?callbackUrl=${callbackUrl}` : '/';
+    const redirectPath = `/logout-cleanup?next=${encodeURIComponent(nextPath)}`;
 
     // Paso 1: Terminar sesión en Keycloak (back-channel, tolerante a fallos)
     await terminateKeycloakSession(idToken, refreshToken);

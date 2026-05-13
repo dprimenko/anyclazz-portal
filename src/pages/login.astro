@@ -64,18 +64,20 @@ const callbackUrl = url.searchParams.get('callbackUrl');
 			try {
 				const urlParams = new URLSearchParams(window.location.search);
 				const callbackUrl = urlParams.get('callbackUrl');
-				if (callbackUrl) {
-					sessionStorage.setItem('auth_callback_url', callbackUrl);
-				}
 
-				await signIn("keycloak");
+				// Pasar el callbackUrl a auth.js para que redirija correctamente tras el login.
+				// Enrutamos por /api/auth/callback para que "Recordarme" siga funcionando.
+				const finalCallbackUrl = callbackUrl
+					? `/api/auth/callback?callbackUrl=${encodeURIComponent(callbackUrl)}`
+					: '/api/auth/callback';
+
+				await signIn("keycloak", { callbackUrl: finalCallbackUrl });
 			} catch (error) {
 				console.error('Error durante el sign in:', error);
 			}
 		}
 
-		// Auto-redirigir a Keycloak igual que antes.
-		// El usuario puede marcar "Recordarme" antes de que ocurra la redirección.
+		// Auto-redirigir a Keycloak.
 		setTimeout(redirectToKeycloak, 100);
 	</script>
 </Base>

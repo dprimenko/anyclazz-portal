@@ -85,6 +85,11 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
         return startTime < now || lesson.status === 'completed';
     }, [startTime, lesson.status]);
 
+    const isJoinable = useMemo(() => {
+        const now = DateTime.now();
+        return now >= startTime.minus({ minutes: 10 }) && now <= endTime.plus({ minutes: 10 });
+    }, [startTime, endTime]);
+
     if (!displayPerson && !isGroup) return null;
 
     const popMenuItems = useMemo(() => {
@@ -182,13 +187,15 @@ export function LessonItem({ lesson, user, repository, token, isHighlited, borde
                                         colorType="secondary"
                                     />
                                 </a>
-                            ) : !lesson.classTypeId.startsWith('onsite') && (lesson.meetingUrl ? (
-                                <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
-                                    <Button label={t('common.join')} colorType="primary" />
-                                </a>
-                            ) : (
-                                <Button label={t('common.join')} colorType="primary" disabled />
-                            ))}
+                            ) : !lesson.classTypeId.startsWith('onsite') && (
+                                isJoinable && lesson.meetingUrl ? (
+                                    <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
+                                        <Button label={t('common.join')} colorType="primary" />
+                                    </a>
+                                ) : (
+                                    <Button label={t('common.join')} colorType="primary" disabled />
+                                )
+                            )}
                         </div>
                         <div className="flex justify-end">
                             <div className="w-[20px] grid place-items-center cursor-pointer">
