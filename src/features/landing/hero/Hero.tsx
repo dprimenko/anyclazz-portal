@@ -4,6 +4,7 @@ import { Button } from "@/ui-library/components/ssr/button/Button";
 import { OptimizedLandingImage } from "@/ui-library/components/ssr/optimized-landing-image/OptimizedLandingImage";
 import { getImageUrl } from "@/utils/getImageUrl";
 import heroImageWebP from "@/assets/images/landing/hero.webp";
+import { SectionExplore } from "../section-explore/SectionExplore";
 
 export function Hero() {
     const imageUrl = getImageUrl(heroImageWebP);
@@ -51,7 +52,8 @@ export function Hero() {
                     <OptimizedLandingImage image="booking-preview-2" />
                 </div>
             </div>
-            <Space size={96} direction="vertical" />
+            <SectionExplore />
+                    
             <div className="flex flex-col-reverse md:flex-row w-full gap-12 md:gap-24 md:mt-[104px]">
                 <div className="relative w-full aspect-[592/560] bg-[var(--color-primary-700)] rounded-2xl overflow-visible mt-12 md:mt-0">
                     <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[90%]">

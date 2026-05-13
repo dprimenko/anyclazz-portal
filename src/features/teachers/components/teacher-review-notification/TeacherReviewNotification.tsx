@@ -33,12 +33,12 @@ export function TeacherReviewNotification({ reviewStatus }: { reviewStatus?: str
     const actions = useMemo(() => {
         if (reviewStatus === 'rejected') {
             return (
-                <a href="/contact-us"><Button label={t('review-notification.contact_support')} colorType='primary' size='lg' fullWidth /></a>
+                <a href="/contact"><Button label={t('review-notification.contact_support')} colorType='primary' size='lg' fullWidth /></a>
             );
         }
 
         return (
-            <a href="/profile?tab=public_information"><Button label={t('review-notification.complete_profile')} colorType='primary' size='lg' fullWidth /></a>
+            <a href="/profile?tab=availability_and_modalities"><Button label={t('review-notification.complete_profile')} colorType='primary' size='lg' fullWidth /></a>
         );
     }, [reviewStatus, t]);
 

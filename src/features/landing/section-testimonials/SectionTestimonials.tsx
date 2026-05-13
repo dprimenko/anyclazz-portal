@@ -8,27 +8,27 @@ const testimonials = [
         id: 1,
         name: "Emily Thompson",
         role: "Student",
-        subject: "Maths",
+        subject: "Yoga",
         rating: 5,
-        quote: "Super intuitive and easy to use. I love how I can connect with teachers that truly understand my goals. Makes studying feel less like a chore and more like an adventure.",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop"
+        quote: "Tried learning yoga through random videos for months and never stayed consistent. Having a real instructor completely changed the experience. Better technique, more motivation, and way more confidence.",
+        image: "https://anyclazz.b-cdn.net/resources/Captura%20de%20pantalla%202026-05-13%20a%20las%2010.47.36.png"
     },
     {
         id: 2,
-        name: "Javier Morales",
+        name: "Raul Ferrer",
         role: "Student",
-        subject: "Español",
+        subject: "Business",
         rating: 5,
-        quote: "Super intuitive and easy to use. I love how I can connect with teachers that truly understand my goals. Makes studying feel less like a chore and more like an adventure.",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop"
+        quote: "I wasted months trying to grow through cold outreach alone. Working with a real business mentor changed everything. Clear strategy, direct feedback, and decisions that actually moved the needle.",
+        image: "https://anyclazz.b-cdn.net/resources/Captura%20de%20pantalla%202026-05-13%20a%20las%2010.50.26.png"
     },
     {
         id: 3,
         name: "Aisha Patel",
         role: "Student",
-        subject: "Sciences",
+        subject: "Programming",
         rating: 5,
-        quote: "The platform has completely transformed my learning experience. Finding qualified teachers in my area was never this easy before.",
+        quote: "I spent months watching coding tutorials and still felt stuck. After a few sessions with a real developer, I finally started building projects with confidence instead of just copying code.",
         image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop"
     },
     {

@@ -19,10 +19,10 @@ export function SectionExplore() {
         <div className="container m-auto flex flex-col w-full px-4 gap-12 py-16 md:py-24" data-testid="section-explore">
             <div className="flex flex-col items-center gap-4">
                 <Text colorType="primary" weight="semibold" textLevel="h2" className="!text-3xl md:!text-4xl" textalign="center">
-                    Students are searching for your subject right now.
+                    Learning hits different with the right teacher. 
                 </Text>
                 <Text colorType="tertiary" textalign="center" className="!text-base md:!text-lg max-w-[60ch]">
-                    180+ subjects with active demand. If you teach it, there are students on Anyclazz already looking for someone like you.
+                    Real people. Real feedback. Real progress across every subject, from math to yoga.
                 </Text>
             </div>
             
@@ -37,17 +37,14 @@ export function SectionExplore() {
                             <Text colorType="primary" weight="semibold" size="text-lg">
                                 {subject.name}
                             </Text>
-                            <Text colorType="tertiary" size="text-md">
-                                {subject.teachers} teachers
-                            </Text>
                         </div>
                     </div>
                 ))}
             </div>
             
             <div className="flex justify-center mt-4">
-                <a href="/api/auth/keycloak-register?role=teacher">
-                    <Button label="Start teaching your subject" colorType="primary" size="lg" />
+                <a href="/teachers">
+                    <Button label="Find your Teachers " colorType="primary" size="lg" />
                 </a>
             </div>
         </div>
