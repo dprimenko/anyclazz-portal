@@ -7,7 +7,7 @@ import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Button } from '@/ui-library/components/ssr/button/Button';
 import { useTranslations } from '@/i18n';
 import { usePaymentMethods } from '@/features/bookings/hooks/usePaymentMethods';
-import { createPaymentIntent } from '@/services/stripe';
+import { createPaymentIntent, updatePaymentIntent } from '@/services/stripe';
 import { markBookingProcessing } from '@/services/payment';
 
 interface BookingCheckoutWrapperProps {
@@ -35,6 +35,7 @@ export function BookingCheckoutWrapper({
   const [saveForFuture, setSaveForFuture] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [stripeAccountId, setStripeAccountId] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [paymentReady, setPaymentReady] = useState(false);
 
   const { paymentMethods, loading: loadingMethods } = usePaymentMethods(accessToken);
@@ -53,23 +54,19 @@ export function BookingCheckoutWrapper({
       .then((res) => {
         setClientSecret(res.client_secret);
         setStripeAccountId(res.stripe_account_id ?? null);
+        setPaymentIntentId(res.payment_intent_id);
       })
       .catch(() => setError('Failed to initialize payment'))
       .finally(() => setPaymentReady(true));
   }, [accessToken, bookingId]);
 
-  // When user toggles "save for future", recreate the PI with the correct flag
+  // When user toggles "save for future", update the existing PI without recreating it
   const handleSaveForFutureChange = async (value: boolean) => {
     setSaveForFuture(value);
-    setPaymentReady(false);
-    try {
-      const res = await createPaymentIntent(accessToken, bookingId, value);
-      setClientSecret(res.client_secret);
-      setStripeAccountId(res.stripe_account_id ?? null);
-    } catch {
-      // keep existing clientSecret if recreation fails
-    } finally {
-      setPaymentReady(true);
+    if (paymentIntentId) {
+      await updatePaymentIntent(accessToken, paymentIntentId, value).catch(() => {
+        // best-effort: payment proceeds even if update fails
+      });
     }
   };
 

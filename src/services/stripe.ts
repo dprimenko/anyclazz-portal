@@ -153,3 +153,22 @@ export async function createPaymentIntent(
 
   return response.json();
 }
+
+export async function updatePaymentIntent(
+  token: string,
+  paymentIntentId: string,
+  savePaymentMethod: boolean
+): Promise<void> {
+  const response = await fetch(`${API_URL}/payment-intents/${paymentIntentId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ save_payment_method: savePaymentMethod }),
+  });
+
+  if (!response.ok) {
+    console.warn('Failed to update payment intent');
+  }
+}
