@@ -147,6 +147,7 @@ export const MobileMenu: FC<MobileMenuProps> = ({ isLoggedIn = false }) => {
                   size="lg" 
                   className="w-full"
                   onClick={() => {
+                    (window as any).fbq?.('track', 'ViewContent', { content_name: 'register_cta' });
                     window.location.href = '/api/auth/keycloak-register?role=student';
                   }}
                 />

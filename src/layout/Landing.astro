@@ -31,7 +31,7 @@ const isLoggedIn = !!session?.user;
         />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <!-- Meta Pixel Code -->
-        <script>
+        <script is:inline>
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -42,6 +42,14 @@ const isLoggedIn = !!session?.user;
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '1260620476234864');
             fbq('track', 'PageView');
+
+            // Track clicks on any registration CTA
+            document.addEventListener('click', function(e) {
+                var link = e.target.closest('a[href*="keycloak-register"]');
+                if (link && typeof fbq !== 'undefined') {
+                    fbq('track', 'ViewContent', { content_name: 'register_cta' });
+                }
+            });
         </script>
         <noscript><img height="1" width="1" style="display:none"
             src="https://www.facebook.com/tr?id=1260620476234864&ev=PageView&noscript=1"
