@@ -6,6 +6,15 @@ import { Text } from '@/ui-library/components/ssr/text/Text';
 const error = Astro.url.searchParams.get('error');
 const errorDescription = Astro.url.searchParams.get('error_description');
 
+// Detectar el caso específico: el usuario se registró con un proveedor social (Google/Apple)
+// vía Keycloak pero el PKCE falla al volver al portal. El usuario SÍ queda registrado
+// en Keycloak. Redirigimos al login para que pueda iniciar sesión normalmente.
+const regPendingCookie = Astro.cookies.get('anyclazz_reg_pending');
+if (error === 'Configuration' && regPendingCookie?.value) {
+    Astro.cookies.delete('anyclazz_reg_pending', { path: '/' });
+    return Astro.redirect('/login');
+}
+
 let errorMessage = 'Ha ocurrido un error en la autenticación';
 let errorDetail = errorDescription || 'Por favor, intenta iniciar sesión nuevamente';
 

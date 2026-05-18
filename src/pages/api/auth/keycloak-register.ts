@@ -63,6 +63,17 @@ export const GET: APIRoute = async ({ redirect, url, cookies }) => {
       secure,
     });
 
+    // Marcar que hay un registro en curso. Usado por auth-error.astro para detectar
+    // el caso en que el usuario se registró con Google/Apple (el usuario queda creado
+    // en Keycloak pero el PKCE falla al volver al portal) y redirigirlo al login.
+    cookies.set('anyclazz_reg_pending', role, {
+      path: '/',
+      maxAge: 60 * 15,
+      httpOnly: true,
+      sameSite: 'lax',
+      secure,
+    });
+
     return redirect(authUrl.toString(), 302);
   } catch (error) {
     console.error('❌ Error during registration redirect:', error);

@@ -20,6 +20,12 @@ export default defineConfig({
       clientId: keycloakClientId,
       clientSecret: keycloakClientSecret,
       issuer: keycloakIssuer,
+      // Only validate PKCE, skip state check. The portal initiates registration via
+      // keycloak-register.ts (bypassing auth.js's normal signin flow), so no authjs.state
+      // cookie is set. Keycloak's First Broker Login flow (Google/Apple) can add a state
+      // parameter in the callback that auth.js would reject. PKCE provides equivalent
+      // CSRF protection for this flow.
+      checks: ["pkce"],
       authorization: {
         url: `${keycloakIssuer}/protocol/openid-connect/auth`,
         params: {
