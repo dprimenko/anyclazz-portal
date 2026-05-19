@@ -5,7 +5,26 @@ import '../features/shared/utils/dateConfig';
 import SeoHead from './components/SeoHead.astro';
 
 import { getLangFromAstro } from '../i18n';
+import { getSession } from 'auth-astro/server';
 const lang = getLangFromAstro(Astro.cookies);
+
+// Detect post-registration: fire Lead pixel once when user lands after registering.
+// The cookie is set by /api/auth/keycloak-register and survives through Keycloak's callback.
+// Cookie value = role ('student' | 'teacher'), used as content_category in the pixel event.
+const regPendingCookie = Astro.cookies.get('anyclazz_reg_pending');
+const leadRole = regPendingCookie?.value || '';
+const fireLeadEvent = !!leadRole;
+let leadUserId = '';
+if (fireLeadEvent) {
+    Astro.cookies.delete('anyclazz_reg_pending', { path: '/' });
+    try {
+        const session = await getSession(Astro.request);
+        // platformId is the Keycloak sub — matches the userId the BE uses in the CAPI event_id
+        leadUserId = (session as any)?.platformId || session?.user?.id || '';
+    } catch {
+        // session unavailable — Lead fires without eventID deduplication
+    }
+}
 
 const { title, description, keywords = [], isDark, noindex = false } = Astro.props;
 ---
@@ -38,6 +57,9 @@ const { title, description, keywords = [], isDark, noindex = false } = Astro.pro
             src="https://www.facebook.com/tr?id=1260620476234864&ev=PageView&noscript=1"
         /></noscript>
         <!-- End Meta Pixel Code -->
+        {fireLeadEvent && (
+            <script is:inline set:html={`fbq('track','Lead',{content_category:'${leadRole}'},{eventID:'lead_${leadUserId}'});`} />
+        )}
     </head>
     <body class="overflow-hidden">
         <div id="portal-root"></div>
