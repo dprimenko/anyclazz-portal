@@ -1,14 +1,19 @@
 import { useTranslations } from '@/i18n';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { Space } from '@/ui-library/components/ssr/space/Space';
+import { LoggedUserClient } from '@/features/auth/ssr/components/logged-user/LoggedUserClient';
+import type { AuthUser } from '@/features/auth/domain/types';
 
 interface OnboardingLayoutProps {
     currentStep: number;
     totalSteps?: number;
     children: React.ReactNode;
+    user?: AuthUser;
+    accessToken?: string;
+    lang?: 'en' | 'es';
 }
 
-export default function OnboardingLayout({ currentStep, totalSteps = 4, children }: OnboardingLayoutProps) {
+export default function OnboardingLayout({ currentStep, totalSteps = 4, children, user, accessToken, lang }: OnboardingLayoutProps) {
     const t = useTranslations();
 
     const steps = [
@@ -40,15 +45,16 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
             <div className="hidden md:flex md:w-64 lg:w-80 bg-[var(--color-bg-active)] p-8">
                 <div className="flex flex-col w-full">
                     {/* Logo */}
-                    <div>
+                    <a href="/">
                         <img src="/images/logo.svg" alt="Anyclazz" className="w-[139px]" />
-                    </div>
+                    </a>
 
                     <Space size={80} direction="vertical" />
 
                     {/* Steps */}
                     <div className="flex flex-col gap-4 overflow-y-auto flex-1">
                         {steps.map((step, index) => {
+
                             const stepNumber = index + 1;
                             const isActive = stepNumber === currentStep;
                             const isCompleted = stepNumber < currentStep;
@@ -97,6 +103,14 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
                             );
                         })}
                     </div>
+
+                    {/* User footer */}
+                    {user && (
+                        <div className="mt-auto pt-6 border-t border-[#E9EAEB]">
+                            <LoggedUserClient user={user} accessToken={accessToken} lang={lang} />
+                        </div>
+                    )}
+
                 </div>
             </div>
 
@@ -105,7 +119,9 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
                 <div className="w-full max-w-md lg:max-w-lg my-auto md:my-0">
                     {/* Mobile Header with Logo */}
                     <div className="md:hidden h-24 flex items-center">
-                        <img src="/images/logo.svg" alt="Anyclazz" className="w-[139px]" />
+                        <a href="/">
+                            <img src="/images/logo.svg" alt="Anyclazz" className="w-[139px]" />
+                        </a>
                     </div>
 
                     <div className="md:hidden flex gap-2 mt-5 mb-10 justify-center">

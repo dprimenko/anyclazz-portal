@@ -6,6 +6,7 @@ import { getLangFromAstro } from '@/i18n';
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
+import type { AuthUser } from '@/features/auth/domain/types';
 
 const session = await getSession(Astro.request);
 const token = session?.accessToken as string;
@@ -46,10 +47,22 @@ const initialData = teacher ? {
   beganTeachingAt: teacher.beganTeachingAt,
   shortPresentation: teacher.shortPresentation,
 } : undefined;
+
+const user: AuthUser = {
+  id: profileData.user.id,
+  email: profileData.user.email,
+  name: `${profileData.user.firstName} ${profileData.user.lastName}`,
+  firstName: profileData.user.firstName,
+  lastName: profileData.user.lastName,
+  timezone: profileData.user.timezone || 'America/New_York',
+  role: 'teacher',
+  language: profileData.user.language,
+  avatarUrl: profileData.teacherProfile?.avatar,
+};
 ---
 
 <Base noindex={true}>
-    <OnboardingLayout currentStep={4} client:load>
+    <OnboardingLayout currentStep={4} user={user} accessToken={token} lang={lang} client:load>
         <OnboardingStep4 lang={lang} teacherId={teacherId} token={token} initialData={initialData} client:load />
     </OnboardingLayout>
 </Base>
