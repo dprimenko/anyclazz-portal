@@ -18,6 +18,7 @@ export const routeConfig: RouteConfig = {
     '/',
     '/login',
     '/logout-cleanup',
+    '/auth-error',
     '/api/auth',
     '/404',
     '/robots.txt',
