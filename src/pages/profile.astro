@@ -13,6 +13,7 @@ import { getSession } from 'auth-astro/server';
 import { TeacherProfile } from "@/features/teachers/teacher-profile/TeacherProfile";
 import { AnyclazzAuthRepository } from "@/features/auth/ssr/infrastructure/AnyclazzAuthRepository";
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
+import { languages } from "@/features/teachers/onboarding/data/languages";
 import { Button } from "@/ui-library/components/ssr/button/Button";
 import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
@@ -50,6 +51,12 @@ const initialTab = Astro.url.searchParams.get('tab') || 'public_information';
 const getProficiencyLevelName = (code: string) => {
     const level = proficiencyLevels.find(l => l.code === code);
     return level ? level.name[lang] : code;
+};
+
+// Helper para obtener el nombre del idioma
+const getLanguageName = (code: string) => {
+    const lang_ = languages.find(l => l.code === code);
+    return lang_ ? lang_.name[lang] : code;
 };
 
 ---
@@ -188,7 +195,7 @@ const getProficiencyLevelName = (code: string) => {
                                     ? teacher.speaksLanguages
                                         .map(
                                             (language) =>
-                                                `${t(`common.language.${language.language}`)} (${getProficiencyLevelName(language.proficiencyLevel)})`,
+                                                `${getLanguageName(language.language)} (${getProficiencyLevelName(language.proficiencyLevel)})`,
                                         )
                                         .join(", ")
                                     : '-'

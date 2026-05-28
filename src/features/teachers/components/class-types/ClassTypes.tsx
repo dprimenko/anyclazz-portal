@@ -16,10 +16,16 @@ export interface ClassTypesProps {
 export function ClassTypes({ classTypes, lang = 'en' }: ClassTypesProps) {
     const t = useTranslations({ lang });
 
+    const visibleClassTypes = classTypes.filter(
+        (ct) => ct.durations && ct.durations.some((d) => d.price != null),
+    );
+
+    if (visibleClassTypes.length === 0) return null;
+
     return (
         <div className={classNames('flex flex-col w-full card p-3 rounded-lg gap-[0.625rem]')}>
             <Text colorType="primary" size="text-sm" weight="semibold">{t('teachers.class-types-pricing')}</Text>
-            {classTypes.map((classType, index) => (
+            {visibleClassTypes.map((classType, index) => (
                 <Fragment key={classType.type}>
                     <div className="flex flex-row gap-1.5">
                         <Icon icon={getClassTypeIcon(classType.type)} />
@@ -27,21 +33,30 @@ export function ClassTypes({ classTypes, lang = 'en' }: ClassTypesProps) {
                         {classType.durations && classType.durations.length > 0 && (
                             <>
                                 {classType.durations.some((duration) => duration.duration === 60) ? (
-                                    <div className="flex flex-row gap-0.5 items-baseline">
-                                        <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${classType.durations.find(duration => duration.duration === 60)?.price?.currency.toLowerCase()}_price`, { amount: classType.durations.find(duration => duration.duration === 60)?.price.amount })}</Text>
-                                        <Text colorType="primary" textLevel="span" size="text-xs">{t('common.hour')}</Text>
-                                    </div>
+                                    (() => {
+                                        const d60 = classType.durations.find(duration => duration.duration === 60);
+                                        return d60?.price ? (
+                                            <div className="flex flex-row gap-0.5 items-baseline">
+                                                <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${d60.price.currency.toLowerCase()}_price`, { amount: d60.price.amount })}</Text>
+                                                <Text colorType="primary" textLevel="span" size="text-xs">{t('common.hour')}</Text>
+                                            </div>
+                                        ) : null;
+                                    })()
                                 ) : (
-                                    <div className="flex flex-row gap-0.5 items-baseline">
-                                        <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${classType.durations[0].price?.currency.toLowerCase()}_price`, { amount: classType.durations[0].price.amount })}</Text>
-                                        <Text colorType="primary" textLevel="span" size="text-xs">{classType.durations[0].duration}min</Text>
-                                    </div>
+                                    (() => {
+                                        const d0 = classType.durations[0];
+                                        return d0?.price ? (
+                                            <div className="flex flex-row gap-0.5 items-baseline">
+                                                <Text colorType="primary" textLevel="span" size="text-sm" weight="semibold">{t(`common.${d0.price.currency.toLowerCase()}_price`, { amount: d0.price.amount })}</Text>
+                                                <Text colorType="primary" textLevel="span" size="text-xs">{d0.duration}min</Text>
+                                            </div>
+                                        ) : null;
+                                    })()
                                 )}
                             </>
-                            
                         )}
                     </div>
-                    {classTypes.length > 1 && index < classTypes.length - 1 && <Divider dotted />}
+                    {visibleClassTypes.length > 1 && index < visibleClassTypes.length - 1 && <Divider dotted />}
                 </Fragment>
             ))}
         </div>

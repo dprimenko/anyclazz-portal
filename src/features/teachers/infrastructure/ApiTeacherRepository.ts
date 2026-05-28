@@ -35,7 +35,7 @@ export class ApiTeacherRepository implements TeacherRepository {
 				type: classType.type as unknown as ClassType,
 				durations: classType.durations?.map((duration) => ({
 					duration: duration.duration,
-					price: duration.price ? {
+					price: duration.price?.price != null ? {
 						amount: duration.price.price,
 						currency: duration.price.currencyCode,
 					} : undefined,

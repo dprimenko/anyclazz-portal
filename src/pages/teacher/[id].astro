@@ -16,6 +16,7 @@ import { TeacherActionButtons } from "@/features/teachers/teacher-detail/compone
 import { ApiTeacherRepository } from "@/features/teachers/infrastructure/ApiTeacherRepository";
 import { getSession } from 'auth-astro/server';
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
+import { languages } from "@/features/teachers/onboarding/data/languages";
 import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export const prerender = false;
@@ -49,11 +50,17 @@ const getProficiencyLevelName = (code: string) => {
     return level ? level.name[lang] : code;
 };
 
+// Helper para obtener el nombre del idioma
+const getLanguageName = (code: string) => {
+    const lang_ = languages.find(l => l.code === code);
+    return lang_ ? lang_.name[lang] : code;
+};
+
 // Verificar si el profesor tiene al menos una clase con precio configurado
 const hasConfiguredPrices = teacher.classTypes.some(classType => 
     classType.durations && 
     classType.durations.length > 0 && 
-    classType.durations.some(duration => duration.price.amount)
+    classType.durations.some(duration => duration.price?.amount != null)
 );
 
 // Determinar texto y enlace del botón de retorno según el rol
@@ -202,7 +209,7 @@ const backButtonText = isTeacher ? t('teachers.back-to-my-profile') : t('teacher
                                     teacher.speaksLanguages
                                         .map(
                                             (language) =>
-                                                `${t(`common.language.${language.language}`)} (${getProficiencyLevelName(language.proficiencyLevel)})`,
+                                                `${getLanguageName(language.language)} (${getProficiencyLevelName(language.proficiencyLevel)})`,
                                         )
                                         .join(", ")
                                 }
