@@ -92,14 +92,20 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
             children: () => classOptionChildren(classType),
         })), [teacher]);
 
-    const classDurations = useMemo(() => [30,60].map((duration) => ({
-        id: duration.toString(),
-        children: () => (
-            <div className="flex flex-row gap-1.5 w-full items-center">
-                <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{t('common.minutes_long', { minutes: duration })}</Text>
-            </div>
-        ),
-    })), [selectedClass, t]);
+    const classDurations = useMemo(() => [30,60]
+        .filter((duration) => {
+            if (!selectedClass?.durations) return false;
+            const d = selectedClass.durations.find(d => d.duration === duration);
+            return d?.price != null;
+        })
+        .map((duration) => ({
+            id: duration.toString(),
+            children: () => (
+                <div className="flex flex-row gap-1.5 w-full items-center">
+                    <Text textLevel="span" colorType="primary" size="text-sm" weight="medium">{t('common.minutes_long', { minutes: duration })}</Text>
+                </div>
+            ),
+        })), [selectedClass, t]);
 
     const availableTimes = useMemo(() => availableSlots.map(({startAt, timezone}) => {
         // Convertir al timezone del estudiante
