@@ -25,6 +25,7 @@ if (fireLeadEvent) {
         // session unavailable — Lead fires without eventID deduplication
     }
 }
+const leadEventName = leadRole === 'student' ? 'Lead-Student' : 'Lead-Teacher';
 
 const { title, description, keywords = [], isDark, noindex = false } = Astro.props;
 ---
@@ -58,7 +59,7 @@ const { title, description, keywords = [], isDark, noindex = false } = Astro.pro
         /></noscript>
         <!-- End Meta Pixel Code -->
         {fireLeadEvent && (
-            <script is:inline set:html={`fbq('track','Lead',{content_category:'${leadRole}'},{eventID:'lead_${leadUserId}'});`} />
+            <script is:inline set:html={`fbq('trackCustom','${leadEventName}',{content_category:'${leadRole}'},{eventID:'lead_${leadUserId}'});`} />
         )}
     </head>
     <body class="overflow-hidden">
