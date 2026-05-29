@@ -85,10 +85,12 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
         </div>
     );
 
-    const classOptions = useMemo(() => teacher.classTypes.map((classType) => ({
-        id: classType.type,
-        children: () => classOptionChildren(classType),
-    })), [teacher]);
+    const classOptions = useMemo(() => teacher.classTypes
+        .filter((ct) => ct.durations && ct.durations.some((d) => d.price != null))
+        .map((classType) => ({
+            id: classType.type,
+            children: () => classOptionChildren(classType),
+        })), [teacher]);
 
     const classDurations = useMemo(() => [30,60].map((duration) => ({
         id: duration.toString(),

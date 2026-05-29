@@ -116,7 +116,7 @@ export function TeacherItem({ teacher, token }: TeacherProps) {
                     </div>
                     <Space size={16} direction="vertical"/>
                     <div className={styles["teacher-item__content-row"]}>
-                        <Text colorType="tertiary" size="text-sm">
+                        <Text className={styles["teacher-item__content-presentation"]} colorType="tertiary" size="text-sm">
                             {t('teachers.speaks')}{' '}
                             {teacher.speaksLanguages.map((language) => {
                                 const lang = languages.find(l => l.code === language.language);
