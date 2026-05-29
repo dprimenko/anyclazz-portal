@@ -108,6 +108,7 @@ export function LoggedUserClient({ lang, user, accessToken }: LoggedUserClientPr
         <PopMenu
             align="right"
             direction="up"
+            className="w-full"
             //items={menuItems}
             trigger={
                 <Card className="p-3 w-full">

@@ -19,9 +19,10 @@ export interface PopMenuProps {
     spaceBetweenTriggerAndMenu?: number; // in pixels
     onClose?: () => void;
     contentClassName?: string;
+    className?: string;
 }
 
-export function PopMenu({ trigger, items, children, align = "right", direction = "down", isOpen: controlledIsOpen, onClose, contentClassName, spaceBetweenTriggerAndMenu = 8 }: PopMenuProps) {
+export function PopMenu({ trigger, items, children, align = "right", direction = "down", isOpen: controlledIsOpen, onClose, contentClassName, spaceBetweenTriggerAndMenu = 8, className }: PopMenuProps) {
     const [internalIsOpen, setInternalIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +62,7 @@ export function PopMenu({ trigger, items, children, align = "right", direction =
         : { bottom: `calc(100% + ${spaceBetweenTriggerAndMenu}px)`, top: 'auto' };
 
     return (
-        <div className="relative inline-block" ref={menuRef}>
+        <div className={classNames("relative inline-block", className)} ref={menuRef}>
             <div 
                 className="bg-transparent border-none p-0 cursor-pointer flex items-center justify-center w-full hover:opacity-80" 
                 onClick={handleToggle}
