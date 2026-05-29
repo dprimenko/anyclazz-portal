@@ -51,9 +51,11 @@ export function TeacherApprovalItemCard({ teacher, onApprove, onReject, isLoadin
                         alt={`${teacher.name} ${teacher.surname}`}
                     />
                     <div className="flex flex-col">
-                        <Text size="text-sm" weight="semibold" colorType="primary">
-                            {teacher.name} {teacher.surname}
-                        </Text>
+                        <a href={`/teacher/${teacher.id}`}>
+                            <Text size="text-sm" weight="semibold" colorType="primary">
+                                {teacher.name} {teacher.surname}
+                            </Text>
+                        </a>
                         <Text size="text-xs" colorType="tertiary">
                             {teacher.email}
                         </Text>

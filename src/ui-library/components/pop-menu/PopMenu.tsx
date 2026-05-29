@@ -61,7 +61,7 @@ export function PopMenu({ trigger, items, children, align = "right", direction =
         : { bottom: `calc(100% + ${spaceBetweenTriggerAndMenu}px)`, top: 'auto' };
 
     return (
-        <div className="relative inline-block w-full" ref={menuRef}>
+        <div className="relative inline-block" ref={menuRef}>
             <div 
                 className="bg-transparent border-none p-0 cursor-pointer flex items-center justify-center w-full hover:opacity-80" 
                 onClick={handleToggle}

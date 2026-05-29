@@ -1,0 +1,84 @@
+---
+import Main from '@/layout/Main.astro';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { Breadcrumb } from '@/ui-library/components/breadcrumb/Breadcrumb';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { ApiAdminBookingsRepository } from '@/features/bookings/infrastructure/ApiAdminBookingsRepository';
+import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
+import { AdminLessonsTable } from '@/features/bookings/components/admin-lessons-table/AdminLessonsTable';
+import { getSession } from 'auth-astro/server';
+import { useTranslationsSSR } from '@/i18n';
+import type { ui } from '@/i18n/ui';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+
+if (user?.role !== 'admin') {
+	return Astro.redirect('/dashboard');
+}
+
+const lang = (Astro.cookies.get('app_lang')?.value || 'en') as keyof typeof ui;
+const t = useTranslationsSSR(lang);
+
+const { id } = Astro.params;
+const teacherName = Astro.url.searchParams.get('name') || id;
+
+const bookingsRepository = new ApiAdminBookingsRepository();
+const teacherRepository = new ApiTeacherRepository();
+
+const [initialData, teacher] = await Promise.allSettled([
+	bookingsRepository.getTeacherBookings({
+		token: accessToken,
+		entityId: id!,
+		page: 1,
+		size: 20,
+	}),
+	teacherRepository.getTeacher({ token: accessToken, teacherId: id! }),
+]);
+
+if (initialData.status === 'rejected') {
+	return Astro.redirect('/admin/teacher-directory');
+}
+
+const teacherSubjectName = teacher.status === 'fulfilled'
+	? (teacher.value.subject?.name?.[lang] ?? undefined)
+	: undefined;
+---
+
+<Main title={t('admin.lessons_history.title')} noindex={true}>
+	<div class="px-4 py-2 sm:p-8">
+		<Breadcrumb
+			items={[
+				{ label: t('menu.teacher-directory'), href: '/admin/teacher-directory' },
+				{ label: teacherName ?? '', href: '#' },
+				{ label: t('admin.lessons_history.title') },
+			]}
+		/>
+		<Space size={16} direction="vertical" />
+		<Text colorType="primary" weight="semibold" size="text-2xl">
+			{t('admin.lessons_history.title')}
+		</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
+
+		<AdminLessonsTable
+			initialLessons={initialData.value}
+			token={accessToken}
+			entityId={id!}
+			perspective="teacher"
+			lang={lang}
+			subjectName={teacherSubjectName}
+			client:load
+		/>
+	</div>
+</Main>

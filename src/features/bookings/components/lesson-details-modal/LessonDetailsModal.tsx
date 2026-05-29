@@ -18,9 +18,10 @@ export interface LessonDetailsModalProps {
     onSendMessage?: () => void;
     userTimezone?: string;
     lang?: 'en' | 'es';
+    isAdmin?: boolean;
 }
 
-export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, userTimezone, lang }: LessonDetailsModalProps) {
+export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, userTimezone, lang, isAdmin }: LessonDetailsModalProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' | undefined });
     
     // Convertir al timezone del usuario (DB) o del navegador como fallback
@@ -70,18 +71,11 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
                     <Icon icon="time" iconWidth={20} iconHeight={20} />
                     <Text size="text-sm" colorType="secondary">
                         {startTime.toFormat('h:mm a')} - {endTime.toFormat('h:mm a')}
+                        {showTeacherTime && (
+                            <span className="text-[var(--color-text-tertiary)]"> · {formatBookingInTeacherTimezone(lesson.startAt, teacherTz)} - {formatBookingInTeacherTimezone(lesson.endAt, teacherTz)} ({teacherTz})</span>
+                        )}
                     </Text>
                 </div>
-
-                {/* Hora del profesor cuando difiere de la del usuario */}
-                {showTeacherTime && (
-                    <div className={styles.infoRow}>
-                        <Icon icon="globe-01" iconWidth={20} iconHeight={20} />
-                        <Text size="text-sm" colorType="tertiary">
-                            {t('booking.teacher_time')}: {formatBookingInTeacherTimezone(lesson.startAt, teacherTz)} - {formatBookingInTeacherTimezone(lesson.endAt, teacherTz)} ({teacherTz})
-                        </Text>
-                    </div>
-                )}
 
                 {/* Lesson Details Section */}
                 <div className={styles.detailsSection}>
@@ -197,7 +191,7 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
                     )}
                 </div>
 
-                {!lesson.classTypeId.startsWith('onsite') && (
+                {!isAdmin && !lesson.classTypeId.startsWith('onsite') && (
                     isJoinable && lesson.meetingUrl ? (
                         <a href={lesson.meetingUrl} target="_blank" rel="noopener noreferrer">
                             <Button label={t('common.join')} colorType="primary" fullWidth />

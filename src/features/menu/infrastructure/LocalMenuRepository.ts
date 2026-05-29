@@ -118,7 +118,19 @@ export class LocalMenuRepository implements MenuRepository {
                 label: 'menu.teachers-approvals',
                 icon: 'users-check',
                 href: '/admin/teachers-approvals',
-            }
+            },
+            {
+                id: 'teacher-directory',
+                label: 'menu.teacher-directory',
+                icon: 'people',
+                href: '/admin/teacher-directory',
+            },
+            {
+                id: 'student-directory',
+                label: 'menu.student-directory',
+                icon: 'graduation-hat-01',
+                href: '/admin/student-directory',
+            },
         ];
     }
 

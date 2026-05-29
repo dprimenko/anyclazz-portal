@@ -1,0 +1,69 @@
+---
+import Main from '@/layout/Main.astro';
+import { Divider } from '@/ui-library/components/ssr/divider/Divider';
+import { Text } from '@/ui-library/components/ssr/text/Text';
+import { Space } from '@/ui-library/components/ssr/space/Space';
+import { Breadcrumb } from '@/ui-library/components/breadcrumb/Breadcrumb';
+import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
+import { ApiAdminBookingsRepository } from '@/features/bookings/infrastructure/ApiAdminBookingsRepository';
+import { AdminLessonsTable } from '@/features/bookings/components/admin-lessons-table/AdminLessonsTable';
+import { getSession } from 'auth-astro/server';
+import { useTranslationsSSR } from '@/i18n';
+import type { ui } from '@/i18n/ui';
+
+const session = await getSession(Astro.request);
+const accessToken = session?.accessToken as string;
+
+if (!accessToken) {
+	return Astro.redirect('/login');
+}
+
+const authRepository = new AnyclazzAuthRepository();
+const user = await authRepository.getCurrentUser(session);
+
+if (user?.role !== 'admin') {
+	return Astro.redirect('/dashboard');
+}
+
+const lang = (Astro.cookies.get('app_lang')?.value || 'en') as keyof typeof ui;
+const t = useTranslationsSSR(lang);
+
+const { id } = Astro.params;
+const studentName = Astro.url.searchParams.get('name') || id;
+
+const bookingsRepository = new ApiAdminBookingsRepository();
+const initialData = await bookingsRepository.getStudentBookings({
+	token: accessToken,
+	entityId: id!,
+	page: 1,
+	size: 20,
+});
+---
+
+<Main title={t('admin.lessons_history.title')} noindex={true}>
+	<div class="px-4 py-2 sm:p-8">
+		<Breadcrumb
+			items={[
+				{ label: t('menu.student-directory'), href: '/admin/student-directory' },
+				{ label: studentName ?? '', href: '#' },
+				{ label: t('admin.lessons_history.title') },
+			]}
+		/>
+		<Space size={16} direction="vertical" />
+		<Text colorType="primary" weight="semibold" size="text-2xl">
+			{t('admin.lessons_history.title')}
+		</Text>
+		<Space size={16} direction="vertical" />
+		<Divider />
+		<Space size={32} direction="vertical" />
+
+		<AdminLessonsTable
+			initialLessons={initialData}
+			token={accessToken}
+			entityId={id!}
+			perspective="student"
+			lang={lang}
+			client:load
+		/>
+	</div>
+</Main>
