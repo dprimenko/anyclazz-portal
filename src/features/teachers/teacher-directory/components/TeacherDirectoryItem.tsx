@@ -75,9 +75,11 @@ export function TeacherDirectoryItem({ teacher, token }: TeacherDirectoryItemPro
                             hasVerifiedBadge={isSuperTutor(teacher.superTutorTo)}
                         />
                         <div className="flex flex-col gap-[2px]">
-                            <Text size="text-sm" weight="semibold" colorType="primary">
-                                {teacher.name} {teacher.surname}
-                            </Text>
+                            <a href={`/teacher/${teacher.id}`} className="no-underline hover:opacity-70 transition-opacity">
+                                <Text size="text-sm" weight="semibold" colorType="primary">
+                                    {teacher.name} {teacher.surname}
+                                </Text>
+                            </a>
                             <Text size="text-xs" colorType="tertiary">{subjectName}</Text>
                         </div>
                     </div>
@@ -123,9 +125,11 @@ export function TeacherDirectoryItem({ teacher, token }: TeacherDirectoryItemPro
                             hasVerifiedBadge={isSuperTutor(teacher.superTutorTo)}
                         />
                         <div className="flex flex-col gap-[2px]">
-                            <Text size="text-sm" weight="medium" colorType="primary">
-                                {teacher.name} {teacher.surname}
-                            </Text>
+                            <a href={`/teacher/${teacher.id}`} className="no-underline hover:opacity-70 transition-opacity">
+                                <Text size="text-sm" weight="medium" colorType="primary">
+                                    {teacher.name} {teacher.surname}
+                                </Text>
+                            </a>
                             <Text size="text-sm" colorType="tertiary">{subjectName}</Text>
                         </div>
                     </div>
