@@ -13,6 +13,7 @@ import { getSession } from 'auth-astro/server';
 import { AnyclazzMyBookingsRepository } from '@/features/bookings/infrastructure/AnyclazzMyBookingsRepository';
 import { BookingCheckoutWrapper } from '@/features/bookings/components/booking-checkout/BookingCheckoutWrapper';
 import { proficiencyLevels } from '@/features/teachers/onboarding/data/proficiencyLevels';
+import { languages } from '@/features/teachers/onboarding/data/languages';
 import { isSuperTutor } from '@/features/teachers/utils/superTutorHelpers';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 
@@ -120,9 +121,11 @@ const getProficiencyLevelName = (code: string) => {
                     <div class="flex flex-row gap-4">
                         <Text colorType="tertiary" size="text-sm">
                             {t('teachers.speaks')}{' '}
-                            {booking.teacher.speaksLanguages.map((language) => (
-                                `${t(`common.language.${language.language}`)} (${getProficiencyLevelName(language.proficiencyLevel)})`
-                            )).join(', ')}
+                            {booking.teacher.speaksLanguages.map((language) => {
+                                const langEntry = languages.find(l => l.code === language.language);
+                                const langName = langEntry ? langEntry.name[lang as 'en' | 'es'] : language.language;
+                                return `${langName} (${getProficiencyLevelName(language.proficiencyLevel)})`;
+                            }).join(', ')}
                         </Text>
                     </div>
                 </div>

@@ -22,7 +22,8 @@ import type { CreateBookingParams } from "../../domain/types";
 import { useStudentTimezone } from "@/features/user/hooks/useStudentTimezone";
 import { useIsMobile } from "@/ui-library/hooks/useIsMobile";
 import { proficiencyLevels } from "@/features/teachers/onboarding/data/proficiencyLevels";
-import { getLangFromUrl } from "@/i18n";
+import { languages } from "@/features/teachers/onboarding/data/languages";
+import { getCurrentLang } from "@/i18n";
 import { isSuperTutor } from "@/features/teachers/utils/superTutorHelpers";
 
 export interface BookingCreatorProps {
@@ -206,9 +207,12 @@ export function BookingCreator({teacher, onClose, accessToken: accessTokenProp}:
                         <Text colorType="tertiary" size="text-sm">
                             {t('teachers.speaks')}{' '}
                             {teacher.speaksLanguages.map((language) => {
+                                const currentLang = getCurrentLang();
                                 const level = proficiencyLevels.find(l => l.code === language.proficiencyLevel);
-                                const levelName = level ? level.name[getLangFromUrl(new URL(window.location.href))] : language.proficiencyLevel;
-                                return `${t(`common.language.${language.language}`)} (${levelName})`;
+                                const levelName = level ? level.name[currentLang] : language.proficiencyLevel;
+                                const langEntry = languages.find(l => l.code === language.language);
+                                const langName = langEntry ? langEntry.name[currentLang] : language.language;
+                                return `${langName} (${levelName})`;
                             }).join(', ')}
                         </Text>
                     </div>
