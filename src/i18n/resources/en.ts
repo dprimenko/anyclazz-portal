@@ -233,6 +233,7 @@ export default {
 
     'teachers.list.title': '{{count}} teachers in {{location}}',
     'teachers.list.title_global': '{{count}} teachers',
+    'students.list.title_global': '{{count}} students',
     'teachers.list.subtitle': 'Book your next lesson.',
     'teachers.error_fetching_teachers': 'Error fetching teachers. Please try again later.',
     'teachers.super-tutor': 'Super Tutor',

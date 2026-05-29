@@ -6,6 +6,7 @@ import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { PageSelector } from '@/ui-library/components/page-selector';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
+import { Text } from '@/ui-library/components/ssr/text/Text';
 import { StudentDirectoryTable } from '../components/student-directory-table/StudentDirectoryTable';
 import { ApiAdminStudentRepository } from '../infrastructure/ApiAdminStudentRepository';
 import type { ListAdminStudentsResponse } from '../domain/types';
@@ -70,6 +71,9 @@ export function PaginatedStudentDirectory({ initialStudents, token, lang = 'en' 
     return (
         <LanguageProvider lang={lang}>
             <div className="flex flex-col gap-6">
+                <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">
+                    {t('students.list.title_global', { count: students.meta.total })}
+                </Text>
                 <div className="relative w-full max-w-xl">
                     <input
                         type="text"

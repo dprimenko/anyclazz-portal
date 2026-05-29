@@ -6,6 +6,7 @@ import { Divider } from '@/ui-library/components/ssr/divider/Divider';
 import { Space } from '@/ui-library/components/ssr/space/Space';
 import { PageSelector } from '@/ui-library/components/page-selector';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
+import { Text } from '@/ui-library/components/ssr/text/Text';
 import { TeacherDirectoryTable } from './components/TeacherDirectoryTable';
 import { ApiAdminTeacherRepository } from './infrastructure/ApiAdminTeacherRepository';
 import type { ListAdminTeachersResponse } from './domain/types';
@@ -70,6 +71,9 @@ export function PaginatedTeacherDirectory({ initialTeachers, token, lang = 'en' 
     return (
         <LanguageProvider lang={lang}>
             <div className="flex flex-col gap-6">
+                <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">
+                    {t('teachers.list.title_global', { count: teachers.meta.total })}
+                </Text>
                 <div className="relative w-full max-w-xl">
                     <input
                         type="text"
