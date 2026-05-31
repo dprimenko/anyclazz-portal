@@ -115,8 +115,8 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex md:items-center md:justify-center p-6 md:p-12 overflow-y-auto">
-                <div className="w-full max-w-md lg:max-w-lg my-auto md:my-0">
+            <div className="flex-1 flex flex-col p-6 md:p-12 overflow-y-auto">
+                <div className="w-full max-w-md lg:max-w-lg mx-auto my-auto">
                     {/* Mobile Header with Logo */}
                     <div className="md:hidden h-24 flex items-center">
                         <a href="/">

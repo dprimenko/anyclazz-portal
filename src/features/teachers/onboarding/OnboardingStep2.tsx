@@ -1,8 +1,9 @@
 import { useState, useMemo, useCallback } from 'react';
+import { NumericFormat } from 'react-number-format';
 import { useTranslations } from '@/i18n';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Checkbox } from '@/ui-library/shared';
-import { ClassType, type TeacherClassType } from '@/features/teachers/domain/types';
+import { ClassType, type TeacherClassType, type DurationPrice } from '@/features/teachers/domain/types';
 import { cn } from '@/lib/utils';
 import { TeacherModalitiesRepository } from '../infrastructure/TeacherModalitiesRepository';
 
@@ -24,14 +25,13 @@ interface ModalityOption {
 export default function OnboardingStep2({ lang, initialData, teacherId, token }: OnboardingStep2Props) {
     const t = useTranslations({ lang: lang as 'en' | 'es' });
     const repository = useMemo(() => new TeacherModalitiesRepository(), []);
-    
-    // Extraer los tipos de las modalidades iniciales
-    const initialClassTypes = useMemo(() => 
-        initialData?.classModalities?.map(m => m.type) || [], 
+
+    const validInitial = useMemo(() =>
+        (initialData?.classModalities || []).filter(ct => ct.type && Array.isArray(ct.durations)),
         [initialData]
     );
-    
-    const [selectedModalities, setSelectedModalities] = useState<ClassType[]>(initialClassTypes);
+
+    const [classTypes, setClassTypes] = useState<TeacherClassType[]>(validInitial);
     const [isSaving, setIsSaving] = useState(false);
 
     const modalityOptions: ModalityOption[] = [
@@ -57,43 +57,68 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
         }
     ];
 
-    const isFormValid = useMemo(() => selectedModalities.length > 0, [selectedModalities]);
+    const isSelected = useCallback((modalityId: ClassType) =>
+        classTypes.some(ct => ct.type === modalityId), [classTypes]);
+
+    const getPrice = useCallback((modalityId: ClassType, duration: 30 | 60): number | undefined => {
+        const ct = classTypes.find(c => c.type === modalityId);
+        return ct?.durations?.find(d => d.duration === duration)?.price?.amount;
+    }, [classTypes]);
+
+    // Cada modalidad seleccionada debe tener al menos un precio > 0
+    const isFormValid = useMemo(() => {
+        if (classTypes.length === 0) return false;
+        return classTypes.every(ct =>
+            ct.durations?.some(d => d.price && d.price.amount > 0)
+        );
+    }, [classTypes]);
 
     const handleToggle = useCallback((modalityId: ClassType) => {
-        setSelectedModalities(prev => {
-            if (prev.includes(modalityId)) {
-                return prev.filter(id => id !== modalityId);
-            } else {
-                return [...prev, modalityId];
+        setClassTypes(prev => {
+            const exists = prev.find(ct => ct.type === modalityId);
+            if (exists) {
+                return prev.filter(ct => ct.type !== modalityId);
             }
+            return [...prev, { type: modalityId, durations: [{ duration: 30 as const }, { duration: 60 as const }] }];
+        });
+    }, []);
+
+    const handlePriceChange = useCallback((modalityId: ClassType, duration: 30 | 60, amount: number | undefined) => {
+        setClassTypes(prev => {
+            const next = prev.map(ct => {
+                if (ct.type !== modalityId) return ct;
+
+                const durations = Array.isArray(ct.durations) ? [...ct.durations] : [];
+                const idx = durations.findIndex(d => d.duration === duration);
+                const updated: DurationPrice = amount && amount > 0
+                    ? { duration, price: { amount, currency: 'USD' } }
+                    : { duration };
+
+                if (idx !== -1) {
+                    durations[idx] = updated;
+                } else {
+                    durations.push(updated);
+                }
+
+                return { ...ct, durations };
+            });
+            return next;
         });
     }, []);
 
     const handleContinue = useCallback(async () => {
         if (!isFormValid) return;
-        
+
         setIsSaving(true);
         try {
-            // Transformar selectedModalities a TeacherClassType[] con duraciones por defecto (sin precios)
-            const classTypes: TeacherClassType[] = selectedModalities.map(type => ({
-                type,
-                durations: [
-                    { duration: 30 },
-                    { duration: 60 }
-                ]
-            }));
-            
             await repository.saveClassTypes(teacherId, classTypes, token);
-            
-            // Navegar a la siguiente página
             window.location.href = `/onboarding/profile-basics`;
         } catch (error) {
             console.error('Error saving step 2:', error);
-            // TODO: Mostrar mensaje de error al usuario
         } finally {
             setIsSaving(false);
         }
-    }, [isFormValid, repository, teacherId, token, selectedModalities, lang]);
+    }, [isFormValid, repository, teacherId, token, classTypes]);
 
     return (
         <>
@@ -114,34 +139,82 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
                 </label>
                 <div className="flex flex-col gap-3">
                     {modalityOptions.map((option) => {
-                        const checked = selectedModalities.includes(option.id);
-                        
+                        const checked = isSelected(option.id);
+
                         return (
                             <div
                                 key={option.id}
                                 className={cn(
-                                    "flex items-start gap-3 p-4 rounded-lg border transition-all cursor-pointer",
-                                    checked 
-                                        ? "border-2 border-[var(--color-primary-700)] bg-[var(--color-primary-100)]" 
+                                    "flex flex-col gap-3 p-4 rounded-lg border transition-all",
+                                    checked
+                                        ? "border-2 border-[var(--color-primary-700)] bg-[var(--color-primary-100)]"
                                         : "border border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)]"
                                 )}
-                                onClick={() => handleToggle(option.id)}
                             >
-                                <Checkbox
-                                    id={option.id}
-                                    checked={checked}
-                                    onCheckedChange={() => handleToggle(option.id)}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="mt-0.5 flex-shrink-0"
-                                />
-                                <div className="flex flex-col gap-1 flex-1">
-                                    <Text textLevel="span" size="text-md" weight="medium" colorType="primary">
-                                        {option.title}
-                                    </Text>
-                                    <Text textLevel="span" size="text-sm" colorType="tertiary">
-                                        {option.description}
-                                    </Text>
-                                </div>
+                                <label className="flex items-start gap-3 cursor-pointer">
+                                    <Checkbox
+                                        id={option.id}
+                                        checked={checked}
+                                        onCheckedChange={() => handleToggle(option.id)}
+                                        className="mt-0.5 flex-shrink-0"
+                                    />
+                                    <div className="flex flex-col gap-1 flex-1">
+                                        <Text textLevel="span" size="text-md" weight="medium" colorType="primary">
+                                            {option.title}
+                                        </Text>
+                                        <Text textLevel="span" size="text-sm" colorType="tertiary">
+                                            {option.description}
+                                        </Text>
+                                    </div>
+                                </label>
+
+                                {checked && (
+                                    <div className="flex flex-col gap-3 pl-8 pt-2">
+                                        {([30, 60] as const).map((duration) => {
+                                            const hasOtherPrice = getPrice(option.id, duration === 30 ? 60 : 30) !== undefined
+                                                && (getPrice(option.id, duration === 30 ? 60 : 30) ?? 0) > 0;
+                                            const thisPrice = getPrice(option.id, duration);
+                                            const isRequired = !hasOtherPrice;
+
+                                            return (
+                                                <div
+                                                    key={duration}
+                                                    className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg"
+                                                >
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Text textLevel="span" size="text-md" weight="medium" colorType="primary">
+                                                            {t('teacher-profile.minutes_lesson', { minutes: duration })}
+                                                        </Text>
+                                                        {isRequired && (
+                                                            <span className="text-[var(--color-primary-700)] text-sm">*</span>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <NumericFormat
+                                                            value={thisPrice ?? ''}
+                                                            onValueChange={(values) => handlePriceChange(option.id, duration, values.floatValue)}
+                                                            placeholder={t('common.price')}
+                                                            className="w-32 px-3 py-2 border border-gray-200 rounded-md text-sm text-right"
+                                                            allowNegative={false}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={false}
+                                                            thousandSeparator={false}
+                                                        />
+                                                        <Text textLevel="span" size="text-md" colorType="tertiary">
+                                                            $
+                                                        </Text>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                        {/* Hint when no price is set yet */}
+                                        {!classTypes.find(ct => ct.type === option.id)?.durations?.some(d => d.price && d.price.amount > 0) && (
+                                            <Text textLevel="span" size="text-sm" colorType="tertiary">
+                                                {t('onboarding.pricing_required')}
+                                            </Text>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         );
                     })}

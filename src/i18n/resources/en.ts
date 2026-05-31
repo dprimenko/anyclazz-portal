@@ -469,6 +469,7 @@ export default {
     'onboarding.student_levels': 'Student Levels',
     'onboarding.category': 'Category',
     'onboarding.class_modality': 'Class Modality',
+    'onboarding.pricing_required': 'Set at least one price to continue.',
     'onboarding.nationality': 'Nationality',
     'onboarding.nationality.placeholder': 'Select your nationality',
     'onboarding.nationality.search': 'Search nationality...',
