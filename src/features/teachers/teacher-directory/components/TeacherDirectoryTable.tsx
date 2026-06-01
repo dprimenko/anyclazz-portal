@@ -40,7 +40,7 @@ export function TeacherDirectoryTable({ teachers, loading = false, token }: Teac
                 <Text size="text-xs" colorType="tertiary" weight="semibold">{t('common.teaches')}</Text>
                 <Text size="text-xs" colorType="tertiary" weight="semibold">{t('admin.teacher_directory.students_column')}</Text>
                 <Text size="text-xs" colorType="tertiary" weight="semibold">{t('admin.teacher_directory.reviews_column')}</Text>
-                <Text size="text-xs" colorType="tertiary" weight="semibold">{t('admin.teacher_directory.score_column')}</Text>
+                <Text size="text-xs" colorType="tertiary" weight="semibold">{t('admin.teacher_directory.minimal_configured_column')}</Text>
                 <div />
             </div>
             <div className="flex flex-col gap-3 sm:gap-0 -mx-4 px-4 sm:mx-0 sm:px-0">

@@ -80,7 +80,7 @@ export function TeacherDirectoryItem({ teacher, token }: TeacherDirectoryItemPro
                                     {teacher.name} {teacher.surname}
                                 </Text>
                             </a>
-                            <Text size="text-xs" colorType="tertiary">{subjectName}</Text>
+                            <Text size="text-xs" colorType="tertiary">{teacher.email}</Text>
                         </div>
                     </div>
                     <PopMenu trigger={popMenuTrigger} items={menuItems} align="right" />
@@ -107,8 +107,18 @@ export function TeacherDirectoryItem({ teacher, token }: TeacherDirectoryItemPro
                         <Text size="text-xs" colorType="tertiary">{t('admin.teacher_directory.reviews_column')}</Text>
                     </div>
                     <div className="flex flex-col items-center gap-0.5">
-                        <Text size="text-sm" weight="semibold" colorType="primary">{score}</Text>
-                        <Text size="text-xs" colorType="tertiary">{t('admin.teacher_directory.score_column')}</Text>
+                        {teacher.minimalConfigured ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                                {t('admin.teacher_directory.minimal_configured_yes')}
+                            </span>
+                        ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-neutral-100)] text-[var(--color-text-tertiary)]">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral-400)] inline-block" />
+                                {t('admin.teacher_directory.minimal_configured_no')}
+                            </span>
+                        )}
+                        <Text size="text-xs" colorType="tertiary">{t('admin.teacher_directory.minimal_configured_column')}</Text>
                     </div>
                 </div>
             </div>
@@ -130,7 +140,7 @@ export function TeacherDirectoryItem({ teacher, token }: TeacherDirectoryItemPro
                                     {teacher.name} {teacher.surname}
                                 </Text>
                             </a>
-                            <Text size="text-sm" colorType="tertiary">{subjectName}</Text>
+                            <Text size="text-sm" colorType="tertiary">{teacher.email}</Text>
                         </div>
                     </div>
 
@@ -149,8 +159,18 @@ export function TeacherDirectoryItem({ teacher, token }: TeacherDirectoryItemPro
                     {/* Reviews */}
                     <Text size="text-sm" colorType="secondary">{teacher.reviewsNumber}</Text>
 
-                    {/* Score */}
-                    <Text size="text-sm" colorType="secondary">{score}</Text>
+                    {/* Minimal Configured */}
+                    {teacher.minimalConfigured ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                            {t('admin.teacher_directory.minimal_configured_yes')}
+                        </span>
+                    ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-neutral-100)] text-[var(--color-text-tertiary)]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral-400)] inline-block" />
+                            {t('admin.teacher_directory.minimal_configured_no')}
+                        </span>
+                    )}
 
                     {/* Actions */}
                     <div className="flex justify-end">

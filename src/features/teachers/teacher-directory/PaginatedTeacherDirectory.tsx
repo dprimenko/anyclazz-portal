@@ -28,11 +28,12 @@ export function PaginatedTeacherDirectory({ initialTeachers, token, lang = 'en' 
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
+    const [configuredFilter, setConfiguredFilter] = useState<'all' | 'true' | 'false'>('all');
     const isFirstRender = useRef(true);
 
     const pages = teachers.meta.lastPage;
 
-    const fetchTeachers = async (currentPage: number, query?: string) => {
+    const fetchTeachers = async (currentPage: number, query?: string, filter?: 'all' | 'true' | 'false') => {
         setLoading(true);
         try {
             const data = await repository.listTeachers({
@@ -40,6 +41,7 @@ export function PaginatedTeacherDirectory({ initialTeachers, token, lang = 'en' 
                 page: currentPage,
                 size: ITEMS_PER_PAGE,
                 query: query || undefined,
+                minimalConfigured: filter === 'all' || filter === undefined ? undefined : filter === 'true',
             });
             setTeachers(data);
         } catch (error) {
@@ -57,15 +59,21 @@ export function PaginatedTeacherDirectory({ initialTeachers, token, lang = 'en' 
 
         const timer = setTimeout(() => {
             setPage(1);
-            fetchTeachers(1, search || undefined);
+            fetchTeachers(1, search || undefined, configuredFilter);
         }, 500);
 
         return () => clearTimeout(timer);
     }, [search]);
 
+    useEffect(() => {
+        if (isFirstRender.current) return;
+        setPage(1);
+        fetchTeachers(1, search || undefined, configuredFilter);
+    }, [configuredFilter]);
+
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
-        fetchTeachers(newPage, search || undefined);
+        fetchTeachers(newPage, search || undefined, configuredFilter);
     };
 
     return (
@@ -74,20 +82,42 @@ export function PaginatedTeacherDirectory({ initialTeachers, token, lang = 'en' 
                 <Text textLevel="h3" size="display-xs" colorType="primary" weight="semibold">
                     {t('teachers.list.title_global', { count: teachers.meta.total })}
                 </Text>
-                <div className="relative w-full max-w-xl">
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder={t('admin.teacher_directory.search_placeholder')}
-                        className="w-full px-4 py-2.5 pl-10 border border-[var(--color-neutral-200)] rounded-lg focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]"
-                    />
-                    <Icon
-                        icon="search"
-                        iconWidth={20}
-                        iconHeight={20}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
-                    />
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                    <div className="relative w-full max-w-xl">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder={t('admin.teacher_directory.search_placeholder')}
+                            className="w-full px-4 py-2.5 pl-10 border border-[var(--color-neutral-200)] rounded-lg focus:outline focus:outline-2 focus:outline-[var(--color-primary-700)]"
+                        />
+                        <Icon
+                            icon="search"
+                            iconWidth={20}
+                            iconHeight={20}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                        />
+                    </div>
+                    <div className="flex items-center gap-1 p-1 bg-[var(--color-neutral-100)] rounded-lg flex-shrink-0">
+                        {(['all', 'true', 'false'] as const).map((option) => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => setConfiguredFilter(option)}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors border-none cursor-pointer ${
+                                    configuredFilter === option
+                                        ? 'bg-white text-[var(--color-text-primary)] shadow-sm'
+                                        : 'bg-transparent text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
+                                }`}
+                            >
+                                {option === 'all'
+                                    ? t('admin.teacher_directory.filter_all')
+                                    : option === 'true'
+                                        ? t('admin.teacher_directory.filter_configured')
+                                        : t('admin.teacher_directory.filter_not_configured')}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <TeacherDirectoryTable teachers={teachers.teachers} loading={loading} token={token} />

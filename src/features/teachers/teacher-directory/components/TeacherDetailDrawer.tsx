@@ -33,6 +33,94 @@ function formatLocation(address?: Teacher['teacherAddress'], lang: 'en' | 'es' =
     return cityName || country || null;
 }
 
+function AdminInfoSection({ adminTeacher }: { adminTeacher: AdminTeacher }) {
+    const t = useTranslations();
+    const stripe = adminTeacher.stripeConnect;
+    const availability = adminTeacher.availability;
+
+    return (
+        <div className="mb-4 rounded-lg border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] p-3 flex flex-col gap-2">
+            <Text size="text-xs" weight="semibold" colorType="tertiary" className="uppercase tracking-wide">
+                {t('admin.teacher_directory.admin_info')}
+            </Text>
+
+            {/* Email */}
+            <div className="flex items-center gap-2">
+                <Icon icon="mail-01" iconWidth={14} iconHeight={14} />
+                <Text size="text-sm" colorType="secondary">{adminTeacher.email}</Text>
+            </div>
+
+            {/* Stripe */}
+            <div className="flex items-center gap-2 flex-wrap">
+                {stripe?.connected ? (
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                            {t('admin.teacher_directory.stripe_connected')}
+                        </span>
+                        {stripe.accountId && (
+                            <a
+                                href={`https://dashboard.stripe.com/connect/accounts/${stripe.accountId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-[var(--color-primary-700)] underline hover:opacity-75"
+                            >
+                                {t('admin.teacher_directory.view_stripe_account')}
+                                <Icon icon="link-external-01" iconWidth={12} iconHeight={12} />
+                            </a>
+                        )}
+                    </div>
+                ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-neutral-100)] text-[var(--color-text-tertiary)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral-400)] inline-block" />
+                        {t('admin.teacher_directory.stripe_not_connected')}
+                    </span>
+                )}
+            </div>
+
+            {/* Charges enabled */}
+            {stripe?.connected && stripe.chargesEnabled && (
+                <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                        {t('admin.teacher_directory.stripe_charges_enabled')}
+                    </span>
+                </div>
+            )}
+
+            {/* Pricing */}
+            <div className="flex items-center gap-2">
+                {adminTeacher.hasPricing ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                        {t('admin.teacher_directory.pricing_configured')}
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-neutral-100)] text-[var(--color-text-tertiary)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral-400)] inline-block" />
+                        {t('admin.teacher_directory.no_pricing')}
+                    </span>
+                )}
+            </div>
+
+            {/* Availability */}
+            <div className="flex items-center gap-2">
+                {availability?.hasAvailability ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                        {t('admin.teacher_directory.has_availability')}
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-neutral-100)] text-[var(--color-text-tertiary)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral-400)] inline-block" />
+                        {t('admin.teacher_directory.no_availability')}
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+}
+
 function DrawerContent({ teacher, adminTeacher, onClose }: { teacher: Teacher | null; adminTeacher: AdminTeacher; onClose: () => void }) {
     const t = useTranslations();
     const lang = getCurrentLang();
@@ -101,6 +189,11 @@ function DrawerContent({ teacher, adminTeacher, onClose }: { teacher: Teacher | 
                                 </Text>
                             </Chip>
                         )}
+                    </div>
+
+                    {/* Admin info: email, stripe, pricing, availability */}
+                    <div className="mt-3">
+                        <AdminInfoSection adminTeacher={adminTeacher} />
                     </div>
 
                     {teacher ? (

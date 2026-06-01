@@ -1,4 +1,4 @@
-import type { AdminTeacher, ListAdminTeachersParams, ListAdminTeachersResponse } from '../domain/types';
+import type { AdminTeacher, AdminTeacherClassType, AdminTeacherStripeConnect, AdminTeacherAvailability, ListAdminTeachersParams, ListAdminTeachersResponse } from '../domain/types';
 import { FetchClient } from '@/features/shared/services/httpClient';
 import { getApiUrl } from '@/features/shared/services/environment';
 
@@ -17,6 +17,11 @@ interface ApiAdminTeacher {
     reviewsNumber?: number;
     averageRating?: number;
     createdAt?: string;
+    hasPricing?: boolean;
+    classTypes?: AdminTeacherClassType[];
+    stripeConnect?: AdminTeacherStripeConnect;
+    availability?: AdminTeacherAvailability;
+    minimalConfigured?: boolean;
 }
 
 export class ApiAdminTeacherRepository {
@@ -26,11 +31,15 @@ export class ApiAdminTeacherRepository {
         this.httpClient = new FetchClient(getApiUrl());
     }
 
-    async listTeachers({ token, page, size, query }: ListAdminTeachersParams): Promise<ListAdminTeachersResponse> {
-        const data: Record<string, string | number> = { page, size };
+    async listTeachers({ token, page, size, query, minimalConfigured }: ListAdminTeachersParams): Promise<ListAdminTeachersResponse> {
+        const data: Record<string, string | number | boolean> = { page, size };
 
         if (query) {
             data.query = query;
+        }
+
+        if (minimalConfigured !== undefined) {
+            data.minimalConfigured = minimalConfigured;
         }
 
         const response = await this.httpClient.get({
@@ -62,6 +71,11 @@ export class ApiAdminTeacherRepository {
                 reviewsNumber: t.reviewsNumber ?? 0,
                 averageRating: t.averageRating ?? 0,
                 createdAt: t.createdAt ?? '',
+                hasPricing: t.hasPricing ?? false,
+                classTypes: t.classTypes,
+                stripeConnect: t.stripeConnect,
+                availability: t.availability,
+                minimalConfigured: t.minimalConfigured ?? false,
             })),
             meta: {
                 currentPage: result.meta.currentPage,

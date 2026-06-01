@@ -1,3 +1,30 @@
+export interface AdminTeacherStripeConnect {
+    connected: boolean;
+    accountId?: string | null;
+    accountType?: string | null;
+    status?: string | null;
+    onboardingCompleted?: boolean;
+    chargesEnabled?: boolean;
+    payoutsEnabled?: boolean;
+}
+
+export interface AdminTeacherAvailability {
+    hasAvailability: boolean;
+    totalFutureSlots: number;
+    nextSlotStart?: string | null;
+    nextSlotEnd?: string | null;
+}
+
+export interface AdminTeacherClassTypeDuration {
+    duration: number;
+    price: { price: number; currencyCode: string };
+}
+
+export interface AdminTeacherClassType {
+    type: string;
+    durations: AdminTeacherClassTypeDuration[];
+}
+
 export interface AdminTeacher {
     id: string;
     name: string;
@@ -18,6 +45,11 @@ export interface AdminTeacher {
     reviewsNumber: number;
     averageRating: number;
     createdAt: string;
+    hasPricing: boolean;
+    classTypes?: AdminTeacherClassType[];
+    stripeConnect?: AdminTeacherStripeConnect;
+    availability?: AdminTeacherAvailability;
+    minimalConfigured: boolean;
 }
 
 export interface ListAdminTeachersResponse {
@@ -35,4 +67,5 @@ export interface ListAdminTeachersParams {
     page: number;
     size: number;
     query?: string;
+    minimalConfigured?: boolean;
 }
