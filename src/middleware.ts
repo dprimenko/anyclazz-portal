@@ -68,20 +68,40 @@ async function checkTeacherOnboarding(session: any, pathname: string): Promise<{
     const teacher = await teacherRepository.getTeacher({ token, teacherId });
     
     // Verificar si tiene todos los campos del onboarding completos
-    const hasAllFields = 
+    // Paso 1: info de enseñanza y perfil básico
+    const hasStep1 =
       teacher.studentLevel?.id &&
       teacher.subjectCategory?.id &&
       teacher.subject?.id &&
       teacher.teacherAddress?.country &&
       teacher.teacherAddress?.city &&
-      teacher.speaksLanguages && teacher.speaksLanguages.length > 0 &&
-      teacher.beganTeachingAt &&
-      teacher.shortPresentation;
-    
-    if (!hasAllFields) {
+      teacher.speaksLanguages && teacher.speaksLanguages.length > 0;
+
+    if (!hasStep1) {
       return { needsOnboarding: true, redirectTo: '/onboarding/what-do-you-teach' };
     }
-    
+
+    // Paso 2: modalidades con precio y disponibilidad
+    const hasClassTypes = teacher.classTypes?.some(ct =>
+      ct.durations?.some(d => d.price && d.price.amount > 0)
+    );
+
+    if (!hasClassTypes || !teacher.hasAvailability) {
+      return { needsOnboarding: true, redirectTo: '/onboarding/class-modality' };
+    }
+
+    // Paso 4: introducción y experiencia
+    const hasStep4 = teacher.beganTeachingAt && teacher.shortPresentation;
+
+    if (!hasStep4) {
+      return { needsOnboarding: true, redirectTo: '/onboarding/quick-intro' };
+    }
+
+    // Paso 5: Stripe conectado
+    if (!teacher.stripeConnected) {
+      return { needsOnboarding: true, redirectTo: '/onboarding/stripe-setup' };
+    }
+
     return { needsOnboarding: false };
   } catch (error) {
     console.error('Error checking teacher onboarding:', error);

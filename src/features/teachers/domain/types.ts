@@ -79,6 +79,8 @@ export interface Teacher {
     timezone?: string;
     createdAt: string;
     savedAt?: string | null;
+    hasAvailability?: boolean;
+    stripeConnected?: boolean;
 }
 
 export interface GetTeacherParams extends CommonParams {

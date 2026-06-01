@@ -13,7 +13,7 @@ interface OnboardingLayoutProps {
     lang?: 'en' | 'es';
 }
 
-export default function OnboardingLayout({ currentStep, totalSteps = 4, children, user, accessToken, lang }: OnboardingLayoutProps) {
+export default function OnboardingLayout({ currentStep, totalSteps = 5, children, user, accessToken, lang }: OnboardingLayoutProps) {
     const t = useTranslations();
 
     const steps = [
@@ -37,6 +37,11 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
             title: t('onboarding.sidebar.quick_intro.title'),
             description: t('onboarding.sidebar.quick_intro.description'),
         },
+        {
+            icon: 'stripe',
+            title: t('onboarding.sidebar.stripe_setup.title'),
+            description: t('onboarding.sidebar.stripe_setup.description'),
+        },
     ];
 
     return (
@@ -49,7 +54,7 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
                         <img src="/images/logo.svg" alt="Anyclazz" className="w-[139px]" />
                     </a>
 
-                    <Space size={80} direction="vertical" />
+                    <Space size={20} direction="vertical" />
 
                     {/* Steps */}
                     <div className="flex flex-col gap-4 overflow-y-auto flex-1">
@@ -64,7 +69,7 @@ export default function OnboardingLayout({ currentStep, totalSteps = 4, children
                                 <div key={index} className="relative">
                                     <div className={`flex items-start gap-4 ${!isActive && 'opacity-60'}`}>
                                         <div className="relative flex flex-col items-center">
-                                            <div className={`p-3 flex items-center justify-center rounded-lg flex-shrink-0 ${
+                                            <div className={`p-3 flex items-center justify-center rounded-lg flex-shrink-0 w-[50px] h-[50px] ${
                                                 isActive 
                                                     ? 'bg-[#FFF4E7] border-2 border-[var(--color-primary-700)]' 
                                                     : isCompleted 

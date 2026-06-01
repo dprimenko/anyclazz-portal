@@ -6,14 +6,18 @@ import { Checkbox } from '@/ui-library/shared';
 import { ClassType, type TeacherClassType, type DurationPrice } from '@/features/teachers/domain/types';
 import { cn } from '@/lib/utils';
 import { TeacherModalitiesRepository } from '../infrastructure/TeacherModalitiesRepository';
+import { TeacherAvailabilityRepository } from '../infrastructure/TeacherAvailabilityRepository';
+import { WeeklyAvailabilitySelector, type DayAvailability } from '../availability_and_modalities/components/WeeklyAvailabilitySelector';
 
 interface OnboardingStep2Props {
     lang: string;
     initialData?: {
         classModalities?: TeacherClassType[];
+        availability?: DayAvailability[];
     };
     teacherId: string;
     token: string;
+    timezone?: string;
 }
 
 interface ModalityOption {
@@ -22,9 +26,10 @@ interface ModalityOption {
     description: string;
 }
 
-export default function OnboardingStep2({ lang, initialData, teacherId, token }: OnboardingStep2Props) {
+export default function OnboardingStep2({ lang, initialData, teacherId, token, timezone = 'America/New_York' }: OnboardingStep2Props) {
     const t = useTranslations({ lang: lang as 'en' | 'es' });
     const repository = useMemo(() => new TeacherModalitiesRepository(), []);
+    const availabilityRepository = useMemo(() => new TeacherAvailabilityRepository(), []);
 
     const validInitial = useMemo(() =>
         (initialData?.classModalities || []).filter(ct => ct.type && Array.isArray(ct.durations)),
@@ -32,6 +37,7 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
     );
 
     const [classTypes, setClassTypes] = useState<TeacherClassType[]>(validInitial);
+    const [weeklyAvailability, setWeeklyAvailability] = useState<DayAvailability[]>(initialData?.availability || []);
     const [isSaving, setIsSaving] = useState(false);
 
     const modalityOptions: ModalityOption[] = [
@@ -66,12 +72,15 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
     }, [classTypes]);
 
     // Cada modalidad seleccionada debe tener al menos un precio > 0
+    // y debe haber al menos un tramo horario disponible
     const isFormValid = useMemo(() => {
         if (classTypes.length === 0) return false;
-        return classTypes.every(ct =>
+        const hasValidPrices = classTypes.every(ct =>
             ct.durations?.some(d => d.price && d.price.amount > 0)
         );
-    }, [classTypes]);
+        const hasAvailability = weeklyAvailability.some(d => d.isAvailable && d.timeRanges.length > 0);
+        return hasValidPrices && hasAvailability;
+    }, [classTypes, weeklyAvailability]);
 
     const handleToggle = useCallback((modalityId: ClassType) => {
         setClassTypes(prev => {
@@ -112,13 +121,14 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
         setIsSaving(true);
         try {
             await repository.saveClassTypes(teacherId, classTypes, token);
+            await availabilityRepository.saveAvailability(teacherId, weeklyAvailability, token, timezone);
             window.location.href = `/onboarding/profile-basics`;
         } catch (error) {
             console.error('Error saving step 2:', error);
         } finally {
             setIsSaving(false);
         }
-    }, [isFormValid, repository, teacherId, token, classTypes]);
+    }, [isFormValid, repository, availabilityRepository, teacherId, token, classTypes, weeklyAvailability, timezone]);
 
     return (
         <>
@@ -219,6 +229,26 @@ export default function OnboardingStep2({ lang, initialData, teacherId, token }:
                         );
                     })}
                 </div>
+            </div>
+
+            {/* Availability */}
+            <div className="mb-8">
+                <label className="block text-sm font-medium text-[var(--color-neutral-700)] mb-1">
+                    {t('onboarding.availability')} <span className="text-[var(--color-primary-700)]">*</span>
+                </label>
+                <Text textLevel="p" size="text-sm" colorType="tertiary" className="mb-3">
+                    {t('teacher-profile.add_time_ranges')}
+                </Text>
+                <WeeklyAvailabilitySelector
+                    availability={weeklyAvailability.length > 0 ? weeklyAvailability : undefined}
+                    onChange={setWeeklyAvailability}
+                    hideLabel
+                />
+                {!weeklyAvailability.some(d => d.isAvailable && d.timeRanges.length > 0) && classTypes.length > 0 && (
+                    <Text textLevel="span" size="text-sm" colorType="tertiary" className="mt-2 block">
+                        {t('onboarding.availability_required')}
+                    </Text>
+                )}
             </div>
 
             {/* Continue Button */}

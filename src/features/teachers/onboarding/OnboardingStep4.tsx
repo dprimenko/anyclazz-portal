@@ -65,8 +65,8 @@ export default function OnboardingStep4({ lang, teacherId, token, initialData }:
                 },
             });
             
-            // Redirigir al dashboard o página de éxito
-            window.location.href = '/dashboard';
+            // Redirigir al paso 5 de configuración de pagos
+            window.location.href = '/onboarding/stripe-setup';
         } catch (error) {
             console.error('Error saving introduction:', error);
         } finally {

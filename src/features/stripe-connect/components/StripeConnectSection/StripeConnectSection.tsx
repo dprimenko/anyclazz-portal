@@ -72,7 +72,12 @@ export const StripeConnectSection: FC<StripeConnectSectionProps> = ({
   }, [oauthCode, oauthState, oauthError, completeOAuth, refetch, oauthProcessed, t]);
 
   const handleConnect = async () => {
-    const response = await startOnboarding(country);
+    // Use current page as OAuth redirect target so the callback lands back here
+    const redirectUri = typeof window !== 'undefined'
+      ? window.location.origin + window.location.pathname
+      : undefined;
+
+    const response = await startOnboarding(country, redirectUri);
     
     console.log('Stripe onboarding response:', response);
     

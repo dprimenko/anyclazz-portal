@@ -65,7 +65,7 @@ export function useStripeConnectActions(accessToken: string) {
   const repository = new StripeConnectRepository();
 
   const startOnboarding = useCallback(
-    async (country: string = 'US') => {
+    async (country: string = 'US', redirectUri?: string) => {
       if (!accessToken) {
         setError('No access token available');
         return null;
@@ -74,7 +74,9 @@ export function useStripeConnectActions(accessToken: string) {
       try {
         setIsProcessing(true);
         setError(null);
-        const response = await repository.createOnboardingLink(accessToken, { country });
+        const data: Record<string, string> = { country };
+        if (redirectUri) data.redirect_url = redirectUri;
+        const response = await repository.createOnboardingLink(accessToken, data);
         return response;
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Error al iniciar el onboarding';

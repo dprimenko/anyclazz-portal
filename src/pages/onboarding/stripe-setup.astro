@@ -1,13 +1,14 @@
 ---
 import Base from '@/layout/Base.astro';
 import OnboardingLayout from '@/features/teachers/onboarding/OnboardingLayout';
-import OnboardingStep2 from '@/features/teachers/onboarding/OnboardingStep2';
+import OnboardingStep5 from '@/features/teachers/onboarding/OnboardingStep5';
 import { getLangFromAstro } from '@/i18n';
 import { getSession } from 'auth-astro/server';
 import { AnyclazzAuthRepository } from '@/features/auth/ssr/infrastructure/AnyclazzAuthRepository';
 import { ApiTeacherRepository } from '@/features/teachers/infrastructure/ApiTeacherRepository';
-import { TeacherAvailabilityRepository } from '@/features/teachers/infrastructure/TeacherAvailabilityRepository';
 import type { AuthUser } from '@/features/auth/domain/types';
+
+export const prerender = false;
 
 const session = await getSession(Astro.request);
 const token = session?.accessToken as string;
@@ -18,7 +19,6 @@ if (!token) {
 
 const lang = getLangFromAstro(Astro.cookies);
 
-// Obtener el perfil completo del usuario
 const authRepository = new AnyclazzAuthRepository();
 const profileData = await authRepository.getUserProfile(token);
 
@@ -26,30 +26,31 @@ if (!profileData || !profileData.teacherProfile) {
   return Astro.redirect('/login');
 }
 
-// El teacherId viene del teacherProfile
 const teacherId = profileData.teacherProfile.id;
 
-// Ejecutar en paralelo para reducir tiempo de carga
 const teacherRepository = new ApiTeacherRepository();
-const availabilityRepository = new TeacherAvailabilityRepository();
 let teacher = null;
-let initialAvailability = undefined;
+let stripeConnectStatus = null;
 
-[teacher, initialAvailability] = await Promise.all([
+// Ejecutar en paralelo para reducir tiempo de carga
+[teacher, stripeConnectStatus] = await Promise.all([
   teacherRepository.getTeacher({ token, teacherId }).catch((error) => {
     console.error('Error loading teacher data:', error);
     return null;
   }),
-  availabilityRepository.getAvailability(teacherId, token).catch((error) => {
-    console.error('Error loading availability:', error);
-    return undefined;
+  teacherRepository.getStripeConnectStatus({ token }).catch((error) => {
+    console.error('Error loading Stripe Connect status:', error);
+    return null;
   }),
 ]);
 
-const initialData = teacher ? {
-  classModalities: teacher.classTypes,
-  availability: initialAvailability,
-} : undefined;
+// Extraer parámetros OAuth de la URL (callback de Stripe)
+const oauthCode = Astro.url.searchParams.get('code');
+const oauthState = Astro.url.searchParams.get('state');
+const oauthError = Astro.url.searchParams.get('error');
+const oauthErrorDescription = Astro.url.searchParams.get('error_description');
+
+const country = teacher?.teacherAddress?.country || 'US';
 
 const user: AuthUser = {
   id: profileData.user.id,
@@ -65,14 +66,25 @@ const user: AuthUser = {
 ---
 
 <Base noindex={true}>
-    <OnboardingLayout currentStep={2} totalSteps={5} user={user} accessToken={token} lang={lang} client:load>
-        <OnboardingStep2 
-          lang={lang} 
-          teacherId={teacherId} 
-          token={token} 
-          timezone={teacher?.timezone || 'America/New_York'}
-          initialData={initialData}
-          client:load 
+    <OnboardingLayout currentStep={5} user={user} accessToken={token} lang={lang} client:load>
+        <OnboardingStep5
+            lang={lang}
+            token={token}
+            country={country}
+            initialStatus={stripeConnectStatus}
+            oauthCode={oauthCode}
+            oauthState={oauthState}
+            oauthError={oauthErrorDescription || oauthError}
+            client:load
         />
     </OnboardingLayout>
 </Base>
+
+<script>
+    // Limpiar parámetros OAuth de la URL sin recargar la página
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('code') || urlParams.has('error')) {
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+    }
+</script>

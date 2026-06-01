@@ -29,9 +29,10 @@ const DAYS_OF_WEEK_KEYS = [
 export interface WeeklyAvailabilitySelectorProps {
     availability?: DayAvailability[];
     onChange?: (availability: DayAvailability[]) => void;
+    hideLabel?: boolean;
 }
 
-export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAvailabilitySelectorProps) {
+export function WeeklyAvailabilitySelector({ availability, onChange, hideLabel = false }: WeeklyAvailabilitySelectorProps) {
     const t = useTranslations();
     const [weekAvailability, setWeekAvailability] = useState<DayAvailability[]>(
         availability || DAYS_OF_WEEK_KEYS.map(day => ({
@@ -45,9 +46,15 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
         const updated = [...weekAvailability];
         updated[dayIndex].isAvailable = !updated[dayIndex].isAvailable;
         
-        // Si se deshabilita el día, limpiar los rangos de tiempo
         if (!updated[dayIndex].isAvailable) {
             updated[dayIndex].timeRanges = [];
+        } else if (updated[dayIndex].timeRanges.length === 0) {
+            // Añadir tramo por defecto al abrir el día por primera vez
+            updated[dayIndex].timeRanges = [{
+                id: `${Date.now()}-${Math.random()}`,
+                from: '09:00',
+                to: '11:00',
+            }];
         }
         
         setWeekAvailability(updated);
@@ -114,17 +121,19 @@ export function WeeklyAvailabilitySelector({ availability, onChange }: WeeklyAva
     };
 
     return (
-        <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex flex-col gap-1 w-[312px]">
-                <Text textLevel="h3" weight="semibold" colorType="primary">
-                    {t('teacher-profile.choose_available_days')} <span className="text-[#F4A43A]">*</span>
-                </Text>
-                <Text textLevel="p" size="text-sm" colorType="tertiary">
-                    {t('teacher-profile.add_time_ranges')}
-                </Text>
-            </div>
+        <div className={hideLabel ? 'flex flex-col gap-4' : 'flex flex-col md:flex-row gap-4'}>
+            {!hideLabel && (
+                <div className="flex flex-col gap-1 w-[312px]">
+                    <Text textLevel="h3" weight="semibold" colorType="primary">
+                        {t('teacher-profile.choose_available_days')} <span className="text-[#F4A43A]">*</span>
+                    </Text>
+                    <Text textLevel="p" size="text-sm" colorType="tertiary">
+                        {t('teacher-profile.add_time_ranges')}
+                    </Text>
+                </div>
+            )}
 
-            <div className="flex flex-col gap-3 bg-white rounded-lg border border-gray-200 p-4 md:flex-grow-[1]">
+            <div className="flex flex-col gap-3 bg-white rounded-lg border border-gray-200 p-4 flex-1">
                 {weekAvailability.map((dayAvail, dayIndex) => (
                     <div key={dayAvail.day} className="flex flex-col gap-3">
                         {/* Day Header with Toggle */}
