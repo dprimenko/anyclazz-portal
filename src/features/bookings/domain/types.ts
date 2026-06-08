@@ -12,6 +12,7 @@ export interface Booking {
     timezone: string;     // IANA timezone del profesor, e.g. "America/New_York"
     meetingUrl?: string;
     status: 'pending' | 'processing' | 'confirmed' | 'completed' | 'cancelled' | 'failed' | 'refunded';
+    stripePaymentIntentId?: string | null;
     createdAt?: string;
     updatedAt?: string;
 }

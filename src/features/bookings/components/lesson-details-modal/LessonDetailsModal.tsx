@@ -171,21 +171,39 @@ export function LessonDetailsModal({ lesson, onClose, onCancel, onSendMessage, u
                     </div>
                 )}
 
+                {/* Stripe Payment Link — admin only */}
+                {isAdmin && lesson.stripePaymentIntentId && (
+                    <div className={styles.detailsSection}>
+                        <Text size="text-sm" weight="semibold" colorType="primary" className="mb-3">
+                            Payment
+                        </Text>
+                        <a
+                            href={`https://dashboard.stripe.com/${import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_test_') ? 'test/' : ''}payments/${lesson.stripePaymentIntentId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-sm text-blue-600 hover:underline"
+                        >
+                            <Icon icon="stripe" iconWidth={32} iconHeight={13} />
+                            <span>{lesson.stripePaymentIntentId}</span>
+                        </a>
+                    </div>
+                )}
+
                 {/* Action Buttons */}
                 <div className={styles.actions}>
                     {onCancel && (
-                        <Button 
-                            label={t('dashboard.cancel_lesson')} 
-                            colorType="secondary" 
-                            fullWidth 
+                        <Button
+                            label={t('dashboard.cancel_lesson')}
+                            colorType="secondary"
+                            fullWidth
                             onClick={onCancel}
                         />
                     )}
                     {onSendMessage && (
-                        <Button 
-                            label={t('dashboard.chat')} 
-                            colorType="secondary" 
-                            fullWidth 
+                        <Button
+                            label={t('dashboard.chat')}
+                            colorType="secondary"
+                            fullWidth
                             onClick={onSendMessage}
                         />
                     )}

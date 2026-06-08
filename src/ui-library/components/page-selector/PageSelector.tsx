@@ -31,7 +31,7 @@ export function PageSelector({ pages, currentPage, maxPages = 3, disabled, onCha
 		const isEllipsisNeeded = (page + maxPages * 2 - 1) < pages;
 		
 		if (!isEllipsisNeeded) {
-			addPages(pages - (maxPages * 2 - 1), pages);
+			addPages(Math.max(1, pages - (maxPages * 2 - 1)), pages);
 			return items;
 		}
 		
