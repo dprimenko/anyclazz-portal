@@ -3,12 +3,11 @@ const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 export interface PaymentMethod {
   payment_method_id: string;
   stripe_payment_method_id: string;
-  type: 'card' | 'paypal';
+  type: 'card';
   card_brand?: string;
   card_last4?: string;
   card_exp_month?: number;
   card_exp_year?: number;
-  paypal_email?: string;
   is_default: boolean;
   is_expired: boolean;
   created_at: string;

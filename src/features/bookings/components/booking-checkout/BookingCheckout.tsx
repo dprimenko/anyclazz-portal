@@ -10,6 +10,8 @@ import { useTranslations } from '@/i18n';
 import { publish } from '@/features/shared/services/domainEventsBus';
 import { SharedDomainEvents } from '@/features/shared/domain/events';
 import { Checkbox } from '@/ui-library/shared/checkbox';
+import { savePaymentMethod } from '@/services/paymentMethods';
+import { updatePaymentIntent } from '@/services/stripe';
 import type { PaymentMethod } from '@/services/paymentMethods';
 
 interface BookingCheckoutProps {
@@ -25,6 +27,8 @@ interface BookingCheckoutProps {
   onSaveForFutureChange?: (value: boolean) => void;
   accessToken?: string;
   stripeAccountId?: string | null;
+  paymentIntentId?: string | null;
+  canSaveForFuture?: boolean;
 }
 
 const cardElementStyle = {
@@ -49,6 +53,8 @@ function CheckoutForm({
   saveForFuture = false,
   onSaveForFutureChange,
   accessToken,
+  paymentIntentId,
+  canSaveForFuture = true,
 }: BookingCheckoutProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -99,12 +105,27 @@ function CheckoutForm({
       // Flow: new card via PaymentElement
       if (!elements) throw new Error('Payment form not ready');
 
-      const { error: confirmError } = await stripe.confirmPayment({
+      // Guarantee setup_future_usage is set on the PI before confirming so Stripe
+      // attaches the PM to the customer automatically on success.
+      if (saveForFuture && accessToken && paymentIntentId) {
+        await updatePaymentIntent(accessToken, paymentIntentId, true).catch(() => {});
+      }
+
+      const { error: confirmError, paymentIntent: confirmedPI } = await stripe.confirmPayment({
         elements,
         confirmParams: { return_url: window.location.href },
         redirect: 'if_required',
       });
       if (confirmError) throw new Error(getStripeErrorMessage(confirmError));
+
+      if (saveForFuture && accessToken && confirmedPI?.payment_method) {
+        const pmId = typeof confirmedPI.payment_method === 'string'
+          ? confirmedPI.payment_method
+          : confirmedPI.payment_method.id;
+        if (pmId) {
+          await savePaymentMethod(accessToken, { stripe_payment_method_id: pmId, set_as_default: false }).catch(() => {});
+        }
+      }
 
       onSuccess();
     } catch (err) {
@@ -137,7 +158,7 @@ function CheckoutForm({
         </div>
       )}
 
-      {isUsingNewMethod && onSaveForFutureChange && (
+      {isUsingNewMethod && onSaveForFutureChange && canSaveForFuture && (
         <label className="flex items-center gap-2 cursor-pointer">
           <Checkbox
             id="save-for-future"
@@ -203,6 +224,8 @@ export function BookingCheckout({
   onSaveForFutureChange,
   accessToken,
   stripeAccountId,
+  paymentIntentId,
+  canSaveForFuture,
 }: BookingCheckoutProps) {
   const stripePromise = useMemo(
     () =>
@@ -234,6 +257,8 @@ export function BookingCheckout({
         saveForFuture={saveForFuture}
         onSaveForFutureChange={onSaveForFutureChange}
         accessToken={accessToken}
+        paymentIntentId={paymentIntentId}
+        canSaveForFuture={canSaveForFuture ?? !stripeAccountId}
       />
     </Elements>
   );

@@ -70,11 +70,14 @@ const user: AuthUser = {
         <OnboardingStep5
             lang={lang}
             token={token}
+            teacherId={teacherId}
             country={country}
             initialStatus={stripeConnectStatus}
             oauthCode={oauthCode}
             oauthState={oauthState}
             oauthError={oauthErrorDescription || oauthError}
+            initialIban={teacher?.iban ?? null}
+            initialAccountHolderName={teacher?.accountHolderName ?? null}
             client:load
         />
     </OnboardingLayout>

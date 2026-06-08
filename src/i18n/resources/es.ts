@@ -545,12 +545,20 @@ export default {
     'onboarding.availability_required': 'Añade al menos un tramo horario disponible para continuar.',
     'onboarding.availability': 'Tu disponibilidad semanal',
     'onboarding.step5.title': 'Configura tus pagos',
-    'onboarding.step5.description': 'Conecta tu cuenta de Stripe para recibir pagos por tus clases. Solo tarda unos minutos.',
+    'onboarding.step5.description': 'Conecta tu cuenta de Stripe para recibir pagos directos por tus clases. Es opcional: puedes omitirlo y configurarlo más tarde.',
     'onboarding.step5.benefit.receive_payments': 'Recibe pagos',
     'onboarding.step5.benefit.secure': 'Seguro y fiable',
     'onboarding.step5.benefit.fast_payouts': 'Pagos rápidos',
     'onboarding.step5.continue': 'Ir al Dashboard',
-    'onboarding.step5.connect_first': 'Conecta tu cuenta de Stripe para continuar',
+    'onboarding.step5.connect_first': 'Opcional — puedes configurarlo más tarde en Ajustes → Pagos',
+    'onboarding.step5.bank_transfer_title': 'O recibe pagos por transferencia bancaria',
+    'onboarding.step5.bank_transfer_description': 'Proporciona tus datos bancarios para que Anyclazz pueda transferirte tus ganancias.',
+    'onboarding.step5.account_holder_name': 'Nombre completo (titular de la cuenta)',
+    'onboarding.step5.account_holder_name_placeholder': 'p.ej. Juan García',
+    'onboarding.step5.iban': 'IBAN',
+    'onboarding.step5.iban_placeholder': 'p.ej. ES12 3456 7890 1234 5678 9012',
+    'onboarding.step5.fill_both_fields': 'Rellena ambos campos para continuar sin Stripe',
+    'onboarding.step5.iban_invalid': 'IBAN no válido — revisa el número',
 
     // Video Upload
     'video.upload.title': 'Video',
@@ -692,6 +700,8 @@ export default {
     'user-settings.confirm_new_password': 'Confirmar nueva contraseña',
     'user-settings.password_changed_success': 'Contraseña actualizada correctamente.',
     'user-settings.wrong_current_password': 'La contraseña actual es incorrecta.',
+    'user-settings.bank_details': 'Datos bancarios',
+    'user-settings.bank_details_description': 'Añade tu cuenta bancaria para que Anyclazz pueda transferirte tus ganancias.',
 
     // Payments — métodos guardados
     'payments.payment_method_title': 'Método de pago',

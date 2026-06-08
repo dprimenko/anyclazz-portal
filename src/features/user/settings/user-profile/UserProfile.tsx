@@ -17,9 +17,12 @@ export interface UserProfileProps {
     role?: string;
     initialPayments?: GetStudentPaymentsResponse;
     lang?: keyof typeof ui;
+    teacherId?: string;
+    initialIban?: string | null;
+    initialAccountHolderName?: string | null;
 }
 
-export function UserProfile({ user: initialUser, accessToken, initialTab, role, initialPayments, lang = 'en' }: UserProfileProps) {
+export function UserProfile({ user: initialUser, accessToken, initialTab, role, initialPayments, lang = 'en', teacherId, initialIban, initialAccountHolderName }: UserProfileProps) {
     const t = useTranslations({ lang });
     const isStudent = role === 'student';
     
@@ -68,7 +71,7 @@ export function UserProfile({ user: initialUser, accessToken, initialTab, role, 
         <div>
             <Tabs tabs={tabs} defaultTab={initialTab} onChange={onTabChange} />
             {selectedTab === "my_details" && (
-                <MyDetails user={user} accessToken={accessToken} repository={repository} lang={lang} />
+                <MyDetails user={user} accessToken={accessToken} repository={repository} lang={lang} role={role} teacherId={teacherId} initialIban={initialIban} initialAccountHolderName={initialAccountHolderName} />
             )}
             {selectedTab === "password" && (
                 <ChangePassword accessToken={accessToken} repository={repository} lang={lang} />

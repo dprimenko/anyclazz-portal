@@ -226,7 +226,6 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
   const [initError, setInitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [processingPayPal, setProcessingPayPal] = useState(false);
   const [savedMethods, setSavedMethods] = useState<PaymentMethod[]>([]);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [saveForFuture, setSaveForFuture] = useState(false);
@@ -247,86 +246,7 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   const stripePromise = loadStripe(publishableKey);
 
   useEffect(() => {
-    // Detectar si viene de PayPal (Stripe agrega estos parámetros al return_url)
-    async function handlePayPalReturn() {
-      if (typeof window === 'undefined') return;
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const setupIntentIdFromUrl = urlParams.get('setup_intent');
-      const redirectStatus = urlParams.get('redirect_status');
-      const subscriptionPending = urlParams.get('subscription');
-
-      // Si viene de PayPal con un SetupIntent exitoso
-      if (setupIntentIdFromUrl && redirectStatus === 'succeeded' && subscriptionPending === 'pending') {
-        setProcessingPayPal(true);
-        setLoading(true);
-
-        try {
-          console.log('Processing PayPal return with SetupIntent:', setupIntentIdFromUrl);
-
-          // Crear la suscripción con el setup_intent_id
-          const subscription = await createSubscription({
-            interval: plan.interval,
-            setup_intent_id: setupIntentIdFromUrl,
-          });
-
-          if (!subscription) {
-            throw new Error(t('subscription.failed_to_create_subscription'));
-          }
-
-          // Verificar el estado de la suscripción
-          if (subscription.status === 'active' || subscription.status === 'incomplete') {
-            console.log('Subscription created successfully:', subscription);
-
-            // Limpiar los parámetros de la URL
-            const newUrl = new URL(window.location.href);
-            newUrl.searchParams.delete('setup_intent');
-            newUrl.searchParams.delete('setup_intent_client_secret');
-            newUrl.searchParams.delete('subscription');
-            newUrl.searchParams.delete('redirect_status');
-            window.history.replaceState({}, '', newUrl.toString());
-
-            // Llamar al callback de éxito
-            onSuccess(subscription.subscription_id);
-          } else {
-            throw new Error(`Unexpected subscription status: ${subscription.status}`);
-          }
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Failed to process PayPal payment';
-          console.error('Error processing PayPal return:', err);
-          
-          // Mostrar error como toast
-          publish(SharedDomainEvents.showToast, {
-            message: errorMessage,
-            variant: 'error',
-          });
-          onError(errorMessage);
-
-          // Limpiar los parámetros de la URL
-          const newUrl = new URL(window.location.href);
-          newUrl.searchParams.delete('setup_intent');
-          newUrl.searchParams.delete('setup_intent_client_secret');
-          newUrl.searchParams.delete('subscription');
-          newUrl.searchParams.delete('redirect_status');
-          window.history.replaceState({}, '', newUrl.toString());
-        } finally {
-          setProcessingPayPal(false);
-          setLoading(false);
-        }
-        return; // No continuar con el flujo normal
-      }
-    }
-
-    // Primero verificar si viene de PayPal
-    handlePayPalReturn().then(() => {
-      // Solo crear SetupIntent si NO viene de PayPal
-      const urlParams = new URLSearchParams(window.location.search);
-      const setupIntentIdFromUrl = urlParams.get('setup_intent');
-
-      if (!setupIntentIdFromUrl) {
-        initializeSetupIntent();
-      }
-    });
+    initializeSetupIntent();
 
     // Crear SetupIntent para capturar información del payment method
     async function initializeSetupIntent() {
@@ -360,7 +280,7 @@ export function SubscriptionCheckout({ plan, token, onSuccess, onError, lang = '
   if (loading) {
     return (
       <div className="flex items-center justify-center py-6">
-          <ProgressIndicator message={processingPayPal ? t('subscription.processing_paypal_payment') : t('subscription.initializing_payment')} />
+          <ProgressIndicator message={t('subscription.initializing_payment')} />
       </div>
     );
   }

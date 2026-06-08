@@ -4,7 +4,6 @@ import type { PaymentMethod } from '@/services/paymentMethods';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 import { AddCardModal } from './AddCardModal';
-import { AddPayPalModal } from './AddPayPalModal';
 import { PaymentMethodSelector } from './PaymentMethodSelector';
 
 interface PaymentMethodsListProps {
@@ -18,7 +17,6 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
   const [loading, setLoading] = useState(false);
   const [showSelector, setShowSelector] = useState(false);
   const [showAddCardModal, setShowAddCardModal] = useState(false);
-  const [showAddPayPalModal, setShowAddPayPalModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,17 +39,11 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
   async function handleCardAdded(stripePaymentMethodId: string) {
     try {
       setError(null);
-      
-      // Guardar en el backend
       const savedMethod = await savePaymentMethod(token, {
         stripe_payment_method_id: stripePaymentMethodId,
-        set_as_default: methods.length === 0, // Si es la primera, marcarla como default
+        set_as_default: methods.length === 0,
       });
-
-      // Actualizar la lista
       setMethods([...methods, savedMethod]);
-      
-      // Si hay un callback, notificar
       if (onMethodSelected) {
         onMethodSelected(savedMethod.payment_method_id);
       }
@@ -62,12 +54,9 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
 
   const getCardIcon = (brand?: string) => {
     switch (brand?.toLowerCase()) {
-      case 'visa':
-        return 'visa';
-      case 'mastercard':
-        return 'mastercard';
-      default:
-        return 'wallet';
+      case 'visa': return 'visa';
+      case 'mastercard': return 'mastercard';
+      default: return 'wallet';
     }
   };
 
@@ -83,19 +72,17 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
         </div>
       )}
 
-      {/* Lista de métodos de pago */}
       <div className="flex flex-col gap-2">
         {methods.map((method) => (
-          <label 
-            key={method.payment_method_id} 
+          <label
+            key={method.payment_method_id}
             className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${
-              selectedMethodId === method.payment_method_id 
-                ? 'border-primary bg-primary/5' 
+              selectedMethodId === method.payment_method_id
+                ? 'border-primary bg-primary/5'
                 : 'border-border hover:border-primary/50'
             }`}
           >
             <div className="flex items-center gap-3 flex-1">
-              {/* Radio button */}
               <input
                 type="radio"
                 name="payment-method"
@@ -104,28 +91,14 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
                 onChange={() => onMethodSelected?.(method.payment_method_id)}
                 className="w-5 h-5 text-primary-orange focus:ring-primary-orange"
               />
-
-              {/* Icono de la tarjeta/método */}
               <div className="flex items-center justify-center w-12 h-8">
-                {method.type === 'card' ? (
-                  <Icon icon={getCardIcon(method.card_brand)} iconWidth={48} iconHeight={32} />
-                ) : method.type === 'paypal' ? (
-                  <Icon icon="paypal" iconWidth={48} iconHeight={32} />
-                ) : null}
+                <Icon icon={getCardIcon(method.card_brand)} iconWidth={48} iconHeight={32} />
               </div>
-
-              {/* Información del método */}
               <div className="flex flex-col gap-0.5">
                 <Text weight="medium" colorType="primary" size="text-sm">
-                  {method.type === 'card' ? (
-                    `${method.card_brand?.charAt(0).toUpperCase()}${method.card_brand?.slice(1)} ending in ${method.card_last4}`
-                  ) : method.type === 'paypal' ? (
-                    method.paypal_email
-                  ) : (
-                    'Payment method'
-                  )}
+                  {`${method.card_brand?.charAt(0).toUpperCase()}${method.card_brand?.slice(1)} ending in ${method.card_last4}`}
                 </Text>
-                {method.type === 'card' && method.card_exp_month && method.card_exp_year && (
+                {method.card_exp_month && method.card_exp_year && (
                   <Text size="text-xs" colorType="tertiary">
                     Expiry {method.card_exp_month.toString().padStart(2, '0')}/{method.card_exp_year}
                   </Text>
@@ -135,8 +108,6 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
                 )}
               </div>
             </div>
-
-            {/* Indicador de selección (opcional, ya tenemos el radio) */}
             {selectedMethodId === method.payment_method_id && (
               <div className="text-primary ml-2">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -149,8 +120,7 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
         ))}
       </div>
 
-      {/* Botón para añadir nuevo método de pago */}
-      <button 
+      <button
         className="flex items-center gap-2 p-3 text-primary hover:text-primary/80 transition-colors w-full justify-start"
         onClick={() => setShowSelector(true)}
         type="button"
@@ -158,31 +128,19 @@ export function PaymentMethodsList({ token, onMethodSelected, selectedMethodId }
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
-        <Text size="text-sm" weight="medium">
-          Add new payment method
-        </Text>
+        <Text size="text-sm" weight="medium">Add new payment method</Text>
       </button>
 
-      {/* Selector de tipo de método de pago */}
       <PaymentMethodSelector
         open={showSelector}
         onClose={() => setShowSelector(false)}
         onSelectCard={() => setShowAddCardModal(true)}
-        onSelectPayPal={() => setShowAddPayPalModal(true)}
       />
 
-      {/* Modal para añadir tarjeta */}
-      <AddCardModal 
-        open={showAddCardModal} 
+      <AddCardModal
+        open={showAddCardModal}
         onClose={() => setShowAddCardModal(false)}
         onCardAdded={handleCardAdded}
-      />
-
-      {/* Modal para añadir PayPal */}
-      <AddPayPalModal
-        open={showAddPayPalModal}
-        onClose={() => setShowAddPayPalModal(false)}
-        onPayPalAdded={handleCardAdded}
       />
     </div>
   );

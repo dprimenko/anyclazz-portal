@@ -543,12 +543,20 @@ export default {
     'onboarding.availability_required': 'Add at least one available time slot to continue.',
     'onboarding.availability': 'Your weekly availability',
     'onboarding.step5.title': 'Set up your payments',
-    'onboarding.step5.description': 'Connect your Stripe account to receive payments for your classes. It only takes a few minutes.',
+    'onboarding.step5.description': 'Connect your Stripe account to receive direct payouts for your classes. This is optional — you can skip and set it up later.',
     'onboarding.step5.benefit.receive_payments': 'Receive payments',
     'onboarding.step5.benefit.secure': 'Secure & trusted',
     'onboarding.step5.benefit.fast_payouts': 'Fast payouts',
     'onboarding.step5.continue': 'Go to Dashboard',
-    'onboarding.step5.connect_first': 'Connect your Stripe account to continue',
+    'onboarding.step5.connect_first': 'Optional — you can configure this later in Payments',
+    'onboarding.step5.bank_transfer_title': 'Or receive payments via bank transfer',
+    'onboarding.step5.bank_transfer_description': 'Provide your bank details so Anyclazz can transfer your earnings directly.',
+    'onboarding.step5.account_holder_name': 'Full name (account holder)',
+    'onboarding.step5.account_holder_name_placeholder': 'e.g. Jane Smith',
+    'onboarding.step5.iban': 'IBAN',
+    'onboarding.step5.iban_placeholder': 'e.g. ES12 3456 7890 1234 5678 9012',
+    'onboarding.step5.fill_both_fields': 'Fill in both fields above to continue without Stripe',
+    'onboarding.step5.iban_invalid': 'Invalid IBAN — please check the number',
 
     // Video Upload
     'video.upload.title': 'Video',
@@ -690,6 +698,8 @@ export default {
     'user-settings.confirm_new_password': 'Confirm new password',
     'user-settings.password_changed_success': 'Password updated successfully.',
     'user-settings.wrong_current_password': 'Current password is incorrect.',
+    'user-settings.bank_details': 'Payment details',
+    'user-settings.bank_details_description': 'Add your bank account so Anyclazz can transfer your earnings directly.',
 
     // Payments — saved methods
     'payments.payment_method_title': 'Payment method',

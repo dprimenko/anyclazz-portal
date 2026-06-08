@@ -192,7 +192,7 @@ export const PaymentMethodsManager: FC<PaymentMethodsManagerProps> = ({
 
                   {/* Details */}
                   <div className="flex flex-col flex-1 min-w-0">
-                    {method.type === 'card' ? (
+                    {method.type === 'card' && (
                       <>
                         <Text size="text-sm" weight="medium" colorType="primary">
                           {method.card_brand
@@ -203,13 +203,6 @@ export const PaymentMethodsManager: FC<PaymentMethodsManagerProps> = ({
                         <Text size="text-xs" colorType={method.is_expired ? 'primary' : 'tertiary'} className={method.is_expired ? 'text-red-500' : ''}>
                           {method.is_expired ? t('checkout.card_expired') : expiry}
                         </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Text size="text-sm" weight="medium" colorType="primary">PayPal</Text>
-                        {method.paypal_email && (
-                          <Text size="text-xs" colorType="tertiary">{method.paypal_email}</Text>
-                        )}
                       </>
                     )}
                   </div>

@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { Modal } from '@/ui-library/components/modal/Modal';
-import { Button } from '@/ui-library/shared/button';
 import { Text } from '@/ui-library/components/ssr/text/Text';
 import { Icon } from '@/ui-library/components/ssr/icon/Icon';
 
@@ -8,10 +6,9 @@ interface PaymentMethodSelectorProps {
   open: boolean;
   onClose: () => void;
   onSelectCard: () => void;
-  onSelectPayPal: () => void;
 }
 
-export function PaymentMethodSelector({ open, onClose, onSelectCard, onSelectPayPal }: PaymentMethodSelectorProps) {
+export function PaymentMethodSelector({ open, onClose, onSelectCard }: PaymentMethodSelectorProps) {
   if (!open) {
     return null;
   }
@@ -23,8 +20,8 @@ export function PaymentMethodSelector({ open, onClose, onSelectCard, onSelectPay
           <Text size="text-lg" weight="semibold" colorType="primary">
             Add payment method
           </Text>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="text-tertiary hover:text-primary transition-colors"
             type="button"
           >
@@ -38,47 +35,22 @@ export function PaymentMethodSelector({ open, onClose, onSelectCard, onSelectPay
           Choose how you want to pay
         </Text>
 
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={() => {
-              onClose();
-              onSelectCard();
-            }}
-            className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
-          >
-            <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-tertiary">
-              <Icon icon="wallet" iconWidth={24} iconHeight={24} />
-            </div>
-            <div className="flex flex-col items-start gap-1">
-              <Text weight="medium" colorType="primary">
-                Credit or debit card
-              </Text>
-              <Text size="text-xs" colorType="tertiary">
-                Visa, Mastercard, Amex
-              </Text>
-            </div>
-          </button>
-
-          <button
-            onClick={() => {
-              onClose();
-              onSelectPayPal();
-            }}
-            className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
-          >
-            <div className="flex items-center justify-center w-12 h-12">
-              <Icon icon="paypal" iconWidth={48} iconHeight={32} />
-            </div>
-            <div className="flex flex-col items-start gap-1">
-              <Text weight="medium" colorType="primary">
-                PayPal
-              </Text>
-              <Text size="text-xs" colorType="tertiary">
-                Pay with your PayPal account
-              </Text>
-            </div>
-          </button>
-        </div>
+        <button
+          onClick={() => { onClose(); onSelectCard(); }}
+          className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
+        >
+          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-tertiary">
+            <Icon icon="wallet" iconWidth={24} iconHeight={24} />
+          </div>
+          <div className="flex flex-col items-start gap-1">
+            <Text weight="medium" colorType="primary">
+              Credit or debit card
+            </Text>
+            <Text size="text-xs" colorType="tertiary">
+              Visa, Mastercard, Amex
+            </Text>
+          </div>
+        </button>
       </div>
     </Modal>
   );

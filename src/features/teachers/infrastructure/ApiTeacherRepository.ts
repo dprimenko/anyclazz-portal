@@ -130,6 +130,8 @@ export class ApiTeacherRepository implements TeacherRepository {
 			...(data.academicBackground !== undefined ? { academicBackground: data.academicBackground } : {}),
 			...(data.certifications !== undefined ? { certifications: data.certifications } : {}),
 			...(data.skills !== undefined ? { skills: data.skills } : {}),
+			...(data.iban !== undefined ? { iban: data.iban } : {}),
+			...(data.accountHolderName !== undefined ? { accountHolderName: data.accountHolderName } : {}),
 		};
 
 		const hasFiles = Boolean(data.avatar || data.portrait || (data.videoPresentation instanceof File));

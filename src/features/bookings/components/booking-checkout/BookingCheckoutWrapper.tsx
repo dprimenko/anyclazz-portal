@@ -129,6 +129,7 @@ export function BookingCheckoutWrapper({
           onSaveForFutureChange={handleSaveForFutureChange}
           accessToken={accessToken}
           stripeAccountId={stripeAccountId}
+          paymentIntentId={paymentIntentId}
         />
       )}
 

@@ -9,7 +9,6 @@ import { Avatar } from "@/ui-library/components/ssr/avatar/Avatar";
 import { FileUpload } from "@/ui-library/components/file-upload";
 import { Controller, useForm } from "react-hook-form";
 import { Combobox, type ComboboxItem } from "@/ui-library/components/form/combobox/Combobox";
-import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { Modal } from "@/ui-library/components/modal/Modal";
 import { RichTextEditor } from "@/ui-library/components/form/rich-text-editor/RichTextEditor";
 import { AvatarCropper } from "@/features/teachers/teacher-profile/public-information/AvatarCropper";
@@ -19,6 +18,28 @@ import { timezones } from "@/features/teachers/onboarding/data/timezones";
 import type { UserProfile, UserRepository } from "../../domain/types";
 
 const BIO_MAX_LENGTH = 1000;
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+
+function formatIban(value: string): string {
+    const raw = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    return raw.match(/.{1,4}/g)?.join(' ') ?? raw;
+}
+
+function validateIban(formatted: string): boolean {
+    const raw = formatted.replace(/\s/g, '').toUpperCase();
+    if (raw.length < 5 || raw.length > 34) return false;
+    if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/.test(raw)) return false;
+    const rearranged = raw.slice(4) + raw.slice(0, 4);
+    const numeric = rearranged
+        .split('')
+        .map((c) => (c >= 'A' && c <= 'Z' ? String(c.charCodeAt(0) - 55) : c))
+        .join('');
+    let remainder = 0;
+    for (let i = 0; i < numeric.length; i += 7) {
+        remainder = parseInt(remainder + numeric.slice(i, i + 7), 10) % 97;
+    }
+    return remainder === 1;
+}
 
 interface MyDetailsFormValues {
     name: string;
@@ -35,10 +56,16 @@ interface MyDetailsProps {
     accessToken: string;
     repository: UserRepository;
     lang: string;
+    role?: string;
+    teacherId?: string;
+    initialIban?: string | null;
+    initialAccountHolderName?: string | null;
 }
 
-export function MyDetails({ user, accessToken, repository, lang }: MyDetailsProps) {
+export function MyDetails({ user, accessToken, repository, lang, role, teacherId, initialIban, initialAccountHolderName }: MyDetailsProps) {
     const t = useTranslations({ lang: lang as 'en' | 'es' });
+    const isTeacher = role === 'teacher';
+
     const [isSaving, setIsSaving] = useState(false);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -46,6 +73,15 @@ export function MyDetails({ user, accessToken, repository, lang }: MyDetailsProp
     const [avatarSourceFile, setAvatarSourceFile] = useState<string | null>(null);
     const [emailChanged, setEmailChanged] = useState(false);
     const [emailInUseError, setEmailInUseError] = useState(false);
+
+    // Bank fields (teacher only)
+    const [iban, setIban] = useState(initialIban ? formatIban(initialIban) : '');
+    const [accountHolderName, setAccountHolderName] = useState(initialAccountHolderName ?? '');
+    const [ibanTouched, setIbanTouched] = useState(false);
+
+    const ibanRaw = iban.replace(/\s/g, '');
+    const ibanValid = ibanRaw.length > 0 && validateIban(iban);
+    const ibanError = ibanTouched && ibanRaw.length > 0 && !ibanValid;
 
     const { control, handleSubmit, reset, watch } = useForm<MyDetailsFormValues>({
         defaultValues: {
@@ -139,6 +175,21 @@ export function MyDetails({ user, accessToken, repository, lang }: MyDetailsProp
             if (values.email.trim() !== user.email) {
                 setEmailChanged(true);
             }
+
+            // Save bank details for teachers
+            if (isTeacher && teacherId) {
+                await fetch(`${API_URL}/teachers/${teacherId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        iban: ibanRaw || null,
+                        accountHolderName: accountHolderName.trim() || null,
+                    }),
+                });
+            }
         } catch (err) {
             if (err instanceof Error && err.message === 'EMAIL_ALREADY_IN_USE') {
                 setEmailInUseError(true);
@@ -146,7 +197,7 @@ export function MyDetails({ user, accessToken, repository, lang }: MyDetailsProp
         } finally {
             setIsSaving(false);
         }
-    }, [accessToken, avatarFile, repository, user.email]);
+    }, [accessToken, avatarFile, repository, user.email, isTeacher, teacherId, ibanRaw, accountHolderName]);
 
     return (
         <form className="mt-6 flex flex-col gap-8" onSubmit={handleSubmit(handleSave)}>
@@ -340,6 +391,69 @@ export function MyDetails({ user, accessToken, repository, lang }: MyDetailsProp
                     </div>
                 </HorizontalInputContainer>
                 <Divider margin={20} />
+
+                {/* Bank details — teachers only */}
+                {isTeacher && (
+                    <>
+                        <div className="flex flex-col gap-[2px] mb-5">
+                            <Text size="text-lg" weight="semibold" colorType="primary">{t('user-settings.bank_details')}</Text>
+                            <Text size="text-md" colorType="tertiary">{t('user-settings.bank_details_description')}</Text>
+                        </div>
+                        <Divider margin={20} />
+
+                        {/* Account holder name */}
+                        <HorizontalInputContainer label={t('onboarding.step5.account_holder_name')}>
+                            <input
+                                type="text"
+                                value={accountHolderName}
+                                onChange={(e) => setAccountHolderName(e.target.value)}
+                                placeholder={t('onboarding.step5.account_holder_name_placeholder')}
+                                disabled={isSaving}
+                                className="w-full px-3 py-2 rounded-lg border border-[var(--color-neutral-300)] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-700)] focus:border-transparent disabled:opacity-50"
+                            />
+                        </HorizontalInputContainer>
+                        <Divider margin={20} />
+
+                        {/* IBAN with mask + validation */}
+                        <HorizontalInputContainer label={t('onboarding.step5.iban')}>
+                            <div className="flex flex-col gap-1.5 w-full">
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        inputMode="text"
+                                        autoCorrect="off"
+                                        autoCapitalize="characters"
+                                        spellCheck={false}
+                                        value={iban}
+                                        onChange={(e) => setIban(formatIban(e.target.value))}
+                                        onBlur={() => setIbanTouched(true)}
+                                        placeholder={t('onboarding.step5.iban_placeholder')}
+                                        maxLength={42}
+                                        disabled={isSaving}
+                                        className={[
+                                            'w-full px-3 py-2 pr-9 rounded-lg border bg-white text-sm font-mono focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50',
+                                            ibanError
+                                                ? 'border-red-400 focus:ring-red-300'
+                                                : ibanValid
+                                                    ? 'border-green-400 focus:ring-green-300'
+                                                    : 'border-[var(--color-neutral-300)] focus:ring-[var(--color-primary-700)]',
+                                        ].join(' ')}
+                                    />
+                                    {ibanValid && (
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-base leading-none">✓</span>
+                                    )}
+                                    {ibanError && (
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500 text-base leading-none">✗</span>
+                                    )}
+                                </div>
+                                {ibanError && (
+                                    <p className="text-xs text-red-500">{t('onboarding.step5.iban_invalid')}</p>
+                                )}
+                            </div>
+                        </HorizontalInputContainer>
+                        <Divider margin={20} />
+                    </>
+                )}
 
                 <div className="flex justify-end mb-4">
                     <Button

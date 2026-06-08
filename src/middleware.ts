@@ -97,10 +97,7 @@ async function checkTeacherOnboarding(session: any, pathname: string): Promise<{
       return { needsOnboarding: true, redirectTo: '/onboarding/quick-intro' };
     }
 
-    // Paso 5: Stripe conectado
-    if (!teacher.stripeConnected) {
-      return { needsOnboarding: true, redirectTo: '/onboarding/stripe-setup' };
-    }
+    // Stripe Connect is optional — teachers can receive bookings through the platform account.
 
     return { needsOnboarding: false };
   } catch (error) {
