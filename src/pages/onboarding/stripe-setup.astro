@@ -78,6 +78,8 @@ const user: AuthUser = {
             oauthError={oauthErrorDescription || oauthError}
             initialIban={teacher?.iban ?? null}
             initialAccountHolderName={teacher?.accountHolderName ?? null}
+            initialAccountNumber={teacher?.accountNumber ?? null}
+            initialRoutingNumber={teacher?.routingNumber ?? null}
             client:load
         />
     </OnboardingLayout>

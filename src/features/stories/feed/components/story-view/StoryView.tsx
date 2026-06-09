@@ -185,19 +185,23 @@ function StoryInfo({ story }: StoryInfoProps) {
 		? description 
 		: `${description.slice(0, MAX_CHARS)}...`;
 
+	const teacherProfileUrl = story.teacher?.id ? `/teacher/${story.teacher.id}` : undefined;
+
 	return (
 		<div className="flex flex-col justify-end p-4 pb-6">
 			<div className="flex gap-3">
 				{/* Left column: Avatar */}
-				<Avatar 
-					src={story.teacher?.avatar} 
-					alt={teacherName}
-					size={40}
-				/>
-				
+				<a href={teacherProfileUrl} className={teacherProfileUrl ? 'cursor-pointer' : 'pointer-events-none'}>
+					<Avatar
+						src={story.teacher?.avatar}
+						alt={teacherName}
+						size={40}
+					/>
+				</a>
+
 				{/* Right column: Name and description */}
 				<div className="flex flex-col gap-1 flex-1">
-					<div className="text-white text-sm font-semibold">{teacherName}</div>
+					<a href={teacherProfileUrl} className={`text-white text-sm font-semibold no-underline hover:underline${teacherProfileUrl ? '' : ' pointer-events-none'}`}>{teacherName}</a>
 					
 					{description && (
 						<div className="text-white/90 text-xs leading-relaxed">

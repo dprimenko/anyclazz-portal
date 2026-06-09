@@ -557,6 +557,13 @@ export default {
     'onboarding.step5.iban_placeholder': 'e.g. ES12 3456 7890 1234 5678 9012',
     'onboarding.step5.fill_both_fields': 'Fill in both fields above to continue without Stripe',
     'onboarding.step5.iban_invalid': 'Invalid IBAN — please check the number',
+    'onboarding.step5.bank_type_iban': 'IBAN (Europe / International)',
+    'onboarding.step5.bank_type_us': 'US Account (ACH)',
+    'onboarding.step5.account_number': 'Account number',
+    'onboarding.step5.account_number_placeholder': 'e.g. 898166879837',
+    'onboarding.step5.routing_number': 'Routing number',
+    'onboarding.step5.routing_number_placeholder': 'e.g. 026009593',
+    'onboarding.step5.routing_number_invalid': 'Routing number must be 9 digits',
 
     // Video Upload
     'video.upload.title': 'Video',

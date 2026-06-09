@@ -83,6 +83,8 @@ export interface Teacher {
     stripeConnected?: boolean;
     iban?: string | null;
     accountHolderName?: string | null;
+    accountNumber?: string | null;
+    routingNumber?: string | null;
 }
 
 export interface GetTeacherParams extends CommonParams {
@@ -146,6 +148,8 @@ export interface UpdateTeacherData {
     skills?: string;
     iban?: string | null;
     accountHolderName?: string | null;
+    accountNumber?: string | null;
+    routingNumber?: string | null;
 }
 
 export interface UpdateTeacherParams extends CommonParams {

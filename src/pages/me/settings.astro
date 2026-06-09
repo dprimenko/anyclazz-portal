@@ -50,6 +50,8 @@ if (currentUser.role === 'student') {
 let teacherId: string | undefined;
 let initialIban: string | null = null;
 let initialAccountHolderName: string | null = null;
+let initialAccountNumber: string | null = null;
+let initialRoutingNumber: string | null = null;
 if (currentUser.role === 'teacher') {
     try {
         const profileApiData = await authRepository.getUserProfile(accessToken);
@@ -59,6 +61,8 @@ if (currentUser.role === 'teacher') {
             const teacher = await teacherRepository.getTeacher({ token: accessToken, teacherId });
             initialIban = teacher?.iban ?? null;
             initialAccountHolderName = teacher?.accountHolderName ?? null;
+            initialAccountNumber = teacher?.accountNumber ?? null;
+            initialRoutingNumber = teacher?.routingNumber ?? null;
         }
     } catch (error) {
         console.error('Error loading teacher bank data:', error);
@@ -72,6 +76,6 @@ if (currentUser.role === 'teacher') {
 		<Space size={16} direction="vertical" />
 		<Divider />
 		<Space size={24} direction="vertical" />
-		<UserProfile user={userProfile} accessToken={accessToken} initialTab={initialTab} role={currentUser.role} initialPayments={initialPayments} lang={lang as 'en' | 'es'} teacherId={teacherId} initialIban={initialIban} initialAccountHolderName={initialAccountHolderName} client:load />
+		<UserProfile user={userProfile} accessToken={accessToken} initialTab={initialTab} role={currentUser.role} initialPayments={initialPayments} lang={lang as 'en' | 'es'} teacherId={teacherId} initialIban={initialIban} initialAccountHolderName={initialAccountHolderName} initialAccountNumber={initialAccountNumber} initialRoutingNumber={initialRoutingNumber} client:load />
 	</div>
 </Main>

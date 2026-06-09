@@ -20,9 +20,11 @@ export interface UserProfileProps {
     teacherId?: string;
     initialIban?: string | null;
     initialAccountHolderName?: string | null;
+    initialAccountNumber?: string | null;
+    initialRoutingNumber?: string | null;
 }
 
-export function UserProfile({ user: initialUser, accessToken, initialTab, role, initialPayments, lang = 'en', teacherId, initialIban, initialAccountHolderName }: UserProfileProps) {
+export function UserProfile({ user: initialUser, accessToken, initialTab, role, initialPayments, lang = 'en', teacherId, initialIban, initialAccountHolderName, initialAccountNumber, initialRoutingNumber }: UserProfileProps) {
     const t = useTranslations({ lang });
     const isStudent = role === 'student';
     
@@ -71,7 +73,7 @@ export function UserProfile({ user: initialUser, accessToken, initialTab, role, 
         <div>
             <Tabs tabs={tabs} defaultTab={initialTab} onChange={onTabChange} />
             {selectedTab === "my_details" && (
-                <MyDetails user={user} accessToken={accessToken} repository={repository} lang={lang} role={role} teacherId={teacherId} initialIban={initialIban} initialAccountHolderName={initialAccountHolderName} />
+                <MyDetails user={user} accessToken={accessToken} repository={repository} lang={lang} role={role} teacherId={teacherId} initialIban={initialIban} initialAccountHolderName={initialAccountHolderName} initialAccountNumber={initialAccountNumber} initialRoutingNumber={initialRoutingNumber} />
             )}
             {selectedTab === "password" && (
                 <ChangePassword accessToken={accessToken} repository={repository} lang={lang} />
