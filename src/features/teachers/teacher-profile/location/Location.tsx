@@ -7,11 +7,11 @@ import { useTranslations } from "@/i18n";
 import { HorizontalInputContainer } from "@/ui-library/components/horizontal-input-container/HorizontalInputContainer";
 import { TextField } from "@/ui-library/components/form/text-field/TextField";
 import { Combobox, type ComboboxItem } from "@/ui-library/components/form/combobox/Combobox";
+import { GoogleCityAutocomplete } from "@/ui-library/components/form/city-autocomplete/GoogleCityAutocomplete";
 import { Controller, useForm } from "react-hook-form";
 import type { TeacherRepository } from "../../domain/types";
 import { countries } from "../../onboarding/data/countries";
 import { states } from "../../onboarding/data/states";
-import { cities } from "../../onboarding/data/cities";
 
 interface LocationFormValues {
     street: string;
@@ -30,7 +30,7 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
     const t = useTranslations();
     const [isSaving, setIsSaving] = useState(false);
 
-    const { control, handleSubmit, reset, watch } = useForm<LocationFormValues>({
+    const { control, handleSubmit, reset, watch, setValue } = useForm<LocationFormValues>({
         defaultValues: {
             street: teacher.teacherAddress?.street ?? "",
             city: teacher.teacherAddress?.city ?? "",
@@ -59,20 +59,11 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
         }));
     }, [t, watchedCountry]);
 
-    // Filter cities by selected country
-    const cityItems: ComboboxItem[] = useMemo(() => {
-        if (watchedCountry) {
-            const countryCities = cities.filter(city => city.country === watchedCountry);
-            return countryCities.map(city => ({
-                value: city.city,
-                label: city.name[t('common.language') as keyof typeof city.name],
-            }));
-        }
-        return cities.map(city => ({
-            value: city.city,
-            label: city.name[t('common.language') as keyof typeof city.name],
-        }));
-    }, [t, watchedCountry]);
+    // Texto a mostrar en el buscador de ciudad (ej. "New York, United States")
+    const [cityLabel, setCityLabel] = useState<string>(
+        teacher.teacherAddress?.fullAddress ??
+        [teacher.teacherAddress?.city, teacher.teacherAddress?.country].filter(Boolean).join(", ")
+    );
 
     useEffect(() => {
         reset({
@@ -81,6 +72,10 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
             state: teacher.teacherAddress?.state ?? "",
             country: teacher.teacherAddress?.country ?? "",
         });
+        setCityLabel(
+            teacher.teacherAddress?.fullAddress ??
+            [teacher.teacherAddress?.city, teacher.teacherAddress?.country].filter(Boolean).join(", ")
+        );
     }, [reset, teacher.teacherAddress]);
 
     const handleSave = useCallback(async (values: LocationFormValues) => {
@@ -187,12 +182,21 @@ export function Location({ teacher, accessToken, repository }: LocationProps) {
                         control={control}
                         rules={{ required: true }}
                         render={({ field }) => (
-                            <Combobox
-                                items={cityItems}
-                                value={field.value}
-                                onChange={field.onChange}
+                            <GoogleCityAutocomplete
+                                value={cityLabel}
+                                onSelect={(selection) => {
+                                    field.onChange(selection.city);
+                                    setCityLabel(selection.fullAddress);
+                                    if (selection.country) {
+                                        setValue('country', selection.country, { shouldDirty: true });
+                                    }
+                                }}
+                                onClear={() => {
+                                    field.onChange('');
+                                    setCityLabel('');
+                                }}
+                                lang={t('common.language') as 'es' | 'en'}
                                 placeholder={t('teacher-profile.city_placeholder')}
-                                searchPlaceholder={t('onboarding.location.search')}
                                 emptyMessage={t('onboarding.location.empty')}
                                 fullWidth
                             />

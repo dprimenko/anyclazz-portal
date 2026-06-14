@@ -5,7 +5,7 @@ import { PriceRangeFilter } from "./PriceRangeFilter";
 import { MoreFilters } from "./MoreFilters";
 import { Icon } from "@/ui-library/components/ssr/icon/Icon";
 import { ClassType } from "../../domain/types";
-import { CitySelector } from '../../onboarding/components/CitySelector';
+import { GoogleCityAutocomplete } from '@/ui-library/components/form/city-autocomplete/GoogleCityAutocomplete';
 import { useTeachers } from "../../providers/TeachersProvider";
 import { Dropdown, type DropdownItem } from "@/ui-library/components/form/dropdown/Dropdown";
 
@@ -38,6 +38,9 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
     const [search, setSearch] = useState('');
     const [selectedCountry, setSelectedCountry] = useState<string>(filters.country || '');
     const [selectedCity, setSelectedCity] = useState<string>(filters.city || '');
+    const [selectedCityLabel, setSelectedCityLabel] = useState<string>(
+        filters.city ? [filters.city, filters.country].filter(Boolean).join(', ') : ''
+    );
     const [selectedClassType, setSelectedClassType] = useState<string>('');
     const [minPrice, setMinPrice] = useState<number | undefined>();
     const [maxPrice, setMaxPrice] = useState<number | undefined>();
@@ -88,14 +91,34 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
         onClear();
     };
 
-    const handleCityChange = (city: string, country: string) => {
+    const handleCityChange = (city: string, country: string, label: string) => {
         setSelectedCity(city);
         setSelectedCountry(country);
-        
+        setSelectedCityLabel(label);
+
         onFiltersChange({
             search: search || undefined,
             country: country || undefined,
             city: city || undefined,
+            classTypeId: selectedClassType || undefined,
+            minPrice,
+            maxPrice,
+            subjectCategoryId,
+            subjectId,
+            speakLanguage,
+            studentLevelId,
+        });
+    };
+
+    const handleCityClear = () => {
+        setSelectedCity('');
+        setSelectedCountry('');
+        setSelectedCityLabel('');
+
+        onFiltersChange({
+            search: search || undefined,
+            country: undefined,
+            city: undefined,
             classTypeId: selectedClassType || undefined,
             minPrice,
             maxPrice,
@@ -172,12 +195,12 @@ export function TeachersFilters({ onFiltersChange, onClear }: TeachersFiltersPro
             <div className="flex flex-col md:flex-row items-space-between w-full gap-2">
                 <div className="flex flex-col md:flex-row gap-2 w-full">
                     <div className="min-w-[180px]">
-                        <CitySelector
-                            value={selectedCity}
-                            onChange={handleCityChange}
+                        <GoogleCityAutocomplete
+                            value={selectedCityLabel}
+                            onSelect={(selection) => handleCityChange(selection.city, selection.country, selection.fullAddress)}
+                            onClear={handleCityClear}
                             lang={lang as 'es' | 'en'}
                             placeholder={t('teachers.select_city')}
-                            searchPlaceholder={t('onboarding.location.search')}
                             emptyMessage={t('onboarding.location.empty')}
                             fullWidth={true}
                         />

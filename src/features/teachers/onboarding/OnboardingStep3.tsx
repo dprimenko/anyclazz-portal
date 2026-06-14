@@ -1,14 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslations } from '@/i18n';
 import { Combobox, type ComboboxItem } from '@/ui-library/components/form/combobox/Combobox';
+import { GoogleCityAutocomplete, type GoogleCitySelection } from '@/ui-library/components/form/city-autocomplete/GoogleCityAutocomplete';
 import { Text } from '@/ui-library/components/ssr/text/Text';
-import { cities } from './data/cities';
 import { countries } from './data/countries';
 import { LanguageSelector } from './components/LanguageSelector';
 import type { TeacherLanguage } from '../domain/types';
 import { ApiTeacherRepository } from '../infrastructure/ApiTeacherRepository';
-import esFlag from '@/assets/images/icons/flags/es.svg';
-import usFlag from '@/assets/images/icons/flags/us.svg';
 
 interface OnboardingStep3Props {
     lang: string;
@@ -24,38 +22,11 @@ interface OnboardingStep3Props {
 export default function OnboardingStep3({ lang, teacherId, token, initialData }: OnboardingStep3Props) {
     const t = useTranslations({ lang: lang as 'en' | 'es' });
     const [selectedNationality, setSelectedNationality] = useState<string>(initialData?.nationalityId || '');
-    const [selectedCity, setSelectedCity] = useState<string>(initialData?.city || '');
+    const [selectedCity, setSelectedCity] = useState<GoogleCitySelection | null>(null);
     const [selectedLanguages, setSelectedLanguages] = useState<TeacherLanguage[]>(initialData?.speaksLanguages || []);
     const [isSaving, setIsSaving] = useState(false);
 
     const repository = useMemo(() => new ApiTeacherRepository(), []);
-
-    // const getFlagForCountry = (countryISO2: string): string => {
-    //     const flags: Record<string, string> = {
-    //         'ES': esFlag.src,
-    //         'US': usFlag.src
-    //     };
-    //     return flags[countryISO2] || '';
-    // };
-
-    // Transform cities data to ComboboxItem format with current locale
-    // Prioritize cities from selected nationality
-    const cityItems: ComboboxItem[] = useMemo(() => {
-        const allCities = cities.map(city => ({
-            value: city.city,
-            label: city.name[lang as keyof typeof city.name],
-            country: city.country,
-        }));
-
-        // If a nationality is selected, prioritize cities from that country
-        if (selectedNationality) {
-            const countryCities = allCities.filter(city => city.country === selectedNationality);
-            const otherCities = allCities.filter(city => city.country !== selectedNationality);
-            return [...countryCities, ...otherCities];
-        }
-
-        return allCities;
-    }, [lang, selectedNationality]);
 
     // Transform countries data to ComboboxItem format with current locale
     const nationalityItems: ComboboxItem[] = countries.map(country => ({
@@ -69,20 +40,6 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
 
         setIsSaving(true);
         try {
-            // Obtener la información completa de la ciudad seleccionada
-            const selectedCityData = cities.find(c => c.city === selectedCity);
-            
-            if (!selectedCityData) {
-                console.error('City data not found');
-                return;
-            }
-
-            // Construir fullAddress
-            const cityName = selectedCityData.name[lang as keyof typeof selectedCityData.name];
-            const countryData = countries.find(c => c.country === selectedCityData.country);
-            const countryName = countryData?.name[lang as keyof typeof countryData.name] || selectedCityData.country;
-            const fullAddress = `${cityName}, ${countryName}`;
-
             // Llamar al repositorio para actualizar los datos del profesor
             await repository.updateTeacher({
                 token,
@@ -90,14 +47,14 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
                 data: {
                     nationalityId: selectedNationality,
                     address: {
-                        country: selectedCityData.country,
-                        city: selectedCityData.city,
-                        fullAddress,
+                        country: selectedCity.country,
+                        city: selectedCity.city,
+                        fullAddress: selectedCity.fullAddress,
                     },
                     speaksLanguages: selectedLanguages,
                 },
             });
-            
+
             window.location.href = '/onboarding/quick-intro';
         } catch (error) {
             console.error('Error saving location and languages:', error);
@@ -106,10 +63,7 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
         }
     };
 
-    const selectedCityData = cities.find(c => c.city === selectedCity);
-    // const selectedCityFlag = selectedCityData ? getFlagForCountry(selectedCityData.country) : '';
-
-    const isFormValid = selectedNationality !== '' && selectedCity !== '' && selectedLanguages.length > 0;
+    const isFormValid = selectedNationality !== '' && selectedCity !== null && selectedLanguages.length > 0;
 
     return (
         <>
@@ -144,24 +98,15 @@ export default function OnboardingStep3({ lang, teacherId, token, initialData }:
                 <label className="block text-sm font-semibold text-[var(--color-neutral-900)] mb-3">
                     {t('onboarding.location')} <span className="text-[var(--color-primary-700)]">*</span>
                 </label>
-                <div className="flex items-center gap-3">
-                    {/* {selectedCityFlag && (
-                        <img 
-                            src={selectedCityFlag} 
-                            alt="" 
-                            className="w-8 h-8 rounded-full flex-shrink-0"
-                        />
-                    )} */}
-                    <Combobox
-                        items={cityItems}
-                        value={selectedCity}
-                        onChange={setSelectedCity}
-                        placeholder={t('onboarding.location.placeholder')}
-                        searchPlaceholder={t('onboarding.location.search')}
-                        emptyMessage={t('onboarding.location.empty')}
-                        fullWidth={true}
-                    />
-                </div>
+                <GoogleCityAutocomplete
+                    value={selectedCity?.fullAddress}
+                    onSelect={setSelectedCity}
+                    onClear={() => setSelectedCity(null)}
+                    lang={lang as 'es' | 'en'}
+                    placeholder={t('onboarding.location.placeholder')}
+                    emptyMessage={t('onboarding.location.empty')}
+                    fullWidth={true}
+                />
             </div>
 
             {/* Languages Selector */}
