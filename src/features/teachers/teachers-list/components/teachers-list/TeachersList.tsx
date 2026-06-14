@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslations } from "../../../../../i18n";
 import styles from "./TeachersList.module.css";
 import { useTeachers } from "../../../providers/TeachersProvider";
@@ -21,7 +22,16 @@ export function TeachersList() {
     updateFilters,
     clearFilters,
     accessToken,
+    filters,
   } = useTeachers();
+
+  // Subir el scroll al inicio cada vez que se recarga el listado
+  // (cambio de página, filtros o limpieza de filtros).
+  // El scroll vive en .main__container (el body tiene overflow: hidden).
+  useEffect(() => {
+    const scrollContainer = document.querySelector(".main__container");
+    (scrollContainer ?? window).scrollTo({ top: 0, behavior: "smooth" });
+  }, [page, filters]);
 
   return (
     <div className={styles["teachers-list__container"]}>
